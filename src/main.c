@@ -37,7 +37,7 @@ void os_sleep_ms(int ms)
 {
 	vTaskDelay(ms);
 }
-void os_sleep()
+void os_suspend(void)
 {
 	vTaskDelay(portMAX_DELAY);
 }
@@ -178,7 +178,7 @@ static int test_can()
 			os_sleep_ms(1000);
 		}
 		if(canA.rxFlag && canB.rxFlag){
-			os_printf("PASS.\n",i,j);
+			os_printf("CAN%d & CAN%d PASS.\n",i,j);
 			test_rst |= 1<<i;
 		}
 		if(canA.rxFlag==0)
@@ -217,7 +217,7 @@ void UartRxIRQHandler(int port)
 }
 int LPUART_receive_from_queue(int port,int timeout){
 	uint8_t c;
-	if(xQueueReceive(uartQueueTbl[port], &c, timeout)==pdTRUE){
+	if(xQueueReceive(uartQueueTbl[port], &c, timeout)==pdPASS){
 		return c;
 	}else{
 		return -1;
@@ -225,7 +225,7 @@ int LPUART_receive_from_queue(int port,int timeout){
 }
 void LPUART_receive_flush(int port)
 {
-	while(LPUART_receive_from_queue(port,1)!=-1);
+	xQueueReset(uartQueueTbl[port]);
 }
 char *LPUART_receive_string_timeout(int port,char *buf, int bufsize, int timeout)
 {
@@ -235,6 +235,8 @@ char *LPUART_receive_string_timeout(int port,char *buf, int bufsize, int timeout
 		int c = LPUART_receive_from_queue(port,timeout);
 		if(c==-1)
 			return NULL;	/*timeout*/
+		if(c=='\r')
+			continue;
 		if(c=='\n'){
 			*p = '\0';
 			return buf;		/*get*/
@@ -256,7 +258,17 @@ void LPUART_transmit_string(int port,const char *data_string)  {  /* Function to
     i++;
   }
 }
-
+static void test_uart_loop(void *p)
+{
+	uartQueueTbl[1] = xQueueCreate(128, sizeof(uint8_t));
+	os_printf("UART%d send message\n",1);
+	LPUART_transmit_string(1, "$$TEST$$\n");
+	os_sleep_ms(1000);
+	char buf[64];
+	LPUART_receive_string_timeout(1, buf, 64, 1000);//(1, buf, 64);
+	os_printf("UART%d get message: %s\n",1,buf);
+	os_suspend();
+}
 static void uart_proc(void *p)
 {
 	struct UartParamSt* param = (struct UartParamSt*)p;
@@ -269,9 +281,9 @@ static void uart_proc(void *p)
 	}else{
 		char buf[64];
 		LPUART_receive_string(param->port, buf, 64);
-		os_printf("UART%d get message: %s",param->port,buf);
+		os_printf("UART%d get message: %s\n",param->port,buf);
 		param->test_rst = 1;
-		os_sleep();
+		os_suspend();
 	}
 
 }
@@ -279,9 +291,6 @@ static void uart_proc(void *p)
 static int test_uart()
 {
 	uint32_t testFlag;
-	uartQueueTbl[0] = xQueueCreate(1, sizeof(uint8_t));
-	uartQueueTbl[1] = xQueueCreate(128, sizeof(uint8_t));
-	uartQueueTbl[2] = xQueueCreate(1, sizeof(uint8_t));
 	for(int i=1;i<2;i++){
 		struct UartParamSt tx = {
 			.tr = 't',
@@ -318,60 +327,207 @@ static int test_uart()
 		return -1;
 	}
 }
-
-
+#define NIC_RST_CLR()   		PTD-> PCOR |= 1<<16
+#define NIC_RST_SET()    		PTD-> PSOR |= 1<<16
+#define NIC_POWER_ON_CLR()    		PTD-> PCOR |= 1<<15
+#define NIC_POWER_ON_SET()   		PTD-> PSOR |= 1<<15
+void nic_io_init(){
+	PCC->PCCn[PCC_PORTD_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
+	PTD->PDDR |= 1 << 15;
+	PTD->PDDR |= 1 << 16;
+	PORTD->PCR[15] |= PORT_PCR_MUX(1); /* Port C6: MUX = ALT2,UART1 TX */
+	PORTD->PCR[16] |= PORT_PCR_MUX(1); /* Port C7: MUX = ALT2,UART1 RX */
+	NIC_RST_CLR();
+	NIC_POWER_ON_CLR();
+}
+void nic_power_onoff(void)
+{
+	NIC_POWER_ON_CLR();
+	os_sleep_ms(300);
+	NIC_POWER_ON_SET();		/* ____--2s--___ */
+	os_sleep_ms(3000);
+	NIC_POWER_ON_CLR();
+	os_sleep_ms(300);
+}
+void nic_reset(void)
+{
+	NIC_RST_CLR();
+	os_sleep_ms(300);
+	NIC_RST_SET();		/* ____--600ms--___ */
+	os_sleep_ms(800);
+	NIC_RST_CLR();
+	os_sleep_ms(300);
+}
 static int test_4g()
 {
+	nic_power_onoff();
 #define UART_4G				(1)
 #define UART_4G_BUFSIZE		(128)
 	char buf[UART_4G_BUFSIZE];
-	uartQueueTbl[1] = xQueueCreate(128, sizeof(uint8_t));
+	char imsi[16];
+	const char *apn = "CMNET";
+	int sockid=1;
+	uint16_t lcport = 5000;
+	char *rmip = "180.89.58.27";
+	uint16_t rmport = 9020;
+	char lcip[16];
+
+	int at_csq(){
+		int res;
+		if(buf[0] == '+'){
+			int a=0,b=0;
+			res = sscanf(buf,"+CSQ: %d,%d",&a,&b);
+			if(res==2 &&(a>0 && a<99))
+				return 0;
+		}
+		return -1;
+	}
+	int at_creg(){
+		int res;
+		if(buf[0] == '+'){
+			int a=0,b=0;
+			res = sscanf(buf,"+CREG: %d,%d",&a,&b);
+			if(res==2 && (b==1||b==5))
+				return 0;
+		}
+		return -1;;
+	}
+	int at_cimi(){
+		if(strlen(buf)==15 && strspn(buf,"0123456789")==15){
+			strcpy(imsi,buf);
+			return 0;
+		}
+		return -1;;
+	}
+	const char* at_miprofile(){
+		snprintf(buf,UART_4G_BUFSIZE,"AT+MIPPROFILE=1,\"%s\"",apn);
+		return buf;
+	}
+	const char* at_mipopen(){
+		snprintf(buf,UART_4G_BUFSIZE,"AT+MIPOPEN=%d,%hu,\"%s\",%hu,0",
+				sockid,lcport,rmip,rmport);
+		return buf;
+	}
+
+	int at_miopen_r(){
+		int res;
+		if(buf[0] == '+'){
+			int a=0,b=0;
+			res = sscanf(buf,"+MIPOPEN=%d,%d",&a,&b);
+			if(res==2 && a==sockid && b==1)
+				return 0;
+		}
+		return -1;;
+	}
+	int at_mipcall(){
+		int res;
+		if(buf[0] == '+'){
+			int a=0;
+			res = sscanf(buf,"+MIPCALL:%d, %s",&a,lcip);
+			if(res==2 && a==sockid)
+				return 0;
+		}
+		return -1;;
+	}
 	struct AtTalkTable {
 		const char *tx;
-		const char *rx;
+		const char *(*tf)();
+		const char *rs;
+		const char *abort;
+		int (*rf)();
 		int retry;
-		int rx_timeout;
+		int tmout;
 	}attbl[] = {
-			{"ATE1",		"OK",	10,	1000},
-			{"AT+CIMI",		"OK",	5,	1000},
-			{"AT+MIPPROFILE=1,\"CMNET\"",	"OK",	5,	1000},
+			/*
+AT+CIMI
+AT+MIPPROFILE=1,"CMNET"
+AT+MIPCALL=1
+AT+MIPCALL?
+AT+MIPOPEN=1,5000,"180.89.58.27",9020,0
+AT+MIPHEX=0
+AT+MIPTPS=1,1,5000,600
+			 */
+			{.tx="ATE1",			.rs="OK",				.retry=60,	.tmout=1000},
+			{.tx="ATE0",			.rs="OK",				.retry=5,	.tmout=1000},
+			{.tx="AT+CPIN?",		.rs="+CPIN: READY",		.retry=20,	.tmout=1000},
+			{.tx="AT+CSQ",			.rs=0,.rf=at_csq,		.retry=20, 	.tmout=1000},
+			{.tx="AT+CREG?",		.rs=0,.rf=at_creg,		.retry=20,	.tmout=1000},
+			{.tx="AT+CIMI",			.rs=0,.rf=at_cimi,		.retry=20,	.tmout=1000},
+			{.tx=0,.tf=at_miprofile,.rs="OK",				.retry=20,	.tmout=1000},
+			{.tx="AT+MIPCALL=1",	.rs=0,.rf=at_mipcall,	.retry=5,	.tmout=10000},
+			{.tx="AT+MIPCALL?",		.rs="OK",				.retry=5,	.tmout=10000},
+			{.tx=0,.tf=at_mipopen,	.rs=0,.rf=at_miopen_r,	.retry=5,	.tmout=5000},
+			{.tx="AT+MIPHEX=0",		.rs="OK",				.retry=60,	.tmout=1000},
+
+			//{.tx="AT+CIMI",		.rx="OK",	5,	1000},
+			//{.tx="AT+MIPPROFILE=1,\"CMNET\"",	"OK",	5,	1000},
 	};
 	int step=0;
 	for(;step<sizeof(attbl)/sizeof(attbl[0]);step++){
-		int r=0;
-		for(;r<attbl[step].retry;r++){
-			LPUART_receive_flush(UART_4G);
-			LPUART_transmit_string(UART_4G, attbl[step].tx);
+		int need_try = 1;
+		for(int r=0;need_try&&r<attbl[step].retry;r++){
+			//LPUART_receive_flush(UART_4G);
+			if(attbl[step].tx){
+				os_printf("put:%s\n",attbl[step].tx);
+				LPUART_transmit_string(UART_4G, attbl[step].tx);
+			}else{
+				const char *ts = attbl[step].tf();
+				os_printf("put:%s\n",ts);
+				LPUART_transmit_string(UART_4G, ts);
+			}
 			LPUART_transmit_string(UART_4G,"\r\n");
-			char *s = LPUART_receive_string_timeout(UART_4G, buf, UART_4G_BUFSIZE, attbl[step].rx_timeout);
-			if(s || strcmp(s,attbl[step].rx)==0)
-				break;
+			os_sleep_ms(500);	/* must delay if not, rx nothing. */
+			char *s;
+			do{
+				s = LPUART_receive_string_timeout(UART_4G, buf, UART_4G_BUFSIZE, attbl[step].tmout);
+				if(s){
+					os_printf("gets:%s\n",s);
+				}
+				if(attbl[step].rs){
+					if(s && strcmp(s,attbl[step].rs)==0){
+						need_try = 0;
+					}
+				}else{
+					need_try = attbl[step].rf();
+				}
+			}while(s && need_try);
 		}
-		if(r==attbl[step].retry)
+		if(need_try)
 			break;
 	}
 	if(step==sizeof(attbl)/sizeof(attbl[0])){
 		os_printf("AT route complete!\n");
 		return 0;
 	}else{
-		os_printf("AT route abort, step=%d cmd=%s wand=%s!\n",step,attbl[step].tx,attbl[step].rx);
+		os_printf("AT route abort, step=%d cmd=%s want=%s!\n",step,attbl[step].tx,attbl[step].rs);
 		return -1;
+	}
+}
+
+int test_rtc(void)
+{
+	for(;;){
+		os_printf("tickcount=%u\n",get_tick_count());
+		os_sleep_ms(1000);
 	}
 }
 
 static TaskHandle_t mainTaskHandle;
 void mainTask(void *p)
 {
+
 	os_printf("board layout init ok. build %s %s\n",__DATE__,__TIME__);
 	static const struct {
 		const char *testitem;
 		int (*func)(void);
 	} test_tbl[] = {
-			{"UART0/1/2 Loop-back Test",		test_uart},
-			{"4G Module Test",					test_4g},
-			{"SD Card Test",					test_sd},
-			{"CAN0/1/2 Loop Test",				test_can},
-			{"Buzzer Test\n",					test_buzzer},
+			//{"T",								test_uart_loop},
+			//{"UART0/1/2 Loop-back Test",		test_uart},
+			{"RTC Test",						test_rtc},
+//			{"4G Module Test",					test_4g},
+//			{"SD Card Test",					test_sd},
+//			{"CAN0/1/2 Loop Test",				test_can},
+//			{"Buzzer Test\n",					test_buzzer},
 	};
 
 	for(int i=0;i<sizeof(test_tbl)/sizeof(test_tbl[0]);i++){
@@ -382,33 +538,7 @@ void mainTask(void *p)
 
 	for(;;);
 }
-void PORT_init1 (void) {
-  PCC->PCCn[PCC_PORTC_INDEX ]|=PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
-  PORTC->PCR[6]|=PORT_PCR_MUX(2);           /* Port C6: MUX = ALT2,UART1 TX */
-  PORTC->PCR[7]|=PORT_PCR_MUX(2);           /* Port C7: MUX = ALT2,UART1 RX */
-}
-int main2(void)
-{
-  WDOG_disable();        /* Disable WDGO*/
-  SOSC_init_8MHz();      /* Initialize system oscilator for 8 MHz xtal */
-  SPLL_init_160MHz();    /* Initialize SPLL to 160 MHz with 8 MHz SOSC */
-  NormalRUNmode_80MHz(); /* Init clocks: 80 MHz sysclk & core, 40 MHz bus, 20 MHz flash */
-  PORT_init1();           /* Configure ports */
 
-  LPUART_init(LPUART1,115200);        /* Initialize LPUART @ 9600*/
- // LPUART1_transmit_string("Running LPUART example\n\r");     /* Transmit char string */
- // LPUART1_transmit_string("Input character to echo...\n\r"); /* Transmit char string */
-
-  for(;;) {
-	  LPUART_transmit_char(LPUART1,'>');  		/* Transmit prompt character*/
-	  int c = LPUART_receive_char(LPUART1);
-	  if(c!=-1){
-		  printf("getc\n");
-	  }else{
-		  printf(".\n");
-	  }
-  }
-}
 int main()
 {
 	WDOG_disable();
@@ -425,12 +555,15 @@ int main()
 	FLEXCAN_init(1,0xB,500000);
 	FLEXCAN_init(2,0xC,500000);
 
+	uartQueueTbl[0] = xQueueCreate(1, sizeof(uint8_t));
+	uartQueueTbl[1] = xQueueCreate(128, sizeof(uint8_t));
+	uartQueueTbl[2] = xQueueCreate(1, sizeof(uint8_t));
 	//LPUART_init(LPUART0, 57600);	//RS485
 	LPUART_init(LPUART1, 115200);	//4G
 	//LPUART_init(LPUART2, 9600);	//GPS
 
 	init_printf_mutex();
-	OS_ASSERT(xTaskCreate(mainTask,"mainTask", 4096/4, NULL , 1, &mainTaskHandle));
+	OS_ASSERT(xTaskCreate(mainTask,"mainTask", 4096/4, NULL , 5, &mainTaskHandle));
 
 	/*** RTOS startup code. Macro PEX_RTOS_START is defined by the RTOS component. DON'T MODIFY THIS CODE!!! ***/
 	#ifdef PEX_RTOS_START

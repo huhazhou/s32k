@@ -55,16 +55,15 @@ void LPIT0_init (void) {
                               /* TRG_SRC=0: External trigger soruce */
                               /* TRG_SEL=0: Timer chan 0 trigger source is selected*/
 }
-#define BUZZER_PTD8		8
-#define CAN0_RX			2
-#define CAN0_TX			3
+
+extern void nic_io_init();
 void PORT_init (void) {
 	//PD8 for buzzer
 	PCC->PCCn[PCC_PORTD_INDEX] = PCC_PCCn_CGC_MASK; /* Enable clock for PORT D */
-	PTD->PDDR |= 1 << BUZZER_PTD8; 					/* Port D8:  Data Direction= output */
-	PORTD->PCR[BUZZER_PTD8] = 0x00000100;		 /* Port D8:  MUX = ALT1, GPIO (to blue LED on EVB) */
+	PTD->PDDR |= 1 << 8; 					/* Port D8:  Data Direction= output */
+	PORTD->PCR[8] |= PORT_PCR_MUX(1);		 /* Port D8:  MUX = ALT1, GPIO (to blue LED on EVB) */
 	//Buzzer init low for disable
-	PTD-> PCOR |= 1<<BUZZER_PTD8;
+	PTD-> PCOR |= 1<<8;
 
 	//can0
 	PCC->PCCn[PCC_PORTC_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTE */
@@ -89,25 +88,81 @@ void PORT_init (void) {
 	PORTD->PCR[14] |= PORT_PCR_MUX(3); /* Port C7: MUX = ALT2,UART1 RX */
 	//uart2
 	PCC->PCCn[PCC_PORTA_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
-	PORTA->PCR[8] |= PORT_PCR_MUX(1); /* Port C6: MUX = ALT2,UART1 TX */
-	PORTA->PCR[9] |= PORT_PCR_MUX(1); /* Port C7: MUX = ALT2,UART1 RX */
+	PORTA->PCR[8] |= PORT_PCR_MUX(2); /* Port C6: MUX = ALT2,UART1 TX */
+	PORTA->PCR[9] |= PORT_PCR_MUX(2); /* Port C7: MUX = ALT2,UART1 RX */
 
 	//4g
-	PCC->PCCn[PCC_PORTD_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
-	PORTD->PCR[15] |= 0x00000100; /* Port C6: MUX = ALT2,UART1 TX */
-	PORTD->PCR[16] |= 0x00000100; /* Port C7: MUX = ALT2,UART1 RX */
-	PTD->PDDR |= 1 << 15;
-	PTD->PDDR |= 1 << 16;
-	PTD-> PSOR |= 1<<15;
-	PTD-> PSOR |= 1<<16;
+	nic_io_init();
+
+	///DS3231SN
+	//PTA0 INT  PTA1 RST
+	PCC->PCCn[PCC_PORTA_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
+	PORTA->PCR[0] |= PORT_PCR_MUX(1); /* Port C6: MUX = ALT2,UART1 TX */
+	PORTA->PCR[1] |= PORT_PCR_MUX(1); /* Port C7: MUX = ALT2,UART1 RX */
+	PTA->PDDR |= 1 << 0; 					/* Port D8:  Data Direction= output */
+	PTA->PDDR |= 1 << 1; 					/* Port D8:  Data Direction= output */
+
+	//PB9 I2C0 SCL, PB10 SDA
+	PCC->PCCn[PCC_PORTB_INDEX] = PCC_PCCn_CGC_MASK; /* Enable clock for PORT D */
+	PORTB->PCR[9] |= PORT_PCR_MUX(1);		 /* Port D8:  MUX = ALT1, GPIO (to blue LED on EVB) */
+	PORTB->PCR[10] |= PORT_PCR_MUX(1);		 /* Port D8:  MUX = ALT1, GPIO (to blue LED on EVB) */
+	PTB->PDDR |= 1 << 9; 					/* Port D8:  Data Direction= output */
+	PTB->PDDR |= 1 << 10; 					/* Port D8:  Data Direction= output */
+	PTB-> PSOR |= 1<<9;
+	PTB-> PSOR |= 1<<10;
+
+	//PTA16  DS2411R
+	PCC->PCCn[PCC_PORTA_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
+	PORTA->PCR[16] |= PORT_PCR_MUX(1); /* Port C6: MUX = ALT2,UART1 TX */
+	PTA->PDDR |= 1 << 16; 					/* Port D8:  Data Direction= output */
 
 }
+inline void ds2411_dir(int d)
+{
+	if(d) PTA->PDDR |= 1 << 16;
+	else PTA->PDDR &= ~(1 << 16);
+}
+inline void ds2411_line(int v)
+{
+	if(v) PTA-> PSOR |= 1<<16;
+	else PTA-> PCOR |= 1<<16;
+}
+inline void ds3231_int(int v)
+{
+	if(v) PTA-> PSOR |= 1<<0;
+	else PTA-> PCOR |= 1<<0;
+}
+inline void ds3231_rst(int v)
+{
+	if(v) PTA-> PSOR |= 1<<1;
+	else PTA-> PCOR |= 1<<1;
+}
+inline void i2c_scl(int v)
+{
+	if(v) PTB-> PSOR |= 1<<9;
+	else PTB-> PCOR |= 1<<9;
+}
+inline void i2c_sda(int v)
+{
+	if(v) PTB-> PSOR |= 1<<10;
+	else PTB-> PCOR |= 1<<10;
+}
+inline void i2c_sda_dir(int d)
+{
+	if(d) PTB->PDDR |= 1 << 10;
+	else PTB->PDDR &= ~(1 << 10);
+}
+inline int i2c_sda_val()
+{
+	return PTB->PIDR & (1<<10);
+}
+
 static volatile uint32_t tickCountVal;
 uint32_t get_tick_count()
 {
 	return tickCountVal;
 }
-void vApplicationTickHook(void)
+extern inline void vApplicationTickHook(void)
 {
 	tickCountVal++;
 }
@@ -121,8 +176,8 @@ void delay_ms(int ms)
 void buzzer_ctrl(int en)
 {
 	if(en)
-		PTD-> PSOR |= 1<<BUZZER_PTD8;
+		PTD-> PSOR |= 1<<8;
 	else
-		PTD-> PCOR |= 1<<BUZZER_PTD8;
+		PTD-> PCOR |= 1<<8;
 }
 
