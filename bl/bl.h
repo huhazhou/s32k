@@ -13,6 +13,7 @@
 extern "C" {
 #endif
 
+#include "LPUART.h"
 #include "FlexCAN.h"
 #include "SPI_MSD0_Driver.h"
 #include "clocks_and_modes.h"

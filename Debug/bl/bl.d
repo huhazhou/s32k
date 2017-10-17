@@ -12,9 +12,9 @@ bl/bl.o: ../bl/bl.c \
  /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/limits_api.h \
  /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/ewl_lib_ext1.h \
  /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/wchar_t.h \
- ../bl/FlexCAN.h ../bl/SPI_MSD0_Driver.h \
+ ../bl/LPUART.h \
  /home/houxd/workspaceS32DS.ARM.V20/dp1000/include/S32K144.h \
- ../bl/clocks_and_modes.h \
+ ../bl/FlexCAN.h ../bl/SPI_MSD0_Driver.h ../bl/clocks_and_modes.h \
  /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/stdio.h \
  /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstdio \
  /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstddef \
@@ -55,11 +55,13 @@ bl/bl.o: ../bl/bl.c \
 
 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/wchar_t.h:
 
+../bl/LPUART.h:
+
+/home/houxd/workspaceS32DS.ARM.V20/dp1000/include/S32K144.h:
+
 ../bl/FlexCAN.h:
 
 ../bl/SPI_MSD0_Driver.h:
-
-/home/houxd/workspaceS32DS.ARM.V20/dp1000/include/S32K144.h:
 
 ../bl/clocks_and_modes.h:
 

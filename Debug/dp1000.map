@@ -1,5 +1,7 @@
 Archive member included because of file (symbol)
 
+/home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(puts.o)
+                              ./src/main.o (puts)
 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
                               ./bl/SPI_MSD0_Driver.o (sprintf)
 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vprintf.o)
@@ -31,13 +33,15 @@ Archive member included because of file (symbol)
 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
                               /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o) (__ewl_runtime_constraint_violation_s)
 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ansi_files.o)
-                              /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o) (__files)
+                              /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(puts.o) (__files)
 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fflush.o)
                               /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ansi_files.o) (fflush)
 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fread.o)
                               /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__wgetchar.o) (__fread)
 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
                               /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vprintf.o) (__FileWrite)
+/home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__putchar.o)
+                              /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(puts.o) (__put_char)
 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
                               /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o) (abort)
 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(mbstowcs_s.o)
@@ -199,8 +203,9 @@ Discarded input sections
  .text          0x00000000        0x0 ./src/main.o
  .data          0x00000000        0x0 ./src/main.o
  .bss           0x00000000        0x0 ./src/main.o
- .text.test_buzzer
-                0x00000000       0x54 ./src/main.o
+ .text.PORT_init1
+                0x00000000       0x3c ./src/main.o
+ .text.main2    0x00000000       0x58 ./src/main.o
  .group         0x00000000        0x8 ./src/convert.o
  .group         0x00000000        0x8 ./src/convert.o
  .group         0x00000000        0x8 ./src/convert.o
@@ -536,8 +541,6 @@ Discarded input sections
                 0x00000000       0x18 ./bl/bl.o
  .text.delay_ms
                 0x00000000       0x28 ./bl/bl.o
- .text.buzzer_ctrl
-                0x00000000       0x38 ./bl/bl.o
  .debug_macro   0x00000000      0x886 ./bl/bl.o
  .debug_macro   0x00000000       0x52 ./bl/bl.o
  .debug_macro   0x00000000       0xa0 ./bl/bl.o
@@ -618,6 +621,39 @@ Discarded input sections
  .debug_macro   0x00000000       0x10 ./bl/SPI_MSD0_Driver.o
  .debug_macro   0x00000000       0x20 ./bl/SPI_MSD0_Driver.o
  .debug_macro   0x00000000       0xa0 ./bl/SPI_MSD0_Driver.o
+ .group         0x00000000        0x8 ./bl/LPUART.o
+ .group         0x00000000        0x8 ./bl/LPUART.o
+ .group         0x00000000        0x8 ./bl/LPUART.o
+ .group         0x00000000        0x8 ./bl/LPUART.o
+ .group         0x00000000        0x8 ./bl/LPUART.o
+ .group         0x00000000        0x8 ./bl/LPUART.o
+ .group         0x00000000        0x8 ./bl/LPUART.o
+ .group         0x00000000        0x8 ./bl/LPUART.o
+ .group         0x00000000        0x8 ./bl/LPUART.o
+ .group         0x00000000        0x8 ./bl/LPUART.o
+ .group         0x00000000        0x8 ./bl/LPUART.o
+ .group         0x00000000        0x8 ./bl/LPUART.o
+ .group         0x00000000        0x8 ./bl/LPUART.o
+ .group         0x00000000        0x8 ./bl/LPUART.o
+ .text          0x00000000        0x0 ./bl/LPUART.o
+ .data          0x00000000        0x0 ./bl/LPUART.o
+ .bss           0x00000000        0x0 ./bl/LPUART.o
+ .text.LPUART_receive_char
+                0x00000000       0x30 ./bl/LPUART.o
+ .debug_macro   0x00000000      0x886 ./bl/LPUART.o
+ .debug_macro   0x00000000       0x52 ./bl/LPUART.o
+ .debug_macro   0x00000000       0xa0 ./bl/LPUART.o
+ .debug_macro   0x00000000       0x16 ./bl/LPUART.o
+ .debug_macro   0x00000000       0x19 ./bl/LPUART.o
+ .debug_macro   0x00000000       0x64 ./bl/LPUART.o
+ .debug_macro   0x00000000      0x185 ./bl/LPUART.o
+ .debug_macro   0x00000000      0x140 ./bl/LPUART.o
+ .debug_macro   0x00000000       0x9d ./bl/LPUART.o
+ .debug_macro   0x00000000       0x10 ./bl/LPUART.o
+ .debug_macro   0x00000000      0x15b ./bl/LPUART.o
+ .debug_macro   0x00000000       0x28 ./bl/LPUART.o
+ .debug_macro   0x00000000       0x58 ./bl/LPUART.o
+ .debug_macro   0x00000000     0xdf8d ./bl/LPUART.o
  .group         0x00000000        0x8 ./bl/FlexCAN.o
  .group         0x00000000        0x8 ./bl/FlexCAN.o
  .group         0x00000000        0x8 ./bl/FlexCAN.o
@@ -1209,7 +1245,7 @@ Discarded input sections
  .debug_macro   0x00000000       0x91 ./FreeRTOS/event_groups.o
  .debug_macro   0x00000000       0x19 ./FreeRTOS/event_groups.o
  .debug_line    0x00000000      0x6ad ./FreeRTOS/event_groups.o
- .debug_str     0x00000000     0x8571 ./FreeRTOS/event_groups.o
+ .debug_str     0x00000000     0x852f ./FreeRTOS/event_groups.o
  .comment       0x00000000       0x71 ./FreeRTOS/event_groups.o
  .debug_frame   0x00000000      0x180 ./FreeRTOS/event_groups.o
  .ARM.attributes
@@ -1269,10 +1305,25 @@ Discarded input sections
  .debug_macro   0x00000000       0x8c ./FreeRTOS/croutine.o
  .debug_macro   0x00000000       0x43 ./FreeRTOS/croutine.o
  .debug_line    0x00000000      0x3f1 ./FreeRTOS/croutine.o
- .debug_str     0x00000000     0x7c72 ./FreeRTOS/croutine.o
+ .debug_str     0x00000000     0x7c30 ./FreeRTOS/croutine.o
  .comment       0x00000000       0x71 ./FreeRTOS/croutine.o
  .ARM.attributes
                 0x00000000       0x39 ./FreeRTOS/croutine.o
+ .text          0x00000000        0x0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(puts.o)
+ .data          0x00000000        0x0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(puts.o)
+ .bss           0x00000000        0x0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(puts.o)
+ .text.puts     0x00000000       0x74 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(puts.o)
+ .debug_info    0x00000000      0x3c4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(puts.o)
+ .debug_abbrev  0x00000000      0x10a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(puts.o)
+ .debug_loc     0x00000000       0x7b /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(puts.o)
+ .debug_aranges
+                0x00000000       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(puts.o)
+ .debug_line    0x00000000       0xb1 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(puts.o)
+ .debug_str     0x00000000      0x3e5 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(puts.o)
+ .comment       0x00000000       0x71 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(puts.o)
+ .debug_frame   0x00000000       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(puts.o)
+ .ARM.attributes
+                0x00000000       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(puts.o)
  .text          0x00000000        0x0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
  .data          0x00000000        0x0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
  .bss           0x00000000        0x0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
@@ -1433,6 +1484,22 @@ Discarded input sections
  .text.getwchar
                 0x00000000        0xc /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
  .text.fwrite   0x00000000        0x4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
+ .text          0x00000000        0x0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__putchar.o)
+ .data          0x00000000        0x0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__putchar.o)
+ .bss           0x00000000        0x0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__putchar.o)
+ .text.__put_char
+                0x00000000       0x8e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__putchar.o)
+ .debug_info    0x00000000      0x431 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__putchar.o)
+ .debug_abbrev  0x00000000       0xf8 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__putchar.o)
+ .debug_loc     0x00000000       0x7b /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__putchar.o)
+ .debug_aranges
+                0x00000000       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__putchar.o)
+ .debug_line    0x00000000       0xc9 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__putchar.o)
+ .debug_str     0x00000000      0x4b7 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__putchar.o)
+ .comment       0x00000000       0x71 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__putchar.o)
+ .debug_frame   0x00000000       0x2c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__putchar.o)
+ .ARM.attributes
+                0x00000000       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__putchar.o)
  .text          0x00000000        0x0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
  .data          0x00000000        0x0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
  .bss           0x00000000        0x0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
@@ -1966,6 +2033,7 @@ LOAD ./fatfs/ccsbcs.o
 LOAD ./bl/clocks_and_modes.o
 LOAD ./bl/bl.o
 LOAD ./bl/SPI_MSD0_Driver.o
+LOAD ./bl/LPUART.o
 LOAD ./bl/FlexCAN.o
 LOAD ./Project_Settings/Startup_Code/system_S32K144.o
 LOAD ./Project_Settings/Startup_Code/startup_S32K144.o
@@ -2008,7 +2076,7 @@ LOAD /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/__arm_e
  .FlashConfig   0x00000400       0x10 ./Project_Settings/Startup_Code/startup_S32K144.o
                 0x00000410                . = ALIGN (0x4)
 
-.text           0x00000410     0xa270
+.text           0x00000410     0xace0
                 0x00000410                . = ALIGN (0x4)
  *(.text)
  .text          0x00000410       0x44 ./Project_Settings/Startup_Code/startup_S32K144.o
@@ -2068,7 +2136,6 @@ LOAD /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/__arm_e
                 0x00000450                FTM3_Ch2_Ch3_IRQHandler
                 0x00000450                FTM2_Ch0_Ch1_IRQHandler
                 0x00000450                LPSPI1_IRQHandler
-                0x00000450                LPUART1_RxTx_IRQHandler
                 0x00000450                RTC_Seconds_IRQHandler
                 0x00000450                CAN2_ORed_IRQHandler
                 0x00000450                Reserved72_IRQHandler
@@ -2084,7 +2151,6 @@ LOAD /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/__arm_e
                 0x00000450                LPIT0_Ch1_IRQHandler
                 0x00000450                FTM1_Ch4_Ch5_IRQHandler
                 0x00000450                FTM3_Ovf_Reload_IRQHandler
-                0x00000450                LPUART2_RxTx_IRQHandler
                 0x00000450                LPSPI0_IRQHandler
                 0x00000450                WDOG_EWM_IRQHandler
                 0x00000450                MemManage_Handler
@@ -2126,7 +2192,6 @@ LOAD /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/__arm_e
                 0x00000450                FTM3_Ch4_Ch5_IRQHandler
                 0x00000450                CAN0_ORed_0_15_MB_IRQHandler
                 0x00000450                PORTE_IRQHandler
-                0x00000450                LPUART0_RxTx_IRQHandler
                 0x00000450                LPTMR0_IRQHandler
                 0x00000450                BusFault_Handler
                 0x00000450                Reserved87_IRQHandler
@@ -2205,550 +2270,600 @@ LOAD /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/__arm_e
  .text.os_sleep_ms
                 0x0000135c       0x18 ./src/main.o
                 0x0000135c                os_sleep_ms
- .text.test_sd  0x00001374      0x194 ./src/main.o
+ .text.os_sleep
+                0x00001374       0x10 ./src/main.o
+                0x00001374                os_sleep
+ .text.test_buzzer
+                0x00001384       0x54 ./src/main.o
+                0x00001384                test_buzzer
+ .text.test_sd  0x000013d8      0x194 ./src/main.o
  .text.can_task_proc
-                0x00001508       0xc0 ./src/main.o
+                0x0000156c       0xc0 ./src/main.o
  .text.test_can
-                0x000015c8      0x1fc ./src/main.o
+                0x0000162c      0x1fc ./src/main.o
+ .text.UartRxIRQHandler
+                0x00001828       0x58 ./src/main.o
+                0x00001828                UartRxIRQHandler
+ .text.LPUART_receive_from_queue
+                0x00001880       0x40 ./src/main.o
+                0x00001880                LPUART_receive_from_queue
+ .text.LPUART_receive_flush
+                0x000018c0       0x20 ./src/main.o
+                0x000018c0                LPUART_receive_flush
+ .text.LPUART_receive_string_timeout
+                0x000018e0       0x68 ./src/main.o
+                0x000018e0                LPUART_receive_string_timeout
+ .text.LPUART_receive_string
+                0x00001948       0x24 ./src/main.o
+                0x00001948                LPUART_receive_string
+ .text.LPUART_transmit_string
+                0x0000196c       0x58 ./src/main.o
+                0x0000196c                LPUART_transmit_string
+ .text.uart_proc
+                0x000019c4       0x88 ./src/main.o
+ .text.test_uart
+                0x00001a4c      0x198 ./src/main.o
+ .text.test_4g  0x00001be4      0x158 ./src/main.o
  .text.mainTask
-                0x000017c4       0x60 ./src/main.o
-                0x000017c4                mainTask
- .text.main     0x00001824       0xa4 ./src/main.o
-                0x00001824                main
+                0x00001d3c       0x60 ./src/main.o
+                0x00001d3c                mainTask
+ .text.main     0x00001d9c       0xb0 ./src/main.o
+                0x00001d9c                main
  .text.vApplicationStackOverflowHook
-                0x000018c8       0x1c ./src/main.o
-                0x000018c8                vApplicationStackOverflowHook
+                0x00001e4c       0x1c ./src/main.o
+                0x00001e4c                vApplicationStackOverflowHook
  .text.vApplicationMallocFailedHook
-                0x000018e4       0x10 ./src/main.o
-                0x000018e4                vApplicationMallocFailedHook
- .text.int2asc  0x000018f4       0x4c ./src/convert.o
-                0x000018f4                int2asc
+                0x00001e68       0x10 ./src/main.o
+                0x00001e68                vApplicationMallocFailedHook
+ .text.int2asc  0x00001e78       0x4c ./src/convert.o
+                0x00001e78                int2asc
  .text.hx_dumphex
-                0x00001940       0x6c ./src/convert.o
-                0x00001940                hx_dumphex
+                0x00001ec4       0x6c ./src/convert.o
+                0x00001ec4                hx_dumphex
  .text.hx_dumphex2str
-                0x000019ac       0x30 ./src/convert.o
-                0x000019ac                hx_dumphex2str
+                0x00001f30       0x30 ./src/convert.o
+                0x00001f30                hx_dumphex2str
  .text.HX_MSB_B2DW
-                0x000019dc       0x5c ./src/convert.o
-                0x000019dc                HX_MSB_B2DW
+                0x00001f60       0x5c ./src/convert.o
+                0x00001f60                HX_MSB_B2DW
  .text.HX_MSB_DW2B
-                0x00001a38       0x48 ./src/convert.o
-                0x00001a38                HX_MSB_DW2B
- .text.mem_cpy  0x00001a80       0x3c ./fatfs/ff.o
- .text.mem_set  0x00001abc       0x34 ./fatfs/ff.o
- .text.mem_cmp  0x00001af0       0x50 ./fatfs/ff.o
- .text.chk_chr  0x00001b40       0x38 ./fatfs/ff.o
+                0x00001fbc       0x48 ./src/convert.o
+                0x00001fbc                HX_MSB_DW2B
+ .text.mem_cpy  0x00002004       0x3c ./fatfs/ff.o
+ .text.mem_set  0x00002040       0x34 ./fatfs/ff.o
+ .text.mem_cmp  0x00002074       0x50 ./fatfs/ff.o
+ .text.chk_chr  0x000020c4       0x38 ./fatfs/ff.o
  .text.sync_window
-                0x00001b78       0x90 ./fatfs/ff.o
+                0x000020fc       0x90 ./fatfs/ff.o
  .text.move_window
-                0x00001c08       0x54 ./fatfs/ff.o
- .text.sync_fs  0x00001c5c      0x148 ./fatfs/ff.o
+                0x0000218c       0x54 ./fatfs/ff.o
+ .text.sync_fs  0x000021e0      0x148 ./fatfs/ff.o
  .text.clust2sect
-                0x00001da4       0x40 ./fatfs/ff.o
-                0x00001da4                clust2sect
- .text.get_fat  0x00001de4      0x158 ./fatfs/ff.o
-                0x00001de4                get_fat
- .text.put_fat  0x00001f3c      0x1f4 ./fatfs/ff.o
-                0x00001f3c                put_fat
+                0x00002328       0x40 ./fatfs/ff.o
+                0x00002328                clust2sect
+ .text.get_fat  0x00002368      0x158 ./fatfs/ff.o
+                0x00002368                get_fat
+ .text.put_fat  0x000024c0      0x1f4 ./fatfs/ff.o
+                0x000024c0                put_fat
  .text.remove_chain
-                0x00002130       0x9c ./fatfs/ff.o
+                0x000026b4       0x9c ./fatfs/ff.o
  .text.create_chain
-                0x000021cc      0x118 ./fatfs/ff.o
- .text.dir_sdi  0x000022e4      0x104 ./fatfs/ff.o
+                0x00002750      0x118 ./fatfs/ff.o
+ .text.dir_sdi  0x00002868      0x104 ./fatfs/ff.o
  .text.dir_next
-                0x000023e8      0x1a4 ./fatfs/ff.o
+                0x0000296c      0x1a4 ./fatfs/ff.o
  .text.dir_alloc
-                0x0000258c       0x8c ./fatfs/ff.o
+                0x00002b10       0x8c ./fatfs/ff.o
  .text.ld_clust
-                0x00002618       0x5c ./fatfs/ff.o
+                0x00002b9c       0x5c ./fatfs/ff.o
  .text.st_clust
-                0x00002674       0x4c ./fatfs/ff.o
- .text.cmp_lfn  0x000026c0       0xdc ./fatfs/ff.o
- .text.fit_lfn  0x0000279c       0xe8 ./fatfs/ff.o
+                0x00002bf8       0x4c ./fatfs/ff.o
+ .text.cmp_lfn  0x00002c44       0xdc ./fatfs/ff.o
+ .text.fit_lfn  0x00002d20       0xe8 ./fatfs/ff.o
  .text.gen_numname
-                0x00002884       0xe4 ./fatfs/ff.o
-                0x00002884                gen_numname
- .text.sum_sfn  0x00002968       0x44 ./fatfs/ff.o
+                0x00002e08       0xe4 ./fatfs/ff.o
+                0x00002e08                gen_numname
+ .text.sum_sfn  0x00002eec       0x44 ./fatfs/ff.o
  .text.dir_find
-                0x000029ac      0x150 ./fatfs/ff.o
+                0x00002f30      0x150 ./fatfs/ff.o
  .text.dir_register
-                0x00002afc      0x204 ./fatfs/ff.o
+                0x00003080      0x204 ./fatfs/ff.o
  .text.create_name
-                0x00002d00      0x3f4 ./fatfs/ff.o
+                0x00003284      0x3f4 ./fatfs/ff.o
  .text.follow_path
-                0x000030f4      0x100 ./fatfs/ff.o
+                0x00003678      0x100 ./fatfs/ff.o
  .text.check_fs
-                0x000031f4       0xc0 ./fatfs/ff.o
+                0x00003778       0xc0 ./fatfs/ff.o
  .text.chk_mounted
-                0x000032b4      0x590 ./fatfs/ff.o
+                0x00003838      0x590 ./fatfs/ff.o
  .text.validate
-                0x00003844       0x5c ./fatfs/ff.o
- .text.f_mount  0x000038a0       0x54 ./fatfs/ff.o
-                0x000038a0                f_mount
- .text.f_open   0x000038f4      0x288 ./fatfs/ff.o
-                0x000038f4                f_open
- .text.f_read   0x00003b7c      0x2ac ./fatfs/ff.o
-                0x00003b7c                f_read
- .text.f_write  0x00003e28      0x30c ./fatfs/ff.o
-                0x00003e28                f_write
- .text.f_sync   0x00004134      0x158 ./fatfs/ff.o
-                0x00004134                f_sync
- .text.f_close  0x0000428c       0x28 ./fatfs/ff.o
-                0x0000428c                f_close
- .text.f_lseek  0x000042b4      0x2a8 ./fatfs/ff.o
-                0x000042b4                f_lseek
+                0x00003dc8       0x5c ./fatfs/ff.o
+ .text.f_mount  0x00003e24       0x54 ./fatfs/ff.o
+                0x00003e24                f_mount
+ .text.f_open   0x00003e78      0x288 ./fatfs/ff.o
+                0x00003e78                f_open
+ .text.f_read   0x00004100      0x2ac ./fatfs/ff.o
+                0x00004100                f_read
+ .text.f_write  0x000043ac      0x30c ./fatfs/ff.o
+                0x000043ac                f_write
+ .text.f_sync   0x000046b8      0x158 ./fatfs/ff.o
+                0x000046b8                f_sync
+ .text.f_close  0x00004810       0x28 ./fatfs/ff.o
+                0x00004810                f_close
+ .text.f_lseek  0x00004838      0x2a8 ./fatfs/ff.o
+                0x00004838                f_lseek
  .text.disk_initialize
-                0x0000455c       0x54 ./fatfs/diskio.o
-                0x0000455c                disk_initialize
+                0x00004ae0       0x54 ./fatfs/diskio.o
+                0x00004ae0                disk_initialize
  .text.disk_status
-                0x000045b0       0x34 ./fatfs/diskio.o
-                0x000045b0                disk_status
+                0x00004b34       0x34 ./fatfs/diskio.o
+                0x00004b34                disk_status
  .text.disk_read
-                0x000045e4       0x7c ./fatfs/diskio.o
-                0x000045e4                disk_read
+                0x00004b68       0x7c ./fatfs/diskio.o
+                0x00004b68                disk_read
  .text.disk_write
-                0x00004660       0x7c ./fatfs/diskio.o
-                0x00004660                disk_write
+                0x00004be4       0x7c ./fatfs/diskio.o
+                0x00004be4                disk_write
  .text.disk_ioctl
-                0x000046dc      0x104 ./fatfs/diskio.o
-                0x000046dc                disk_ioctl
+                0x00004c60      0x104 ./fatfs/diskio.o
+                0x00004c60                disk_ioctl
  .text.get_fattime
-                0x000047e0       0x10 ./fatfs/diskio.o
-                0x000047e0                get_fattime
+                0x00004d64       0x10 ./fatfs/diskio.o
+                0x00004d64                get_fattime
  .text.ff_convert
-                0x000047f0       0x74 ./fatfs/ccsbcs.o
-                0x000047f0                ff_convert
+                0x00004d74       0x74 ./fatfs/ccsbcs.o
+                0x00004d74                ff_convert
  .text.ff_wtoupper
-                0x00004864       0x5c ./fatfs/ccsbcs.o
-                0x00004864                ff_wtoupper
+                0x00004de8       0x5c ./fatfs/ccsbcs.o
+                0x00004de8                ff_wtoupper
  .text.SOSC_init_8MHz
-                0x000048c0       0x4c ./bl/clocks_and_modes.o
-                0x000048c0                SOSC_init_8MHz
+                0x00004e44       0x4c ./bl/clocks_and_modes.o
+                0x00004e44                SOSC_init_8MHz
  .text.SPLL_init_160MHz
-                0x0000490c       0x64 ./bl/clocks_and_modes.o
-                0x0000490c                SPLL_init_160MHz
+                0x00004e90       0x64 ./bl/clocks_and_modes.o
+                0x00004e90                SPLL_init_160MHz
  .text.NormalRUNmode_80MHz
-                0x00004970       0x2c ./bl/clocks_and_modes.o
-                0x00004970                NormalRUNmode_80MHz
+                0x00004ef4       0x2c ./bl/clocks_and_modes.o
+                0x00004ef4                NormalRUNmode_80MHz
  .text.WDOG_disable
-                0x0000499c       0x2c ./bl/bl.o
-                0x0000499c                WDOG_disable
+                0x00004f20       0x2c ./bl/bl.o
+                0x00004f20                WDOG_disable
  .text.NVIC_init_IRQs
-                0x000049c8       0x2c ./bl/bl.o
-                0x000049c8                NVIC_init_IRQs
+                0x00004f4c       0x58 ./bl/bl.o
+                0x00004f4c                NVIC_init_IRQs
  .text.PORT_init
-                0x000049f4       0xc0 ./bl/bl.o
-                0x000049f4                PORT_init
+                0x00004fa4      0x198 ./bl/bl.o
+                0x00004fa4                PORT_init
  .text.vApplicationTickHook
-                0x00004ab4       0x1c ./bl/bl.o
-                0x00004ab4                vApplicationTickHook
+                0x0000513c       0x1c ./bl/bl.o
+                0x0000513c                vApplicationTickHook
+ .text.buzzer_ctrl
+                0x00005158       0x38 ./bl/bl.o
+                0x00005158                buzzer_ctrl
  .text.MSD0_spi_read_write
-                0x00004ad0       0x64 ./bl/SPI_MSD0_Driver.o
-                0x00004ad0                MSD0_spi_read_write
+                0x00005190       0x64 ./bl/SPI_MSD0_Driver.o
+                0x00005190                MSD0_spi_read_write
  .text.MSD0_SPIHighSpeed
-                0x00004b34       0x38 ./bl/SPI_MSD0_Driver.o
-                0x00004b34                MSD0_SPIHighSpeed
+                0x000051f4       0x38 ./bl/SPI_MSD0_Driver.o
+                0x000051f4                MSD0_SPIHighSpeed
  .text.MSD0_Init
-                0x00004b6c      0x33c ./bl/SPI_MSD0_Driver.o
-                0x00004b6c                MSD0_Init
+                0x0000522c      0x33c ./bl/SPI_MSD0_Driver.o
+                0x0000522c                MSD0_Init
  .text.MSD0_GetCardInfo
-                0x00004ea8      0x420 ./bl/SPI_MSD0_Driver.o
-                0x00004ea8                MSD0_GetCardInfo
+                0x00005568      0x420 ./bl/SPI_MSD0_Driver.o
+                0x00005568                MSD0_GetCardInfo
  .text.MSD0_read_buffer
-                0x000052c8       0x84 ./bl/SPI_MSD0_Driver.o
-                0x000052c8                MSD0_read_buffer
+                0x00005988       0x84 ./bl/SPI_MSD0_Driver.o
+                0x00005988                MSD0_read_buffer
  .text.MSD0_ReadSingleBlock
-                0x0000534c       0x5c ./bl/SPI_MSD0_Driver.o
-                0x0000534c                MSD0_ReadSingleBlock
+                0x00005a0c       0x5c ./bl/SPI_MSD0_Driver.o
+                0x00005a0c                MSD0_ReadSingleBlock
  .text.MSD0_ReadMultiBlock
-                0x000053a8       0x84 ./bl/SPI_MSD0_Driver.o
-                0x000053a8                MSD0_ReadMultiBlock
+                0x00005a68       0x84 ./bl/SPI_MSD0_Driver.o
+                0x00005a68                MSD0_ReadMultiBlock
  .text.MSD0_WriteSingleBlock
-                0x0000542c       0xec ./bl/SPI_MSD0_Driver.o
-                0x0000542c                MSD0_WriteSingleBlock
+                0x00005aec       0xec ./bl/SPI_MSD0_Driver.o
+                0x00005aec                MSD0_WriteSingleBlock
  .text.MSD0_WriteMultiBlock
-                0x00005518      0x110 ./bl/SPI_MSD0_Driver.o
-                0x00005518                MSD0_WriteMultiBlock
+                0x00005bd8      0x110 ./bl/SPI_MSD0_Driver.o
+                0x00005bd8                MSD0_WriteMultiBlock
  .text.MSD0_send_command
-                0x00005628       0x90 ./bl/SPI_MSD0_Driver.o
-                0x00005628                MSD0_send_command
+                0x00005ce8       0x90 ./bl/SPI_MSD0_Driver.o
+                0x00005ce8                MSD0_send_command
  .text.MSD0_send_command_hold
-                0x000056b8       0x88 ./bl/SPI_MSD0_Driver.o
-                0x000056b8                MSD0_send_command_hold
+                0x00005d78       0x88 ./bl/SPI_MSD0_Driver.o
+                0x00005d78                MSD0_send_command_hold
  .text.LPSPI0_init_master
-                0x00005740       0xa8 ./bl/SPI_MSD0_Driver.o
-                0x00005740                LPSPI0_init_master
- .text.FLEXCAN0_init
-                0x000057e8      0x150 ./bl/FlexCAN.o
-                0x000057e8                FLEXCAN0_init
- .text.FLEXCAN0_transmit_msg
-                0x00005938       0x74 ./bl/FlexCAN.o
-                0x00005938                FLEXCAN0_transmit_msg
- .text.FLEXCAN0_receive_msg
-                0x000059ac       0x94 ./bl/FlexCAN.o
-                0x000059ac                FLEXCAN0_receive_msg
+                0x00005e00       0xa8 ./bl/SPI_MSD0_Driver.o
+                0x00005e00                LPSPI0_init_master
+ .text.LPUART_init
+                0x00005ea8      0x120 ./bl/LPUART.o
+                0x00005ea8                LPUART_init
+ .text.LPUART_transmit_char
+                0x00005fc8       0x2c ./bl/LPUART.o
+                0x00005fc8                LPUART_transmit_char
+ .text.LPUART0_RxTx_IRQHandler
+                0x00005ff4       0x20 ./bl/LPUART.o
+                0x00005ff4                LPUART0_RxTx_IRQHandler
+ .text.LPUART1_RxTx_IRQHandler
+                0x00006014       0x20 ./bl/LPUART.o
+                0x00006014                LPUART1_RxTx_IRQHandler
+ .text.LPUART2_RxTx_IRQHandler
+                0x00006034       0x20 ./bl/LPUART.o
+                0x00006034                LPUART2_RxTx_IRQHandler
+ .text.FLEXCAN_init
+                0x00006054      0x150 ./bl/FlexCAN.o
+                0x00006054                FLEXCAN_init
+ .text.FLEXCAN_transmit_msg
+                0x000061a4       0x74 ./bl/FlexCAN.o
+                0x000061a4                FLEXCAN_transmit_msg
+ .text.FLEXCAN_receive_msg
+                0x00006218       0x94 ./bl/FlexCAN.o
+                0x00006218                FLEXCAN_receive_msg
  .text.SystemInit
-                0x00005a40       0x58 ./Project_Settings/Startup_Code/system_S32K144.o
-                0x00005a40                SystemInit
+                0x000062ac       0x58 ./Project_Settings/Startup_Code/system_S32K144.o
+                0x000062ac                SystemInit
  .text.init_data_bss
-                0x00005a98       0xf4 ./Project_Settings/Startup_Code/startup.o
-                0x00005a98                init_data_bss
+                0x00006304       0xf4 ./Project_Settings/Startup_Code/startup.o
+                0x00006304                init_data_bss
  .text.pvPortMalloc
-                0x00005b8c      0x124 ./FreeRTOS/portable/MemMang/heap_2.o
-                0x00005b8c                pvPortMalloc
+                0x000063f8      0x124 ./FreeRTOS/portable/MemMang/heap_2.o
+                0x000063f8                pvPortMalloc
  .text.vPortFree
-                0x00005cb0       0x70 ./FreeRTOS/portable/MemMang/heap_2.o
-                0x00005cb0                vPortFree
+                0x0000651c       0x70 ./FreeRTOS/portable/MemMang/heap_2.o
+                0x0000651c                vPortFree
  .text.prvHeapInit
-                0x00005d20       0x50 ./FreeRTOS/portable/MemMang/heap_2.o
+                0x0000658c       0x50 ./FreeRTOS/portable/MemMang/heap_2.o
  .text.pxPortInitialiseStack
-                0x00005d70       0x64 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
-                0x00005d70                pxPortInitialiseStack
+                0x000065dc       0x64 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                0x000065dc                pxPortInitialiseStack
  .text.prvTaskExitError
-                0x00005dd4       0x3c ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                0x00006640       0x3c ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
  .text.SVC_Handler
-                0x00005e10       0x20 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
-                0x00005e10                SVC_Handler
+                0x0000667c       0x20 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                0x0000667c                SVC_Handler
  .text.prvPortStartFirstTask
-                0x00005e30       0x20 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                0x0000669c       0x20 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
  .text.xPortStartScheduler
-                0x00005e50      0x118 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
-                0x00005e50                xPortStartScheduler
+                0x000066bc      0x118 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                0x000066bc                xPortStartScheduler
  .text.vPortEnterCritical
-                0x00005f68       0x5c ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
-                0x00005f68                vPortEnterCritical
+                0x000067d4       0x5c ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                0x000067d4                vPortEnterCritical
  .text.vPortExitCritical
-                0x00005fc4       0x4c ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
-                0x00005fc4                vPortExitCritical
+                0x00006830       0x4c ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                0x00006830                vPortExitCritical
  .text.PendSV_Handler
-                0x00006010       0x60 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
-                0x00006010                PendSV_Handler
+                0x0000687c       0x60 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                0x0000687c                PendSV_Handler
  .text.SysTick_Handler
-                0x00006070       0x44 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
-                0x00006070                SysTick_Handler
+                0x000068dc       0x44 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                0x000068dc                SysTick_Handler
  .text.vPortSetupTimerInterrupt
-                0x000060b4       0x24 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
-                0x000060b4                vPortSetupTimerInterrupt
+                0x00006920       0x24 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                0x00006920                vPortSetupTimerInterrupt
  .text.vPortEnableVFP
-                0x000060d8       0x14 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                0x00006944       0x14 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
  .text.vPortValidateInterruptPriority
-                0x000060ec       0x78 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
-                0x000060ec                vPortValidateInterruptPriority
+                0x00006958       0x78 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                0x00006958                vPortValidateInterruptPriority
  .text.xTimerCreateTimerTask
-                0x00006164       0x64 ./FreeRTOS/timers.o
-                0x00006164                xTimerCreateTimerTask
+                0x000069d0       0x64 ./FreeRTOS/timers.o
+                0x000069d0                xTimerCreateTimerTask
  .text.xTimerGenericCommand
-                0x000061c8       0x8c ./FreeRTOS/timers.o
-                0x000061c8                xTimerGenericCommand
+                0x00006a34       0x8c ./FreeRTOS/timers.o
+                0x00006a34                xTimerGenericCommand
  .text.prvProcessExpiredTimer
-                0x00006254       0x80 ./FreeRTOS/timers.o
+                0x00006ac0       0x80 ./FreeRTOS/timers.o
  .text.prvTimerTask
-                0x000062d4       0x24 ./FreeRTOS/timers.o
+                0x00006b40       0x24 ./FreeRTOS/timers.o
  .text.prvProcessTimerOrBlockTask
-                0x000062f8       0x80 ./FreeRTOS/timers.o
+                0x00006b64       0x80 ./FreeRTOS/timers.o
  .text.prvGetNextExpireTime
-                0x00006378       0x48 ./FreeRTOS/timers.o
+                0x00006be4       0x48 ./FreeRTOS/timers.o
  .text.prvSampleTimeNow
-                0x000063c0       0x40 ./FreeRTOS/timers.o
+                0x00006c2c       0x40 ./FreeRTOS/timers.o
  .text.prvInsertTimerInActiveList
-                0x00006400       0x84 ./FreeRTOS/timers.o
+                0x00006c6c       0x84 ./FreeRTOS/timers.o
  .text.prvProcessReceivedCommands
-                0x00006484      0x160 ./FreeRTOS/timers.o
+                0x00006cf0      0x160 ./FreeRTOS/timers.o
  .text.prvSwitchTimerLists
-                0x000065e4       0xc0 ./FreeRTOS/timers.o
+                0x00006e50       0xc0 ./FreeRTOS/timers.o
  .text.prvCheckForValidListAndQueue
-                0x000066a4       0x74 ./FreeRTOS/timers.o
+                0x00006f10       0x74 ./FreeRTOS/timers.o
  .text.xTaskGenericCreate
-                0x00006718      0x19c ./FreeRTOS/tasks.o
-                0x00006718                xTaskGenericCreate
+                0x00006f84      0x19c ./FreeRTOS/tasks.o
+                0x00006f84                xTaskGenericCreate
  .text.vTaskDelete
-                0x000068b4      0x104 ./FreeRTOS/tasks.o
-                0x000068b4                vTaskDelete
+                0x00007120      0x104 ./FreeRTOS/tasks.o
+                0x00007120                vTaskDelete
  .text.vTaskDelay
-                0x000069b8       0xa4 ./FreeRTOS/tasks.o
-                0x000069b8                vTaskDelay
+                0x00007224       0xa4 ./FreeRTOS/tasks.o
+                0x00007224                vTaskDelay
  .text.vTaskStartScheduler
-                0x00006a5c       0x98 ./FreeRTOS/tasks.o
-                0x00006a5c                vTaskStartScheduler
+                0x000072c8       0x98 ./FreeRTOS/tasks.o
+                0x000072c8                vTaskStartScheduler
  .text.vTaskSuspendAll
-                0x00006af4       0x1c ./FreeRTOS/tasks.o
-                0x00006af4                vTaskSuspendAll
+                0x00007360       0x1c ./FreeRTOS/tasks.o
+                0x00007360                vTaskSuspendAll
  .text.xTaskResumeAll
-                0x00006b10      0x12c ./FreeRTOS/tasks.o
-                0x00006b10                xTaskResumeAll
+                0x0000737c      0x12c ./FreeRTOS/tasks.o
+                0x0000737c                xTaskResumeAll
  .text.xTaskGetTickCount
-                0x00006c3c       0x20 ./FreeRTOS/tasks.o
-                0x00006c3c                xTaskGetTickCount
+                0x000074a8       0x20 ./FreeRTOS/tasks.o
+                0x000074a8                xTaskGetTickCount
  .text.xTaskIncrementTick
-                0x00006c5c      0x190 ./FreeRTOS/tasks.o
-                0x00006c5c                xTaskIncrementTick
+                0x000074c8      0x190 ./FreeRTOS/tasks.o
+                0x000074c8                xTaskIncrementTick
  .text.vTaskSwitchContext
-                0x00006dec       0xd0 ./FreeRTOS/tasks.o
-                0x00006dec                vTaskSwitchContext
+                0x00007658       0xd0 ./FreeRTOS/tasks.o
+                0x00007658                vTaskSwitchContext
  .text.vTaskPlaceOnEventList
-                0x00006ebc       0x9c ./FreeRTOS/tasks.o
-                0x00006ebc                vTaskPlaceOnEventList
+                0x00007728       0x9c ./FreeRTOS/tasks.o
+                0x00007728                vTaskPlaceOnEventList
  .text.vTaskPlaceOnEventListRestricted
-                0x00006f58       0x9c ./FreeRTOS/tasks.o
-                0x00006f58                vTaskPlaceOnEventListRestricted
+                0x000077c4       0x9c ./FreeRTOS/tasks.o
+                0x000077c4                vTaskPlaceOnEventListRestricted
  .text.xTaskRemoveFromEventList
-                0x00006ff4       0xc8 ./FreeRTOS/tasks.o
-                0x00006ff4                xTaskRemoveFromEventList
+                0x00007860       0xc8 ./FreeRTOS/tasks.o
+                0x00007860                xTaskRemoveFromEventList
  .text.vTaskSetTimeOutState
-                0x000070bc       0x44 ./FreeRTOS/tasks.o
-                0x000070bc                vTaskSetTimeOutState
+                0x00007928       0x44 ./FreeRTOS/tasks.o
+                0x00007928                vTaskSetTimeOutState
  .text.xTaskCheckForTimeOut
-                0x00007100       0xbc ./FreeRTOS/tasks.o
-                0x00007100                xTaskCheckForTimeOut
+                0x0000796c       0xbc ./FreeRTOS/tasks.o
+                0x0000796c                xTaskCheckForTimeOut
  .text.vTaskMissedYield
-                0x000071bc       0x18 ./FreeRTOS/tasks.o
-                0x000071bc                vTaskMissedYield
+                0x00007a28       0x18 ./FreeRTOS/tasks.o
+                0x00007a28                vTaskMissedYield
  .text.prvIdleTask
-                0x000071d4       0x30 ./FreeRTOS/tasks.o
+                0x00007a40       0x30 ./FreeRTOS/tasks.o
  .text.prvInitialiseTCBVariables
-                0x00007204       0xa4 ./FreeRTOS/tasks.o
+                0x00007a70       0xa4 ./FreeRTOS/tasks.o
  .text.prvInitialiseTaskLists
-                0x000072a8       0x7c ./FreeRTOS/tasks.o
+                0x00007b14       0x7c ./FreeRTOS/tasks.o
  .text.prvCheckTasksWaitingTermination
-                0x00007324       0x74 ./FreeRTOS/tasks.o
+                0x00007b90       0x74 ./FreeRTOS/tasks.o
  .text.prvAddCurrentTaskToDelayedList
-                0x00007398       0x6c ./FreeRTOS/tasks.o
+                0x00007c04       0x6c ./FreeRTOS/tasks.o
  .text.prvAllocateTCBAndStack
-                0x00007404       0x70 ./FreeRTOS/tasks.o
+                0x00007c70       0x70 ./FreeRTOS/tasks.o
  .text.prvDeleteTCB
-                0x00007474       0x20 ./FreeRTOS/tasks.o
+                0x00007ce0       0x20 ./FreeRTOS/tasks.o
  .text.prvResetNextTaskUnblockTime
-                0x00007494       0x48 ./FreeRTOS/tasks.o
+                0x00007d00       0x48 ./FreeRTOS/tasks.o
  .text.xTaskGetSchedulerState
-                0x000074dc       0x3c ./FreeRTOS/tasks.o
-                0x000074dc                xTaskGetSchedulerState
+                0x00007d48       0x3c ./FreeRTOS/tasks.o
+                0x00007d48                xTaskGetSchedulerState
  .text.vTaskPriorityInherit
-                0x00007518       0xf0 ./FreeRTOS/tasks.o
-                0x00007518                vTaskPriorityInherit
+                0x00007d84       0xf0 ./FreeRTOS/tasks.o
+                0x00007d84                vTaskPriorityInherit
  .text.xTaskPriorityDisinherit
-                0x00007608      0x10c ./FreeRTOS/tasks.o
-                0x00007608                xTaskPriorityDisinherit
+                0x00007e74      0x10c ./FreeRTOS/tasks.o
+                0x00007e74                xTaskPriorityDisinherit
  .text.pvTaskIncrementMutexHeldCount
-                0x00007714       0x28 ./FreeRTOS/tasks.o
-                0x00007714                pvTaskIncrementMutexHeldCount
+                0x00007f80       0x28 ./FreeRTOS/tasks.o
+                0x00007f80                pvTaskIncrementMutexHeldCount
  .text.xQueueGenericReset
-                0x0000773c       0xd0 ./FreeRTOS/queue.o
-                0x0000773c                xQueueGenericReset
+                0x00007fa8       0xd0 ./FreeRTOS/queue.o
+                0x00007fa8                xQueueGenericReset
  .text.xQueueGenericCreate
-                0x0000780c       0xb0 ./FreeRTOS/queue.o
-                0x0000780c                xQueueGenericCreate
+                0x00008078       0xb0 ./FreeRTOS/queue.o
+                0x00008078                xQueueGenericCreate
  .text.xQueueCreateMutex
-                0x000078bc       0x98 ./FreeRTOS/queue.o
-                0x000078bc                xQueueCreateMutex
+                0x00008128       0x98 ./FreeRTOS/queue.o
+                0x00008128                xQueueCreateMutex
  .text.xQueueGenericSend
-                0x00007954      0x1ec ./FreeRTOS/queue.o
-                0x00007954                xQueueGenericSend
+                0x000081c0      0x1ec ./FreeRTOS/queue.o
+                0x000081c0                xQueueGenericSend
  .text.xQueueGenericSendFromISR
-                0x00007b40      0x118 ./FreeRTOS/queue.o
-                0x00007b40                xQueueGenericSendFromISR
+                0x000083ac      0x118 ./FreeRTOS/queue.o
+                0x000083ac                xQueueGenericSendFromISR
  .text.xQueueGenericReceive
-                0x00007c58      0x20c ./FreeRTOS/queue.o
-                0x00007c58                xQueueGenericReceive
+                0x000084c4      0x20c ./FreeRTOS/queue.o
+                0x000084c4                xQueueGenericReceive
  .text.prvCopyDataToQueue
-                0x00007e64       0xdc ./FreeRTOS/queue.o
+                0x000086d0       0xdc ./FreeRTOS/queue.o
  .text.prvCopyDataFromQueue
-                0x00007f40       0x4c ./FreeRTOS/queue.o
+                0x000087ac       0x4c ./FreeRTOS/queue.o
  .text.prvUnlockQueue
-                0x00007f8c       0x98 ./FreeRTOS/queue.o
+                0x000087f8       0x98 ./FreeRTOS/queue.o
  .text.prvIsQueueEmpty
-                0x00008024       0x2c ./FreeRTOS/queue.o
+                0x00008890       0x2c ./FreeRTOS/queue.o
  .text.prvIsQueueFull
-                0x00008050       0x30 ./FreeRTOS/queue.o
+                0x000088bc       0x30 ./FreeRTOS/queue.o
  .text.vQueueWaitForMessageRestricted
-                0x00008080       0x5c ./FreeRTOS/queue.o
-                0x00008080                vQueueWaitForMessageRestricted
+                0x000088ec       0x5c ./FreeRTOS/queue.o
+                0x000088ec                vQueueWaitForMessageRestricted
  .text.vListInitialise
-                0x000080dc       0x40 ./FreeRTOS/list.o
-                0x000080dc                vListInitialise
+                0x00008948       0x40 ./FreeRTOS/list.o
+                0x00008948                vListInitialise
  .text.vListInitialiseItem
-                0x0000811c       0x18 ./FreeRTOS/list.o
-                0x0000811c                vListInitialiseItem
+                0x00008988       0x18 ./FreeRTOS/list.o
+                0x00008988                vListInitialiseItem
  .text.vListInsertEnd
-                0x00008134       0x48 ./FreeRTOS/list.o
-                0x00008134                vListInsertEnd
+                0x000089a0       0x48 ./FreeRTOS/list.o
+                0x000089a0                vListInsertEnd
  .text.vListInsert
-                0x0000817c       0x70 ./FreeRTOS/list.o
-                0x0000817c                vListInsert
+                0x000089e8       0x70 ./FreeRTOS/list.o
+                0x000089e8                vListInsert
  .text.uxListRemove
-                0x000081ec       0x54 ./FreeRTOS/list.o
-                0x000081ec                uxListRemove
- .text.sprintf  0x00008240       0x1e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
-                0x00008240                sprintf
- *fill*         0x0000825e        0x2 
- .text.vprintf  0x00008260       0x38 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vprintf.o)
-                0x00008260                vprintf
+                0x00008a58       0x54 ./FreeRTOS/list.o
+                0x00008a58                uxListRemove
+ .text.sprintf  0x00008aac       0x1e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
+                0x00008aac                sprintf
+ *fill*         0x00008aca        0x2 
+ .text.vprintf  0x00008acc       0x38 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vprintf.o)
+                0x00008acc                vprintf
  .text.__StringWrite
-                0x00008298       0x26 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vsnprintf.o)
-                0x00008298                __StringWrite
- *fill*         0x000082be        0x2 
+                0x00008b04       0x26 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vsnprintf.o)
+                0x00008b04                __StringWrite
+ *fill*         0x00008b2a        0x2 
  .text.vsnprintf
-                0x000082c0       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vsnprintf.o)
-                0x000082c0                vsnprintf
- .text.exit     0x000082f4       0x38 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
-                0x000082f4                exit
- .text.memcpy   0x0000832c       0x16 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memcpy.o)
-                0x0000832c                memcpy
- .text.memset   0x00008342        0xc /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memset.o)
-                0x00008342                memset
- .text.strchr   0x0000834e       0x1a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strchr.o)
-                0x0000834e                strchr
- .text.strcmp   0x00008368       0x1a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcmp.o)
-                0x00008368                strcmp
- .text.strlen   0x00008382        0xe /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strlen.o)
-                0x00008382                strlen
- .text.fwide    0x00008390       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwide.o)
-                0x00008390                fwide
+                0x00008b2c       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vsnprintf.o)
+                0x00008b2c                vsnprintf
+ .text.exit     0x00008b60       0x38 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
+                0x00008b60                exit
+ .text.memcpy   0x00008b98       0x16 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memcpy.o)
+                0x00008b98                memcpy
+ .text.memset   0x00008bae        0xc /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memset.o)
+                0x00008bae                memset
+ .text.strchr   0x00008bba       0x1a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strchr.o)
+                0x00008bba                strchr
+ .text.strcmp   0x00008bd4       0x1a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcmp.o)
+                0x00008bd4                strcmp
+ .text.strlen   0x00008bee        0xe /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strlen.o)
+                0x00008bee                strlen
+ .text.fwide    0x00008bfc       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwide.o)
+                0x00008bfc                fwide
  .text.long2str.isra.0
-                0x000083c4      0x19e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
+                0x00008c30      0x19e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
  .text.longlong2str.isra.1
-                0x00008562      0x20e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
+                0x00008dce      0x20e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
  .text.double2hex.isra.2
-                0x00008770      0x234 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
+                0x00008fdc      0x234 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
  .text.__pformatter
-                0x000089a4      0x9b8 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
-                0x000089a4                __pformatter
- .text.isupper  0x0000935c       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ctype_aeabi.o)
-                0x0000935c                isupper
+                0x00009210      0x9b8 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
+                0x00009210                __pformatter
+ .text.isupper  0x00009bc8       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ctype_aeabi.o)
+                0x00009bc8                isupper
  .text.__ewl_runtime_constraint_violation_s
-                0x00009378       0x10 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
-                0x00009378                __ewl_runtime_constraint_violation_s
+                0x00009be4       0x10 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
+                0x00009be4                __ewl_runtime_constraint_violation_s
  .text.__fwrite
-                0x00009388      0x16c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
-                0x00009388                __fwrite
+                0x00009bf4      0x16c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
+                0x00009bf4                __fwrite
  .text.__FileWrite
-                0x000094f4       0x1a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
-                0x000094f4                __FileWrite
- *fill*         0x0000950e        0x2 
- .text.abort    0x00009510       0x24 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
-                0x00009510                abort
+                0x00009d60       0x1a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
+                0x00009d60                __FileWrite
+ *fill*         0x00009d7a        0x2 
+ .text.abort    0x00009d7c       0x24 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
+                0x00009d7c                abort
  .text.wcstombs
-                0x00009534       0x42 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(mbstowcs_s.o)
-                0x00009534                wcstombs
+                0x00009da0       0x42 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(mbstowcs_s.o)
+                0x00009da0                wcstombs
  .text.__wctomb_noconv
-                0x00009576       0x12 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(wctomb.o)
-                0x00009576                __wctomb_noconv
- .text.wctomb   0x00009588        0x4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(wctomb.o)
-                0x00009588                wctomb
+                0x00009de2       0x12 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(wctomb.o)
+                0x00009de2                __wctomb_noconv
+ .text.wctomb   0x00009df4        0x4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(wctomb.o)
+                0x00009df4                wctomb
  .text.__fill_mem
-                0x0000958c       0x7a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__filll_mem.o)
-                0x0000958c                __fill_mem
- .text.memchr   0x00009606       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memchr.o)
-                0x00009606                memchr
+                0x00009df8       0x7a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__filll_mem.o)
+                0x00009df8                __fill_mem
+ .text.memchr   0x00009e72       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memchr.o)
+                0x00009e72                memchr
  .text.__memrchr
-                0x00009622       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__memrchr.o)
-                0x00009622                __memrchr
- .text.strcpy   0x0000963e       0x12 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcpy.o)
-                0x0000963e                strcpy
- .text.strncpy  0x00009650       0x26 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strncpy.o)
-                0x00009650                strncpy
- *fill*         0x00009676        0x2 
- .text.raise    0x00009678       0x38 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(raise.o)
-                0x00009678                raise
+                0x00009e8e       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__memrchr.o)
+                0x00009e8e                __memrchr
+ .text.strcpy   0x00009eaa       0x12 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcpy.o)
+                0x00009eaa                strcpy
+ .text.strncpy  0x00009ebc       0x26 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strncpy.o)
+                0x00009ebc                strncpy
+ *fill*         0x00009ee2        0x2 
+ .text.raise    0x00009ee4       0x38 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(raise.o)
+                0x00009ee4                raise
  .text.__prep_buffer
-                0x000096b0       0x16 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__buffer_io.o)
-                0x000096b0                __prep_buffer
+                0x00009f1c       0x16 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__buffer_io.o)
+                0x00009f1c                __prep_buffer
  .text.__flush_buffer
-                0x000096c6       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__buffer_io.o)
-                0x000096c6                __flush_buffer
- *fill*         0x000096fa        0x6 
+                0x00009f32       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__buffer_io.o)
+                0x00009f32                __flush_buffer
+ *fill*         0x00009f66        0x2 
  .text.__num2dec
-                0x00009700      0x220 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
-                0x00009700                __num2dec
+                0x00009f68      0x220 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
+                0x00009f68                __num2dec
  .text.__round_decimal
-                0x00009920       0x98 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
-                0x00009920                __round_decimal
+                0x0000a188       0x98 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
+                0x0000a188                __round_decimal
  .text.__signbitd
-                0x000099b8        0x8 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(math_api.o)
-                0x000099b8                __signbitd
+                0x0000a220        0x8 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(math_api.o)
+                0x0000a220                __signbitd
  .text.__fpclassifyd
-                0x000099c0       0x44 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(math_api.o)
-                0x000099c0                __fpclassifyd
- .text.frexp    0x00009a04       0x70 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(s_frexp.o)
-                0x00009a04                frexp
+                0x0000a228       0x44 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(math_api.o)
+                0x0000a228                __fpclassifyd
+ .text.frexp    0x0000a26c       0x70 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(s_frexp.o)
+                0x0000a26c                frexp
  .text.__fini_cpp
-                0x00009a74       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(gcc_ctor_dtor.o)
-                0x00009a74                __fini_cpp
+                0x0000a2dc       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(gcc_ctor_dtor.o)
+                0x0000a2dc                __fini_cpp
  .text._ExitProcess
-                0x00009aa8        0x2 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(gcc_ctor_dtor.o)
-                0x00009aa8                _ExitProcess
- *fill*         0x00009aaa        0x2 
+                0x0000a310        0x2 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(gcc_ctor_dtor.o)
+                0x0000a310                _ExitProcess
+ *fill*         0x0000a312        0x2 
  .text.__destroy_global_chain
-                0x00009aac       0x18 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(__arm_eabi_init.o)
-                0x00009aac                __destroy_global_chain
+                0x0000a314       0x18 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(__arm_eabi_init.o)
+                0x0000a314                __destroy_global_chain
  .text.sys_writec
-                0x00009ac4        0xe /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
-                0x00009ac4                sys_writec
+                0x0000a32c        0xe /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
+                0x0000a32c                sys_writec
  .text.sys_readc
-                0x00009ad2       0x10 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
-                0x00009ad2                sys_readc
+                0x0000a33a       0x10 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
+                0x0000a33a                sys_readc
  .text.__read_console
-                0x00009ae2       0x1a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
-                0x00009ae2                __read_console
+                0x0000a34a       0x1a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
+                0x0000a34a                __read_console
  .text.__write_console
-                0x00009afc       0x18 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
-                0x00009afc                __write_console
+                0x0000a364       0x18 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
+                0x0000a364                __write_console
  .text.__close_console
-                0x00009b14        0x4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
-                0x00009b14                __close_console
+                0x0000a37c        0x4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
+                0x0000a37c                __close_console
  .text.sys_write
-                0x00009b18        0xe /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
-                0x00009b18                sys_write
+                0x0000a380        0xe /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
+                0x0000a380                sys_write
  .text.__write_file
-                0x00009b26       0x1e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
-                0x00009b26                __write_file
+                0x0000a38e       0x1e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
+                0x0000a38e                __write_file
  .text.sys_read
-                0x00009b44        0xe /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
-                0x00009b44                sys_read
+                0x0000a3ac        0xe /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
+                0x0000a3ac                sys_read
  .text.__read_file
-                0x00009b52       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
-                0x00009b52                __read_file
+                0x0000a3ba       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
+                0x0000a3ba                __read_file
  *(.rodata)
- *fill*         0x00009b86        0x2 
- .rodata        0x00009b88      0x371 ./src/main.o
- *fill*         0x00009ef9        0x3 
- .rodata        0x00009efc       0x58 ./fatfs/ff.o
- .rodata        0x00009f54        0x3 ./bl/SPI_MSD0_Driver.o
- *fill*         0x00009f57        0x1 
- .rodata        0x00009f58        0x8 ./FreeRTOS/timers.o
- .rodata        0x00009f60        0x5 ./FreeRTOS/tasks.o
+ *fill*         0x0000a3ee        0x2 
+ .rodata        0x0000a3f0      0x555 ./src/main.o
+ *fill*         0x0000a945        0x3 
+ .rodata        0x0000a948       0x58 ./fatfs/ff.o
+ .rodata        0x0000a9a0        0x3 ./bl/SPI_MSD0_Driver.o
+ *fill*         0x0000a9a3        0x1 
+ .rodata        0x0000a9a4        0x8 ./FreeRTOS/timers.o
+ .rodata        0x0000a9ac        0x5 ./FreeRTOS/tasks.o
  *(.rodata*)
- *fill*         0x00009f65        0x3 
- .rodata.__FUNCTION__.6178
-                0x00009f68        0x9 ./src/main.o
- *fill*         0x00009f71        0x3 
- .rodata.test_tbl.6197
-                0x00009f74       0x10 ./src/main.o
- .rodata.__FUNCTION__.6205
-                0x00009f84        0x5 ./src/main.o
- *fill*         0x00009f89        0x3 
- .rodata.ExCvt  0x00009f8c       0x80 ./fatfs/ff.o
+ *fill*         0x0000a9b1        0x3 
+ .rodata.__FUNCTION__.6188
+                0x0000a9b4        0x9 ./src/main.o
+ *fill*         0x0000a9bd        0x3 
+ .rodata.__FUNCTION__.6261
+                0x0000a9c0        0xa ./src/main.o
+ *fill*         0x0000a9ca        0x2 
+ .rodata.test_tbl.6298
+                0x0000a9cc       0x28 ./src/main.o
+ .rodata.__FUNCTION__.6314
+                0x0000a9f4        0x5 ./src/main.o
+ *fill*         0x0000a9f9        0x3 
+ .rodata.ExCvt  0x0000a9fc       0x80 ./fatfs/ff.o
  .rodata.LfnOfs
-                0x0000a00c        0xd ./fatfs/ff.o
- *fill*         0x0000a019        0x3 
- .rodata.Tbl    0x0000a01c      0x100 ./fatfs/ccsbcs.o
+                0x0000aa7c        0xd ./fatfs/ff.o
+ *fill*         0x0000aa89        0x3 
+ .rodata.Tbl    0x0000aa8c      0x100 ./fatfs/ccsbcs.o
  .rodata.tbl_lower.4156
-                0x0000a11c      0x1e0 ./fatfs/ccsbcs.o
+                0x0000ab8c      0x1e0 ./fatfs/ccsbcs.o
  .rodata.tbl_upper.4157
-                0x0000a2fc      0x1e0 ./fatfs/ccsbcs.o
+                0x0000ad6c      0x1e0 ./fatfs/ccsbcs.o
  .rodata.str1.1
-                0x0000a4dc       0x14 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
+                0x0000af4c       0x14 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
                                  0x25 (size before relaxing)
  .rodata.str4.4
-                0x0000a4f0        0x4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
+                0x0000af60        0x4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
  .rodata.__aeabi_ctype_table_C
-                0x0000a4f4      0x101 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ctype_aeabi.o)
-                0x0000a4f4                __aeabi_ctype_table_C
- *fill*         0x0000a5f5        0x3 
+                0x0000af64      0x101 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ctype_aeabi.o)
+                0x0000af64                __aeabi_ctype_table_C
+ *fill*         0x0000b065        0x3 
  .rodata.digit_values
-                0x0000a5f8       0x40 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
+                0x0000b068       0x40 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
  .rodata.bit_values
-                0x0000a638       0x48 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
+                0x0000b0a8       0x48 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
  *(.glue_7)
  .glue_7        0x00000000        0x0 linker stubs
  *(.glue_7t)
@@ -2756,67 +2871,67 @@ LOAD /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/__arm_e
  *(.eh_frame)
  *(.init)
  *(.fini)
-                0x0000a680                . = ALIGN (0x4)
+                0x0000b0f0                . = ALIGN (0x4)
 
-.vfp11_veneer   0x0000a680        0x0
+.vfp11_veneer   0x0000b0f0        0x0
  .vfp11_veneer  0x00000000        0x0 linker stubs
 
-.v4_bx          0x0000a680        0x0
+.v4_bx          0x0000b0f0        0x0
  .v4_bx         0x00000000        0x0 linker stubs
 
-.iplt           0x0000a680        0x0
+.iplt           0x0000b0f0        0x0
  .iplt          0x00000000        0x0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/__arm_start-hosted.o
 
 .ARM.extab
  *(.ARM.extab* .gnu.linkonce.armextab.*)
 
-.ARM            0x0000a680        0x8
-                0x0000a680                __exidx_start = .
+.ARM            0x0000b0f0        0x8
+                0x0000b0f0                __exidx_start = .
  *(.ARM.exidx*)
- .ARM.exidx     0x0000a680        0x8 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_divdi3.o)
- .ARM.exidx     0x0000a688        0x0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_udivdi3.o)
+ .ARM.exidx     0x0000b0f0        0x8 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_divdi3.o)
+ .ARM.exidx     0x0000b0f8        0x0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_udivdi3.o)
                                   0x8 (size before relaxing)
-                0x0000a688                __exidx_end = .
+                0x0000b0f8                __exidx_end = .
 
-.rel.dyn        0x0000a688        0x0
+.rel.dyn        0x0000b0f8        0x0
  .rel.iplt      0x00000000        0x0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/__arm_start-hosted.o
 
-.ctors          0x0000a688        0x0
-                0x0000a688                __CTOR_LIST__ = .
+.ctors          0x0000b0f8        0x0
+                0x0000b0f8                __CTOR_LIST__ = .
  *crtbegin.o(.ctors)
  *crtbegin?.o(.ctors)
  *(EXCLUDE_FILE(*crtend.o *crtend?.o) .ctors)
  *(SORT(.ctors.*))
  *(.ctors)
-                0x0000a688                __CTOR_END__ = .
+                0x0000b0f8                __CTOR_END__ = .
 
-.dtors          0x0000a688        0x0
-                0x0000a688                __DTOR_LIST__ = .
+.dtors          0x0000b0f8        0x0
+                0x0000b0f8                __DTOR_LIST__ = .
  *crtbegin.o(.dtors)
  *crtbegin?.o(.dtors)
  *(EXCLUDE_FILE(*crtend.o *crtend?.o) .dtors)
  *(SORT(.dtors.*))
  *(.dtors)
-                0x0000a688                __DTOR_END__ = .
+                0x0000b0f8                __DTOR_END__ = .
 
-.preinit_array  0x0000a688        0x0
-                0x0000a688                PROVIDE (__preinit_array_start, .)
+.preinit_array  0x0000b0f8        0x0
+                0x0000b0f8                PROVIDE (__preinit_array_start, .)
  *(.preinit_array*)
-                0x0000a688                PROVIDE (__preinit_array_end, .)
+                0x0000b0f8                PROVIDE (__preinit_array_end, .)
 
-.init_array     0x0000a688        0x0
-                0x0000a688                PROVIDE (__init_array_start, .)
+.init_array     0x0000b0f8        0x0
+                0x0000b0f8                PROVIDE (__init_array_start, .)
  *(SORT(.init_array.*))
  *(.init_array*)
-                0x0000a688                PROVIDE (__init_array_end, .)
+                0x0000b0f8                PROVIDE (__init_array_end, .)
 
-.fini_array     0x0000a688        0x0
-                0x0000a688                PROVIDE (__fini_array_start, .)
+.fini_array     0x0000b0f8        0x0
+                0x0000b0f8                PROVIDE (__fini_array_start, .)
  *(SORT(.fini_array.*))
  *(.fini_array*)
-                0x0000a688                PROVIDE (__fini_array_end, .)
-                0x0000a688                __etext = .
-                0x0000a688                __DATA_ROM = .
+                0x0000b0f8                PROVIDE (__fini_array_end, .)
+                0x0000b0f8                __etext = .
+                0x0000b0f8                __DATA_ROM = .
 
 .interrupts_ram
                 0x1fff8000      0x400
@@ -2831,7 +2946,7 @@ LOAD /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/__arm_e
                 0x1fff8000                __VECTOR_RAM = DEFINED (__flash_vector_table__)?ORIGIN (m_interrupts):__VECTOR_RAM__
                 0x00000400                __RAM_VECTOR_TABLE_SIZE = DEFINED (__flash_vector_table__)?0x0:(__interrupts_ram_end__ - __interrupts_ram_start__)
 
-.data           0x1fff8400      0x10c load address 0x0000a688
+.data           0x1fff8400      0x10c load address 0x0000b0f8
                 0x1fff8400                . = ALIGN (0x4)
                 0x1fff8400                __DATA_RAM = .
                 0x1fff8400                __data_start__ = .
@@ -2857,25 +2972,25 @@ LOAD /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/__arm_e
  *(.jcr*)
                 0x1fff850c                . = ALIGN (0x4)
                 0x1fff850c                __data_end__ = .
-                0x0000a794                __DATA_END = (__DATA_ROM + (__data_end__ - __data_start__))
-                0x0000a794                __CODE_ROM = __DATA_END
+                0x0000b204                __DATA_END = (__DATA_ROM + (__data_end__ - __data_start__))
+                0x0000b204                __CODE_ROM = __DATA_END
 
-.igot.plt       0x1fff850c        0x0 load address 0x0000a794
+.igot.plt       0x1fff850c        0x0 load address 0x0000b204
  .igot.plt      0x00000000        0x0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/__arm_start-hosted.o
 
-.code           0x1fff850c        0x0 load address 0x0000a794
+.code           0x1fff850c        0x0 load address 0x0000b204
                 0x1fff850c                . = ALIGN (0x4)
                 0x1fff850c                __CODE_RAM = .
                 0x1fff850c                __code_start__ = .
  *(.code_ram)
                 0x1fff850c                . = ALIGN (0x4)
                 0x1fff850c                __code_end__ = .
-                0x0000a794                __CODE_END = (__CODE_ROM + (__code_end__ - __code_start__))
+                0x0000b204                __CODE_END = (__CODE_ROM + (__code_end__ - __code_start__))
 
 .customSectionBlock
  *(.customSection)
 
-.bss            0x20000000     0x44ec
+.bss            0x20000000     0x44f8
                 0x20000000                . = ALIGN (0x4)
                 0x20000000                __BSS_START = .
                 0x20000000                __bss_start__ = .
@@ -2883,119 +2998,120 @@ LOAD /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/__arm_e
  *(.bss*)
  .bss.prt_mutex
                 0x20000000        0x4 ./src/main.o
+ .bss.uartQueueTbl
+                0x20000004        0xc ./src/main.o
  .bss.mainTaskHandle
-                0x20000004        0x4 ./src/main.o
- .bss.FatFs     0x20000008        0x8 ./fatfs/ff.o
- .bss.Fsid      0x20000010        0x2 ./fatfs/ff.o
- .bss.CurrVol   0x20000012        0x1 ./fatfs/ff.o
- *fill*         0x20000013        0x1 
- .bss.LfnBuf    0x20000014      0x200 ./fatfs/ff.o
+                0x20000010        0x4 ./src/main.o
+ .bss.FatFs     0x20000014        0x8 ./fatfs/ff.o
+ .bss.Fsid      0x2000001c        0x2 ./fatfs/ff.o
+ .bss.CurrVol   0x2000001e        0x1 ./fatfs/ff.o
+ *fill*         0x2000001f        0x1 
+ .bss.LfnBuf    0x20000020      0x200 ./fatfs/ff.o
  .bss.tickCountVal
-                0x20000214        0x4 ./bl/bl.o
- .bss.ucHeap    0x20000218     0x4000 ./FreeRTOS/portable/MemMang/heap_2.o
- .bss.xStart    0x20004218        0x8 ./FreeRTOS/portable/MemMang/heap_2.o
- .bss.xEnd      0x20004220        0x8 ./FreeRTOS/portable/MemMang/heap_2.o
+                0x20000220        0x4 ./bl/bl.o
+ .bss.ucHeap    0x20000224     0x4000 ./FreeRTOS/portable/MemMang/heap_2.o
+ .bss.xStart    0x20004224        0x8 ./FreeRTOS/portable/MemMang/heap_2.o
+ .bss.xEnd      0x2000422c        0x8 ./FreeRTOS/portable/MemMang/heap_2.o
  .bss.xHeapHasBeenInitialised.4449
-                0x20004228        0x4 ./FreeRTOS/portable/MemMang/heap_2.o
+                0x20004234        0x4 ./FreeRTOS/portable/MemMang/heap_2.o
  .bss.ucMaxSysCallPriority
-                0x2000422c        0x1 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
- *fill*         0x2000422d        0x3 
+                0x20004238        0x1 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+ *fill*         0x20004239        0x3 
  .bss.ulMaxPRIGROUPValue
-                0x20004230        0x4 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                0x2000423c        0x4 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
  .bss.xActiveTimerList1
-                0x20004234       0x14 ./FreeRTOS/timers.o
+                0x20004240       0x14 ./FreeRTOS/timers.o
  .bss.xActiveTimerList2
-                0x20004248       0x14 ./FreeRTOS/timers.o
+                0x20004254       0x14 ./FreeRTOS/timers.o
  .bss.pxCurrentTimerList
-                0x2000425c        0x4 ./FreeRTOS/timers.o
- .bss.pxOverflowTimerList
-                0x20004260        0x4 ./FreeRTOS/timers.o
- .bss.xTimerQueue
-                0x20004264        0x4 ./FreeRTOS/timers.o
- .bss.xLastTime.4689
                 0x20004268        0x4 ./FreeRTOS/timers.o
+ .bss.pxOverflowTimerList
+                0x2000426c        0x4 ./FreeRTOS/timers.o
+ .bss.xTimerQueue
+                0x20004270        0x4 ./FreeRTOS/timers.o
+ .bss.xLastTime.4689
+                0x20004274        0x4 ./FreeRTOS/timers.o
  .bss.pxCurrentTCB
-                0x2000426c        0x4 ./FreeRTOS/tasks.o
-                0x2000426c                pxCurrentTCB
+                0x20004278        0x4 ./FreeRTOS/tasks.o
+                0x20004278                pxCurrentTCB
  .bss.pxReadyTasksLists
-                0x20004270       0xa0 ./FreeRTOS/tasks.o
+                0x2000427c       0xa0 ./FreeRTOS/tasks.o
  .bss.xDelayedTaskList1
-                0x20004310       0x14 ./FreeRTOS/tasks.o
+                0x2000431c       0x14 ./FreeRTOS/tasks.o
  .bss.xDelayedTaskList2
-                0x20004324       0x14 ./FreeRTOS/tasks.o
+                0x20004330       0x14 ./FreeRTOS/tasks.o
  .bss.pxDelayedTaskList
-                0x20004338        0x4 ./FreeRTOS/tasks.o
+                0x20004344        0x4 ./FreeRTOS/tasks.o
  .bss.pxOverflowDelayedTaskList
-                0x2000433c        0x4 ./FreeRTOS/tasks.o
+                0x20004348        0x4 ./FreeRTOS/tasks.o
  .bss.xPendingReadyList
-                0x20004340       0x14 ./FreeRTOS/tasks.o
+                0x2000434c       0x14 ./FreeRTOS/tasks.o
  .bss.xTasksWaitingTermination
-                0x20004354       0x14 ./FreeRTOS/tasks.o
+                0x20004360       0x14 ./FreeRTOS/tasks.o
  .bss.uxTasksDeleted
-                0x20004368        0x4 ./FreeRTOS/tasks.o
+                0x20004374        0x4 ./FreeRTOS/tasks.o
  .bss.xSuspendedTaskList
-                0x2000436c       0x14 ./FreeRTOS/tasks.o
+                0x20004378       0x14 ./FreeRTOS/tasks.o
  .bss.uxCurrentNumberOfTasks
-                0x20004380        0x4 ./FreeRTOS/tasks.o
- .bss.xTickCount
-                0x20004384        0x4 ./FreeRTOS/tasks.o
- .bss.uxTopReadyPriority
-                0x20004388        0x4 ./FreeRTOS/tasks.o
- .bss.xSchedulerRunning
                 0x2000438c        0x4 ./FreeRTOS/tasks.o
- .bss.uxPendedTicks
+ .bss.xTickCount
                 0x20004390        0x4 ./FreeRTOS/tasks.o
- .bss.xYieldPending
+ .bss.uxTopReadyPriority
                 0x20004394        0x4 ./FreeRTOS/tasks.o
- .bss.xNumOfOverflows
+ .bss.xSchedulerRunning
                 0x20004398        0x4 ./FreeRTOS/tasks.o
- .bss.uxTaskNumber
+ .bss.uxPendedTicks
                 0x2000439c        0x4 ./FreeRTOS/tasks.o
- .bss.xNextTaskUnblockTime
+ .bss.xYieldPending
                 0x200043a0        0x4 ./FreeRTOS/tasks.o
- .bss.uxSchedulerSuspended
+ .bss.xNumOfOverflows
                 0x200043a4        0x4 ./FreeRTOS/tasks.o
+ .bss.uxTaskNumber
+                0x200043a8        0x4 ./FreeRTOS/tasks.o
+ .bss.xNextTaskUnblockTime
+                0x200043ac        0x4 ./FreeRTOS/tasks.o
+ .bss.uxSchedulerSuspended
+                0x200043b0        0x4 ./FreeRTOS/tasks.o
  .bss.__stdio_exit
-                0x200043a8        0x4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
-                0x200043a8                __stdio_exit
+                0x200043b4        0x4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
+                0x200043b4                __stdio_exit
  .bss.__console_exit
-                0x200043ac        0x4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
-                0x200043ac                __console_exit
+                0x200043b8        0x4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
+                0x200043b8                __console_exit
  .bss.__ewl_constraint_handler
-                0x200043b0        0x4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
+                0x200043bc        0x4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
  .bss.__global_destructor_chain
-                0x200043b4        0x4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(__arm_eabi_init.o)
-                0x200043b4                __global_destructor_chain
+                0x200043c0        0x4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(__arm_eabi_init.o)
+                0x200043c0                __global_destructor_chain
  *(COMMON)
- COMMON         0x200043b8       0x58 ./bl/SPI_MSD0_Driver.o
-                0x200043b8                SD0_CardInfo
- COMMON         0x20004410       0xc0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ansi_files.o)
-                0x20004410                stdout_buff
-                0x20004450                stdin_buff
-                0x20004490                stderr_buff
- COMMON         0x200044d0       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(signal.o)
-                0x200044d0                signal_funcs
-                0x200044ec                . = ALIGN (0x4)
-                0x200044ec                __bss_end__ = .
-                0x200044ec                __BSS_END = .
+ COMMON         0x200043c4       0x58 ./bl/SPI_MSD0_Driver.o
+                0x200043c4                SD0_CardInfo
+ COMMON         0x2000441c       0xc0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ansi_files.o)
+                0x2000441c                stdout_buff
+                0x2000445c                stdin_buff
+                0x2000449c                stderr_buff
+ COMMON         0x200044dc       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(signal.o)
+                0x200044dc                signal_funcs
+                0x200044f8                . = ALIGN (0x4)
+                0x200044f8                __bss_end__ = .
+                0x200044f8                __BSS_END = .
 
-.heap           0x200044ec      0x404
-                0x200044f0                . = ALIGN (0x8)
- *fill*         0x200044ec        0x4 
-                0x200044f0                __end__ = .
-                0x200044f0                PROVIDE (end, .)
-                0x200044f0                PROVIDE (_end, .)
-                0x200044f0                PROVIDE (__end, .)
-                0x200044f0                __HeapBase = .
-                0x200048f0                . = (. + HEAP_SIZE)
- *fill*         0x200044f0      0x400 
-                0x200048f0                __HeapLimit = .
-                0x200048f0                __heap_limit = .
+.heap           0x200044f8      0x400
+                0x200044f8                . = ALIGN (0x8)
+                0x200044f8                __end__ = .
+                0x200044f8                PROVIDE (end, .)
+                0x200044f8                PROVIDE (_end, .)
+                0x200044f8                PROVIDE (__end, .)
+                0x200044f8                __HeapBase = .
+                0x200048f8                . = (. + HEAP_SIZE)
+ *fill*         0x200044f8      0x400 
+                0x200048f8                __HeapLimit = .
+                0x200048f8                __heap_limit = .
 
-.stack          0x200048f0      0x400
-                0x200048f0                . = ALIGN (0x8)
-                0x20004cf0                . = (. + STACK_SIZE)
- *fill*         0x200048f0      0x400 
+.stack          0x200048f8      0x400
+                0x200048f8                . = ALIGN (0x8)
+                0x20004cf8                . = (. + STACK_SIZE)
+ *fill*         0x200048f8      0x400 
                 0x20007000                __StackTop = (ORIGIN (m_data_2) + 0x7000)
                 0x20006c00                __StackLimit = (__StackTop - STACK_SIZE)
                 0x20007000                PROVIDE (__stack, __StackTop)
@@ -3020,573 +3136,584 @@ LOAD /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/__arm_e
  .ARM.attributes
                 0x0000018f       0x39 ./bl/SPI_MSD0_Driver.o
  .ARM.attributes
-                0x000001c8       0x39 ./bl/FlexCAN.o
+                0x000001c8       0x39 ./bl/LPUART.o
  .ARM.attributes
-                0x00000201       0x39 ./Project_Settings/Startup_Code/system_S32K144.o
+                0x00000201       0x39 ./bl/FlexCAN.o
  .ARM.attributes
-                0x0000023a       0x1f ./Project_Settings/Startup_Code/startup_S32K144.o
+                0x0000023a       0x39 ./Project_Settings/Startup_Code/system_S32K144.o
  .ARM.attributes
-                0x00000259       0x39 ./Project_Settings/Startup_Code/startup.o
+                0x00000273       0x1f ./Project_Settings/Startup_Code/startup_S32K144.o
  .ARM.attributes
-                0x00000292       0x39 ./FreeRTOS/portable/MemMang/heap_2.o
+                0x00000292       0x39 ./Project_Settings/Startup_Code/startup.o
  .ARM.attributes
-                0x000002cb       0x39 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                0x000002cb       0x39 ./FreeRTOS/portable/MemMang/heap_2.o
  .ARM.attributes
-                0x00000304       0x39 ./FreeRTOS/timers.o
+                0x00000304       0x39 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
  .ARM.attributes
-                0x0000033d       0x39 ./FreeRTOS/tasks.o
+                0x0000033d       0x39 ./FreeRTOS/timers.o
  .ARM.attributes
-                0x00000376       0x39 ./FreeRTOS/queue.o
+                0x00000376       0x39 ./FreeRTOS/tasks.o
  .ARM.attributes
-                0x000003af       0x39 ./FreeRTOS/list.o
+                0x000003af       0x39 ./FreeRTOS/queue.o
  .ARM.attributes
-                0x000003e8       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
+                0x000003e8       0x39 ./FreeRTOS/list.o
  .ARM.attributes
-                0x00000421       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vprintf.o)
+                0x00000421       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
  .ARM.attributes
-                0x0000045a       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vsnprintf.o)
+                0x0000045a       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vprintf.o)
  .ARM.attributes
-                0x00000493       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
+                0x00000493       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vsnprintf.o)
  .ARM.attributes
-                0x000004cc       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memcpy.o)
+                0x000004cc       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
  .ARM.attributes
-                0x00000505       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memset.o)
+                0x00000505       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memcpy.o)
  .ARM.attributes
-                0x0000053e       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strchr.o)
+                0x0000053e       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memset.o)
  .ARM.attributes
-                0x00000577       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcmp.o)
+                0x00000577       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strchr.o)
  .ARM.attributes
-                0x000005b0       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strlen.o)
+                0x000005b0       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcmp.o)
  .ARM.attributes
-                0x000005e9       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwide.o)
+                0x000005e9       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strlen.o)
  .ARM.attributes
-                0x00000622       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
+                0x00000622       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwide.o)
  .ARM.attributes
-                0x0000065b       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ctype_aeabi.o)
+                0x0000065b       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
  .ARM.attributes
-                0x00000694       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
+                0x00000694       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ctype_aeabi.o)
  .ARM.attributes
-                0x000006cd       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ansi_files.o)
+                0x000006cd       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
  .ARM.attributes
-                0x00000706       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
+                0x00000706       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ansi_files.o)
  .ARM.attributes
-                0x0000073f       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
+                0x0000073f       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
  .ARM.attributes
-                0x00000778       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(mbstowcs_s.o)
+                0x00000778       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
  .ARM.attributes
-                0x000007b1       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(wctomb.o)
+                0x000007b1       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(mbstowcs_s.o)
  .ARM.attributes
-                0x000007ea       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__filll_mem.o)
+                0x000007ea       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(wctomb.o)
  .ARM.attributes
-                0x00000823       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memchr.o)
+                0x00000823       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__filll_mem.o)
  .ARM.attributes
-                0x0000085c       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__memrchr.o)
+                0x0000085c       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memchr.o)
  .ARM.attributes
-                0x00000895       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcpy.o)
+                0x00000895       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__memrchr.o)
  .ARM.attributes
-                0x000008ce       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strncpy.o)
+                0x000008ce       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcpy.o)
  .ARM.attributes
-                0x00000907       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(raise.o)
+                0x00000907       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strncpy.o)
  .ARM.attributes
-                0x00000940       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(signal.o)
+                0x00000940       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(raise.o)
  .ARM.attributes
-                0x00000979       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__buffer_io.o)
+                0x00000979       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(signal.o)
  .ARM.attributes
-                0x000009b2       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
+                0x000009b2       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__buffer_io.o)
  .ARM.attributes
-                0x000009eb       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(math_api.o)
+                0x000009eb       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
  .ARM.attributes
-                0x00000a24       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(s_frexp.o)
+                0x00000a24       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(math_api.o)
  .ARM.attributes
-                0x00000a5d       0x22 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_arm_addsubdf3.o)
+                0x00000a5d       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(s_frexp.o)
  .ARM.attributes
-                0x00000a7f       0x22 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_arm_muldivdf3.o)
+                0x00000a96       0x22 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_arm_addsubdf3.o)
  .ARM.attributes
-                0x00000aa1       0x22 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_arm_cmpdf2.o)
+                0x00000ab8       0x22 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_arm_muldivdf3.o)
  .ARM.attributes
-                0x00000ac3       0x22 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_arm_fixdfsi.o)
+                0x00000ada       0x22 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_arm_cmpdf2.o)
  .ARM.attributes
-                0x00000ae5       0x22 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_aeabi_uldivmod.o)
+                0x00000afc       0x22 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_arm_fixdfsi.o)
  .ARM.attributes
-                0x00000b07       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(bpabi.o)
+                0x00000b1e       0x22 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_aeabi_uldivmod.o)
  .ARM.attributes
-                0x00000b3b       0x22 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_dvmd_tls.o)
+                0x00000b40       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(bpabi.o)
  .ARM.attributes
-                0x00000b5d       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_divdi3.o)
+                0x00000b74       0x22 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_dvmd_tls.o)
  .ARM.attributes
-                0x00000b91       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_udivdi3.o)
+                0x00000b96       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_divdi3.o)
  .ARM.attributes
-                0x00000bc5       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(gcc_ctor_dtor.o)
+                0x00000bca       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_udivdi3.o)
  .ARM.attributes
-                0x00000bfe       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(__arm_eabi_init.o)
+                0x00000bfe       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(gcc_ctor_dtor.o)
  .ARM.attributes
-                0x00000c37       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(cxxabi_terminate_override.o)
+                0x00000c37       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(__arm_eabi_init.o)
  .ARM.attributes
-                0x00000c70       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
+                0x00000c70       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(cxxabi_terminate_override.o)
  .ARM.attributes
-                0x00000ca9       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
+                0x00000ca9       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
+ .ARM.attributes
+                0x00000ce2       0x39 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
                 0x00000001                ASSERT ((__StackLimit >= __HeapLimit), region m_data_2 overflowed with stack and heap)
 OUTPUT(dp1000.elf elf32-littlearm)
 
-.debug_info     0x00000000    0x10969
- .debug_info    0x00000000      0x781 ./src/main.o
- .debug_info    0x00000781      0xee3 ./src/convert.o
- .debug_info    0x00001664     0x2010 ./fatfs/ff.o
- .debug_info    0x00003674      0x55b ./fatfs/diskio.o
- .debug_info    0x00003bcf      0x160 ./fatfs/ccsbcs.o
- .debug_info    0x00003d2f      0x269 ./bl/clocks_and_modes.o
- .debug_info    0x00003f98      0x53e ./bl/bl.o
- .debug_info    0x000044d6      0xba1 ./bl/SPI_MSD0_Driver.o
- .debug_info    0x00005077      0x575 ./bl/FlexCAN.o
- .debug_info    0x000055ec      0x500 ./Project_Settings/Startup_Code/system_S32K144.o
- .debug_info    0x00005aec       0x8b ./Project_Settings/Startup_Code/startup_S32K144.o
- .debug_info    0x00005b77      0x3eb ./Project_Settings/Startup_Code/startup.o
- .debug_info    0x00005f62      0x2d4 ./FreeRTOS/portable/MemMang/heap_2.o
- .debug_info    0x00006236      0x512 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
- .debug_info    0x00006748      0xb3c ./FreeRTOS/timers.o
- .debug_info    0x00007284     0x1a87 ./FreeRTOS/tasks.o
- .debug_info    0x00008d0b     0x104e ./FreeRTOS/queue.o
- .debug_info    0x00009d59      0x28f ./FreeRTOS/list.o
- .debug_info    0x00009fe8      0x3ef /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
- .debug_info    0x0000a3d7      0x3e8 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vprintf.o)
- .debug_info    0x0000a7bf      0x4cb /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vsnprintf.o)
- .debug_info    0x0000ac8a      0x111 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
- .debug_info    0x0000ad9b      0x111 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memcpy.o)
- .debug_info    0x0000aeac       0xec /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memset.o)
- .debug_info    0x0000af98      0x106 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strchr.o)
- .debug_info    0x0000b09e      0x115 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcmp.o)
- .debug_info    0x0000b1b3       0xeb /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strlen.o)
- .debug_info    0x0000b29e      0x4cc /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwide.o)
- .debug_info    0x0000b76a      0xe0e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
- .debug_info    0x0000c578      0x306 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ctype_aeabi.o)
- .debug_info    0x0000c87e      0x248 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
- .debug_info    0x0000cac6      0x514 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ansi_files.o)
- .debug_info    0x0000cfda      0x659 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
- .debug_info    0x0000d633       0xb2 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
- .debug_info    0x0000d6e5      0x570 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(mbstowcs_s.o)
- .debug_info    0x0000dc55      0x3e5 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(wctomb.o)
- .debug_info    0x0000e03a      0x137 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__filll_mem.o)
- .debug_info    0x0000e171      0x121 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memchr.o)
- .debug_info    0x0000e292      0x116 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__memrchr.o)
- .debug_info    0x0000e3a8      0x10e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcpy.o)
- .debug_info    0x0000e4b6      0x108 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strncpy.o)
- .debug_info    0x0000e5be      0x108 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(raise.o)
- .debug_info    0x0000e6c6      0x124 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(signal.o)
- .debug_info    0x0000e7ea      0x492 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__buffer_io.o)
- .debug_info    0x0000ec7c      0x51d /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
- .debug_info    0x0000f199      0x30c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(math_api.o)
- .debug_info    0x0000f4a5      0x1a1 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(s_frexp.o)
- .debug_info    0x0000f646      0x14a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(gcc_ctor_dtor.o)
- .debug_info    0x0000f790      0x2dc /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(__arm_eabi_init.o)
- .debug_info    0x0000fa6c       0x62 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(cxxabi_terminate_override.o)
- .debug_info    0x0000face      0x232 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
- .debug_info    0x0000fd00      0xc69 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
+.debug_info     0x00000000    0x11466
+ .debug_info    0x00000000      0xdaa ./src/main.o
+ .debug_info    0x00000daa      0xee3 ./src/convert.o
+ .debug_info    0x00001c8d     0x2010 ./fatfs/ff.o
+ .debug_info    0x00003c9d      0x55b ./fatfs/diskio.o
+ .debug_info    0x000041f8      0x160 ./fatfs/ccsbcs.o
+ .debug_info    0x00004358      0x269 ./bl/clocks_and_modes.o
+ .debug_info    0x000045c1      0x7c1 ./bl/bl.o
+ .debug_info    0x00004d82      0xba1 ./bl/SPI_MSD0_Driver.o
+ .debug_info    0x00005923      0x251 ./bl/LPUART.o
+ .debug_info    0x00005b74      0x575 ./bl/FlexCAN.o
+ .debug_info    0x000060e9      0x500 ./Project_Settings/Startup_Code/system_S32K144.o
+ .debug_info    0x000065e9       0x8b ./Project_Settings/Startup_Code/startup_S32K144.o
+ .debug_info    0x00006674      0x3eb ./Project_Settings/Startup_Code/startup.o
+ .debug_info    0x00006a5f      0x2d4 ./FreeRTOS/portable/MemMang/heap_2.o
+ .debug_info    0x00006d33      0x512 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+ .debug_info    0x00007245      0xb3c ./FreeRTOS/timers.o
+ .debug_info    0x00007d81     0x1a87 ./FreeRTOS/tasks.o
+ .debug_info    0x00009808     0x104e ./FreeRTOS/queue.o
+ .debug_info    0x0000a856      0x28f ./FreeRTOS/list.o
+ .debug_info    0x0000aae5      0x3ef /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
+ .debug_info    0x0000aed4      0x3e8 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vprintf.o)
+ .debug_info    0x0000b2bc      0x4cb /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vsnprintf.o)
+ .debug_info    0x0000b787      0x111 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
+ .debug_info    0x0000b898      0x111 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memcpy.o)
+ .debug_info    0x0000b9a9       0xec /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memset.o)
+ .debug_info    0x0000ba95      0x106 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strchr.o)
+ .debug_info    0x0000bb9b      0x115 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcmp.o)
+ .debug_info    0x0000bcb0       0xeb /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strlen.o)
+ .debug_info    0x0000bd9b      0x4cc /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwide.o)
+ .debug_info    0x0000c267      0xe0e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
+ .debug_info    0x0000d075      0x306 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ctype_aeabi.o)
+ .debug_info    0x0000d37b      0x248 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
+ .debug_info    0x0000d5c3      0x514 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ansi_files.o)
+ .debug_info    0x0000dad7      0x659 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
+ .debug_info    0x0000e130       0xb2 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
+ .debug_info    0x0000e1e2      0x570 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(mbstowcs_s.o)
+ .debug_info    0x0000e752      0x3e5 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(wctomb.o)
+ .debug_info    0x0000eb37      0x137 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__filll_mem.o)
+ .debug_info    0x0000ec6e      0x121 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memchr.o)
+ .debug_info    0x0000ed8f      0x116 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__memrchr.o)
+ .debug_info    0x0000eea5      0x10e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcpy.o)
+ .debug_info    0x0000efb3      0x108 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strncpy.o)
+ .debug_info    0x0000f0bb      0x108 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(raise.o)
+ .debug_info    0x0000f1c3      0x124 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(signal.o)
+ .debug_info    0x0000f2e7      0x492 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__buffer_io.o)
+ .debug_info    0x0000f779      0x51d /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
+ .debug_info    0x0000fc96      0x30c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(math_api.o)
+ .debug_info    0x0000ffa2      0x1a1 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(s_frexp.o)
+ .debug_info    0x00010143      0x14a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(gcc_ctor_dtor.o)
+ .debug_info    0x0001028d      0x2dc /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(__arm_eabi_init.o)
+ .debug_info    0x00010569       0x62 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(cxxabi_terminate_override.o)
+ .debug_info    0x000105cb      0x232 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
+ .debug_info    0x000107fd      0xc69 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
 
-.debug_abbrev   0x00000000     0x3a05
- .debug_abbrev  0x00000000      0x1bf ./src/main.o
- .debug_abbrev  0x000001bf      0x173 ./src/convert.o
- .debug_abbrev  0x00000332      0x1f0 ./fatfs/ff.o
- .debug_abbrev  0x00000522      0x129 ./fatfs/diskio.o
- .debug_abbrev  0x0000064b       0xab ./fatfs/ccsbcs.o
- .debug_abbrev  0x000006f6       0xc2 ./bl/clocks_and_modes.o
- .debug_abbrev  0x000007b8      0x157 ./bl/bl.o
- .debug_abbrev  0x0000090f      0x244 ./bl/SPI_MSD0_Driver.o
- .debug_abbrev  0x00000b53      0x186 ./bl/FlexCAN.o
- .debug_abbrev  0x00000cd9      0x118 ./Project_Settings/Startup_Code/system_S32K144.o
- .debug_abbrev  0x00000df1       0x14 ./Project_Settings/Startup_Code/startup_S32K144.o
- .debug_abbrev  0x00000e05      0x101 ./Project_Settings/Startup_Code/startup.o
- .debug_abbrev  0x00000f06      0x171 ./FreeRTOS/portable/MemMang/heap_2.o
- .debug_abbrev  0x00001077      0x1c0 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
- .debug_abbrev  0x00001237      0x1ea ./FreeRTOS/timers.o
- .debug_abbrev  0x00001421      0x276 ./FreeRTOS/tasks.o
- .debug_abbrev  0x00001697      0x1d7 ./FreeRTOS/queue.o
- .debug_abbrev  0x0000186e       0xc1 ./FreeRTOS/list.o
- .debug_abbrev  0x0000192f      0x12d /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
- .debug_abbrev  0x00001a5c      0x126 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vprintf.o)
- .debug_abbrev  0x00001b82      0x150 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vsnprintf.o)
- .debug_abbrev  0x00001cd2       0x91 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
- .debug_abbrev  0x00001d63       0x95 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memcpy.o)
- .debug_abbrev  0x00001df8       0x62 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memset.o)
- .debug_abbrev  0x00001e5a       0x89 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strchr.o)
- .debug_abbrev  0x00001ee3       0x7a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcmp.o)
- .debug_abbrev  0x00001f5d       0x7a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strlen.o)
- .debug_abbrev  0x00001fd7      0x179 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwide.o)
- .debug_abbrev  0x00002150      0x28e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
- .debug_abbrev  0x000023de       0x85 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ctype_aeabi.o)
- .debug_abbrev  0x00002463      0x140 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
- .debug_abbrev  0x000025a3      0x107 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ansi_files.o)
- .debug_abbrev  0x000026aa      0x181 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
- .debug_abbrev  0x0000282b       0x5c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
- .debug_abbrev  0x00002887      0x132 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(mbstowcs_s.o)
- .debug_abbrev  0x000029b9      0x126 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(wctomb.o)
- .debug_abbrev  0x00002adf       0x78 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__filll_mem.o)
- .debug_abbrev  0x00002b57       0x95 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memchr.o)
- .debug_abbrev  0x00002bec       0x95 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__memrchr.o)
- .debug_abbrev  0x00002c81       0x96 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcpy.o)
- .debug_abbrev  0x00002d17       0x89 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strncpy.o)
- .debug_abbrev  0x00002da0       0xa6 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(raise.o)
- .debug_abbrev  0x00002e46       0xc6 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(signal.o)
- .debug_abbrev  0x00002f0c      0x142 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__buffer_io.o)
- .debug_abbrev  0x0000304e      0x15d /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
- .debug_abbrev  0x000031ab       0xf7 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(math_api.o)
- .debug_abbrev  0x000032a2       0xce /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(s_frexp.o)
- .debug_abbrev  0x00003370       0xae /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(gcc_ctor_dtor.o)
- .debug_abbrev  0x0000341e      0x1e2 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(__arm_eabi_init.o)
- .debug_abbrev  0x00003600       0x55 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(cxxabi_terminate_override.o)
- .debug_abbrev  0x00003655      0x137 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
- .debug_abbrev  0x0000378c      0x279 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
+.debug_abbrev   0x00000000     0x3ca6
+ .debug_abbrev  0x00000000      0x336 ./src/main.o
+ .debug_abbrev  0x00000336      0x173 ./src/convert.o
+ .debug_abbrev  0x000004a9      0x1f0 ./fatfs/ff.o
+ .debug_abbrev  0x00000699      0x129 ./fatfs/diskio.o
+ .debug_abbrev  0x000007c2       0xab ./fatfs/ccsbcs.o
+ .debug_abbrev  0x0000086d       0xc2 ./bl/clocks_and_modes.o
+ .debug_abbrev  0x0000092f      0x16d ./bl/bl.o
+ .debug_abbrev  0x00000a9c      0x244 ./bl/SPI_MSD0_Driver.o
+ .debug_abbrev  0x00000ce0      0x114 ./bl/LPUART.o
+ .debug_abbrev  0x00000df4      0x186 ./bl/FlexCAN.o
+ .debug_abbrev  0x00000f7a      0x118 ./Project_Settings/Startup_Code/system_S32K144.o
+ .debug_abbrev  0x00001092       0x14 ./Project_Settings/Startup_Code/startup_S32K144.o
+ .debug_abbrev  0x000010a6      0x101 ./Project_Settings/Startup_Code/startup.o
+ .debug_abbrev  0x000011a7      0x171 ./FreeRTOS/portable/MemMang/heap_2.o
+ .debug_abbrev  0x00001318      0x1c0 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+ .debug_abbrev  0x000014d8      0x1ea ./FreeRTOS/timers.o
+ .debug_abbrev  0x000016c2      0x276 ./FreeRTOS/tasks.o
+ .debug_abbrev  0x00001938      0x1d7 ./FreeRTOS/queue.o
+ .debug_abbrev  0x00001b0f       0xc1 ./FreeRTOS/list.o
+ .debug_abbrev  0x00001bd0      0x12d /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
+ .debug_abbrev  0x00001cfd      0x126 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vprintf.o)
+ .debug_abbrev  0x00001e23      0x150 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vsnprintf.o)
+ .debug_abbrev  0x00001f73       0x91 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
+ .debug_abbrev  0x00002004       0x95 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memcpy.o)
+ .debug_abbrev  0x00002099       0x62 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memset.o)
+ .debug_abbrev  0x000020fb       0x89 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strchr.o)
+ .debug_abbrev  0x00002184       0x7a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcmp.o)
+ .debug_abbrev  0x000021fe       0x7a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strlen.o)
+ .debug_abbrev  0x00002278      0x179 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwide.o)
+ .debug_abbrev  0x000023f1      0x28e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
+ .debug_abbrev  0x0000267f       0x85 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ctype_aeabi.o)
+ .debug_abbrev  0x00002704      0x140 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
+ .debug_abbrev  0x00002844      0x107 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ansi_files.o)
+ .debug_abbrev  0x0000294b      0x181 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
+ .debug_abbrev  0x00002acc       0x5c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
+ .debug_abbrev  0x00002b28      0x132 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(mbstowcs_s.o)
+ .debug_abbrev  0x00002c5a      0x126 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(wctomb.o)
+ .debug_abbrev  0x00002d80       0x78 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__filll_mem.o)
+ .debug_abbrev  0x00002df8       0x95 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memchr.o)
+ .debug_abbrev  0x00002e8d       0x95 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__memrchr.o)
+ .debug_abbrev  0x00002f22       0x96 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcpy.o)
+ .debug_abbrev  0x00002fb8       0x89 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strncpy.o)
+ .debug_abbrev  0x00003041       0xa6 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(raise.o)
+ .debug_abbrev  0x000030e7       0xc6 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(signal.o)
+ .debug_abbrev  0x000031ad      0x142 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__buffer_io.o)
+ .debug_abbrev  0x000032ef      0x15d /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
+ .debug_abbrev  0x0000344c       0xf7 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(math_api.o)
+ .debug_abbrev  0x00003543       0xce /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(s_frexp.o)
+ .debug_abbrev  0x00003611       0xae /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(gcc_ctor_dtor.o)
+ .debug_abbrev  0x000036bf      0x1e2 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(__arm_eabi_init.o)
+ .debug_abbrev  0x000038a1       0x55 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(cxxabi_terminate_override.o)
+ .debug_abbrev  0x000038f6      0x137 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
+ .debug_abbrev  0x00003a2d      0x279 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
 
-.debug_aranges  0x00000000     0x1138
+.debug_aranges  0x00000000     0x11e0
  .debug_aranges
-                0x00000000       0x70 ./src/main.o
+                0x00000000       0xd0 ./src/main.o
  .debug_aranges
-                0x00000070      0x190 ./src/convert.o
+                0x000000d0      0x190 ./src/convert.o
  .debug_aranges
-                0x00000200      0x1d8 ./fatfs/ff.o
+                0x00000260      0x1d8 ./fatfs/ff.o
  .debug_aranges
-                0x000003d8       0x48 ./fatfs/diskio.o
+                0x00000438       0x48 ./fatfs/diskio.o
  .debug_aranges
-                0x00000420       0x28 ./fatfs/ccsbcs.o
+                0x00000480       0x28 ./fatfs/ccsbcs.o
  .debug_aranges
-                0x00000448       0x30 ./bl/clocks_and_modes.o
+                0x000004a8       0x30 ./bl/clocks_and_modes.o
  .debug_aranges
-                0x00000478       0x58 ./bl/bl.o
+                0x000004d8       0x58 ./bl/bl.o
  .debug_aranges
-                0x000004d0       0xa0 ./bl/SPI_MSD0_Driver.o
+                0x00000530       0xa0 ./bl/SPI_MSD0_Driver.o
  .debug_aranges
-                0x00000570       0x30 ./bl/FlexCAN.o
+                0x000005d0       0x48 ./bl/LPUART.o
  .debug_aranges
-                0x000005a0       0x30 ./Project_Settings/Startup_Code/system_S32K144.o
+                0x00000618       0x30 ./bl/FlexCAN.o
  .debug_aranges
-                0x000005d0       0x20 ./Project_Settings/Startup_Code/startup_S32K144.o
+                0x00000648       0x30 ./Project_Settings/Startup_Code/system_S32K144.o
  .debug_aranges
-                0x000005f0       0x20 ./Project_Settings/Startup_Code/startup.o
+                0x00000678       0x20 ./Project_Settings/Startup_Code/startup_S32K144.o
  .debug_aranges
-                0x00000610       0x40 ./FreeRTOS/portable/MemMang/heap_2.o
+                0x00000698       0x20 ./Project_Settings/Startup_Code/startup.o
  .debug_aranges
-                0x00000650       0x80 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                0x000006b8       0x40 ./FreeRTOS/portable/MemMang/heap_2.o
  .debug_aranges
-                0x000006d0       0xa8 ./FreeRTOS/timers.o
+                0x000006f8       0x80 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
  .debug_aranges
-                0x00000778      0x1a8 ./FreeRTOS/tasks.o
+                0x00000778       0xa8 ./FreeRTOS/timers.o
  .debug_aranges
-                0x00000920       0xd0 ./FreeRTOS/queue.o
+                0x00000820      0x1a8 ./FreeRTOS/tasks.o
  .debug_aranges
-                0x000009f0       0x40 ./FreeRTOS/list.o
+                0x000009c8       0xd0 ./FreeRTOS/queue.o
  .debug_aranges
-                0x00000a30       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
+                0x00000a98       0x40 ./FreeRTOS/list.o
  .debug_aranges
-                0x00000a58       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vprintf.o)
+                0x00000ad8       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
  .debug_aranges
-                0x00000a80       0x30 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vsnprintf.o)
+                0x00000b00       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vprintf.o)
  .debug_aranges
-                0x00000ab0       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
+                0x00000b28       0x30 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vsnprintf.o)
  .debug_aranges
-                0x00000ad8       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memcpy.o)
+                0x00000b58       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
  .debug_aranges
-                0x00000af8       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memset.o)
+                0x00000b80       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memcpy.o)
  .debug_aranges
-                0x00000b18       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strchr.o)
+                0x00000ba0       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memset.o)
  .debug_aranges
-                0x00000b38       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcmp.o)
+                0x00000bc0       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strchr.o)
  .debug_aranges
-                0x00000b58       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strlen.o)
+                0x00000be0       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcmp.o)
  .debug_aranges
-                0x00000b78       0x30 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwide.o)
+                0x00000c00       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strlen.o)
  .debug_aranges
-                0x00000ba8       0x48 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
+                0x00000c20       0x30 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwide.o)
  .debug_aranges
-                0x00000bf0       0x88 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ctype_aeabi.o)
+                0x00000c50       0x48 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
  .debug_aranges
-                0x00000c78       0x40 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
+                0x00000c98       0x88 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ctype_aeabi.o)
  .debug_aranges
-                0x00000cb8       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ansi_files.o)
+                0x00000d20       0x40 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
  .debug_aranges
-                0x00000ce0       0x38 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
+                0x00000d60       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ansi_files.o)
  .debug_aranges
-                0x00000d18       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
+                0x00000d88       0x38 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
  .debug_aranges
-                0x00000d38       0x38 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(mbstowcs_s.o)
+                0x00000dc0       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
  .debug_aranges
-                0x00000d70       0x30 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(wctomb.o)
+                0x00000de0       0x38 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(mbstowcs_s.o)
  .debug_aranges
-                0x00000da0       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__filll_mem.o)
+                0x00000e18       0x30 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(wctomb.o)
  .debug_aranges
-                0x00000dc0       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memchr.o)
+                0x00000e48       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__filll_mem.o)
  .debug_aranges
-                0x00000de0       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__memrchr.o)
+                0x00000e68       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memchr.o)
  .debug_aranges
-                0x00000e00       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcpy.o)
+                0x00000e88       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__memrchr.o)
  .debug_aranges
-                0x00000e20       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strncpy.o)
+                0x00000ea8       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcpy.o)
  .debug_aranges
-                0x00000e40       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(raise.o)
+                0x00000ec8       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strncpy.o)
  .debug_aranges
-                0x00000e60       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(signal.o)
+                0x00000ee8       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(raise.o)
  .debug_aranges
-                0x00000e80       0x30 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__buffer_io.o)
+                0x00000f08       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(signal.o)
  .debug_aranges
-                0x00000eb0       0x30 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
+                0x00000f28       0x30 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__buffer_io.o)
  .debug_aranges
-                0x00000ee0       0x60 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(math_api.o)
+                0x00000f58       0x30 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
  .debug_aranges
-                0x00000f40       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(s_frexp.o)
+                0x00000f88       0x60 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(math_api.o)
  .debug_aranges
-                0x00000f60       0x30 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(gcc_ctor_dtor.o)
+                0x00000fe8       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(s_frexp.o)
  .debug_aranges
-                0x00000f90       0x60 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(__arm_eabi_init.o)
+                0x00001008       0x30 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(gcc_ctor_dtor.o)
  .debug_aranges
-                0x00000ff0       0x18 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(cxxabi_terminate_override.o)
+                0x00001038       0x60 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(__arm_eabi_init.o)
  .debug_aranges
-                0x00001008       0x50 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
+                0x00001098       0x18 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(cxxabi_terminate_override.o)
  .debug_aranges
-                0x00001058       0xe0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
+                0x000010b0       0x50 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
+ .debug_aranges
+                0x00001100       0xe0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
 
-.debug_ranges   0x00000000      0x900
- .debug_ranges  0x00000000       0x60 ./src/main.o
- .debug_ranges  0x00000060      0x180 ./src/convert.o
- .debug_ranges  0x000001e0      0x1c8 ./fatfs/ff.o
- .debug_ranges  0x000003a8       0x38 ./fatfs/diskio.o
- .debug_ranges  0x000003e0       0x18 ./fatfs/ccsbcs.o
- .debug_ranges  0x000003f8       0x20 ./bl/clocks_and_modes.o
- .debug_ranges  0x00000418       0x48 ./bl/bl.o
- .debug_ranges  0x00000460       0x90 ./bl/SPI_MSD0_Driver.o
- .debug_ranges  0x000004f0       0x20 ./bl/FlexCAN.o
- .debug_ranges  0x00000510       0x20 ./Project_Settings/Startup_Code/system_S32K144.o
- .debug_ranges  0x00000530       0x10 ./Project_Settings/Startup_Code/startup.o
- .debug_ranges  0x00000540       0x30 ./FreeRTOS/portable/MemMang/heap_2.o
- .debug_ranges  0x00000570       0x70 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
- .debug_ranges  0x000005e0       0x98 ./FreeRTOS/timers.o
- .debug_ranges  0x00000678      0x198 ./FreeRTOS/tasks.o
- .debug_ranges  0x00000810       0xc0 ./FreeRTOS/queue.o
- .debug_ranges  0x000008d0       0x30 ./FreeRTOS/list.o
+.debug_ranges   0x00000000      0x998
+ .debug_ranges  0x00000000       0xc0 ./src/main.o
+ .debug_ranges  0x000000c0      0x180 ./src/convert.o
+ .debug_ranges  0x00000240      0x1c8 ./fatfs/ff.o
+ .debug_ranges  0x00000408       0x38 ./fatfs/diskio.o
+ .debug_ranges  0x00000440       0x18 ./fatfs/ccsbcs.o
+ .debug_ranges  0x00000458       0x20 ./bl/clocks_and_modes.o
+ .debug_ranges  0x00000478       0x48 ./bl/bl.o
+ .debug_ranges  0x000004c0       0x90 ./bl/SPI_MSD0_Driver.o
+ .debug_ranges  0x00000550       0x38 ./bl/LPUART.o
+ .debug_ranges  0x00000588       0x20 ./bl/FlexCAN.o
+ .debug_ranges  0x000005a8       0x20 ./Project_Settings/Startup_Code/system_S32K144.o
+ .debug_ranges  0x000005c8       0x10 ./Project_Settings/Startup_Code/startup.o
+ .debug_ranges  0x000005d8       0x30 ./FreeRTOS/portable/MemMang/heap_2.o
+ .debug_ranges  0x00000608       0x70 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+ .debug_ranges  0x00000678       0x98 ./FreeRTOS/timers.o
+ .debug_ranges  0x00000710      0x198 ./FreeRTOS/tasks.o
+ .debug_ranges  0x000008a8       0xc0 ./FreeRTOS/queue.o
+ .debug_ranges  0x00000968       0x30 ./FreeRTOS/list.o
 
-.debug_macro    0x00000000    0x20351
- .debug_macro   0x00000000      0x246 ./src/main.o
- .debug_macro   0x00000246      0x886 ./src/main.o
- .debug_macro   0x00000acc       0x52 ./src/main.o
- .debug_macro   0x00000b1e       0xa0 ./src/main.o
- .debug_macro   0x00000bbe       0x16 ./src/main.o
- .debug_macro   0x00000bd4       0x64 ./src/main.o
- .debug_macro   0x00000c38      0x185 ./src/main.o
- .debug_macro   0x00000dbd      0x140 ./src/main.o
- .debug_macro   0x00000efd       0x16 ./src/main.o
- .debug_macro   0x00000f13       0x28 ./src/main.o
- .debug_macro   0x00000f3b       0x10 ./src/main.o
- .debug_macro   0x00000f4b       0x16 ./src/main.o
- .debug_macro   0x00000f61       0x16 ./src/main.o
- .debug_macro   0x00000f77       0x16 ./src/main.o
- .debug_macro   0x00000f8d       0x8b ./src/main.o
- .debug_macro   0x00001018       0x22 ./src/main.o
- .debug_macro   0x0000103a       0x10 ./src/main.o
- .debug_macro   0x0000104a       0x20 ./src/main.o
- .debug_macro   0x0000106a       0x10 ./src/main.o
- .debug_macro   0x0000107a       0x19 ./src/main.o
- .debug_macro   0x00001093       0x9d ./src/main.o
- .debug_macro   0x00001130      0x1af ./src/main.o
- .debug_macro   0x000012df     0xdf8d ./src/main.o
- .debug_macro   0x0000f26c       0xa0 ./src/main.o
- .debug_macro   0x0000f30c       0x97 ./src/main.o
- .debug_macro   0x0000f3a3       0xe7 ./src/main.o
- .debug_macro   0x0000f48a      0x175 ./src/main.o
- .debug_macro   0x0000f5ff      0x15d ./src/main.o
- .debug_macro   0x0000f75c       0xe4 ./src/main.o
- .debug_macro   0x0000f840       0x10 ./src/main.o
- .debug_macro   0x0000f850       0x1f ./src/main.o
- .debug_macro   0x0000f86f      0x345 ./src/main.o
- .debug_macro   0x0000fbb4       0xc0 ./src/main.o
- .debug_macro   0x0000fc74       0x8c ./src/main.o
- .debug_macro   0x0000fd00       0xb0 ./src/main.o
- .debug_macro   0x0000fdb0       0x7f ./src/main.o
- .debug_macro   0x0000fe2f       0xd2 ./src/main.o
- .debug_macro   0x0000ff01      0x177 ./src/convert.o
- .debug_macro   0x00010078      0x15b ./src/convert.o
- .debug_macro   0x000101d3       0x58 ./src/convert.o
- .debug_macro   0x0001022b       0xcc ./src/convert.o
- .debug_macro   0x000102f7      0x29b ./fatfs/ff.o
- .debug_macro   0x00010592       0x8e ./fatfs/ff.o
- .debug_macro   0x00010620      0x16e ./fatfs/diskio.o
- .debug_macro   0x0001078e       0x10 ./fatfs/diskio.o
- .debug_macro   0x0001079e       0x82 ./fatfs/diskio.o
- .debug_macro   0x00010820       0x54 ./fatfs/ccsbcs.o
- .debug_macro   0x00010874       0xb0 ./bl/clocks_and_modes.o
- .debug_macro   0x00010924      0x17b ./bl/bl.o
- .debug_macro   0x00010a9f     0xdfa2 ./bl/bl.o
- .debug_macro   0x0001ea41      0x157 ./bl/SPI_MSD0_Driver.o
- .debug_macro   0x0001eb98       0xbf ./bl/FlexCAN.o
- .debug_macro   0x0001ec57       0xe9 ./Project_Settings/Startup_Code/system_S32K144.o
- .debug_macro   0x0001ed40       0x10 ./Project_Settings/Startup_Code/system_S32K144.o
- .debug_macro   0x0001ed50       0x73 ./Project_Settings/Startup_Code/system_S32K144.o
- .debug_macro   0x0001edc3      0x978 ./Project_Settings/Startup_Code/system_S32K144.o
- .debug_macro   0x0001f73b       0x22 ./Project_Settings/Startup_Code/system_S32K144.o
- .debug_macro   0x0001f75d       0x22 ./Project_Settings/Startup_Code/system_S32K144.o
- .debug_macro   0x0001f77f       0xea ./Project_Settings/Startup_Code/startup.o
- .debug_macro   0x0001f869      0x179 ./FreeRTOS/portable/MemMang/heap_2.o
- .debug_macro   0x0001f9e2       0x2e ./FreeRTOS/portable/MemMang/heap_2.o
- .debug_macro   0x0001fa10      0x1f5 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
- .debug_macro   0x0001fc05      0x188 ./FreeRTOS/timers.o
- .debug_macro   0x0001fd8d       0x91 ./FreeRTOS/timers.o
- .debug_macro   0x0001fe1e      0x207 ./FreeRTOS/tasks.o
- .debug_macro   0x00020025       0x16 ./FreeRTOS/tasks.o
- .debug_macro   0x0002003b      0x1cb ./FreeRTOS/queue.o
- .debug_macro   0x00020206      0x14b ./FreeRTOS/list.o
+.debug_macro    0x00000000    0x2042f
+ .debug_macro   0x00000000      0x262 ./src/main.o
+ .debug_macro   0x00000262      0x886 ./src/main.o
+ .debug_macro   0x00000ae8       0x52 ./src/main.o
+ .debug_macro   0x00000b3a       0xa0 ./src/main.o
+ .debug_macro   0x00000bda       0x16 ./src/main.o
+ .debug_macro   0x00000bf0       0x64 ./src/main.o
+ .debug_macro   0x00000c54      0x185 ./src/main.o
+ .debug_macro   0x00000dd9      0x140 ./src/main.o
+ .debug_macro   0x00000f19       0x16 ./src/main.o
+ .debug_macro   0x00000f2f       0x28 ./src/main.o
+ .debug_macro   0x00000f57       0x10 ./src/main.o
+ .debug_macro   0x00000f67       0x16 ./src/main.o
+ .debug_macro   0x00000f7d       0x16 ./src/main.o
+ .debug_macro   0x00000f93       0x16 ./src/main.o
+ .debug_macro   0x00000fa9       0x8b ./src/main.o
+ .debug_macro   0x00001034       0x22 ./src/main.o
+ .debug_macro   0x00001056       0x10 ./src/main.o
+ .debug_macro   0x00001066       0x20 ./src/main.o
+ .debug_macro   0x00001086       0x10 ./src/main.o
+ .debug_macro   0x00001096       0x19 ./src/main.o
+ .debug_macro   0x000010af       0x9d ./src/main.o
+ .debug_macro   0x0000114c      0x1af ./src/main.o
+ .debug_macro   0x000012fb     0xdf8d ./src/main.o
+ .debug_macro   0x0000f288      0x175 ./src/main.o
+ .debug_macro   0x0000f3fd      0x15d ./src/main.o
+ .debug_macro   0x0000f55a       0xe4 ./src/main.o
+ .debug_macro   0x0000f63e       0x10 ./src/main.o
+ .debug_macro   0x0000f64e       0x1f ./src/main.o
+ .debug_macro   0x0000f66d      0x345 ./src/main.o
+ .debug_macro   0x0000f9b2       0xc0 ./src/main.o
+ .debug_macro   0x0000fa72       0x8c ./src/main.o
+ .debug_macro   0x0000fafe       0xb0 ./src/main.o
+ .debug_macro   0x0000fbae       0x7f ./src/main.o
+ .debug_macro   0x0000fc2d       0xa0 ./src/main.o
+ .debug_macro   0x0000fccd       0x97 ./src/main.o
+ .debug_macro   0x0000fd64       0xe7 ./src/main.o
+ .debug_macro   0x0000fe4b       0xd2 ./src/main.o
+ .debug_macro   0x0000ff1d      0x177 ./src/convert.o
+ .debug_macro   0x00010094      0x15b ./src/convert.o
+ .debug_macro   0x000101ef       0x58 ./src/convert.o
+ .debug_macro   0x00010247       0xcc ./src/convert.o
+ .debug_macro   0x00010313      0x29b ./fatfs/ff.o
+ .debug_macro   0x000105ae       0x8e ./fatfs/ff.o
+ .debug_macro   0x0001063c      0x16e ./fatfs/diskio.o
+ .debug_macro   0x000107aa       0x10 ./fatfs/diskio.o
+ .debug_macro   0x000107ba       0x82 ./fatfs/diskio.o
+ .debug_macro   0x0001083c       0x54 ./fatfs/ccsbcs.o
+ .debug_macro   0x00010890       0xb0 ./bl/clocks_and_modes.o
+ .debug_macro   0x00010940      0x189 ./bl/bl.o
+ .debug_macro   0x00010ac9     0xdfa2 ./bl/bl.o
+ .debug_macro   0x0001ea6b      0x157 ./bl/SPI_MSD0_Driver.o
+ .debug_macro   0x0001ebc2       0xb4 ./bl/LPUART.o
+ .debug_macro   0x0001ec76       0xbf ./bl/FlexCAN.o
+ .debug_macro   0x0001ed35       0xe9 ./Project_Settings/Startup_Code/system_S32K144.o
+ .debug_macro   0x0001ee1e       0x10 ./Project_Settings/Startup_Code/system_S32K144.o
+ .debug_macro   0x0001ee2e       0x73 ./Project_Settings/Startup_Code/system_S32K144.o
+ .debug_macro   0x0001eea1      0x978 ./Project_Settings/Startup_Code/system_S32K144.o
+ .debug_macro   0x0001f819       0x22 ./Project_Settings/Startup_Code/system_S32K144.o
+ .debug_macro   0x0001f83b       0x22 ./Project_Settings/Startup_Code/system_S32K144.o
+ .debug_macro   0x0001f85d       0xea ./Project_Settings/Startup_Code/startup.o
+ .debug_macro   0x0001f947      0x179 ./FreeRTOS/portable/MemMang/heap_2.o
+ .debug_macro   0x0001fac0       0x2e ./FreeRTOS/portable/MemMang/heap_2.o
+ .debug_macro   0x0001faee      0x1f5 ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+ .debug_macro   0x0001fce3      0x188 ./FreeRTOS/timers.o
+ .debug_macro   0x0001fe6b       0x91 ./FreeRTOS/timers.o
+ .debug_macro   0x0001fefc      0x207 ./FreeRTOS/tasks.o
+ .debug_macro   0x00020103       0x16 ./FreeRTOS/tasks.o
+ .debug_macro   0x00020119      0x1cb ./FreeRTOS/queue.o
+ .debug_macro   0x000202e4      0x14b ./FreeRTOS/list.o
 
-.debug_line     0x00000000     0x8f31
- .debug_line    0x00000000      0x7ac ./src/main.o
- .debug_line    0x000007ac      0x7ad ./src/convert.o
- .debug_line    0x00000f59     0x1363 ./fatfs/ff.o
- .debug_line    0x000022bc      0x37e ./fatfs/diskio.o
- .debug_line    0x0000263a      0x146 ./fatfs/ccsbcs.o
- .debug_line    0x00002780      0x23a ./bl/clocks_and_modes.o
- .debug_line    0x000029ba      0x33c ./bl/bl.o
- .debug_line    0x00002cf6      0x5f7 ./bl/SPI_MSD0_Driver.o
- .debug_line    0x000032ed      0x270 ./bl/FlexCAN.o
- .debug_line    0x0000355d      0x2b0 ./Project_Settings/Startup_Code/system_S32K144.o
- .debug_line    0x0000380d       0x83 ./Project_Settings/Startup_Code/startup_S32K144.o
- .debug_line    0x00003890      0x273 ./Project_Settings/Startup_Code/startup.o
- .debug_line    0x00003b03      0x4cf ./FreeRTOS/portable/MemMang/heap_2.o
- .debug_line    0x00003fd2      0x5ea ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
- .debug_line    0x000045bc      0x716 ./FreeRTOS/timers.o
- .debug_line    0x00004cd2      0xf72 ./FreeRTOS/tasks.o
- .debug_line    0x00005c44      0xb46 ./FreeRTOS/queue.o
- .debug_line    0x0000678a      0x47d ./FreeRTOS/list.o
- .debug_line    0x00006c07       0xda /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
- .debug_line    0x00006ce1       0xde /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vprintf.o)
- .debug_line    0x00006dbf      0x10b /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vsnprintf.o)
- .debug_line    0x00006eca       0xa4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
- .debug_line    0x00006f6e       0x88 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memcpy.o)
- .debug_line    0x00006ff6       0x8f /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memset.o)
- .debug_line    0x00007085       0x7c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strchr.o)
- .debug_line    0x00007101       0x7c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcmp.o)
- .debug_line    0x0000717d       0x84 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strlen.o)
- .debug_line    0x00007201       0xe9 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwide.o)
- .debug_line    0x000072ea      0x566 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
- .debug_line    0x00007850      0x180 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ctype_aeabi.o)
- .debug_line    0x000079d0       0xd1 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
- .debug_line    0x00007aa1       0xcb /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ansi_files.o)
- .debug_line    0x00007b6c      0x188 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
- .debug_line    0x00007cf4       0x77 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
- .debug_line    0x00007d6b      0x16e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(mbstowcs_s.o)
- .debug_line    0x00007ed9       0xe1 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(wctomb.o)
- .debug_line    0x00007fba       0xb2 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__filll_mem.o)
- .debug_line    0x0000806c       0x93 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memchr.o)
- .debug_line    0x000080ff       0x8f /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__memrchr.o)
- .debug_line    0x0000818e       0x7c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcpy.o)
- .debug_line    0x0000820a       0x8b /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strncpy.o)
- .debug_line    0x00008295       0x8a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(raise.o)
- .debug_line    0x0000831f       0x8a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(signal.o)
- .debug_line    0x000083a9       0xf9 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__buffer_io.o)
- .debug_line    0x000084a2      0x1b1 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
- .debug_line    0x00008653      0x177 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(math_api.o)
- .debug_line    0x000087ca       0xbd /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(s_frexp.o)
- .debug_line    0x00008887       0x74 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(gcc_ctor_dtor.o)
- .debug_line    0x000088fb      0x11b /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(__arm_eabi_init.o)
- .debug_line    0x00008a16       0x66 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(cxxabi_terminate_override.o)
- .debug_line    0x00008a7c      0x145 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
- .debug_line    0x00008bc1      0x370 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
+.debug_line     0x00000000     0x9368
+ .debug_line    0x00000000      0x973 ./src/main.o
+ .debug_line    0x00000973      0x7ad ./src/convert.o
+ .debug_line    0x00001120     0x1363 ./fatfs/ff.o
+ .debug_line    0x00002483      0x37e ./fatfs/diskio.o
+ .debug_line    0x00002801      0x146 ./fatfs/ccsbcs.o
+ .debug_line    0x00002947      0x23a ./bl/clocks_and_modes.o
+ .debug_line    0x00002b81      0x35d ./bl/bl.o
+ .debug_line    0x00002ede      0x5f7 ./bl/SPI_MSD0_Driver.o
+ .debug_line    0x000034d5      0x24f ./bl/LPUART.o
+ .debug_line    0x00003724      0x270 ./bl/FlexCAN.o
+ .debug_line    0x00003994      0x2b0 ./Project_Settings/Startup_Code/system_S32K144.o
+ .debug_line    0x00003c44       0x83 ./Project_Settings/Startup_Code/startup_S32K144.o
+ .debug_line    0x00003cc7      0x273 ./Project_Settings/Startup_Code/startup.o
+ .debug_line    0x00003f3a      0x4cf ./FreeRTOS/portable/MemMang/heap_2.o
+ .debug_line    0x00004409      0x5ea ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+ .debug_line    0x000049f3      0x716 ./FreeRTOS/timers.o
+ .debug_line    0x00005109      0xf72 ./FreeRTOS/tasks.o
+ .debug_line    0x0000607b      0xb46 ./FreeRTOS/queue.o
+ .debug_line    0x00006bc1      0x47d ./FreeRTOS/list.o
+ .debug_line    0x0000703e       0xda /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
+ .debug_line    0x00007118       0xde /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vprintf.o)
+ .debug_line    0x000071f6      0x10b /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vsnprintf.o)
+ .debug_line    0x00007301       0xa4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
+ .debug_line    0x000073a5       0x88 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memcpy.o)
+ .debug_line    0x0000742d       0x8f /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memset.o)
+ .debug_line    0x000074bc       0x7c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strchr.o)
+ .debug_line    0x00007538       0x7c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcmp.o)
+ .debug_line    0x000075b4       0x84 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strlen.o)
+ .debug_line    0x00007638       0xe9 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwide.o)
+ .debug_line    0x00007721      0x566 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
+ .debug_line    0x00007c87      0x180 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ctype_aeabi.o)
+ .debug_line    0x00007e07       0xd1 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
+ .debug_line    0x00007ed8       0xcb /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ansi_files.o)
+ .debug_line    0x00007fa3      0x188 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
+ .debug_line    0x0000812b       0x77 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
+ .debug_line    0x000081a2      0x16e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(mbstowcs_s.o)
+ .debug_line    0x00008310       0xe1 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(wctomb.o)
+ .debug_line    0x000083f1       0xb2 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__filll_mem.o)
+ .debug_line    0x000084a3       0x93 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memchr.o)
+ .debug_line    0x00008536       0x8f /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__memrchr.o)
+ .debug_line    0x000085c5       0x7c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcpy.o)
+ .debug_line    0x00008641       0x8b /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strncpy.o)
+ .debug_line    0x000086cc       0x8a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(raise.o)
+ .debug_line    0x00008756       0x8a /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(signal.o)
+ .debug_line    0x000087e0       0xf9 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__buffer_io.o)
+ .debug_line    0x000088d9      0x1b1 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
+ .debug_line    0x00008a8a      0x177 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(math_api.o)
+ .debug_line    0x00008c01       0xbd /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(s_frexp.o)
+ .debug_line    0x00008cbe       0x74 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(gcc_ctor_dtor.o)
+ .debug_line    0x00008d32      0x11b /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(__arm_eabi_init.o)
+ .debug_line    0x00008e4d       0x66 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(cxxabi_terminate_override.o)
+ .debug_line    0x00008eb3      0x145 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
+ .debug_line    0x00008ff8      0x370 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
 
-.debug_str      0x00000000    0x6ed3a
- .debug_str     0x00000000    0x64133 ./src/main.o
-                              0x64255 (size before relaxing)
- .debug_str     0x00064133      0x292 ./src/convert.o
+.debug_str      0x00000000    0x6f4cf
+ .debug_str     0x00000000    0x642e1 ./src/main.o
+                              0x6442e (size before relaxing)
+ .debug_str     0x000642e1      0x292 ./src/convert.o
                                0x5721 (size before relaxing)
- .debug_str     0x000643c5      0xcd6 ./fatfs/ff.o
+ .debug_str     0x00064573      0xcd6 ./fatfs/ff.o
                                0x3ec4 (size before relaxing)
- .debug_str     0x0006509b      0x2d7 ./fatfs/diskio.o
+ .debug_str     0x00065249      0x2d7 ./fatfs/diskio.o
                               0x5e9ea (size before relaxing)
- .debug_str     0x00065372       0x47 ./fatfs/ccsbcs.o
+ .debug_str     0x00065520       0x47 ./fatfs/ccsbcs.o
                                0x2fc5 (size before relaxing)
- .debug_str     0x000653b9      0x113 ./bl/clocks_and_modes.o
+ .debug_str     0x00065567       0xf1 ./bl/clocks_and_modes.o
                               0x5ddef (size before relaxing)
- .debug_str     0x000654cc      0x17d ./bl/bl.o
-                              0x5e5e0 (size before relaxing)
- .debug_str     0x00065649      0x1f0 ./bl/SPI_MSD0_Driver.o
+ .debug_str     0x00065658      0x6fc ./bl/bl.o
+                              0x5ebab (size before relaxing)
+ .debug_str     0x00065d54      0x1ea ./bl/SPI_MSD0_Driver.o
                               0x5e915 (size before relaxing)
- .debug_str     0x00065839      0x1ac ./bl/FlexCAN.o
-                              0x5ecee (size before relaxing)
- .debug_str     0x000659e5     0x47dd ./Project_Settings/Startup_Code/system_S32K144.o
+ .debug_str     0x00065f3e       0x93 ./bl/LPUART.o
+                              0x5ddce (size before relaxing)
+ .debug_str     0x00065fd1      0x1a9 ./bl/FlexCAN.o
+                              0x5eceb (size before relaxing)
+ .debug_str     0x0006617a     0x47dd ./Project_Settings/Startup_Code/system_S32K144.o
                               0x62585 (size before relaxing)
- .debug_str     0x0006a1c2      0x120 ./Project_Settings/Startup_Code/startup.o
+ .debug_str     0x0006a957      0x120 ./Project_Settings/Startup_Code/startup.o
                               0x624bc (size before relaxing)
- .debug_str     0x0006a2e2      0x44e ./FreeRTOS/portable/MemMang/heap_2.o
-                               0x7b0d (size before relaxing)
- .debug_str     0x0006a730      0x83a ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
-                               0x7f22 (size before relaxing)
- .debug_str     0x0006af6a      0xcb2 ./FreeRTOS/timers.o
-                               0x8f26 (size before relaxing)
- .debug_str     0x0006bc1c     0x10e3 ./FreeRTOS/tasks.o
-                               0x9230 (size before relaxing)
- .debug_str     0x0006ccff      0x5aa ./FreeRTOS/queue.o
-                               0x898b (size before relaxing)
- .debug_str     0x0006d2a9       0x9c ./FreeRTOS/list.o
-                               0x72c4 (size before relaxing)
- .debug_str     0x0006d345      0x2e9 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
+ .debug_str     0x0006aa77      0x44e ./FreeRTOS/portable/MemMang/heap_2.o
+                               0x7acb (size before relaxing)
+ .debug_str     0x0006aec5      0x83a ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+                               0x7ee0 (size before relaxing)
+ .debug_str     0x0006b6ff      0xcb2 ./FreeRTOS/timers.o
+                               0x8ee4 (size before relaxing)
+ .debug_str     0x0006c3b1     0x10e3 ./FreeRTOS/tasks.o
+                               0x91ee (size before relaxing)
+ .debug_str     0x0006d494      0x5aa ./FreeRTOS/queue.o
+                               0x8949 (size before relaxing)
+ .debug_str     0x0006da3e       0x9c ./FreeRTOS/list.o
+                               0x7282 (size before relaxing)
+ .debug_str     0x0006dada      0x2e9 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
                                 0x406 (size before relaxing)
- .debug_str     0x0006d62e       0x23 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vprintf.o)
+ .debug_str     0x0006ddc3       0x23 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vprintf.o)
                                 0x408 (size before relaxing)
- .debug_str     0x0006d651       0x7c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vsnprintf.o)
+ .debug_str     0x0006dde6       0x7c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vsnprintf.o)
                                 0x468 (size before relaxing)
- .debug_str     0x0006d6cd       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
+ .debug_str     0x0006de62       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
                                 0x24e (size before relaxing)
- .debug_str     0x0006d701       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memcpy.o)
+ .debug_str     0x0006de96       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memcpy.o)
                                 0x229 (size before relaxing)
- .debug_str     0x0006d71d       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memset.o)
+ .debug_str     0x0006deb2       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memset.o)
                                 0x231 (size before relaxing)
- .debug_str     0x0006d739       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strchr.o)
+ .debug_str     0x0006dece       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strchr.o)
                                 0x228 (size before relaxing)
- .debug_str     0x0006d755       0x2e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcmp.o)
+ .debug_str     0x0006deea       0x2e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcmp.o)
                                 0x243 (size before relaxing)
- .debug_str     0x0006d783       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strlen.o)
+ .debug_str     0x0006df18       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strlen.o)
                                 0x231 (size before relaxing)
- .debug_str     0x0006d79f       0xb1 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwide.o)
+ .debug_str     0x0006df34       0xb1 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwide.o)
                                 0x4a2 (size before relaxing)
- .debug_str     0x0006d850      0x35b /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
+ .debug_str     0x0006dfe5      0x35b /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
                                 0x820 (size before relaxing)
- .debug_str     0x0006dbab       0x95 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ctype_aeabi.o)
+ .debug_str     0x0006e340       0x95 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ctype_aeabi.o)
                                 0x2ad (size before relaxing)
- .debug_str     0x0006dc40       0xd0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
+ .debug_str     0x0006e3d5       0xd0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
                                 0x2e4 (size before relaxing)
- .debug_str     0x0006dd10      0x140 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ansi_files.o)
+ .debug_str     0x0006e4a5      0x140 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ansi_files.o)
                                 0x59b (size before relaxing)
- .debug_str     0x0006de50      0x183 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
+ .debug_str     0x0006e5e5      0x183 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
                                 0x65d (size before relaxing)
- .debug_str     0x0006dfd3       0x19 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
+ .debug_str     0x0006e768       0x19 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
                                 0x230 (size before relaxing)
- .debug_str     0x0006dfec       0x69 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(mbstowcs_s.o)
+ .debug_str     0x0006e781       0x69 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(mbstowcs_s.o)
                                 0x454 (size before relaxing)
- .debug_str     0x0006e055       0x2b /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(wctomb.o)
+ .debug_str     0x0006e7ea       0x2b /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(wctomb.o)
                                 0x3f8 (size before relaxing)
- .debug_str     0x0006e080       0x25 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__filll_mem.o)
+ .debug_str     0x0006e815       0x25 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__filll_mem.o)
                                 0x243 (size before relaxing)
- .debug_str     0x0006e0a5       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memchr.o)
+ .debug_str     0x0006e83a       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memchr.o)
                                 0x239 (size before relaxing)
- .debug_str     0x0006e0c1       0x22 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__memrchr.o)
+ .debug_str     0x0006e856       0x22 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__memrchr.o)
                                 0x236 (size before relaxing)
- .debug_str     0x0006e0e3       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcpy.o)
+ .debug_str     0x0006e878       0x1c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcpy.o)
                                 0x233 (size before relaxing)
- .debug_str     0x0006e0ff       0x1e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strncpy.o)
+ .debug_str     0x0006e894       0x1e /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strncpy.o)
                                 0x22b (size before relaxing)
- .debug_str     0x0006e11d       0x38 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(raise.o)
+ .debug_str     0x0006e8b2       0x38 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(raise.o)
                                 0x252 (size before relaxing)
- .debug_str     0x0006e155       0x31 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(signal.o)
+ .debug_str     0x0006e8ea       0x31 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(signal.o)
                                 0x26a (size before relaxing)
- .debug_str     0x0006e186       0x81 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__buffer_io.o)
+ .debug_str     0x0006e91b       0x81 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__buffer_io.o)
                                 0x48c (size before relaxing)
- .debug_str     0x0006e207       0x93 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
+ .debug_str     0x0006e99c       0x93 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
                                 0x30a (size before relaxing)
- .debug_str     0x0006e29a       0xe5 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(math_api.o)
+ .debug_str     0x0006ea2f       0xe5 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(math_api.o)
                                 0x319 (size before relaxing)
- .debug_str     0x0006e37f       0x24 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(s_frexp.o)
+ .debug_str     0x0006eb14       0x24 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(s_frexp.o)
                                 0x24e (size before relaxing)
- .debug_str     0x0006e3a3      0x2a8 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(gcc_ctor_dtor.o)
+ .debug_str     0x0006eb38      0x2a8 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(gcc_ctor_dtor.o)
                                 0x2b1 (size before relaxing)
- .debug_str     0x0006e64b      0x108 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(__arm_eabi_init.o)
+ .debug_str     0x0006ede0      0x108 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(__arm_eabi_init.o)
                                 0x2e2 (size before relaxing)
- .debug_str     0x0006e753      0x227 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(cxxabi_terminate_override.o)
+ .debug_str     0x0006eee8      0x227 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(cxxabi_terminate_override.o)
                                 0x270 (size before relaxing)
- .debug_str     0x0006e97a       0x9b /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
+ .debug_str     0x0006f10f       0x9b /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
                                 0x2cf (size before relaxing)
- .debug_str     0x0006ea15      0x325 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
+ .debug_str     0x0006f1aa      0x325 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
                                 0x715 (size before relaxing)
 
 .comment        0x00000000       0x70
@@ -3599,6 +3726,7 @@ OUTPUT(dp1000.elf elf32-littlearm)
  .comment       0x00000000       0x71 ./bl/clocks_and_modes.o
  .comment       0x00000000       0x71 ./bl/bl.o
  .comment       0x00000000       0x71 ./bl/SPI_MSD0_Driver.o
+ .comment       0x00000000       0x71 ./bl/LPUART.o
  .comment       0x00000000       0x71 ./bl/FlexCAN.o
  .comment       0x00000000       0x71 ./Project_Settings/Startup_Code/system_S32K144.o
  .comment       0x00000000       0x71 ./Project_Settings/Startup_Code/startup.o
@@ -3643,61 +3771,62 @@ OUTPUT(dp1000.elf elf32-littlearm)
  .comment       0x00000000       0x71 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
  .comment       0x00000000       0x71 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
 
-.debug_frame    0x00000000     0x3658
- .debug_frame   0x00000000      0x1a4 ./src/main.o
- .debug_frame   0x000001a4      0x778 ./src/convert.o
- .debug_frame   0x0000091c      0x84c ./fatfs/ff.o
- .debug_frame   0x00001168       0xe8 ./fatfs/diskio.o
- .debug_frame   0x00001250       0x60 ./fatfs/ccsbcs.o
- .debug_frame   0x000012b0       0x70 ./bl/clocks_and_modes.o
- .debug_frame   0x00001320      0x11c ./bl/bl.o
- .debug_frame   0x0000143c      0x29c ./bl/SPI_MSD0_Driver.o
- .debug_frame   0x000016d8       0x88 ./bl/FlexCAN.o
- .debug_frame   0x00001760       0x80 ./Project_Settings/Startup_Code/system_S32K144.o
- .debug_frame   0x000017e0       0x38 ./Project_Settings/Startup_Code/startup.o
- .debug_frame   0x00001818       0xc0 ./FreeRTOS/portable/MemMang/heap_2.o
- .debug_frame   0x000018d8      0x19c ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
- .debug_frame   0x00001a74      0x2a4 ./FreeRTOS/timers.o
- .debug_frame   0x00001d18      0x72c ./FreeRTOS/tasks.o
- .debug_frame   0x00002444      0x358 ./FreeRTOS/queue.o
- .debug_frame   0x0000279c       0xd8 ./FreeRTOS/list.o
- .debug_frame   0x00002874       0x4c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
- .debug_frame   0x000028c0       0x3c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vprintf.o)
- .debug_frame   0x000028fc       0x60 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vsnprintf.o)
- .debug_frame   0x0000295c       0x3c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
- .debug_frame   0x00002998       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memcpy.o)
- .debug_frame   0x000029c0       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memset.o)
- .debug_frame   0x000029e8       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strchr.o)
- .debug_frame   0x00002a08       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcmp.o)
- .debug_frame   0x00002a28       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strlen.o)
- .debug_frame   0x00002a48       0x40 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwide.o)
- .debug_frame   0x00002a88       0xf8 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
- .debug_frame   0x00002b80       0xf0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ctype_aeabi.o)
- .debug_frame   0x00002c70       0x68 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
- .debug_frame   0x00002cd8       0x48 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ansi_files.o)
- .debug_frame   0x00002d20       0x74 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
- .debug_frame   0x00002d94       0x2c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
- .debug_frame   0x00002dc0       0x94 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(mbstowcs_s.o)
- .debug_frame   0x00002e54       0x40 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(wctomb.o)
- .debug_frame   0x00002e94       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__filll_mem.o)
- .debug_frame   0x00002ebc       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memchr.o)
- .debug_frame   0x00002ee4       0x2c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__memrchr.o)
- .debug_frame   0x00002f10       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcpy.o)
- .debug_frame   0x00002f30       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strncpy.o)
- .debug_frame   0x00002f58       0x2c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(raise.o)
- .debug_frame   0x00002f84       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(signal.o)
- .debug_frame   0x00002fa4       0x58 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__buffer_io.o)
- .debug_frame   0x00002ffc       0x90 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
- .debug_frame   0x0000308c       0xd4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(math_api.o)
- .debug_frame   0x00003160       0x2c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(s_frexp.o)
- .debug_frame   0x0000318c       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_aeabi_uldivmod.o)
- .debug_frame   0x000031b4       0x50 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(bpabi.o)
- .debug_frame   0x00003204       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_divdi3.o)
- .debug_frame   0x00003238       0x30 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_udivdi3.o)
- .debug_frame   0x00003268       0x50 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(gcc_ctor_dtor.o)
- .debug_frame   0x000032b8       0xbc /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(__arm_eabi_init.o)
- .debug_frame   0x00003374       0x90 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
- .debug_frame   0x00003404      0x254 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
+.debug_frame    0x00000000     0x38e0
+ .debug_frame   0x00000000      0x350 ./src/main.o
+ .debug_frame   0x00000350      0x778 ./src/convert.o
+ .debug_frame   0x00000ac8      0x84c ./fatfs/ff.o
+ .debug_frame   0x00001314       0xe8 ./fatfs/diskio.o
+ .debug_frame   0x000013fc       0x60 ./fatfs/ccsbcs.o
+ .debug_frame   0x0000145c       0x70 ./bl/clocks_and_modes.o
+ .debug_frame   0x000014cc      0x11c ./bl/bl.o
+ .debug_frame   0x000015e8      0x29c ./bl/SPI_MSD0_Driver.o
+ .debug_frame   0x00001884       0xdc ./bl/LPUART.o
+ .debug_frame   0x00001960       0x88 ./bl/FlexCAN.o
+ .debug_frame   0x000019e8       0x80 ./Project_Settings/Startup_Code/system_S32K144.o
+ .debug_frame   0x00001a68       0x38 ./Project_Settings/Startup_Code/startup.o
+ .debug_frame   0x00001aa0       0xc0 ./FreeRTOS/portable/MemMang/heap_2.o
+ .debug_frame   0x00001b60      0x19c ./FreeRTOS/portable/GCC/ARM_CM4F/port.o
+ .debug_frame   0x00001cfc      0x2a4 ./FreeRTOS/timers.o
+ .debug_frame   0x00001fa0      0x72c ./FreeRTOS/tasks.o
+ .debug_frame   0x000026cc      0x358 ./FreeRTOS/queue.o
+ .debug_frame   0x00002a24       0xd8 ./FreeRTOS/list.o
+ .debug_frame   0x00002afc       0x4c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)
+ .debug_frame   0x00002b48       0x3c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vprintf.o)
+ .debug_frame   0x00002b84       0x60 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(vsnprintf.o)
+ .debug_frame   0x00002be4       0x3c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(exit.o)
+ .debug_frame   0x00002c20       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memcpy.o)
+ .debug_frame   0x00002c48       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memset.o)
+ .debug_frame   0x00002c70       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strchr.o)
+ .debug_frame   0x00002c90       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcmp.o)
+ .debug_frame   0x00002cb0       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strlen.o)
+ .debug_frame   0x00002cd0       0x40 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwide.o)
+ .debug_frame   0x00002d10       0xf8 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__printformat.o)
+ .debug_frame   0x00002e08       0xf0 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ctype_aeabi.o)
+ .debug_frame   0x00002ef8       0x68 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(secure_error.o)
+ .debug_frame   0x00002f60       0x48 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(ansi_files.o)
+ .debug_frame   0x00002fa8       0x74 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(fwrite.o)
+ .debug_frame   0x0000301c       0x2c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(abort.o)
+ .debug_frame   0x00003048       0x94 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(mbstowcs_s.o)
+ .debug_frame   0x000030dc       0x40 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(wctomb.o)
+ .debug_frame   0x0000311c       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__filll_mem.o)
+ .debug_frame   0x00003144       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(memchr.o)
+ .debug_frame   0x0000316c       0x2c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__memrchr.o)
+ .debug_frame   0x00003198       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strcpy.o)
+ .debug_frame   0x000031b8       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(strncpy.o)
+ .debug_frame   0x000031e0       0x2c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(raise.o)
+ .debug_frame   0x0000320c       0x20 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(signal.o)
+ .debug_frame   0x0000322c       0x58 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(__buffer_io.o)
+ .debug_frame   0x00003284       0x90 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(ansi_fp.o)
+ .debug_frame   0x00003314       0xd4 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(math_api.o)
+ .debug_frame   0x000033e8       0x2c /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libm.a(s_frexp.o)
+ .debug_frame   0x00003414       0x28 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_aeabi_uldivmod.o)
+ .debug_frame   0x0000343c       0x50 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(bpabi.o)
+ .debug_frame   0x0000348c       0x34 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_divdi3.o)
+ .debug_frame   0x000034c0       0x30 /home/houxd/prog/NXP/S32DS_ARM_v2.0/Cross_Tools/gcc-arm-none-eabi-4_9/bin/../lib/gcc/arm-none-eabi/4.9.3/armv7e-m/fpu/libgcc.a(_udivdi3.o)
+ .debug_frame   0x000034f0       0x50 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(gcc_ctor_dtor.o)
+ .debug_frame   0x00003540       0xbc /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/librt.a(__arm_eabi_init.o)
+ .debug_frame   0x000035fc       0x90 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_console_io.o)
+ .debug_frame   0x0000368c      0x254 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libhosted.a(semihosted_file_io.o)
 
 .debug_loc      0x00000000     0x4d00
  .debug_loc     0x00000000       0x63 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/lib/armv7e-m/fpu/libc99.a(sprintf.o)

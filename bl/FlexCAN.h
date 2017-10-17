@@ -8,13 +8,13 @@
 #define FLEXCAN_H_
 
 #include <stdint.h>
-extern void FLEXCAN0_init(int port, uint32_t ID, uint32_t bps);
-extern void FLEXCAN0_transmit_msg(
+extern void FLEXCAN_init(int port, uint32_t ID, uint32_t bps);
+extern void FLEXCAN_transmit_msg(
 		int port,
 		uint32_t TxID,
 		uint32_t TxLENGTH,
 		const uint8_t TxDATA[8]);
-extern int FLEXCAN0_receive_msg(
+extern int FLEXCAN_receive_msg(
 		int port,
 		uint32_t *RxLENGTH, /* Recieved message number of data bytes */
 		uint8_t RxDATA[8]

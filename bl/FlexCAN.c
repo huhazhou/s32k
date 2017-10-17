@@ -14,7 +14,7 @@ CAN_Type *CAN[3] = {CAN0,CAN1,CAN2};
 int PCC_FlexCAN_INDEX[3] = {PCC_FlexCAN0_INDEX,PCC_FlexCAN1_INDEX,PCC_FlexCAN2_INDEX};
 
 
-void FLEXCAN0_init(int port,uint32_t ID, uint32_t bps)
+void FLEXCAN_init(int port,uint32_t ID, uint32_t bps)
 {
 #define MSG_BUF_SIZE  4    /* Msg Buffer Size. (CAN 2.0AB: 2 hdr +  2 data= 4 words) */
 	uint32_t i = 0;
@@ -62,7 +62,7 @@ void FLEXCAN0_init(int port,uint32_t ID, uint32_t bps)
 	/* Good practice: wait for NOTRDY to clear (module ready)  */
 }
 
-void FLEXCAN0_transmit_msg(
+void FLEXCAN_transmit_msg(
 		int port,
 		uint32_t TxID,
 		uint32_t TxLENGTH,
@@ -80,7 +80,7 @@ void FLEXCAN0_transmit_msg(
 	/* DLC = 8 bytes */
 }
 
-int FLEXCAN0_receive_msg(
+int FLEXCAN_receive_msg(
 		int port,
 		//uint32_t *RxID, /* Received message ID */
 		uint32_t *RxLENGTH, /* Recieved message number of data bytes */

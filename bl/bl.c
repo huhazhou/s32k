@@ -20,9 +20,21 @@ void WDOG_disable(void) {
 }
 
 void NVIC_init_IRQs (void) {
-	  S32_NVIC->ICPR[1] = 1 << (48 % 32);  /* IRQ48-LPIT0 ch0: clr any pending IRQ*/
-	  S32_NVIC->ISER[1] = 1 << (48 % 32);  /* IRQ48-LPIT0 ch0: enable IRQ */
-	  S32_NVIC->IP[48] = 0xA;              /* IRQ48-LPIT0 ch0: priority 10 of 0-15*/
+	S32_NVIC->ICPR[1] = 1 << (LPUART0_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: clr any pending IRQ*/
+	S32_NVIC->ISER[1] = 1 << (LPUART0_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: enable IRQ */
+	S32_NVIC->IP[LPUART0_RxTx_IRQn] =0x0f; /* IRQ48-LPIT0 ch0: priority 10 of 0-15*/
+
+	S32_NVIC->ICPR[1] = 1 << (LPUART1_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: clr any pending IRQ*/
+	S32_NVIC->ISER[1] = 1 << (LPUART1_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: enable IRQ */
+	S32_NVIC->IP[LPUART1_RxTx_IRQn] =0x0f; /* IRQ48-LPIT0 ch0: priority 10 of 0-15*/
+
+	S32_NVIC->ICPR[1] = 1 << (LPUART2_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: clr any pending IRQ*/
+	S32_NVIC->ISER[1] = 1 << (LPUART2_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: enable IRQ */
+	S32_NVIC->IP[LPUART2_RxTx_IRQn] =0x0f; /* IRQ48-LPIT0 ch0: priority 10 of 0-15*/
+
+//	  S32_NVIC->ICPR[1] = 1 << (48 % 32);  /* IRQ48-LPIT0 ch0: clr any pending IRQ*/
+//	  S32_NVIC->ISER[1] = 1 << (48 % 32);  /* IRQ48-LPIT0 ch0: enable IRQ */
+//	  S32_NVIC->IP[48] = 0xA;              /* IRQ48-LPIT0 ch0: priority 10 of 0-15*/
 }
 
 void LPIT0_init (void) {
@@ -49,23 +61,45 @@ void LPIT0_init (void) {
 void PORT_init (void) {
 	//PD8 for buzzer
 	PCC->PCCn[PCC_PORTD_INDEX] = PCC_PCCn_CGC_MASK; /* Enable clock for PORT D */
-	PTD->PDDR |= 1 << BUZZER_PTD8; /* Port D8:  Data Direction= output */
-	PORTD->PCR[BUZZER_PTD8] = 0x00000100; /* Port D8:  MUX = ALT1, GPIO (to blue LED on EVB) */
+	PTD->PDDR |= 1 << BUZZER_PTD8; 					/* Port D8:  Data Direction= output */
+	PORTD->PCR[BUZZER_PTD8] = 0x00000100;		 /* Port D8:  MUX = ALT1, GPIO (to blue LED on EVB) */
 	//Buzzer init low for disable
 	PTD-> PCOR |= 1<<BUZZER_PTD8;
 
-
+	//can0
 	PCC->PCCn[PCC_PORTC_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTE */
 	PORTC->PCR[2] |= PORT_PCR_MUX(3); /* Port E4: MUX = ALT5, CAN0_RX */
 	PORTC->PCR[3] |= PORT_PCR_MUX(3); /* Port E5: MUX = ALT5, CAN0_TX */
-
+	//can1
 	PCC->PCCn[PCC_PORTC_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTE */
 	PORTC->PCR[6] |= PORT_PCR_MUX(3); /* Port E4: MUX = ALT5, CAN0_RX */
 	PORTC->PCR[7] |= PORT_PCR_MUX(3); /* Port E5: MUX = ALT5, CAN0_TX */
-
+	//can2
 	PCC->PCCn[PCC_PORTC_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTE */
 	PORTC->PCR[16] |= PORT_PCR_MUX(3); /* Port E4: MUX = ALT5, CAN0_RX */
 	PORTC->PCR[17] |= PORT_PCR_MUX(3); /* Port E5: MUX = ALT5, CAN0_TX */
+
+	//uart0
+	PCC->PCCn[PCC_PORTB_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTB */
+	PORTB->PCR[0] |= PORT_PCR_MUX(3); /* Port C6: MUX = ALT2,UART0 TX */
+	PORTB->PCR[1] |= PORT_PCR_MUX(3); /* Port C7: MUX = ALT2,UART0 RX */
+	//uart1
+	PCC->PCCn[PCC_PORTD_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
+	PORTD->PCR[13] |= PORT_PCR_MUX(3); /* Port C6: MUX = ALT2,UART1 TX */
+	PORTD->PCR[14] |= PORT_PCR_MUX(3); /* Port C7: MUX = ALT2,UART1 RX */
+	//uart2
+	PCC->PCCn[PCC_PORTA_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
+	PORTA->PCR[8] |= PORT_PCR_MUX(1); /* Port C6: MUX = ALT2,UART1 TX */
+	PORTA->PCR[9] |= PORT_PCR_MUX(1); /* Port C7: MUX = ALT2,UART1 RX */
+
+	//4g
+	PCC->PCCn[PCC_PORTD_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
+	PORTD->PCR[15] |= 0x00000100; /* Port C6: MUX = ALT2,UART1 TX */
+	PORTD->PCR[16] |= 0x00000100; /* Port C7: MUX = ALT2,UART1 RX */
+	PTD->PDDR |= 1 << 15;
+	PTD->PDDR |= 1 << 16;
+	PTD-> PSOR |= 1<<15;
+	PTD-> PSOR |= 1<<16;
 
 }
 static volatile uint32_t tickCountVal;
