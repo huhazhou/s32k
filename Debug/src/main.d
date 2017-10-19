@@ -45,10 +45,11 @@ src/main.o: ../src/main.c \
  /home/houxd/workspaceS32DS.ARM.V20/dp1000/bl/FlexCAN.h \
  /home/houxd/workspaceS32DS.ARM.V20/dp1000/bl/SPI_MSD0_Driver.h \
  /home/houxd/workspaceS32DS.ARM.V20/dp1000/bl/clocks_and_modes.h \
+ /home/houxd/workspaceS32DS.ARM.V20/dp1000/bl/ds3231.h \
  /home/houxd/workspaceS32DS.ARM.V20/dp1000/fatfs/ff.h \
  /home/houxd/workspaceS32DS.ARM.V20/dp1000/fatfs/../fatfs/integer.h \
  /home/houxd/workspaceS32DS.ARM.V20/dp1000/fatfs/../fatfs/ffconf.h \
- ../src/convert.h
+ ../src/convert.h /home/houxd/workspaceS32DS.ARM.V20/dp1000/bl/timelib.h
 
 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/lib_c99.prefix:
 
@@ -142,6 +143,8 @@ src/main.o: ../src/main.c \
 
 /home/houxd/workspaceS32DS.ARM.V20/dp1000/bl/clocks_and_modes.h:
 
+/home/houxd/workspaceS32DS.ARM.V20/dp1000/bl/ds3231.h:
+
 /home/houxd/workspaceS32DS.ARM.V20/dp1000/fatfs/ff.h:
 
 /home/houxd/workspaceS32DS.ARM.V20/dp1000/fatfs/../fatfs/integer.h:
@@ -149,3 +152,5 @@ src/main.o: ../src/main.c \
 /home/houxd/workspaceS32DS.ARM.V20/dp1000/fatfs/../fatfs/ffconf.h:
 
 ../src/convert.h:
+
+/home/houxd/workspaceS32DS.ARM.V20/dp1000/bl/timelib.h:

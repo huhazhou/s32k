@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include "softi2c.h"
 #include "convert.h"
-#include "timelib.h"
 
 #define DS3231_CHIP_ADDR 	0xD0    //器件地址
 
@@ -60,15 +59,7 @@ const struct SoftI2C_Ports I2C0 = {
 	.SDA_VAL	=SDA_VAL,
 	.HALF_CLK_CYCLE_US	=	10,
 };
-struct DS3231_Time{
-	uint8_t sec;	//00-59
-	uint8_t min;	//00-59
-	uint8_t hour;	//00-23
-	uint8_t wday;	//1~7
-	uint8_t mday;	//1~32
-	uint8_t mon;	//1~12
-	uint8_t year;	//0~99
-};
+
 void ds3231_settime(const struct DS3231_Time *dsdat) {
 	softi2c_send_data(&I2C0,DS3231_CHIP_ADDR,DS3231_SECOND,		7,(uint8_t*)dsdat);   //修改年
 }
@@ -92,73 +83,10 @@ float ds3231_gettempr() {
 		res = -res;
 	return res;
 }
-void load_time()
-{
-	struct DS3231_Time dst;
-	struct DS3231_Time dst2;
-	ds3231_gettime(&dst2);	//local
-	do{
-		ds3231_gettime(&dst);
-	}while(dst.sec==dst2.sec);
-	struct tm ltm = {
-		.tm_sec = bcd2int(dst.sec),
-		.tm_min = bcd2int(dst.min),
-		.tm_hour = bcd2int(dst.hour),
-		.tm_wday = bcd2int(dst.wday)-1,
-		.tm_mday = bcd2int(dst.mday),
-		.tm_mon = bcd2int(dst.mon),
-		.tm_year = (2000 + bcd2int(dst.year)) - 1900,
-	};
-	time_t now = mktime(&ltm) - __timezone(NULL);	//to utc
-	time(&now);
-}
-void store_time()
-{
-	time_t t = time(NULL);		//utc
-	struct tm ltm;
-	localtime_s(&t,&ltm);		//to local
-	struct DS3231_Time dst = {
-		.sec = 	int2bcd(ltm.tm_sec),
-		.min = 	int2bcd(ltm.tm_min),
-		.hour = int2bcd(ltm.tm_hour),
-		.wday = int2bcd(ltm.tm_wday+1),
-		.mday = int2bcd(ltm.tm_mday),
-		.mon = 	int2bcd(ltm.tm_mon),
-		.year = int2bcd(ltm.tm_year%100),
-	};
-	ds3231_settime(&dst);
-}
-int main() {
-	WDOG_disable();
-	SOSC_init_8MHz(); /* Initialize system oscilator for 8 MHz xtal */
-	SPLL_init_160MHz(); /* Initialize SPLL to 160 MHz with 8 MHz SOSC */
-	NormalRUNmode_80MHz(); /* Init clocks: 80 MHz sysclk & core, 40 MHz bus, 20 MHz flash */
-	NVIC_init_IRQs(); /* Enable desired interrupts and priorities */
-	PORT_init(); /* Configure ports */
 
+int ds3231_init()
+{
 	softi2c_init_io(&I2C0);
-	char asc[128];
-	//2017/10/19 13:5:26
-	time_t set = 1508389526UL;	//utc
-	struct tm ltm;
-	localtime_s(&set,&ltm);
-	char *s = asctime_s(&ltm,asc,128);
-	printf("%s\n",s);
-	time(&set);
-	store_time();
-
-	float tempr = ds3231_gettempr();
-	printf("temp=%f\n", tempr);
-	load_time();
-	while(1){
-		time_t t = time(NULL);
-		struct tm ltm;
-		localtime_s(&t,&ltm);
-		char *s = asctime_s(&ltm,asc,128);
-		printf("%s\n",s);
-		softi2c_test_delay_1s(1000000);
-	}
-	while (1)
-		;
 }
+
 

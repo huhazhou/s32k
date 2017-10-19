@@ -6,13 +6,14 @@
  */
 #include <timelib.h>
 #include <stdio.h>
-volatile time_t __now_time = 0;
+volatile uint64_t __timelib_tick_count = 0;
+static volatile uint64_t time_tick_diff = 0;
 time_t time(const time_t* t)
 {
 	if(t){
-		__now_time = *t;
+		time_tick_diff = (uint64_t)(*t) - (__timelib_tick_count/_TIMELIB_TICK_HZ);
 	}
-	return __now_time;
+	return time_tick_diff + (__timelib_tick_count/_TIMELIB_TICK_HZ);
 }
 time_t mktime(struct tm * pt)
 {
@@ -31,8 +32,8 @@ time_t mktime(struct tm * pt)
 	) * 60 + min /* now have minutes */
 	) * 60 + sec; /* finally seconds */
 }
+static const char days_tbl[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 void localtime_z(const time_t *ptime, long timezone, struct tm *tm_time) {
-	static const char days_tbl[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 	uint32_t pass_4year;
 	uint32_t hpery;
 	time_t raw_time = *ptime;
@@ -81,22 +82,29 @@ void localtime_z(const time_t *ptime, long timezone, struct tm *tm_time) {
 }
 long __timezone(long *ptz)
 {
-	static tz = _TIMELIB_TZ_DEF;
+	static long tz = _TIMELIB_TZ_DEF;
 	if(ptz)
 		tz = *ptz;
 	return tz;
 }
 struct tm *localtime_s(const time_t * pt, struct tm*ltm)
 {
-	localtime_z(pt,__timezone(NULL),ltm);
+	time_t t = pt?*pt:time(NULL);
+	localtime_z(&t,__timezone(NULL),ltm);
 	return ltm;
 }
+struct tm *localtime(const time_t * pt)
+{
+	static struct tm ltm;
+	return localtime_s(pt,&ltm);
+}
 
+#if _TIMELIB_ASC_USE_CN == 0
+static const char format[] = "%.3s %.3s%3d %.2d:%.2d:%.2d %d\n";
+static const char *const wday_name[] = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
+static const char *const month_name[] = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
 char *asctime_s(const struct tm * tp, char *buf, int buflen)
 {
-	static const char format[] = "%.3s %.3s%3d %.2d:%.2d:%.2d %d\n";
-	static const char *const wday_name[] = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
-	static const char *const month_name[] = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
 	int n = snprintf(buf, buflen, format,
 			(tp->tm_wday < 0 || tp->tm_wday >= 7 ?
 					"???" : wday_name[tp->tm_wday]),
@@ -107,3 +115,25 @@ char *asctime_s(const struct tm * tp, char *buf, int buflen)
 		return NULL;
 	return buf;
 }
+#else
+static const char format[] = "%d年%d月%d日 %.2d:%.2d:%.2d 星期%s";
+static const char *const cn_name[] = {"日","一","二","三","四","五","六"};
+char *asctime_s(const struct tm * tp, char *buf, int buflen)
+{
+	int n = snprintf(buf, buflen, format,
+			1900 + tp->tm_year,tp->tm_mon,tp->tm_mday,
+			tp->tm_hour, tp->tm_min, tp->tm_sec,
+			(tp->tm_wday < 0 || tp->tm_wday >= 7 ?
+					"?" : cn_name[tp->tm_wday])
+			);
+	if (n < 0)
+		return NULL;
+	return buf;
+}
+#endif
+char *asctime(const struct tm * tp)
+{
+	static char buf[64];
+	return asctime_s(tp,buf,64);
+}
+

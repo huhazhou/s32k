@@ -12,6 +12,7 @@
 #include "SPI_MSD0_Driver.h"
 #include "clocks_and_modes.h"
 #include "FlexCAN.h"
+#include "timelib.h"
 
 void WDOG_disable(void) {
 	WDOG->CNT = 0xD928C520; /*Unlock watchdog*/
@@ -116,31 +117,17 @@ void PORT_init (void) {
 	PORTA->PCR[16] |= PORT_PCR_MUX(1); /* Port C6: MUX = ALT2,UART1 TX */
 	PTA->PDDR |= 1 << 16; 					/* Port D8:  Data Direction= output */
 
-}
-inline void ds2411_dir(int d)
-{
-	if(d) PTA->PDDR |= 1 << 16;
-	else PTA->PDDR &= ~(1 << 16);
-}
-inline void ds2411_line(int v)
-{
-	if(v) PTA-> PSOR |= 1<<16;
-	else PTA-> PCOR |= 1<<16;
+	//rtc
+	ds3231_init();
 }
 
-
-
-
-
-
-static volatile uint32_t tickCountVal;
 uint32_t get_tick_count()
 {
-	return tickCountVal;
+	return __timelib_tick_count;
 }
 extern inline void vApplicationTickHook(void)
 {
-	tickCountVal++;
+	__timelib_tick_count ++;
 }
 
 void delay_ms(int ms)

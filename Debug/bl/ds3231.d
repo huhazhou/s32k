@@ -15,6 +15,7 @@ bl/ds3231.o: ../bl/ds3231.c \
  ../bl/LPUART.h \
  /home/houxd/workspaceS32DS.ARM.V20/dp1000/include/S32K144.h \
  ../bl/FlexCAN.h ../bl/SPI_MSD0_Driver.h ../bl/clocks_and_modes.h \
+ ../bl/ds3231.h \
  /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/stdio.h \
  /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstdio \
  /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstddef \
@@ -28,8 +29,7 @@ bl/ds3231.o: ../bl/ds3231.c \
  /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/stdarg.h \
  /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstdarg \
  /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/arm/stdarg.ARM.h \
- ../bl/softi2c.h /home/houxd/workspaceS32DS.ARM.V20/dp1000/src/convert.h \
- ../bl/timelib.h
+ ../bl/softi2c.h /home/houxd/workspaceS32DS.ARM.V20/dp1000/src/convert.h
 
 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/lib_c99.prefix:
 
@@ -67,6 +67,8 @@ bl/ds3231.o: ../bl/ds3231.c \
 
 ../bl/clocks_and_modes.h:
 
+../bl/ds3231.h:
+
 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/stdio.h:
 
 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstdio:
@@ -96,5 +98,3 @@ bl/ds3231.o: ../bl/ds3231.c \
 ../bl/softi2c.h:
 
 /home/houxd/workspaceS32DS.ARM.V20/dp1000/src/convert.h:
-
-../bl/timelib.h:

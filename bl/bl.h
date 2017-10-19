@@ -17,6 +17,7 @@ extern "C" {
 #include "FlexCAN.h"
 #include "SPI_MSD0_Driver.h"
 #include "clocks_and_modes.h"
+#include "ds3231.h"
 
 extern void WDOG_disable(void);
 extern void NVIC_init_IRQs (void);

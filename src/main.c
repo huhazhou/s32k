@@ -8,6 +8,7 @@
 #include "bl.h"
 #include "ff.h"
 #include "convert.h"
+#include "timelib.h"
 
 #define OS_ASSERT(v)											\
 	if(pdTRUE != (v)){											\
@@ -513,12 +514,75 @@ AT+MIPTPS=1,1,5000,600
 	}
 }
 
-int test_rtc(void)
+void load_time()
 {
+	struct DS3231_Time dst;
+	struct DS3231_Time dst2;
+	taskENTER_CRITICAL();
+	ds3231_gettime(&dst2);	//local
+	do{
+		ds3231_gettime(&dst);
+	}while(dst.sec==dst2.sec);
+	taskEXIT_CRITICAL();
+	struct tm ltm = {
+		.tm_sec = bcd2int(dst.sec),
+		.tm_min = bcd2int(dst.min),
+		.tm_hour = bcd2int(dst.hour),
+		.tm_wday = bcd2int(dst.wday)-1,
+		.tm_mday = bcd2int(dst.mday),
+		.tm_mon = bcd2int(dst.mon),
+		.tm_year = (2000 + bcd2int(dst.year)) - 1900,
+	};
+	time_t now = mktime(&ltm) - __timezone(NULL);	//to utc
+	time(&now);
+}
+void store_time()
+{
+	time_t t = time(NULL);		//utc
+	struct tm ltm;
+	localtime_s(&t,&ltm);		//to local
+	struct DS3231_Time dst = {
+		.sec = 	int2bcd(ltm.tm_sec),
+		.min = 	int2bcd(ltm.tm_min),
+		.hour = int2bcd(ltm.tm_hour),
+		.wday = int2bcd(ltm.tm_wday+1),
+		.mday = int2bcd(ltm.tm_mday),
+		.mon = 	int2bcd(ltm.tm_mon),
+		.year = int2bcd(ltm.tm_year%100),
+	};
+	taskENTER_CRITICAL();
+	ds3231_settime(&dst);
+	taskEXIT_CRITICAL();
+}
+void rtc_proc(void* p)
+{
+	(void)p;
 	for(;;){
-		os_printf("tickcount=%u\n",get_tick_count());
+		struct tm ltm;
+		localtime_s(NULL,&ltm);
+		printf("read time: %s\n",asctime(&ltm));
 		os_sleep_ms(1000);
 	}
+}
+int test_rtc(void)
+{
+	TaskHandle_t rtc_handle;
+	float tempr = ds3231_gettempr();
+	printf("DS3231 temprature: %f\n", tempr);
+	//2017/10/19 13:5:26
+	time_t set = 1508389526UL;	//utc
+	struct tm ltm;
+	localtime_s(&set,&ltm);
+	printf("set time: %s\n",asctime(&ltm));
+	time(&set);
+	store_time();
+	OS_ASSERT(xTaskCreate(rtc_proc,"rtc_proc", 1024/4, NULL , 5, &rtc_handle));
+	for(int i=0;i<2;i++){
+		load_time();		//per 5-sec load time from hardware
+		os_sleep_ms(5000);
+	}
+	vTaskDelete(rtc_handle);
+	return 0;
 }
 
 static TaskHandle_t mainTaskHandle;
@@ -590,5 +654,3 @@ void vApplicationMallocFailedHook(void)
 {
 	os_printf("\n*** OS Malloc Fail.\n");
 }
-
-

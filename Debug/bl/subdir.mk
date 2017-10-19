@@ -11,8 +11,10 @@ C_SRCS_QUOTED += \
 "../bl/SPI_MSD0_Driver.c" \
 "../bl/bl.c" \
 "../bl/clocks_and_modes.c" \
+"../bl/ds2411.c" \
 "../bl/ds3231.c" \
 "../bl/softi2c.c" \
+"../bl/softonewire.c" \
 "../bl/timelib.c" 
 
 C_SRCS += \
@@ -21,8 +23,10 @@ C_SRCS += \
 ../bl/SPI_MSD0_Driver.c \
 ../bl/bl.c \
 ../bl/clocks_and_modes.c \
+../bl/ds2411.c \
 ../bl/ds3231.c \
 ../bl/softi2c.c \
+../bl/softonewire.c \
 ../bl/timelib.c 
 
 C_DEPS_QUOTED += \
@@ -31,8 +35,10 @@ C_DEPS_QUOTED += \
 "./bl/SPI_MSD0_Driver.d" \
 "./bl/bl.d" \
 "./bl/clocks_and_modes.d" \
+"./bl/ds2411.d" \
 "./bl/ds3231.d" \
 "./bl/softi2c.d" \
+"./bl/softonewire.d" \
 "./bl/timelib.d" 
 
 OBJS_QUOTED += \
@@ -41,8 +47,10 @@ OBJS_QUOTED += \
 "./bl/SPI_MSD0_Driver.o" \
 "./bl/bl.o" \
 "./bl/clocks_and_modes.o" \
+"./bl/ds2411.o" \
 "./bl/ds3231.o" \
 "./bl/softi2c.o" \
+"./bl/softonewire.o" \
 "./bl/timelib.o" 
 
 C_DEPS += \
@@ -51,8 +59,10 @@ C_DEPS += \
 ./bl/SPI_MSD0_Driver.d \
 ./bl/bl.d \
 ./bl/clocks_and_modes.d \
+./bl/ds2411.d \
 ./bl/ds3231.d \
 ./bl/softi2c.d \
+./bl/softonewire.d \
 ./bl/timelib.d 
 
 OBJS_OS_FORMAT += \
@@ -61,8 +71,10 @@ OBJS_OS_FORMAT += \
 ./bl/SPI_MSD0_Driver.o \
 ./bl/bl.o \
 ./bl/clocks_and_modes.o \
+./bl/ds2411.o \
 ./bl/ds3231.o \
 ./bl/softi2c.o \
+./bl/softonewire.o \
 ./bl/timelib.o 
 
 OBJS += \
@@ -71,8 +83,10 @@ OBJS += \
 ./bl/SPI_MSD0_Driver.o \
 ./bl/bl.o \
 ./bl/clocks_and_modes.o \
+./bl/ds2411.o \
 ./bl/ds3231.o \
 ./bl/softi2c.o \
+./bl/softonewire.o \
 ./bl/timelib.o 
 
 
@@ -117,9 +131,17 @@ bl/clocks_and_modes.o: ../bl/clocks_and_modes.c
 	@echo 'Finished building: $<'
 	@echo ' '
 
-bl/ds3231.o: ../bl/ds3231.c
+bl/ds2411.o: ../bl/ds2411.c
 	@echo 'Building file: $<'
 	@echo 'Executing target #17 $<'
+	@echo 'Invoking: Standard S32DS C Compiler'
+	arm-none-eabi-gcc "@bl/ds2411.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "bl/ds2411.o" "$<"
+	@echo 'Finished building: $<'
+	@echo ' '
+
+bl/ds3231.o: ../bl/ds3231.c
+	@echo 'Building file: $<'
+	@echo 'Executing target #18 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@bl/ds3231.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "bl/ds3231.o" "$<"
 	@echo 'Finished building: $<'
@@ -127,15 +149,23 @@ bl/ds3231.o: ../bl/ds3231.c
 
 bl/softi2c.o: ../bl/softi2c.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #18 $<'
+	@echo 'Executing target #19 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@bl/softi2c.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "bl/softi2c.o" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
+bl/softonewire.o: ../bl/softonewire.c
+	@echo 'Building file: $<'
+	@echo 'Executing target #20 $<'
+	@echo 'Invoking: Standard S32DS C Compiler'
+	arm-none-eabi-gcc "@bl/softonewire.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "bl/softonewire.o" "$<"
+	@echo 'Finished building: $<'
+	@echo ' '
+
 bl/timelib.o: ../bl/timelib.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #19 $<'
+	@echo 'Executing target #21 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@bl/timelib.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "bl/timelib.o" "$<"
 	@echo 'Finished building: $<'
