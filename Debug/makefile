@@ -2,7 +2,7 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-#Progress monitor hint: 22
+#Progress monitor hint: 25
 first : all
 -include ../makefile.init
 
@@ -82,21 +82,21 @@ all: warning-messages explicit-dependencies dp1000.elf secondary-outputs
 # Tool invocations
 dp1000.elf: $(OBJS) /home/houxd/workspaceS32DS.ARM.V20/dp1000/Project_Settings/Linker_Files/S32K1xx_flash.ld $(USER_OBJS)
 	@echo 'Building target: $@'
-	@echo 'Executing target #23 $@'
+	@echo 'Executing target #26 $@'
 	@echo 'Invoking: Standard S32DS C++ Linker'
 	arm-none-eabi-g++ -o "dp1000.elf" "@dp1000.args"  $(USER_OBJS_QUOTED) $(LIBS_QUOTED)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 dp1000.srec: $(EXECUTABLES)
-	@echo 'Executing target #24 $@'
+	@echo 'Executing target #27 $@'
 	@echo 'Invoking: Standard S32DS Create Flash Image'
 	arm-none-eabi-objcopy -O srec $(EXECUTABLES)  "dp1000.srec"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 dp1000.siz: $(EXECUTABLES)
-	@echo 'Executing target #25 $@'
+	@echo 'Executing target #28 $@'
 	@echo 'Invoking: Standard S32DS Print Size'
 	arm-none-eabi-size --format=berkeley $(EXECUTABLES)
 	@echo 'Finished building: $@'

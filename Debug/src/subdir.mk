@@ -37,7 +37,7 @@ OBJS += \
 # Each subdirectory must supply rules for building sources it contributes
 src/convert.o: ../src/convert.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #21 $<'
+	@echo 'Executing target #24 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@src/convert.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "src/convert.o" "$<"
 	@echo 'Finished building: $<'
@@ -45,7 +45,7 @@ src/convert.o: ../src/convert.c
 
 src/main.o: ../src/main.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #22 $<'
+	@echo 'Executing target #25 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@src/main.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "src/main.o" "$<"
 	@echo 'Finished building: $<'

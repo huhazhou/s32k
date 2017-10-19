@@ -10,49 +10,70 @@ C_SRCS_QUOTED += \
 "../bl/LPUART.c" \
 "../bl/SPI_MSD0_Driver.c" \
 "../bl/bl.c" \
-"../bl/clocks_and_modes.c" 
+"../bl/clocks_and_modes.c" \
+"../bl/ds3231.c" \
+"../bl/softi2c.c" \
+"../bl/timelib.c" 
 
 C_SRCS += \
 ../bl/FlexCAN.c \
 ../bl/LPUART.c \
 ../bl/SPI_MSD0_Driver.c \
 ../bl/bl.c \
-../bl/clocks_and_modes.c 
+../bl/clocks_and_modes.c \
+../bl/ds3231.c \
+../bl/softi2c.c \
+../bl/timelib.c 
 
 C_DEPS_QUOTED += \
 "./bl/FlexCAN.d" \
 "./bl/LPUART.d" \
 "./bl/SPI_MSD0_Driver.d" \
 "./bl/bl.d" \
-"./bl/clocks_and_modes.d" 
+"./bl/clocks_and_modes.d" \
+"./bl/ds3231.d" \
+"./bl/softi2c.d" \
+"./bl/timelib.d" 
 
 OBJS_QUOTED += \
 "./bl/FlexCAN.o" \
 "./bl/LPUART.o" \
 "./bl/SPI_MSD0_Driver.o" \
 "./bl/bl.o" \
-"./bl/clocks_and_modes.o" 
+"./bl/clocks_and_modes.o" \
+"./bl/ds3231.o" \
+"./bl/softi2c.o" \
+"./bl/timelib.o" 
 
 C_DEPS += \
 ./bl/FlexCAN.d \
 ./bl/LPUART.d \
 ./bl/SPI_MSD0_Driver.d \
 ./bl/bl.d \
-./bl/clocks_and_modes.d 
+./bl/clocks_and_modes.d \
+./bl/ds3231.d \
+./bl/softi2c.d \
+./bl/timelib.d 
 
 OBJS_OS_FORMAT += \
 ./bl/FlexCAN.o \
 ./bl/LPUART.o \
 ./bl/SPI_MSD0_Driver.o \
 ./bl/bl.o \
-./bl/clocks_and_modes.o 
+./bl/clocks_and_modes.o \
+./bl/ds3231.o \
+./bl/softi2c.o \
+./bl/timelib.o 
 
 OBJS += \
 ./bl/FlexCAN.o \
 ./bl/LPUART.o \
 ./bl/SPI_MSD0_Driver.o \
 ./bl/bl.o \
-./bl/clocks_and_modes.o 
+./bl/clocks_and_modes.o \
+./bl/ds3231.o \
+./bl/softi2c.o \
+./bl/timelib.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -93,6 +114,30 @@ bl/clocks_and_modes.o: ../bl/clocks_and_modes.c
 	@echo 'Executing target #16 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@bl/clocks_and_modes.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "bl/clocks_and_modes.o" "$<"
+	@echo 'Finished building: $<'
+	@echo ' '
+
+bl/ds3231.o: ../bl/ds3231.c
+	@echo 'Building file: $<'
+	@echo 'Executing target #17 $<'
+	@echo 'Invoking: Standard S32DS C Compiler'
+	arm-none-eabi-gcc "@bl/ds3231.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "bl/ds3231.o" "$<"
+	@echo 'Finished building: $<'
+	@echo ' '
+
+bl/softi2c.o: ../bl/softi2c.c
+	@echo 'Building file: $<'
+	@echo 'Executing target #18 $<'
+	@echo 'Invoking: Standard S32DS C Compiler'
+	arm-none-eabi-gcc "@bl/softi2c.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "bl/softi2c.o" "$<"
+	@echo 'Finished building: $<'
+	@echo ' '
+
+bl/timelib.o: ../bl/timelib.c
+	@echo 'Building file: $<'
+	@echo 'Executing target #19 $<'
+	@echo 'Invoking: Standard S32DS C Compiler'
+	arm-none-eabi-gcc "@bl/timelib.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "bl/timelib.o" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

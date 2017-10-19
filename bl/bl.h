@@ -27,16 +27,6 @@ extern void buzzer_ctrl(int en);
 extern void buzzer_ctrl(int en);
 
 
-extern inline void ds3231_int(int v);
-extern inline void ds3231_rst(int v);
-extern inline void i2c_scl(int v);
-extern inline void i2c_sda(int v);
-extern inline void i2c_sda_dir(int d);
-extern inline int i2c_sda_val();
-
-extern inline void ds2411_dir(int d);
-extern inline void ds2411_line(int v);
-
 
 #ifdef __cplusplus
 }

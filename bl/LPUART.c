@@ -51,8 +51,13 @@ void LPUART_init(LPUART_Type *LPUART, uint32_t bps)  /* Init. summary: 9600 baud
 //                               /* LBKDIE, RXEDGIE=0: interrupts disable */
 //                               /* TDMAE, RDMAE, TDMAE=0: DMA requests disabled */
 //                               /* MAEN1, MAEN2,  MATCFG=0: Match disabled */
+	LPUART->STAT = 0xC01FC000;
+	LPUART->MATCH = 0x0;
+	LPUART->CTRL = 0x0;
+	LPUART->CTRL &= ~(LPUART_CTRL_R9T8_MASK | LPUART_BAUD_M10_MASK);
+	LPUART->CTRL |= LPUART_CTRL_TE_MASK | LPUART_CTRL_RE_MASK | LPUART_CTRL_RIE_MASK;
 
-  LPUART->CTRL=0x002C0000;    /* Enable transmitter & receiver, no parity, 8 bit char: */
+	 //LPUART->CTRL=0x002C0000;    /* Enable transmitter & receiver, no parity, 8 bit char: */
                                /* RE=1: Receiver enabled */
                                /* TE=1: Transmitter enabled */
                                /* PE,PT=0: No hw parity generation or checking */
@@ -66,6 +71,7 @@ void LPUART_init(LPUART_Type *LPUART, uint32_t bps)  /* Init. summary: 9600 baud
                                /* ILT=0: Idle char bit count starts after start bit */
                                /* SBK=0: Normal transmitter operation - no break char */
                                /* LOOPS,RSRC=0: no loop back */
+	//LPUART1->GLOBAL |= 1<<1;
 }
 
 void LPUART_transmit_char(LPUART_Type *LPUART,char send) {    /* Function to Transmit single Char */

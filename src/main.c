@@ -223,6 +223,17 @@ int LPUART_receive_from_queue(int port,int timeout){
 		return -1;
 	}
 }
+//int LPUART_receive_char_timeout(int port,int timeout){
+//	LPUART_Type* uartTbl[3] = { LPUART0, LPUART1, LPUART2 };
+//	int t = get_tick_count() + timeout;
+//	do{
+//		int c = LPUART_receive_char(uartTbl[port]);
+//		if(c!=-1)
+//			return c;
+//		//os_sleep_ms(1);
+//	}while(get_tick_count()<t);
+//	return -1;
+//}
 void LPUART_receive_flush(int port)
 {
 	xQueueReset(uartQueueTbl[port]);
@@ -232,7 +243,7 @@ char *LPUART_receive_string_timeout(int port,char *buf, int bufsize, int timeout
 	char *p = buf;
 	char *end = buf+bufsize-1;
 	while(p<end){
-		int c = LPUART_receive_from_queue(port,timeout);
+		int c = LPUART_receive_from_queue(port, timeout);
 		if(c==-1)
 			return NULL;	/*timeout*/
 		if(c=='\r')
@@ -251,12 +262,14 @@ char *LPUART_receive_string(int port,char *buf, int bufsize)
 	return LPUART_receive_string_timeout(port,buf,bufsize,portMAX_DELAY);
 }
 void LPUART_transmit_string(int port,const char *data_string)  {  /* Function to Transmit whole string */
-  uint32_t i=0;
-  LPUART_Type* uartTbl[3] = {LPUART0,LPUART1,LPUART2};
-  while(data_string[i] != '\0')  {           /* Send chars one at a time */
-    LPUART_transmit_char(uartTbl[port],data_string[i]);
-    i++;
-  }
+	taskENTER_CRITICAL();
+	uint32_t i = 0;
+	LPUART_Type* uartTbl[3] = { LPUART0, LPUART1, LPUART2 };
+	while (data_string[i] != '\0') { /* Send chars one at a time */
+		LPUART_transmit_char(uartTbl[port], data_string[i]);
+		i++;
+	}
+	taskEXIT_CRITICAL();
 }
 static void test_uart_loop(void *p)
 {
@@ -360,6 +373,8 @@ void nic_reset(void)
 }
 static int test_4g()
 {
+	int test_trys =3;
+	test_start:
 	nic_power_onoff();
 #define UART_4G				(1)
 #define UART_4G_BUFSIZE		(128)
@@ -374,22 +389,18 @@ static int test_4g()
 
 	int at_csq(){
 		int res;
-		if(buf[0] == '+'){
-			int a=0,b=0;
-			res = sscanf(buf,"+CSQ: %d,%d",&a,&b);
-			if(res==2 &&(a>0 && a<99))
-				return 0;
-		}
+		int a=0,b=0;
+		res = sscanf(buf,"+CSQ: %d,%d",&a,&b);
+		if(res==2 &&(a>0 && a<99))
+			return 0;
 		return -1;
 	}
 	int at_creg(){
 		int res;
-		if(buf[0] == '+'){
-			int a=0,b=0;
-			res = sscanf(buf,"+CREG: %d,%d",&a,&b);
-			if(res==2 && (b==1||b==5))
-				return 0;
-		}
+		int a=0,b=0;
+		res = sscanf(buf,"+CREG: %d,%d",&a,&b);
+		if(res==2 && (b==1||b==5))
+			return 0;
 		return -1;;
 	}
 	int at_cimi(){
@@ -408,35 +419,35 @@ static int test_4g()
 				sockid,lcport,rmip,rmport);
 		return buf;
 	}
-
 	int at_miopen_r(){
 		int res;
-		if(buf[0] == '+'){
-			int a=0,b=0;
-			res = sscanf(buf,"+MIPOPEN=%d,%d",&a,&b);
-			if(res==2 && a==sockid && b==1)
-				return 0;
-		}
+		int a=0,b=0;
+		res = sscanf(buf,"+MIPOPEN=%d,%d",&a,&b);
+		if(res==2 && a==sockid && b==1)
+			return 0;
 		return -1;;
 	}
 	int at_mipcall(){
 		int res;
-		if(buf[0] == '+'){
-			int a=0;
-			res = sscanf(buf,"+MIPCALL:%d, %s",&a,lcip);
-			if(res==2 && a==sockid)
-				return 0;
-		}
+		int a=0;
+		res = sscanf(buf,"+MIPCALL:%d, %s",&a,lcip);
+		if(res==2 && a==sockid)
+			return 0;
 		return -1;;
 	}
 	struct AtTalkTable {
-		const char *tx;
+		const char *ts;
 		const char *(*tf)();
 		const char *rs;
 		const char *abort;
 		int (*rf)();
 		int retry;
 		int tmout;
+		/*
+		 * when retry tmout not init, use def val
+		 */
+#define _DFT_AT_RETRY	(5)
+#define _DFT_AT_TMOUT	(1000)
 	}attbl[] = {
 			/*
 AT+CIMI
@@ -447,17 +458,17 @@ AT+MIPOPEN=1,5000,"180.89.58.27",9020,0
 AT+MIPHEX=0
 AT+MIPTPS=1,1,5000,600
 			 */
-			{.tx="ATE1",			.rs="OK",				.retry=60,	.tmout=1000},
-			{.tx="ATE0",			.rs="OK",				.retry=5,	.tmout=1000},
-			{.tx="AT+CPIN?",		.rs="+CPIN: READY",		.retry=20,	.tmout=1000},
-			{.tx="AT+CSQ",			.rs=0,.rf=at_csq,		.retry=20, 	.tmout=1000},
-			{.tx="AT+CREG?",		.rs=0,.rf=at_creg,		.retry=20,	.tmout=1000},
-			{.tx="AT+CIMI",			.rs=0,.rf=at_cimi,		.retry=20,	.tmout=1000},
-			{.tx=0,.tf=at_miprofile,.rs="OK",				.retry=20,	.tmout=1000},
-			{.tx="AT+MIPCALL=1",	.rs=0,.rf=at_mipcall,	.retry=5,	.tmout=10000},
-			{.tx="AT+MIPCALL?",		.rs="OK",				.retry=5,	.tmout=10000},
-			{.tx=0,.tf=at_mipopen,	.rs=0,.rf=at_miopen_r,	.retry=5,	.tmout=5000},
-			{.tx="AT+MIPHEX=0",		.rs="OK",				.retry=60,	.tmout=1000},
+			{.ts="ATE1",			.rs="OK",				.retry=3000000, .tmout=1000},
+			{.ts="ATE0",			.rs="OK",				},
+			{.ts="AT+CPIN?",		.rs="+CPIN: READY",		},
+			{.ts="AT+CSQ",			.rf=at_csq,				},
+			{.ts="AT+CREG?",		.rf=at_creg,			},
+			{.ts="AT+CIMI",			.rf=at_cimi,			},
+			{.tf=at_miprofile,		.rs="OK",				},
+			{.ts="AT+MIPCALL=1",	.rf=at_mipcall,			.retry=5,	.tmout=10000},
+			{.ts="AT+MIPCALL?",		.rs="OK",				.retry=5,	.tmout=2000},
+			{.tf=at_mipopen,		.rf=at_miopen_r,		.retry=5,	.tmout=5000},
+			{.ts="AT+MIPHEX=0",		.rs="OK",				},
 
 			//{.tx="AT+CIMI",		.rx="OK",	5,	1000},
 			//{.tx="AT+MIPPROFILE=1,\"CMNET\"",	"OK",	5,	1000},
@@ -465,21 +476,17 @@ AT+MIPTPS=1,1,5000,600
 	int step=0;
 	for(;step<sizeof(attbl)/sizeof(attbl[0]);step++){
 		int need_try = 1;
-		for(int r=0;need_try&&r<attbl[step].retry;r++){
+		int retry = attbl[step].retry?:_DFT_AT_RETRY;
+		for(int r=0;need_try&&r<retry;r++){
+			const char *ts = attbl[step].ts?:attbl[step].tf();
 			//LPUART_receive_flush(UART_4G);
-			if(attbl[step].tx){
-				os_printf("put:%s\n",attbl[step].tx);
-				LPUART_transmit_string(UART_4G, attbl[step].tx);
-			}else{
-				const char *ts = attbl[step].tf();
-				os_printf("put:%s\n",ts);
-				LPUART_transmit_string(UART_4G, ts);
-			}
+			os_printf("put:%s\n",ts);
+			LPUART_transmit_string(UART_4G, ts);
 			LPUART_transmit_string(UART_4G,"\r\n");
-			os_sleep_ms(500);	/* must delay if not, rx nothing. */
+			os_sleep_ms(100);	/* must delay if not, rx nothing. */
 			char *s;
 			do{
-				s = LPUART_receive_string_timeout(UART_4G, buf, UART_4G_BUFSIZE, attbl[step].tmout);
+				s = LPUART_receive_string_timeout(UART_4G, buf, UART_4G_BUFSIZE, attbl[step].tmout?:_DFT_AT_TMOUT);
 				if(s){
 					os_printf("gets:%s\n",s);
 				}
@@ -499,7 +506,9 @@ AT+MIPTPS=1,1,5000,600
 		os_printf("AT route complete!\n");
 		return 0;
 	}else{
-		os_printf("AT route abort, step=%d cmd=%s want=%s!\n",step,attbl[step].tx,attbl[step].rs);
+		os_printf("AT route abort, step=%d cmd=%s want=%s!\n",step,attbl[step].ts,attbl[step].rs);
+		if(test_trys-->0)
+			goto test_start;
 		return -1;
 	}
 }
@@ -523,8 +532,8 @@ void mainTask(void *p)
 	} test_tbl[] = {
 			//{"T",								test_uart_loop},
 			//{"UART0/1/2 Loop-back Test",		test_uart},
-			{"RTC Test",						test_rtc},
-//			{"4G Module Test",					test_4g},
+			//{"RTC Test",						test_rtc},
+			{"4G Module Test",					test_4g},
 //			{"SD Card Test",					test_sd},
 //			{"CAN0/1/2 Loop Test",				test_can},
 //			{"Buzzer Test\n",					test_buzzer},
@@ -539,7 +548,7 @@ void mainTask(void *p)
 	for(;;);
 }
 
-int main()
+int mainx()
 {
 	WDOG_disable();
 	SOSC_init_8MHz(); /* Initialize system oscilator for 8 MHz xtal */

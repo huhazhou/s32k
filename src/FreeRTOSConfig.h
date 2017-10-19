@@ -83,7 +83,7 @@
  * See http://www.freertos.org/a00110.html.
  *----------------------------------------------------------*/
 
-#define configUSE_PREEMPTION                     1
+#define configUSE_PREEMPTION                     0
 #define configUSE_IDLE_HOOK                      0
 #define configUSE_TICK_HOOK                      1
 #define configCPU_CLOCK_HZ                       ( 80000000UL )
@@ -95,15 +95,15 @@
 #define configMAX_TASK_NAME_LEN                  ( 36 )
 #define configUSE_TRACE_FACILITY                 0
 #define configUSE_16_BIT_TICKS                   0
-#define configIDLE_SHOULD_YIELD                  1
+#define configIDLE_SHOULD_YIELD                  0
 #define configUSE_MUTEXES                        1
 #define configQUEUE_REGISTRY_SIZE                0
 #define configCHECK_FOR_STACK_OVERFLOW           1
 #define configUSE_RECURSIVE_MUTEXES              0
 #define configUSE_MALLOC_FAILED_HOOK             1
 #define configUSE_APPLICATION_TASK_TAG           0
-#define configUSE_COUNTING_SEMAPHORES            1
-#define configMAX_SYSCALL_INTERRUPT_PRIORITY	(1)
+#define configUSE_COUNTING_SEMAPHORES            0
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY	(configMAX_PRIORITIES-1)//(1)
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES                    0

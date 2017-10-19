@@ -127,35 +127,11 @@ inline void ds2411_line(int v)
 	if(v) PTA-> PSOR |= 1<<16;
 	else PTA-> PCOR |= 1<<16;
 }
-inline void ds3231_int(int v)
-{
-	if(v) PTA-> PSOR |= 1<<0;
-	else PTA-> PCOR |= 1<<0;
-}
-inline void ds3231_rst(int v)
-{
-	if(v) PTA-> PSOR |= 1<<1;
-	else PTA-> PCOR |= 1<<1;
-}
-inline void i2c_scl(int v)
-{
-	if(v) PTB-> PSOR |= 1<<9;
-	else PTB-> PCOR |= 1<<9;
-}
-inline void i2c_sda(int v)
-{
-	if(v) PTB-> PSOR |= 1<<10;
-	else PTB-> PCOR |= 1<<10;
-}
-inline void i2c_sda_dir(int d)
-{
-	if(d) PTB->PDDR |= 1 << 10;
-	else PTB->PDDR &= ~(1 << 10);
-}
-inline int i2c_sda_val()
-{
-	return PTB->PIDR & (1<<10);
-}
+
+
+
+
+
 
 static volatile uint32_t tickCountVal;
 uint32_t get_tick_count()
