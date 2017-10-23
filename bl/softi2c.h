@@ -38,29 +38,29 @@ const struct SoftI2C_Ports I2C0 = {
 #include <stdint.h>
 
 #define DELAY_CALIBRATE_PARAM	(5)	//soft delay calibrate param
-struct SoftI2C_Ports {
-	void (*SET_SCL)();
-	void (*CLR_SCL)();
-	void (*SET_SDA)();
-	void (*CLR_SDA)();
+struct SoftI2C {
+	void (*SCL_SET)();
+	void (*SCL_CLR)();
 	void (*SCL_OUT)();
 	void (*SCL_IN )();
+	void (*SDA_SET)();
+	void (*SDA_CLR)();
 	void (*SDA_OUT)();
-	void  (*SDA_IN )();
-	int (*SDA_VAL)();
-	int HALF_CLK_CYCLE_US;	// unit is us.
+	void (*SDA_IN )();
+	int  (*SDA_VAL)();
+	int  HALF_CLK_CYCLE_US;	// unit is us.
 };
 extern void softi2c_test_delay_1s();	//use for calibrate soft delay
-extern void softi2c_init_io(const struct SoftI2C_Ports *I2C_DEV);
-extern void softi2c_start(const struct SoftI2C_Ports *I2C_DEV);
-extern void softi2c_stop(const struct SoftI2C_Ports *I2C_DEV);
-extern void softi2c_send_byte(const struct SoftI2C_Ports *I2C_DEV, unsigned data);
-extern int softi2c_check_ack(const struct SoftI2C_Ports *I2C_DEV);
-extern unsigned softi2c_read_byte(const struct SoftI2C_Ports *I2C_DEV);
-extern void softi2c_send_ack(const struct SoftI2C_Ports *I2C_DEV);
-extern void softi2c_send_noack(const struct SoftI2C_Ports *I2C_DEV);
-extern void softi2c_send_data(const struct SoftI2C_Ports *I2C_DEV, unsigned chipaddr,
-		unsigned dataaddr, unsigned datanum, const uint8_t *data);
-extern void softi2c_read_data(const struct SoftI2C_Ports *I2C_DEV, unsigned chipaddr,
-		unsigned dataaddr, unsigned datanum, uint8_t *data);
+extern void softi2c_init_io(const struct SoftI2C *I2C_DEV);
+extern void softi2c_start();
+extern void softi2c_stop();
+extern void softi2c_send_byte(unsigned data);
+extern int softi2c_check_ack();
+extern unsigned softi2c_read_byte();
+extern void softi2c_send_ack();
+extern void softi2c_send_noack();
+extern void softi2c_send_data(unsigned chipaddr, unsigned dataaddr,
+		unsigned datanum, const uint8_t *data);
+extern int softi2c_read_data(unsigned chipaddr,unsigned dataaddr,
+		unsigned datanum, uint8_t *data);
 #endif /* SOFTI2C_H_ */

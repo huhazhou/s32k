@@ -17,8 +17,7 @@ bl/softonewire.o: ../bl/softonewire.c \
  /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/null.h \
  /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/size_t.h \
  /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/ewl_rsize_t.h \
- /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/string_api.h \
- /home/houxd/workspaceS32DS.ARM.V20/dp1000/include/S32K144.h
+ /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/string_api.h
 
 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/lib_c99.prefix:
 
@@ -57,5 +56,3 @@ bl/softonewire.o: ../bl/softonewire.c \
 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/ewl_rsize_t.h:
 
 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/string_api.h:
-
-/home/houxd/workspaceS32DS.ARM.V20/dp1000/include/S32K144.h:

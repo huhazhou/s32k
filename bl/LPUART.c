@@ -75,9 +75,10 @@ void LPUART_init(LPUART_Type *LPUART, uint32_t bps)  /* Init. summary: 9600 baud
 }
 
 void LPUART_transmit_char(LPUART_Type *LPUART,char send) {    /* Function to Transmit single Char */
-  while((LPUART->STAT & LPUART_STAT_TDRE_MASK)>>LPUART_STAT_TDRE_SHIFT==0);
+  //while((LPUART->STAT & LPUART_STAT_TDRE_MASK)>>LPUART_STAT_TDRE_SHIFT==0);
                                    /* Wait for transmit buffer to be empty */
   LPUART->DATA=send;              /* Send data */
+  while((LPUART->STAT & LPUART_STAT_TC_MASK)==0);
 }
 
 int LPUART_receive_char(LPUART_Type *LPUART) {    /* Function to Receive single Char */
@@ -89,22 +90,25 @@ int LPUART_receive_char(LPUART_Type *LPUART) {    /* Function to Receive single 
 
   return recieve & 0xFFU;
 }
-extern void UartRxIRQHandler();
+extern void UartRxIRQHandler(int port,uint8_t rxbyte);
 void LPUART0_RxTx_IRQHandler(void)
 {
 	if((LPUART0->STAT&LPUART_STAT_RDRF_MASK)>>LPUART_STAT_RDRF_SHIFT){
-		UartRxIRQHandler(0);
+		uint8_t rxbyte = LPUART0->DATA;
+		UartRxIRQHandler(0,rxbyte);
 	}
 }
 void LPUART1_RxTx_IRQHandler(void)
 {
 	if((LPUART1->STAT&LPUART_STAT_RDRF_MASK)>>LPUART_STAT_RDRF_SHIFT){
-		UartRxIRQHandler(1);
+		uint8_t rxbyte = LPUART1->DATA;
+		UartRxIRQHandler(1,rxbyte);
 	}
 }
 void LPUART2_RxTx_IRQHandler(void)
 {
 	if((LPUART2->STAT&LPUART_STAT_RDRF_MASK)>>LPUART_STAT_RDRF_SHIFT){
-		UartRxIRQHandler(2);
+		uint8_t rxbyte = LPUART2->DATA;
+		UartRxIRQHandler(2,rxbyte);
 	}
 }

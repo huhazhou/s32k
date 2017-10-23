@@ -15,7 +15,7 @@ bl/ds3231.o: ../bl/ds3231.c \
  ../bl/LPUART.h \
  /home/houxd/workspaceS32DS.ARM.V20/dp1000/include/S32K144.h \
  ../bl/FlexCAN.h ../bl/SPI_MSD0_Driver.h ../bl/clocks_and_modes.h \
- ../bl/ds3231.h \
+ ../bl/ds3231.h ../bl/ds2411.h \
  /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/stdio.h \
  /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstdio \
  /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstddef \
@@ -68,6 +68,8 @@ bl/ds3231.o: ../bl/ds3231.c \
 ../bl/clocks_and_modes.h:
 
 ../bl/ds3231.h:
+
+../bl/ds2411.h:
 
 /home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/stdio.h:
 

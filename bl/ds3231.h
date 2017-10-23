@@ -17,7 +17,7 @@ struct DS3231_Time{
 	uint8_t mon;	//1~12
 	uint8_t year;	//0~99
 };
-extern int ds3231_init();
+extern void ds3231_init();
 extern float ds3231_gettempr();
 extern void ds3231_settime(const struct DS3231_Time *dsdat);
 extern void ds3231_gettime(struct DS3231_Time *dsdat);

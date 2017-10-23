@@ -12,61 +12,49 @@
 #include "S32K144.h"
 #include "softonewire.h"
 
-//定义存放SN的基地址和偏移地址
-#define SN_DEV_ADDR		0xA0
-#define SN_OFFSET		0xF0
-
-#define DEBUGMSG(...)
-
-uint8_t calc_crc8(uint8_t *dat, uint8_t length) {
-	uint8_t i, j, aa, check, flag;
-	check = 0;
-	for (i = 0; i < length; i++) {
-		aa = *dat++;
-		for (j = 0; j < 8; j++) {
-			flag = (check ^ aa) & 1;
-			check >>= 1;
-			if (flag) {
-				check ^= 0x0c;
-				check |= 0x80;
-			}
-			aa >>= 1;
-		}
-	}
-	return check;
+void IO_OUT_SET() {
+	PTA->PDDR |= 1 << 16;
+	PTA-> PSOR |= 1<<16;
 }
+void IO_OUT_CLR() {
+	PTA->PDDR |= 1 << 16;
+	PTA-> PCOR |= 1<<16;
+}
+
+int IO_IN_VAL() {
+	PTA->PDDR &= ~(1 << 16);
+	return PTA->PDIR & 1<<16;
+}
+const unsigned DS2411_TIMING_TABLE[_OW_INDEX_MAX] = {
+	[OW_RESET_BEGAIN] = 480,
+	[OW_RESET_WAIT_ACK] = 70,
+	[OW_RESET_END] = 410,
+	[OW_WRITE_1_L] = 6,
+	[OW_WRITE_1_H] = 64,
+	[OW_WRITE_0_L] = 60,
+	[OW_WRITE_0_H] = 10,
+	[OW_READ_LOW] = 4,
+	[OW_READ_BEFORE_SAMPLE] = 8,
+	[OW_READ_END] = 65,
+};
+const struct SoftOneWire OneWireDev = {
+		.IO_OUT_SET = IO_OUT_SET,
+		.IO_OUT_CLR = IO_OUT_CLR,
+		.IO_IN_VAL = IO_IN_VAL,
+		.TIMING_TABLE = DS2411_TIMING_TABLE,
+};
+
 int ds2411_getsn(struct DS2411_SN* psn) {
 	uint8_t *sn = (uint8_t*)psn;
-	int rst_val = onewrie_reset();
-	if(0!=rst_val)
+	onewrie_io_init(&OneWireDev);
+	int res = onewire_read(0x33,8,sn);
+	if(res)
 		return -1;
-	onewire_write_byte(0x33); //启动读取过程
-	for (int i = 0; i < 8; i++) {
-		sn[i] = onewire_read_byte();
-	}
-	if (sn[7] != calc_crc8(sn, 7)) {
+	if (sn[7] != onewrie_crc8(sn, 7)) {
 		return -2;
 	}
 	return 0;
 }
 
-int main()
-{
-	WDOG_disable();
-	SOSC_init_8MHz(); /* Initialize system oscilator for 8 MHz xtal */
-	SPLL_init_160MHz(); /* Initialize SPLL to 160 MHz with 8 MHz SOSC */
-	NormalRUNmode_80MHz(); /* Init clocks: 80 MHz sysclk & core, 40 MHz bus, 20 MHz flash */
-	NVIC_init_IRQs();        /* Enable desired interrupts and priorities */
-	PORT_init();             /* Configure ports */
-
-	while(1){
-		char asc[128];
-		char buf[8];
-		int res = ds2411_getsn((struct DS2411_SN*)buf);
-		printf("res=%d\n",res);
-		printf("%s\n",hx_dumphex2str(buf,8,asc));
-	}
-
-}
 
 

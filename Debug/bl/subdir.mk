@@ -14,8 +14,7 @@ C_SRCS_QUOTED += \
 "../bl/ds2411.c" \
 "../bl/ds3231.c" \
 "../bl/softi2c.c" \
-"../bl/softonewire.c" \
-"../bl/timelib.c" 
+"../bl/softonewire.c" 
 
 C_SRCS += \
 ../bl/FlexCAN.c \
@@ -26,8 +25,7 @@ C_SRCS += \
 ../bl/ds2411.c \
 ../bl/ds3231.c \
 ../bl/softi2c.c \
-../bl/softonewire.c \
-../bl/timelib.c 
+../bl/softonewire.c 
 
 C_DEPS_QUOTED += \
 "./bl/FlexCAN.d" \
@@ -38,8 +36,7 @@ C_DEPS_QUOTED += \
 "./bl/ds2411.d" \
 "./bl/ds3231.d" \
 "./bl/softi2c.d" \
-"./bl/softonewire.d" \
-"./bl/timelib.d" 
+"./bl/softonewire.d" 
 
 OBJS_QUOTED += \
 "./bl/FlexCAN.o" \
@@ -50,8 +47,7 @@ OBJS_QUOTED += \
 "./bl/ds2411.o" \
 "./bl/ds3231.o" \
 "./bl/softi2c.o" \
-"./bl/softonewire.o" \
-"./bl/timelib.o" 
+"./bl/softonewire.o" 
 
 C_DEPS += \
 ./bl/FlexCAN.d \
@@ -62,8 +58,7 @@ C_DEPS += \
 ./bl/ds2411.d \
 ./bl/ds3231.d \
 ./bl/softi2c.d \
-./bl/softonewire.d \
-./bl/timelib.d 
+./bl/softonewire.d 
 
 OBJS_OS_FORMAT += \
 ./bl/FlexCAN.o \
@@ -74,8 +69,7 @@ OBJS_OS_FORMAT += \
 ./bl/ds2411.o \
 ./bl/ds3231.o \
 ./bl/softi2c.o \
-./bl/softonewire.o \
-./bl/timelib.o 
+./bl/softonewire.o 
 
 OBJS += \
 ./bl/FlexCAN.o \
@@ -86,8 +80,7 @@ OBJS += \
 ./bl/ds2411.o \
 ./bl/ds3231.o \
 ./bl/softi2c.o \
-./bl/softonewire.o \
-./bl/timelib.o 
+./bl/softonewire.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -160,14 +153,6 @@ bl/softonewire.o: ../bl/softonewire.c
 	@echo 'Executing target #20 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@bl/softonewire.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "bl/softonewire.o" "$<"
-	@echo 'Finished building: $<'
-	@echo ' '
-
-bl/timelib.o: ../bl/timelib.c
-	@echo 'Building file: $<'
-	@echo 'Executing target #21 $<'
-	@echo 'Invoking: Standard S32DS C Compiler'
-	arm-none-eabi-gcc "@bl/timelib.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "bl/timelib.o" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

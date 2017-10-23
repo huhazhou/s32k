@@ -21,17 +21,17 @@ void WDOG_disable(void) {
 }
 
 void NVIC_init_IRQs (void) {
-	S32_NVIC->ICPR[1] = 1 << (LPUART0_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: clr any pending IRQ*/
-	S32_NVIC->ISER[1] = 1 << (LPUART0_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: enable IRQ */
-	S32_NVIC->IP[LPUART0_RxTx_IRQn] =0x0f; /* IRQ48-LPIT0 ch0: priority 10 of 0-15*/
+	S32_NVIC->ICPR[LPUART0_RxTx_IRQn/32] = 1 << (LPUART0_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: clr any pending IRQ*/
+	S32_NVIC->ISER[LPUART0_RxTx_IRQn/32] = 1 << (LPUART0_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: enable IRQ */
+	S32_NVIC->IP[LPUART0_RxTx_IRQn] =0x05; /* IRQ48-LPIT0 ch0: priority 10 of 0-15*/
 
-	S32_NVIC->ICPR[1] = 1 << (LPUART1_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: clr any pending IRQ*/
-	S32_NVIC->ISER[1] = 1 << (LPUART1_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: enable IRQ */
-	S32_NVIC->IP[LPUART1_RxTx_IRQn] =0x0f; /* IRQ48-LPIT0 ch0: priority 10 of 0-15*/
+	S32_NVIC->ICPR[LPUART1_RxTx_IRQn/32] = 1 << (LPUART1_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: clr any pending IRQ*/
+	S32_NVIC->ISER[LPUART1_RxTx_IRQn/32] = 1 << (LPUART1_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: enable IRQ */
+	S32_NVIC->IP[LPUART1_RxTx_IRQn] =0x05; /* IRQ48-LPIT0 ch0: priority 10 of 0-15*/
 
-	S32_NVIC->ICPR[1] = 1 << (LPUART2_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: clr any pending IRQ*/
-	S32_NVIC->ISER[1] = 1 << (LPUART2_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: enable IRQ */
-	S32_NVIC->IP[LPUART2_RxTx_IRQn] =0x0f; /* IRQ48-LPIT0 ch0: priority 10 of 0-15*/
+	S32_NVIC->ICPR[LPUART1_RxTx_IRQn/32] = 1 << (LPUART2_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: clr any pending IRQ*/
+	S32_NVIC->ISER[LPUART1_RxTx_IRQn/32] = 1 << (LPUART2_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: enable IRQ */
+	S32_NVIC->IP[LPUART2_RxTx_IRQn] =0x05; /* IRQ48-LPIT0 ch0: priority 10 of 0-15*/
 
 //	  S32_NVIC->ICPR[1] = 1 << (48 % 32);  /* IRQ48-LPIT0 ch0: clr any pending IRQ*/
 //	  S32_NVIC->ISER[1] = 1 << (48 % 32);  /* IRQ48-LPIT0 ch0: enable IRQ */
@@ -81,8 +81,8 @@ void PORT_init (void) {
 
 	//uart0
 	PCC->PCCn[PCC_PORTB_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTB */
-	PORTB->PCR[0] |= PORT_PCR_MUX(3); /* Port C6: MUX = ALT2,UART0 TX */
-	PORTB->PCR[1] |= PORT_PCR_MUX(3); /* Port C7: MUX = ALT2,UART0 RX */
+	PORTB->PCR[0] |= PORT_PCR_MUX(2); /* Port C6: MUX = ALT2,UART0 TX */
+	PORTB->PCR[1] |= PORT_PCR_MUX(2); /* Port C7: MUX = ALT2,UART0 RX */
 	//uart1
 	PCC->PCCn[PCC_PORTD_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTC */
 	PORTD->PCR[13] |= PORT_PCR_MUX(3); /* Port C6: MUX = ALT2,UART1 TX */
@@ -119,6 +119,71 @@ void PORT_init (void) {
 
 	//rtc
 	ds3231_init();
+
+	//io in
+	PCC->PCCn[PCC_PORTB_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTB */
+	PORTB->PCR[4] |= PORT_PCR_MUX(1); /* Port C6: MUX = ALT2,UART0 TX */
+	PORTB->PCR[5] |= PORT_PCR_MUX(1); /* Port C7: MUX = ALT2,UART0 RX */
+	PTB->PDDR &= ~((1<<4)|(1<<5));
+	PCC->PCCn[PCC_PORTE_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTB */
+	PORTE->PCR[8] |= PORT_PCR_MUX(1); /* Port C6: MUX = ALT2,UART0 TX */
+	PORTE->PCR[9] |= PORT_PCR_MUX(1); /* Port C7: MUX = ALT2,UART0 RX */
+	PTE->PDDR &= ~((1<<8)|(1<<9));
+
+
+	//leds
+	PCC->PCCn[PCC_PORTB_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTB */
+	PORTB->PCR[12] |= PORT_PCR_MUX(1); /* Port C6: MUX = ALT2,UART0 TX */
+	PORTB->PCR[13] |= PORT_PCR_MUX(1); /* Port C7: MUX = ALT2,UART0 RX */
+	PORTB->PCR[14] |= PORT_PCR_MUX(1); /* Port C7: MUX = ALT2,UART0 RX */
+	PORTB->PCR[15] |= PORT_PCR_MUX(1); /* Port C7: MUX = ALT2,UART0 RX */
+	PORTB->PCR[16] |= PORT_PCR_MUX(1); /* Port C7: MUX = ALT2,UART0 RX */
+	PORTB->PCR[17] |= PORT_PCR_MUX(1); /* Port C7: MUX = ALT2,UART0 RX */
+	PTB->PDDR |= ((1<<12)|(1<<13)|(1<<14)|(1<<15)|(1<<16)|(1<<17));
+
+	//power
+	PCC->PCCn[PCC_PORTD_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTB */
+	PORTD->PCR[3] |= PORT_PCR_MUX(1); /* Port C6: MUX = ALT2,UART0 TX */
+	//powec
+	PORTD->PCR[4] |= PORT_PCR_MUX(1); /* Port C6: MUX = ALT2,UART0 TX */
+	PTD->PDDR |= ((1<<3)|(1<<4));
+	PTD->PCOR |= 1<<3;
+	PTD->PSOR |= 1<<4;
+
+	//RS485
+	PCC-> PCCn[PCC_PORTC_INDEX] = PCC_PCCn_CGC_MASK; /* Enable clock to PORT C */
+	PTC->PDDR |= 1<<10; /* Port D0: Data Direction= output */
+	PORTC->PCR[10] = 0x00000100; /* Port D0: MUX = GPIO */
+	PTC-> PCOR |= 1<<10;	//default receive
+
+}
+void rs485_dir(int tx)
+{
+	if(tx) PTC-> PSOR |= 1<<10;
+	else PTC-> PCOR |= 1<<10;
+}
+int get_input_val(int id)
+{
+	if(id==0) return PTB->PDIR&(1<<4);
+	else if(id==1) return PTB->PDIR&(1<<5);
+	else if(id==2) return PTE->PDIR&(1<<8);
+	else if(id==3) return PTE->PDIR&(1<<9);
+	else return 0;
+}
+void led_ctrl(int id, int v)
+{
+	if(v) PTB->PSOR |= 1<<(id+12);
+	else PTB->PCOR |= 1<<(id+12);
+}
+void power_ctrl(int v)
+{
+	if(v) PTD->PSOR |= 1<<3;
+	else PTD->PCOR |= 1<<3;
+}
+void powec_ctrl(int v)
+{
+	if(v) PTD->PSOR |= 1<<4;
+	else PTD->PCOR |= 1<<4;
 }
 
 uint32_t get_tick_count()

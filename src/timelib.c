@@ -7,7 +7,7 @@
 #include <timelib.h>
 #include <stdio.h>
 volatile uint64_t __timelib_tick_count = 0;
-static volatile uint64_t time_tick_diff = 0;
+static volatile int64_t time_tick_diff = 0;
 time_t time(const time_t* t)
 {
 	if(t){
@@ -15,7 +15,7 @@ time_t time(const time_t* t)
 	}
 	return time_tick_diff + (__timelib_tick_count/_TIMELIB_TICK_HZ);
 }
-time_t mktime(struct tm * pt)
+time_t mktime_z(struct tm * pt, long timezone)
 {
 	unsigned int year = pt->tm_year + 1900;
 	unsigned int mon = pt->tm_mon+1;
@@ -27,11 +27,18 @@ time_t mktime(struct tm * pt)
 		mon += 12; /* Puts Feb last since it has leap day */
 		year -= 1;
 	}
-	return ((((unsigned long) (year / 4 - year / 100 + year / 400
+	time_t res = ((((unsigned long) (year / 4 - year / 100 + year / 400
 			+ 367 * mon / 12 + day) + year * 365 - 719499) * 24 + hour /* now have hours */
 	) * 60 + min /* now have minutes */
 	) * 60 + sec; /* finally seconds */
+
+	return res - timezone;
 }
+time_t mktime(struct tm * pt)
+{
+	return mktime_z(pt,__timezone(NULL));
+}
+
 static const char days_tbl[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 void localtime_z(const time_t *ptime, long timezone, struct tm *tm_time) {
 	uint32_t pass_4year;
@@ -45,7 +52,7 @@ void localtime_z(const time_t *ptime, long timezone, struct tm *tm_time) {
 	raw_time /= 60;
 	tm_time->tm_min = (int) (raw_time % 60);
 	raw_time /= 60;
-	tm_time->tm_wday = raw_time/24%7 + 4;
+	tm_time->tm_wday = ((raw_time/24)+4)%7;
 	pass_4year = ((unsigned int) raw_time / (1461L * 24L));
 	tm_time->tm_year = (pass_4year << 2) + 70;
 	raw_time %= 1461L * 24L;
@@ -116,12 +123,17 @@ char *asctime_s(const struct tm * tp, char *buf, int buflen)
 	return buf;
 }
 #else
-static const char format[] = "%d年%d月%d日 %.2d:%.2d:%.2d 星期%s";
+#if __SUPPORT_CH_DISPLAY
+static const char format[] = "%d年%d月%d日 %.2d:%.2d:%.2d 星期%s\n";
 static const char *const cn_name[] = {"日","一","二","三","四","五","六"};
+#else
+static const char format[] = "%d/%d/%d %.2d:%.2d:%.2d Week%s\n";
+static const char *const cn_name[] = {"0","1","2","3","4","5","6"};
+#endif
 char *asctime_s(const struct tm * tp, char *buf, int buflen)
 {
 	int n = snprintf(buf, buflen, format,
-			1900 + tp->tm_year,tp->tm_mon,tp->tm_mday,
+			1900 + tp->tm_year,tp->tm_mon+1,tp->tm_mday,
 			tp->tm_hour, tp->tm_min, tp->tm_sec,
 			(tp->tm_wday < 0 || tp->tm_wday >= 7 ?
 					"?" : cn_name[tp->tm_wday])

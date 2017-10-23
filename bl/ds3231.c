@@ -47,11 +47,11 @@ void SDA_OUT()	{PTB->PDDR |= 1 << 10;     }
 void SDA_IN ()	{PTB->PDDR &= ~(1 << 10);  }
 int  SDA_VAL()	{return PTB->PDIR & (1<<10);}
 
-const struct SoftI2C_Ports I2C0 = {
-	.SET_SCL 	=SET_SCL,
-	.CLR_SCL 	=CLR_SCL,
-	.SET_SDA 	=SET_SDA,
-	.CLR_SDA 	=CLR_SDA,
+const struct SoftI2C I2C0 = {
+	.SCL_SET 	=SET_SCL,
+	.SCL_CLR 	=CLR_SCL,
+	.SDA_SET 	=SET_SDA,
+	.SDA_CLR 	=CLR_SDA,
 	.SCL_OUT 	=SCL_OUT,
 	.SCL_IN 	=SCL_IN,
 	.SDA_OUT	=SDA_OUT,
@@ -61,10 +61,10 @@ const struct SoftI2C_Ports I2C0 = {
 };
 
 void ds3231_settime(const struct DS3231_Time *dsdat) {
-	softi2c_send_data(&I2C0,DS3231_CHIP_ADDR,DS3231_SECOND,		7,(uint8_t*)dsdat);   //修改年
+	softi2c_send_data(DS3231_CHIP_ADDR,DS3231_SECOND,		7,(uint8_t*)dsdat);   //修改年
 }
 void ds3231_gettime(struct DS3231_Time *dsdat) {
-	softi2c_read_data(&I2C0,DS3231_CHIP_ADDR,DS3231_SECOND,7,(uint8_t*)dsdat);
+	softi2c_read_data(DS3231_CHIP_ADDR,DS3231_SECOND,7,(uint8_t*)dsdat);
 }
 float ds3231_gettempr() {
 	/*
@@ -73,7 +73,7 @@ float ds3231_gettempr() {
 	 * \-----byteh-----/ \------bytel--------/
 	 */
 	uint8_t tempr[2];
-	softi2c_read_data(&I2C0,DS3231_CHIP_ADDR,DS3231_TEMPERATUREH,2,tempr);
+	softi2c_read_data(DS3231_CHIP_ADDR,DS3231_TEMPERATUREH,2,tempr);
 	int sign = tempr[0] & 0b10000000;
 	uint32_t t = tempr[0] & 0b01111111;
 	t<<=2;
@@ -84,7 +84,7 @@ float ds3231_gettempr() {
 	return res;
 }
 
-int ds3231_init()
+void ds3231_init()
 {
 	softi2c_init_io(&I2C0);
 }

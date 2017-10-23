@@ -51,7 +51,7 @@ OBJS += \
 # Each subdirectory must supply rules for building sources it contributes
 fatfs/ccsbcs.o: ../fatfs/ccsbcs.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #22 $<'
+	@echo 'Executing target #21 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@fatfs/ccsbcs.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "fatfs/ccsbcs.o" "$<"
 	@echo 'Finished building: $<'
@@ -59,7 +59,7 @@ fatfs/ccsbcs.o: ../fatfs/ccsbcs.c
 
 fatfs/diskio.o: ../fatfs/diskio.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #23 $<'
+	@echo 'Executing target #22 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@fatfs/diskio.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "fatfs/diskio.o" "$<"
 	@echo 'Finished building: $<'
@@ -67,7 +67,7 @@ fatfs/diskio.o: ../fatfs/diskio.c
 
 fatfs/ff.o: ../fatfs/ff.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #24 $<'
+	@echo 'Executing target #23 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@fatfs/ff.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "fatfs/ff.o" "$<"
 	@echo 'Finished building: $<'
@@ -75,7 +75,7 @@ fatfs/ff.o: ../fatfs/ff.c
 
 fatfs/unicode.o: ../fatfs/unicode.c
 	@echo 'Building file: $<'
-	@echo 'Executing target #25 $<'
+	@echo 'Executing target #24 $<'
 	@echo 'Invoking: Standard S32DS C Compiler'
 	arm-none-eabi-gcc "@fatfs/unicode.args" -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "fatfs/unicode.o" "$<"
 	@echo 'Finished building: $<'
