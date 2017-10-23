@@ -1,0 +1,351 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.eabi_attribute 27, 1
+   4              		.eabi_attribute 28, 1
+   5              		.fpu fpv4-sp-d16
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.thumb
+  16              		.file	"ds2411.c"
+  17              		.text
+  18              	.Ltext0:
+  19              		.cfi_sections	.debug_frame
+  20              		.section	.text.IO_OUT_SET,"ax",%progbits
+  21              		.align	2
+  22              		.global	IO_OUT_SET
+  23              		.thumb
+  24              		.thumb_func
+  26              	IO_OUT_SET:
+  27              	.LFB0:
+  28              		.file 1 "../bl/ds2411.c"
+   1:../bl/ds2411.c **** /*
+   2:../bl/ds2411.c ****  * ds2411.c
+   3:../bl/ds2411.c ****  *
+   4:../bl/ds2411.c ****  *  Created on: 2017年10月19日
+   5:../bl/ds2411.c ****  *      Author: houxd
+   6:../bl/ds2411.c ****  */
+   7:../bl/ds2411.c **** 
+   8:../bl/ds2411.c **** #include <ds2411.h>
+   9:../bl/ds2411.c **** #include <stdint.h>
+  10:../bl/ds2411.c **** #include <stdio.h>
+  11:../bl/ds2411.c **** #include <string.h>
+  12:../bl/ds2411.c **** #include "S32K144.h"
+  13:../bl/ds2411.c **** #include "softonewire.h"
+  14:../bl/ds2411.c **** 
+  15:../bl/ds2411.c **** void IO_OUT_SET() {
+  29              		.loc 1 15 0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 1, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+  34 0000 80B4     		push	{r7}
+  35              		.cfi_def_cfa_offset 4
+  36              		.cfi_offset 7, -4
+  37 0002 00AF     		add	r7, sp, #0
+  38              		.cfi_def_cfa_register 7
+  16:../bl/ds2411.c **** 	PTA->PDDR |= 1 << 16;
+  39              		.loc 1 16 0
+  40 0004 074A     		ldr	r2, .L2
+  41 0006 074B     		ldr	r3, .L2
+  42 0008 5B69     		ldr	r3, [r3, #20]
+  43 000a 43F48033 		orr	r3, r3, #65536
+  44 000e 5361     		str	r3, [r2, #20]
+  17:../bl/ds2411.c **** 	PTA-> PSOR |= 1<<16;
+  45              		.loc 1 17 0
+  46 0010 044A     		ldr	r2, .L2
+  47 0012 044B     		ldr	r3, .L2
+  48 0014 5B68     		ldr	r3, [r3, #4]
+  49 0016 43F48033 		orr	r3, r3, #65536
+  50 001a 5360     		str	r3, [r2, #4]
+  18:../bl/ds2411.c **** }
+  51              		.loc 1 18 0
+  52 001c BD46     		mov	sp, r7
+  53              		.cfi_def_cfa_register 13
+  54              		@ sp needed
+  55 001e 5DF8047B 		ldr	r7, [sp], #4
+  56              		.cfi_restore 7
+  57              		.cfi_def_cfa_offset 0
+  58 0022 7047     		bx	lr
+  59              	.L3:
+  60              		.align	2
+  61              	.L2:
+  62 0024 00F00F40 		.word	1074786304
+  63              		.cfi_endproc
+  64              	.LFE0:
+  66              		.section	.text.IO_OUT_CLR,"ax",%progbits
+  67              		.align	2
+  68              		.global	IO_OUT_CLR
+  69              		.thumb
+  70              		.thumb_func
+  72              	IO_OUT_CLR:
+  73              	.LFB1:
+  19:../bl/ds2411.c **** void IO_OUT_CLR() {
+  74              		.loc 1 19 0
+  75              		.cfi_startproc
+  76              		@ args = 0, pretend = 0, frame = 0
+  77              		@ frame_needed = 1, uses_anonymous_args = 0
+  78              		@ link register save eliminated.
+  79 0000 80B4     		push	{r7}
+  80              		.cfi_def_cfa_offset 4
+  81              		.cfi_offset 7, -4
+  82 0002 00AF     		add	r7, sp, #0
+  83              		.cfi_def_cfa_register 7
+  20:../bl/ds2411.c **** 	PTA->PDDR |= 1 << 16;
+  84              		.loc 1 20 0
+  85 0004 074A     		ldr	r2, .L5
+  86 0006 074B     		ldr	r3, .L5
+  87 0008 5B69     		ldr	r3, [r3, #20]
+  88 000a 43F48033 		orr	r3, r3, #65536
+  89 000e 5361     		str	r3, [r2, #20]
+  21:../bl/ds2411.c **** 	PTA-> PCOR |= 1<<16;
+  90              		.loc 1 21 0
+  91 0010 044A     		ldr	r2, .L5
+  92 0012 044B     		ldr	r3, .L5
+  93 0014 9B68     		ldr	r3, [r3, #8]
+  94 0016 43F48033 		orr	r3, r3, #65536
+  95 001a 9360     		str	r3, [r2, #8]
+  22:../bl/ds2411.c **** }
+  96              		.loc 1 22 0
+  97 001c BD46     		mov	sp, r7
+  98              		.cfi_def_cfa_register 13
+  99              		@ sp needed
+ 100 001e 5DF8047B 		ldr	r7, [sp], #4
+ 101              		.cfi_restore 7
+ 102              		.cfi_def_cfa_offset 0
+ 103 0022 7047     		bx	lr
+ 104              	.L6:
+ 105              		.align	2
+ 106              	.L5:
+ 107 0024 00F00F40 		.word	1074786304
+ 108              		.cfi_endproc
+ 109              	.LFE1:
+ 111              		.section	.text.IO_IN_VAL,"ax",%progbits
+ 112              		.align	2
+ 113              		.global	IO_IN_VAL
+ 114              		.thumb
+ 115              		.thumb_func
+ 117              	IO_IN_VAL:
+ 118              	.LFB2:
+  23:../bl/ds2411.c **** 
+  24:../bl/ds2411.c **** int IO_IN_VAL() {
+ 119              		.loc 1 24 0
+ 120              		.cfi_startproc
+ 121              		@ args = 0, pretend = 0, frame = 0
+ 122              		@ frame_needed = 1, uses_anonymous_args = 0
+ 123              		@ link register save eliminated.
+ 124 0000 80B4     		push	{r7}
+ 125              		.cfi_def_cfa_offset 4
+ 126              		.cfi_offset 7, -4
+ 127 0002 00AF     		add	r7, sp, #0
+ 128              		.cfi_def_cfa_register 7
+  25:../bl/ds2411.c **** 	PTA->PDDR &= ~(1 << 16);
+ 129              		.loc 1 25 0
+ 130 0004 074A     		ldr	r2, .L9
+ 131 0006 074B     		ldr	r3, .L9
+ 132 0008 5B69     		ldr	r3, [r3, #20]
+ 133 000a 23F48033 		bic	r3, r3, #65536
+ 134 000e 5361     		str	r3, [r2, #20]
+  26:../bl/ds2411.c **** 	return PTA->PDIR & 1<<16;
+ 135              		.loc 1 26 0
+ 136 0010 044B     		ldr	r3, .L9
+ 137 0012 1B69     		ldr	r3, [r3, #16]
+ 138 0014 03F48033 		and	r3, r3, #65536
+  27:../bl/ds2411.c **** }
+ 139              		.loc 1 27 0
+ 140 0018 1846     		mov	r0, r3
+ 141 001a BD46     		mov	sp, r7
+ 142              		.cfi_def_cfa_register 13
+ 143              		@ sp needed
+ 144 001c 5DF8047B 		ldr	r7, [sp], #4
+ 145              		.cfi_restore 7
+ 146              		.cfi_def_cfa_offset 0
+ 147 0020 7047     		bx	lr
+ 148              	.L10:
+ 149 0022 00BF     		.align	2
+ 150              	.L9:
+ 151 0024 00F00F40 		.word	1074786304
+ 152              		.cfi_endproc
+ 153              	.LFE2:
+ 155              		.global	DS2411_TIMING_TABLE
+ 156              		.section	.rodata.DS2411_TIMING_TABLE,"a",%progbits
+ 157              		.align	2
+ 160              	DS2411_TIMING_TABLE:
+ 161 0000 E0010000 		.word	480
+ 162 0004 46000000 		.word	70
+ 163 0008 9A010000 		.word	410
+ 164 000c 06000000 		.word	6
+ 165 0010 40000000 		.word	64
+ 166 0014 3C000000 		.word	60
+ 167 0018 0A000000 		.word	10
+ 168 001c 04000000 		.word	4
+ 169 0020 08000000 		.word	8
+ 170 0024 41000000 		.word	65
+ 171              		.global	OneWireDev
+ 172              		.section	.rodata.OneWireDev,"a",%progbits
+ 173              		.align	2
+ 176              	OneWireDev:
+ 177 0000 00000000 		.word	IO_OUT_SET
+ 178 0004 00000000 		.word	IO_OUT_CLR
+ 179 0008 00000000 		.word	IO_IN_VAL
+ 180 000c 00000000 		.word	DS2411_TIMING_TABLE
+ 181              		.section	.text.ds2411_getsn,"ax",%progbits
+ 182              		.align	2
+ 183              		.global	ds2411_getsn
+ 184              		.thumb
+ 185              		.thumb_func
+ 187              	ds2411_getsn:
+ 188              	.LFB3:
+  28:../bl/ds2411.c **** const unsigned DS2411_TIMING_TABLE[_OW_INDEX_MAX] = {
+  29:../bl/ds2411.c **** 	[OW_RESET_BEGAIN] = 480,
+  30:../bl/ds2411.c **** 	[OW_RESET_WAIT_ACK] = 70,
+  31:../bl/ds2411.c **** 	[OW_RESET_END] = 410,
+  32:../bl/ds2411.c **** 	[OW_WRITE_1_L] = 6,
+  33:../bl/ds2411.c **** 	[OW_WRITE_1_H] = 64,
+  34:../bl/ds2411.c **** 	[OW_WRITE_0_L] = 60,
+  35:../bl/ds2411.c **** 	[OW_WRITE_0_H] = 10,
+  36:../bl/ds2411.c **** 	[OW_READ_LOW] = 4,
+  37:../bl/ds2411.c **** 	[OW_READ_BEFORE_SAMPLE] = 8,
+  38:../bl/ds2411.c **** 	[OW_READ_END] = 65,
+  39:../bl/ds2411.c **** };
+  40:../bl/ds2411.c **** const struct SoftOneWire OneWireDev = {
+  41:../bl/ds2411.c **** 		.IO_OUT_SET = IO_OUT_SET,
+  42:../bl/ds2411.c **** 		.IO_OUT_CLR = IO_OUT_CLR,
+  43:../bl/ds2411.c **** 		.IO_IN_VAL = IO_IN_VAL,
+  44:../bl/ds2411.c **** 		.TIMING_TABLE = DS2411_TIMING_TABLE,
+  45:../bl/ds2411.c **** };
+  46:../bl/ds2411.c **** 
+  47:../bl/ds2411.c **** int ds2411_getsn(struct DS2411_SN* psn) {
+ 189              		.loc 1 47 0
+ 190              		.cfi_startproc
+ 191              		@ args = 0, pretend = 0, frame = 16
+ 192              		@ frame_needed = 1, uses_anonymous_args = 0
+ 193 0000 90B5     		push	{r4, r7, lr}
+ 194              		.cfi_def_cfa_offset 12
+ 195              		.cfi_offset 4, -12
+ 196              		.cfi_offset 7, -8
+ 197              		.cfi_offset 14, -4
+ 198 0002 85B0     		sub	sp, sp, #20
+ 199              		.cfi_def_cfa_offset 32
+ 200 0004 00AF     		add	r7, sp, #0
+ 201              		.cfi_def_cfa_register 7
+ 202 0006 7860     		str	r0, [r7, #4]
+  48:../bl/ds2411.c **** 	uint8_t *sn = (uint8_t*)psn;
+ 203              		.loc 1 48 0
+ 204 0008 7B68     		ldr	r3, [r7, #4]
+ 205 000a FB60     		str	r3, [r7, #12]
+  49:../bl/ds2411.c **** 	onewrie_io_init(&OneWireDev);
+ 206              		.loc 1 49 0
+ 207 000c 1048     		ldr	r0, .L15
+ 208 000e FFF7FEFF 		bl	onewrie_io_init
+  50:../bl/ds2411.c **** 	int res = onewire_read(0x33,8,sn);
+ 209              		.loc 1 50 0
+ 210 0012 3320     		movs	r0, #51
+ 211 0014 0821     		movs	r1, #8
+ 212 0016 FA68     		ldr	r2, [r7, #12]
+ 213 0018 FFF7FEFF 		bl	onewire_read
+ 214 001c B860     		str	r0, [r7, #8]
+  51:../bl/ds2411.c **** 	if(res)
+ 215              		.loc 1 51 0
+ 216 001e BB68     		ldr	r3, [r7, #8]
+ 217 0020 002B     		cmp	r3, #0
+ 218 0022 02D0     		beq	.L12
+  52:../bl/ds2411.c **** 		return -1;
+ 219              		.loc 1 52 0
+ 220 0024 4FF0FF33 		mov	r3, #-1
+ 221 0028 0DE0     		b	.L13
+ 222              	.L12:
+  53:../bl/ds2411.c **** 	if (sn[7] != onewrie_crc8(sn, 7)) {
+ 223              		.loc 1 53 0
+ 224 002a FB68     		ldr	r3, [r7, #12]
+ 225 002c 0733     		adds	r3, r3, #7
+ 226 002e 1C78     		ldrb	r4, [r3]	@ zero_extendqisi2
+ 227 0030 F868     		ldr	r0, [r7, #12]
+ 228 0032 0721     		movs	r1, #7
+ 229 0034 FFF7FEFF 		bl	onewrie_crc8
+ 230 0038 0346     		mov	r3, r0
+ 231 003a 9C42     		cmp	r4, r3
+ 232 003c 02D0     		beq	.L14
+  54:../bl/ds2411.c **** 		return -2;
+ 233              		.loc 1 54 0
+ 234 003e 6FF00103 		mvn	r3, #1
+ 235 0042 00E0     		b	.L13
+ 236              	.L14:
+  55:../bl/ds2411.c **** 	}
+  56:../bl/ds2411.c **** 	return 0;
+ 237              		.loc 1 56 0
+ 238 0044 0023     		movs	r3, #0
+ 239              	.L13:
+  57:../bl/ds2411.c **** }
+ 240              		.loc 1 57 0
+ 241 0046 1846     		mov	r0, r3
+ 242 0048 1437     		adds	r7, r7, #20
+ 243              		.cfi_def_cfa_offset 12
+ 244 004a BD46     		mov	sp, r7
+ 245              		.cfi_def_cfa_register 13
+ 246              		@ sp needed
+ 247 004c 90BD     		pop	{r4, r7, pc}
+ 248              	.L16:
+ 249 004e 00BF     		.align	2
+ 250              	.L15:
+ 251 0050 00000000 		.word	OneWireDev
+ 252              		.cfi_endproc
+ 253              	.LFE3:
+ 255              		.text
+ 256              	.Letext0:
+ 257              		.file 2 "/home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstdint"
+ 258              		.file 3 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/bl/ds2411.h"
+ 259              		.file 4 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/include/S32K144.h"
+ 260              		.file 5 "../bl/softonewire.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 ds2411.c
+     /tmp/cc93edmE.s:21     .text.IO_OUT_SET:00000000 $t
+     /tmp/cc93edmE.s:26     .text.IO_OUT_SET:00000000 IO_OUT_SET
+     /tmp/cc93edmE.s:62     .text.IO_OUT_SET:00000024 $d
+     /tmp/cc93edmE.s:67     .text.IO_OUT_CLR:00000000 $t
+     /tmp/cc93edmE.s:72     .text.IO_OUT_CLR:00000000 IO_OUT_CLR
+     /tmp/cc93edmE.s:107    .text.IO_OUT_CLR:00000024 $d
+     /tmp/cc93edmE.s:112    .text.IO_IN_VAL:00000000 $t
+     /tmp/cc93edmE.s:117    .text.IO_IN_VAL:00000000 IO_IN_VAL
+     /tmp/cc93edmE.s:151    .text.IO_IN_VAL:00000024 $d
+     /tmp/cc93edmE.s:160    .rodata.DS2411_TIMING_TABLE:00000000 DS2411_TIMING_TABLE
+     /tmp/cc93edmE.s:157    .rodata.DS2411_TIMING_TABLE:00000000 $d
+     /tmp/cc93edmE.s:176    .rodata.OneWireDev:00000000 OneWireDev
+     /tmp/cc93edmE.s:173    .rodata.OneWireDev:00000000 $d
+     /tmp/cc93edmE.s:182    .text.ds2411_getsn:00000000 $t
+     /tmp/cc93edmE.s:187    .text.ds2411_getsn:00000000 ds2411_getsn
+     /tmp/cc93edmE.s:251    .text.ds2411_getsn:00000050 $d
+                     .debug_frame:00000010 $d
+                           .group:00000000 wm4.0.728a2e6911dc01ff85c2d70c52e8fae1
+                           .group:00000000 wm4.lib_c99.prefix.8.3580c292f50811c682d980dc4180498e
+                           .group:00000000 wm4.common.prefix.16.d7bf937cdf46fd76dde96b376e3b328a
+                           .group:00000000 wm4.ewl_c_version.h.9.0bcb57d6a3f89baae1f9b121de2772f5
+                           .group:00000000 wm4.os_enum.h.9.f9446d6af68b3fa72a37d4d924d3b347
+                           .group:00000000 wm4.ansi_prefix.ARM.h.13.4b23f4c654df3c3277534542f67d200c
+                           .group:00000000 wm4.ansi_parms.h.64.90aed58330fdde08746db908036e1f37
+                           .group:00000000 wm4.limits_api.h.9.bc6daa20b3abae2bba6c512044e73b43
+                           .group:00000000 wm4.ewl_lib_ext1.h.14.f9b057cc049671136093886db2a3473f
+                           .group:00000000 wm4.cstdint.134.0ece0ba0ee759ce9e45a8fa510ec0d93
+                           .group:00000000 wm4.wchar_t.h.9.94198016f5b5f455e54ea1f3f054b416
+                           .group:00000000 wm4.cstdint.246.0573fcc3ea2319479988f90b448d87e4
+                           .group:00000000 wm4.size_t.h.9.f983491a73b5c81f421ee8223b1ac5c0
+                           .group:00000000 wm4.ewl_rsize_t.h.11.b283831bb803e76ceb1756da2df9a1b5
+                           .group:00000000 wm4.cstddef.32.067e2ea187472b6198f9ace951e27a51
+                           .group:00000000 wm4.va_list.h.9.b0bb078841c0305c2667a31da10a9070
+                           .group:00000000 wm4.file_struc.h.13.96d07f4b7392ecdee9ce60307cac6248
+                           .group:00000000 wm4.stdarg.ARM.h.9.32516e68edcca81ab31f48f233894821
+                           .group:00000000 wm4.stdio_api.h.64.7d83b1caa7fdc34505042751a1c33692
+                           .group:00000000 wm4.cstdio.1187.51197b0e8ec7388017461af9f7851efe
+                           .group:00000000 wm4.string_api.h.9.a9265430fd330d238bc93998aef29e99
+                           .group:00000000 wm4.S32K144.h.177.db9d6057c342cdeacc7fa44375c761e5
+
+UNDEFINED SYMBOLS
+onewrie_io_init
+onewire_read
+onewrie_crc8

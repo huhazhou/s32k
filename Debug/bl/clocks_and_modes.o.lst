@@ -1,0 +1,285 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.eabi_attribute 27, 1
+   4              		.eabi_attribute 28, 1
+   5              		.fpu fpv4-sp-d16
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.thumb
+  16              		.file	"clocks_and_modes.c"
+  17              		.text
+  18              	.Ltext0:
+  19              		.cfi_sections	.debug_frame
+  20              		.section	.text.SOSC_init_8MHz,"ax",%progbits
+  21              		.align	2
+  22              		.global	SOSC_init_8MHz
+  23              		.thumb
+  24              		.thumb_func
+  26              	SOSC_init_8MHz:
+  27              	.LFB0:
+  28              		.file 1 "../bl/clocks_and_modes.c"
+   1:../bl/clocks_and_modes.c **** /*
+   2:../bl/clocks_and_modes.c ****  * clocks_and_modes.c              Copyright NXP 2016
+   3:../bl/clocks_and_modes.c ****  * Description: Example clock and mode functions
+   4:../bl/clocks_and_modes.c ****  * 2015 Feb 22 S Mihalik/ O Romero - initial version
+   5:../bl/clocks_and_modes.c ****  * 2016 Oct 15 S.M. / O.R. - Updated PLL per S32K1XX data sheet rev 1
+   6:../bl/clocks_and_modes.c ****  * 2016 Dec 06 S.M. et al - NormalRUNmode_80MHz changed "if" to "while"
+   7:../bl/clocks_and_modes.c ****  * 2016 Jan 05 S.M. - NormalRUNmode_80MHz: added () in while expression
+   8:../bl/clocks_and_modes.c ****  */
+   9:../bl/clocks_and_modes.c **** 
+  10:../bl/clocks_and_modes.c **** #include "S32K144.h"           /* include peripheral declarations S32K144 */
+  11:../bl/clocks_and_modes.c **** #include "clocks_and_modes.h"
+  12:../bl/clocks_and_modes.c **** 
+  13:../bl/clocks_and_modes.c **** void SOSC_init_8MHz(void) {
+  29              		.loc 1 13 0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 1, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+  34 0000 80B4     		push	{r7}
+  35              		.cfi_def_cfa_offset 4
+  36              		.cfi_offset 7, -4
+  37 0002 00AF     		add	r7, sp, #0
+  38              		.cfi_def_cfa_register 7
+  14:../bl/clocks_and_modes.c ****   SCG->SOSCDIV=0x00000101;  /* SOSCDIV1 & SOSCDIV2 =1: divide by 1 */
+  39              		.loc 1 14 0
+  40 0004 104B     		ldr	r3, .L4
+  41 0006 40F20112 		movw	r2, #257
+  42 000a C3F80421 		str	r2, [r3, #260]
+  15:../bl/clocks_and_modes.c ****   SCG->SOSCCFG=0x00000024;  /* Range=2: Medium freq (SOSC betw 1MHz-8MHz)*/
+  43              		.loc 1 15 0
+  44 000e 0E4B     		ldr	r3, .L4
+  45 0010 2422     		movs	r2, #36
+  46 0012 C3F80821 		str	r2, [r3, #264]
+  16:../bl/clocks_and_modes.c ****                             /* HGO=0:   Config xtal osc for low power */
+  17:../bl/clocks_and_modes.c ****                             /* EREFS=1: Input is external XTAL */
+  18:../bl/clocks_and_modes.c ****   while(SCG->SOSCCSR & SCG_SOSCCSR_LK_MASK); /* Ensure SOSCCSR unlocked */
+  47              		.loc 1 18 0
+  48 0016 00BF     		nop
+  49              	.L2:
+  50              		.loc 1 18 0 is_stmt 0 discriminator 1
+  51 0018 0B4B     		ldr	r3, .L4
+  52 001a D3F80031 		ldr	r3, [r3, #256]
+  53 001e 03F40003 		and	r3, r3, #8388608
+  54 0022 002B     		cmp	r3, #0
+  55 0024 F8D1     		bne	.L2
+  19:../bl/clocks_and_modes.c ****   SCG->SOSCCSR=0x00000001;  /* LK=0:          SOSCCSR can be written */
+  56              		.loc 1 19 0 is_stmt 1
+  57 0026 084B     		ldr	r3, .L4
+  58 0028 0122     		movs	r2, #1
+  59 002a C3F80021 		str	r2, [r3, #256]
+  20:../bl/clocks_and_modes.c ****                             /* SOSCCMRE=0:    OSC CLK monitor IRQ if enabled */
+  21:../bl/clocks_and_modes.c ****                             /* SOSCCM=0:      OSC CLK monitor disabled */
+  22:../bl/clocks_and_modes.c ****                             /* SOSCERCLKEN=0: Sys OSC 3V ERCLK output clk disabled */
+  23:../bl/clocks_and_modes.c ****                             /* SOSCLPEN=0:    Sys OSC disabled in VLP modes */
+  24:../bl/clocks_and_modes.c ****                             /* SOSCSTEN=0:    Sys OSC disabled in Stop modes */
+  25:../bl/clocks_and_modes.c ****                             /* SOSCEN=1:      Enable oscillator */
+  26:../bl/clocks_and_modes.c ****   while(!(SCG->SOSCCSR & SCG_SOSCCSR_SOSCVLD_MASK)); /* Wait for sys OSC clk valid */
+  60              		.loc 1 26 0
+  61 002e 00BF     		nop
+  62              	.L3:
+  63              		.loc 1 26 0 is_stmt 0 discriminator 1
+  64 0030 054B     		ldr	r3, .L4
+  65 0032 D3F80031 		ldr	r3, [r3, #256]
+  66 0036 03F08073 		and	r3, r3, #16777216
+  67 003a 002B     		cmp	r3, #0
+  68 003c F8D0     		beq	.L3
+  27:../bl/clocks_and_modes.c **** }
+  69              		.loc 1 27 0 is_stmt 1
+  70 003e BD46     		mov	sp, r7
+  71              		.cfi_def_cfa_register 13
+  72              		@ sp needed
+  73 0040 5DF8047B 		ldr	r7, [sp], #4
+  74              		.cfi_restore 7
+  75              		.cfi_def_cfa_offset 0
+  76 0044 7047     		bx	lr
+  77              	.L5:
+  78 0046 00BF     		.align	2
+  79              	.L4:
+  80 0048 00400640 		.word	1074151424
+  81              		.cfi_endproc
+  82              	.LFE0:
+  84              		.section	.text.SPLL_init_160MHz,"ax",%progbits
+  85              		.align	2
+  86              		.global	SPLL_init_160MHz
+  87              		.thumb
+  88              		.thumb_func
+  90              	SPLL_init_160MHz:
+  91              	.LFB1:
+  28:../bl/clocks_and_modes.c **** 
+  29:../bl/clocks_and_modes.c **** void SPLL_init_160MHz(void) {
+  92              		.loc 1 29 0
+  93              		.cfi_startproc
+  94              		@ args = 0, pretend = 0, frame = 0
+  95              		@ frame_needed = 1, uses_anonymous_args = 0
+  96              		@ link register save eliminated.
+  97 0000 80B4     		push	{r7}
+  98              		.cfi_def_cfa_offset 4
+  99              		.cfi_offset 7, -4
+ 100 0002 00AF     		add	r7, sp, #0
+ 101              		.cfi_def_cfa_register 7
+  30:../bl/clocks_and_modes.c ****   while(SCG->SPLLCSR & SCG_SPLLCSR_LK_MASK); /* Ensure SPLLCSR unlocked */
+ 102              		.loc 1 30 0
+ 103 0004 00BF     		nop
+ 104              	.L7:
+ 105              		.loc 1 30 0 is_stmt 0 discriminator 1
+ 106 0006 164B     		ldr	r3, .L10
+ 107 0008 D3F80036 		ldr	r3, [r3, #1536]
+ 108 000c 03F40003 		and	r3, r3, #8388608
+ 109 0010 002B     		cmp	r3, #0
+ 110 0012 F8D1     		bne	.L7
+  31:../bl/clocks_and_modes.c ****   SCG->SPLLCSR = 0x00000000;  /* SPLLEN=0: SPLL is disabled (default) */
+ 111              		.loc 1 31 0 is_stmt 1
+ 112 0014 124B     		ldr	r3, .L10
+ 113 0016 0022     		movs	r2, #0
+ 114 0018 C3F80026 		str	r2, [r3, #1536]
+  32:../bl/clocks_and_modes.c ****   SCG->SPLLDIV = 0x00000302;  /* SPLLDIV1 divide by 2; SPLLDIV2 divide by 4 */
+ 115              		.loc 1 32 0
+ 116 001c 104B     		ldr	r3, .L10
+ 117 001e 40F20232 		movw	r2, #770
+ 118 0022 C3F80426 		str	r2, [r3, #1540]
+  33:../bl/clocks_and_modes.c ****   SCG->SPLLCFG = 0x00180000;  /* PREDIV=0: Divide SOSC_CLK by 0+1=1 */
+ 119              		.loc 1 33 0
+ 120 0026 0E4B     		ldr	r3, .L10
+ 121 0028 4FF4C012 		mov	r2, #1572864
+ 122 002c C3F80826 		str	r2, [r3, #1544]
+  34:../bl/clocks_and_modes.c ****                               /* MULT=24:  Multiply sys pll by 4+24=40 */
+  35:../bl/clocks_and_modes.c ****                               /* SPLL_CLK = 8MHz / 1 * 40 / 2 = 160 MHz */
+  36:../bl/clocks_and_modes.c ****   while(SCG->SPLLCSR & SCG_SPLLCSR_LK_MASK); /* Ensure SPLLCSR unlocked */
+ 123              		.loc 1 36 0
+ 124 0030 00BF     		nop
+ 125              	.L8:
+ 126              		.loc 1 36 0 is_stmt 0 discriminator 1
+ 127 0032 0B4B     		ldr	r3, .L10
+ 128 0034 D3F80036 		ldr	r3, [r3, #1536]
+ 129 0038 03F40003 		and	r3, r3, #8388608
+ 130 003c 002B     		cmp	r3, #0
+ 131 003e F8D1     		bne	.L8
+  37:../bl/clocks_and_modes.c ****   SCG->SPLLCSR = 0x00000001; /* LK=0:        SPLLCSR can be written */
+ 132              		.loc 1 37 0 is_stmt 1
+ 133 0040 074B     		ldr	r3, .L10
+ 134 0042 0122     		movs	r2, #1
+ 135 0044 C3F80026 		str	r2, [r3, #1536]
+  38:../bl/clocks_and_modes.c ****                              /* SPLLCMRE=0:  SPLL CLK monitor IRQ if enabled */
+  39:../bl/clocks_and_modes.c ****                              /* SPLLCM=0:    SPLL CLK monitor disabled */
+  40:../bl/clocks_and_modes.c ****                              /* SPLLSTEN=0:  SPLL disabled in Stop modes */
+  41:../bl/clocks_and_modes.c ****                              /* SPLLEN=1:    Enable SPLL */
+  42:../bl/clocks_and_modes.c ****   while(!(SCG->SPLLCSR & SCG_SPLLCSR_SPLLVLD_MASK)); /* Wait for SPLL valid */
+ 136              		.loc 1 42 0
+ 137 0048 00BF     		nop
+ 138              	.L9:
+ 139              		.loc 1 42 0 is_stmt 0 discriminator 1
+ 140 004a 054B     		ldr	r3, .L10
+ 141 004c D3F80036 		ldr	r3, [r3, #1536]
+ 142 0050 03F08073 		and	r3, r3, #16777216
+ 143 0054 002B     		cmp	r3, #0
+ 144 0056 F8D0     		beq	.L9
+  43:../bl/clocks_and_modes.c **** }
+ 145              		.loc 1 43 0 is_stmt 1
+ 146 0058 BD46     		mov	sp, r7
+ 147              		.cfi_def_cfa_register 13
+ 148              		@ sp needed
+ 149 005a 5DF8047B 		ldr	r7, [sp], #4
+ 150              		.cfi_restore 7
+ 151              		.cfi_def_cfa_offset 0
+ 152 005e 7047     		bx	lr
+ 153              	.L11:
+ 154              		.align	2
+ 155              	.L10:
+ 156 0060 00400640 		.word	1074151424
+ 157              		.cfi_endproc
+ 158              	.LFE1:
+ 160              		.section	.text.NormalRUNmode_80MHz,"ax",%progbits
+ 161              		.align	2
+ 162              		.global	NormalRUNmode_80MHz
+ 163              		.thumb
+ 164              		.thumb_func
+ 166              	NormalRUNmode_80MHz:
+ 167              	.LFB2:
+  44:../bl/clocks_and_modes.c **** 
+  45:../bl/clocks_and_modes.c **** void NormalRUNmode_80MHz (void) {  /* Change to normal RUN mode with 8MHz SOSC, 80 MHz PLL*/
+ 168              		.loc 1 45 0
+ 169              		.cfi_startproc
+ 170              		@ args = 0, pretend = 0, frame = 0
+ 171              		@ frame_needed = 1, uses_anonymous_args = 0
+ 172              		@ link register save eliminated.
+ 173 0000 80B4     		push	{r7}
+ 174              		.cfi_def_cfa_offset 4
+ 175              		.cfi_offset 7, -4
+ 176 0002 00AF     		add	r7, sp, #0
+ 177              		.cfi_def_cfa_register 7
+  46:../bl/clocks_and_modes.c ****   SCG->RCCR=SCG_RCCR_SCS(6)      /* PLL as clock source*/
+ 178              		.loc 1 46 0
+ 179 0004 074B     		ldr	r3, .L14
+ 180 0006 084A     		ldr	r2, .L14+4
+ 181 0008 5A61     		str	r2, [r3, #20]
+  47:../bl/clocks_and_modes.c ****     |SCG_RCCR_DIVCORE(0b01)      /* DIVCORE=1, div. by 2: Core clock = 160/2 MHz = 80 MHz*/
+  48:../bl/clocks_and_modes.c ****     |SCG_RCCR_DIVBUS(0b01)       /* DIVBUS=1, div. by 2: bus clock = 40 MHz*/
+  49:../bl/clocks_and_modes.c ****     |SCG_RCCR_DIVSLOW(0b10);     /* DIVSLOW=2, div. by 2: SCG slow, flash clock= 26 2/3 MHz*/
+  50:../bl/clocks_and_modes.c ****   while (((SCG->CSR & SCG_CSR_SCS_MASK) >> SCG_CSR_SCS_SHIFT ) != 6) {}
+ 182              		.loc 1 50 0
+ 183 000a 00BF     		nop
+ 184              	.L13:
+ 185              		.loc 1 50 0 is_stmt 0 discriminator 1
+ 186 000c 054B     		ldr	r3, .L14
+ 187 000e 1B69     		ldr	r3, [r3, #16]
+ 188 0010 03F07063 		and	r3, r3, #251658240
+ 189 0014 1B0E     		lsrs	r3, r3, #24
+ 190 0016 062B     		cmp	r3, #6
+ 191 0018 F8D1     		bne	.L13
+  51:../bl/clocks_and_modes.c ****                                  /* Wait for sys clk src = SPLL */
+  52:../bl/clocks_and_modes.c **** }
+ 192              		.loc 1 52 0 is_stmt 1
+ 193 001a BD46     		mov	sp, r7
+ 194              		.cfi_def_cfa_register 13
+ 195              		@ sp needed
+ 196 001c 5DF8047B 		ldr	r7, [sp], #4
+ 197              		.cfi_restore 7
+ 198              		.cfi_def_cfa_offset 0
+ 199 0020 7047     		bx	lr
+ 200              	.L15:
+ 201 0022 00BF     		.align	2
+ 202              	.L14:
+ 203 0024 00400640 		.word	1074151424
+ 204 0028 12000106 		.word	100728850
+ 205              		.cfi_endproc
+ 206              	.LFE2:
+ 208              		.text
+ 209              	.Letext0:
+ 210              		.file 2 "/home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstdint"
+ 211              		.file 3 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/include/S32K144.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 clocks_and_modes.c
+     /tmp/ccCq2Hyw.s:21     .text.SOSC_init_8MHz:00000000 $t
+     /tmp/ccCq2Hyw.s:26     .text.SOSC_init_8MHz:00000000 SOSC_init_8MHz
+     /tmp/ccCq2Hyw.s:80     .text.SOSC_init_8MHz:00000048 $d
+     /tmp/ccCq2Hyw.s:85     .text.SPLL_init_160MHz:00000000 $t
+     /tmp/ccCq2Hyw.s:90     .text.SPLL_init_160MHz:00000000 SPLL_init_160MHz
+     /tmp/ccCq2Hyw.s:156    .text.SPLL_init_160MHz:00000060 $d
+     /tmp/ccCq2Hyw.s:161    .text.NormalRUNmode_80MHz:00000000 $t
+     /tmp/ccCq2Hyw.s:166    .text.NormalRUNmode_80MHz:00000000 NormalRUNmode_80MHz
+     /tmp/ccCq2Hyw.s:203    .text.NormalRUNmode_80MHz:00000024 $d
+                     .debug_frame:00000010 $d
+                           .group:00000000 wm4.0.728a2e6911dc01ff85c2d70c52e8fae1
+                           .group:00000000 wm4.lib_c99.prefix.8.3580c292f50811c682d980dc4180498e
+                           .group:00000000 wm4.common.prefix.16.d7bf937cdf46fd76dde96b376e3b328a
+                           .group:00000000 wm4.ewl_c_version.h.9.0bcb57d6a3f89baae1f9b121de2772f5
+                           .group:00000000 wm4.S32K144.h.177.451251ac556d3b0b8a04170a135f92d4
+                           .group:00000000 wm4.os_enum.h.9.f9446d6af68b3fa72a37d4d924d3b347
+                           .group:00000000 wm4.ansi_prefix.ARM.h.13.4b23f4c654df3c3277534542f67d200c
+                           .group:00000000 wm4.ansi_parms.h.64.90aed58330fdde08746db908036e1f37
+                           .group:00000000 wm4.limits_api.h.9.bc6daa20b3abae2bba6c512044e73b43
+                           .group:00000000 wm4.ewl_lib_ext1.h.14.f9b057cc049671136093886db2a3473f
+                           .group:00000000 wm4.cstdint.134.0ece0ba0ee759ce9e45a8fa510ec0d93
+                           .group:00000000 wm4.wchar_t.h.9.94198016f5b5f455e54ea1f3f054b416
+                           .group:00000000 wm4.cstdint.246.0573fcc3ea2319479988f90b448d87e4
+                           .group:00000000 wm4.S32K144.h.190.037de4cd4cd4f94a273a3fe3e68d3ef7
+
+NO UNDEFINED SYMBOLS

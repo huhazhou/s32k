@@ -659,6 +659,7 @@ int test_gps()
 			return -1;
 		}
 	}
+	return -1;
 }
 
 int test_485()

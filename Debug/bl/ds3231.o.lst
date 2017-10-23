@@ -1,0 +1,696 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.eabi_attribute 27, 1
+   4              		.eabi_attribute 28, 1
+   5              		.fpu fpv4-sp-d16
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.thumb
+  16              		.file	"ds3231.c"
+  17              		.text
+  18              	.Ltext0:
+  19              		.cfi_sections	.debug_frame
+  20              		.section	.text.SET_SCL,"ax",%progbits
+  21              		.align	2
+  22              		.global	SET_SCL
+  23              		.thumb
+  24              		.thumb_func
+  26              	SET_SCL:
+  27              	.LFB0:
+  28              		.file 1 "../bl/ds3231.c"
+   1:../bl/ds3231.c **** /*
+   2:../bl/ds3231.c ****  * ds3231.c
+   3:../bl/ds3231.c ****  *
+   4:../bl/ds3231.c ****  *  Created on: 2017年10月18日
+   5:../bl/ds3231.c ****  *      Author: houxd
+   6:../bl/ds3231.c ****  */
+   7:../bl/ds3231.c **** #include "bl.h"
+   8:../bl/ds3231.c **** #include <stdint.h>
+   9:../bl/ds3231.c **** #include "S32K144.h" /* include peripheral declarations S32K144 */
+  10:../bl/ds3231.c **** #include <stdio.h>
+  11:../bl/ds3231.c **** #include "softi2c.h"
+  12:../bl/ds3231.c **** #include "convert.h"
+  13:../bl/ds3231.c **** 
+  14:../bl/ds3231.c **** #define DS3231_CHIP_ADDR 	0xD0    //器件地址
+  15:../bl/ds3231.c **** 
+  16:../bl/ds3231.c **** #define DS3231_SECOND       0x00    //秒
+  17:../bl/ds3231.c **** #define DS3231_MINUTE       0x01    //分
+  18:../bl/ds3231.c **** #define DS3231_HOUR         0x02    //时
+  19:../bl/ds3231.c **** #define DS3231_WEEK         0x03    //星期
+  20:../bl/ds3231.c **** #define DS3231_DAY          0x04    //日
+  21:../bl/ds3231.c **** #define DS3231_MONTH        0x05    //月
+  22:../bl/ds3231.c **** #define DS3231_YEAR         0x06    //年
+  23:../bl/ds3231.c **** //闹铃1
+  24:../bl/ds3231.c **** #define DS3231_SALARM1ECOND 0x07    //秒
+  25:../bl/ds3231.c **** #define DS3231_ALARM1MINUTE 0x08    //分
+  26:../bl/ds3231.c **** #define DS3231_ALARM1HOUR   0x09    //时
+  27:../bl/ds3231.c **** #define DS3231_ALARM1WEEK   0x0A    //星期/日
+  28:../bl/ds3231.c **** //闹铃2
+  29:../bl/ds3231.c **** #define DS3231_ALARM2MINUTE 0x0b    //分
+  30:../bl/ds3231.c **** #define DS3231_ALARM2HOUR   0x0c    //时
+  31:../bl/ds3231.c **** #define DS3231_ALARM2WEEK   0x0d    //星期/日
+  32:../bl/ds3231.c **** #define DS3231_CONTROL      0x0e    //控制寄存器
+  33:../bl/ds3231.c **** #define DS3231_STATUS       0x0f    //状态寄存器
+  34:../bl/ds3231.c **** #define BSY                 2       //忙
+  35:../bl/ds3231.c **** #define OSF                 7       //振荡器停止标志
+  36:../bl/ds3231.c **** #define DS3231_XTAL         0x10    //晶体老化寄存器
+  37:../bl/ds3231.c **** #define DS3231_TEMPERATUREH 0x11    //温度寄存器高字节(8位)
+  38:../bl/ds3231.c **** #define DS3231_TEMPERATUREL 0x12    //温度寄存器低字节(高2位)
+  39:../bl/ds3231.c **** 
+  40:../bl/ds3231.c **** void SET_SCL()	{PTB->PSOR |= 1 << 9;	   }
+  29              		.loc 1 40 0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 0
+  32              		@ frame_needed = 1, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+  34 0000 80B4     		push	{r7}
+  35              		.cfi_def_cfa_offset 4
+  36              		.cfi_offset 7, -4
+  37 0002 00AF     		add	r7, sp, #0
+  38              		.cfi_def_cfa_register 7
+  39              		.loc 1 40 0
+  40 0004 044A     		ldr	r2, .L2
+  41 0006 044B     		ldr	r3, .L2
+  42 0008 5B68     		ldr	r3, [r3, #4]
+  43 000a 43F40073 		orr	r3, r3, #512
+  44 000e 5360     		str	r3, [r2, #4]
+  45 0010 BD46     		mov	sp, r7
+  46              		.cfi_def_cfa_register 13
+  47              		@ sp needed
+  48 0012 5DF8047B 		ldr	r7, [sp], #4
+  49              		.cfi_restore 7
+  50              		.cfi_def_cfa_offset 0
+  51 0016 7047     		bx	lr
+  52              	.L3:
+  53              		.align	2
+  54              	.L2:
+  55 0018 40F00F40 		.word	1074786368
+  56              		.cfi_endproc
+  57              	.LFE0:
+  59              		.section	.text.CLR_SCL,"ax",%progbits
+  60              		.align	2
+  61              		.global	CLR_SCL
+  62              		.thumb
+  63              		.thumb_func
+  65              	CLR_SCL:
+  66              	.LFB1:
+  41:../bl/ds3231.c **** void CLR_SCL()	{PTB->PCOR |= 1 << 9;      }
+  67              		.loc 1 41 0
+  68              		.cfi_startproc
+  69              		@ args = 0, pretend = 0, frame = 0
+  70              		@ frame_needed = 1, uses_anonymous_args = 0
+  71              		@ link register save eliminated.
+  72 0000 80B4     		push	{r7}
+  73              		.cfi_def_cfa_offset 4
+  74              		.cfi_offset 7, -4
+  75 0002 00AF     		add	r7, sp, #0
+  76              		.cfi_def_cfa_register 7
+  77              		.loc 1 41 0
+  78 0004 044A     		ldr	r2, .L5
+  79 0006 044B     		ldr	r3, .L5
+  80 0008 9B68     		ldr	r3, [r3, #8]
+  81 000a 43F40073 		orr	r3, r3, #512
+  82 000e 9360     		str	r3, [r2, #8]
+  83 0010 BD46     		mov	sp, r7
+  84              		.cfi_def_cfa_register 13
+  85              		@ sp needed
+  86 0012 5DF8047B 		ldr	r7, [sp], #4
+  87              		.cfi_restore 7
+  88              		.cfi_def_cfa_offset 0
+  89 0016 7047     		bx	lr
+  90              	.L6:
+  91              		.align	2
+  92              	.L5:
+  93 0018 40F00F40 		.word	1074786368
+  94              		.cfi_endproc
+  95              	.LFE1:
+  97              		.section	.text.SET_SDA,"ax",%progbits
+  98              		.align	2
+  99              		.global	SET_SDA
+ 100              		.thumb
+ 101              		.thumb_func
+ 103              	SET_SDA:
+ 104              	.LFB2:
+  42:../bl/ds3231.c **** void SET_SDA()	{PTB->PSOR |= 1 << 10;     }
+ 105              		.loc 1 42 0
+ 106              		.cfi_startproc
+ 107              		@ args = 0, pretend = 0, frame = 0
+ 108              		@ frame_needed = 1, uses_anonymous_args = 0
+ 109              		@ link register save eliminated.
+ 110 0000 80B4     		push	{r7}
+ 111              		.cfi_def_cfa_offset 4
+ 112              		.cfi_offset 7, -4
+ 113 0002 00AF     		add	r7, sp, #0
+ 114              		.cfi_def_cfa_register 7
+ 115              		.loc 1 42 0
+ 116 0004 044A     		ldr	r2, .L8
+ 117 0006 044B     		ldr	r3, .L8
+ 118 0008 5B68     		ldr	r3, [r3, #4]
+ 119 000a 43F48063 		orr	r3, r3, #1024
+ 120 000e 5360     		str	r3, [r2, #4]
+ 121 0010 BD46     		mov	sp, r7
+ 122              		.cfi_def_cfa_register 13
+ 123              		@ sp needed
+ 124 0012 5DF8047B 		ldr	r7, [sp], #4
+ 125              		.cfi_restore 7
+ 126              		.cfi_def_cfa_offset 0
+ 127 0016 7047     		bx	lr
+ 128              	.L9:
+ 129              		.align	2
+ 130              	.L8:
+ 131 0018 40F00F40 		.word	1074786368
+ 132              		.cfi_endproc
+ 133              	.LFE2:
+ 135              		.section	.text.CLR_SDA,"ax",%progbits
+ 136              		.align	2
+ 137              		.global	CLR_SDA
+ 138              		.thumb
+ 139              		.thumb_func
+ 141              	CLR_SDA:
+ 142              	.LFB3:
+  43:../bl/ds3231.c **** void CLR_SDA()	{PTB->PCOR |= 1 << 10;     }
+ 143              		.loc 1 43 0
+ 144              		.cfi_startproc
+ 145              		@ args = 0, pretend = 0, frame = 0
+ 146              		@ frame_needed = 1, uses_anonymous_args = 0
+ 147              		@ link register save eliminated.
+ 148 0000 80B4     		push	{r7}
+ 149              		.cfi_def_cfa_offset 4
+ 150              		.cfi_offset 7, -4
+ 151 0002 00AF     		add	r7, sp, #0
+ 152              		.cfi_def_cfa_register 7
+ 153              		.loc 1 43 0
+ 154 0004 044A     		ldr	r2, .L11
+ 155 0006 044B     		ldr	r3, .L11
+ 156 0008 9B68     		ldr	r3, [r3, #8]
+ 157 000a 43F48063 		orr	r3, r3, #1024
+ 158 000e 9360     		str	r3, [r2, #8]
+ 159 0010 BD46     		mov	sp, r7
+ 160              		.cfi_def_cfa_register 13
+ 161              		@ sp needed
+ 162 0012 5DF8047B 		ldr	r7, [sp], #4
+ 163              		.cfi_restore 7
+ 164              		.cfi_def_cfa_offset 0
+ 165 0016 7047     		bx	lr
+ 166              	.L12:
+ 167              		.align	2
+ 168              	.L11:
+ 169 0018 40F00F40 		.word	1074786368
+ 170              		.cfi_endproc
+ 171              	.LFE3:
+ 173              		.section	.text.SCL_OUT,"ax",%progbits
+ 174              		.align	2
+ 175              		.global	SCL_OUT
+ 176              		.thumb
+ 177              		.thumb_func
+ 179              	SCL_OUT:
+ 180              	.LFB4:
+  44:../bl/ds3231.c **** void SCL_OUT()	{PTB->PDDR |= 1 << 9;      }
+ 181              		.loc 1 44 0
+ 182              		.cfi_startproc
+ 183              		@ args = 0, pretend = 0, frame = 0
+ 184              		@ frame_needed = 1, uses_anonymous_args = 0
+ 185              		@ link register save eliminated.
+ 186 0000 80B4     		push	{r7}
+ 187              		.cfi_def_cfa_offset 4
+ 188              		.cfi_offset 7, -4
+ 189 0002 00AF     		add	r7, sp, #0
+ 190              		.cfi_def_cfa_register 7
+ 191              		.loc 1 44 0
+ 192 0004 044A     		ldr	r2, .L14
+ 193 0006 044B     		ldr	r3, .L14
+ 194 0008 5B69     		ldr	r3, [r3, #20]
+ 195 000a 43F40073 		orr	r3, r3, #512
+ 196 000e 5361     		str	r3, [r2, #20]
+ 197 0010 BD46     		mov	sp, r7
+ 198              		.cfi_def_cfa_register 13
+ 199              		@ sp needed
+ 200 0012 5DF8047B 		ldr	r7, [sp], #4
+ 201              		.cfi_restore 7
+ 202              		.cfi_def_cfa_offset 0
+ 203 0016 7047     		bx	lr
+ 204              	.L15:
+ 205              		.align	2
+ 206              	.L14:
+ 207 0018 40F00F40 		.word	1074786368
+ 208              		.cfi_endproc
+ 209              	.LFE4:
+ 211              		.section	.text.SCL_IN,"ax",%progbits
+ 212              		.align	2
+ 213              		.global	SCL_IN
+ 214              		.thumb
+ 215              		.thumb_func
+ 217              	SCL_IN:
+ 218              	.LFB5:
+  45:../bl/ds3231.c **** void SCL_IN ()	{PTB->PDDR &= ~(1 << 9);   }
+ 219              		.loc 1 45 0
+ 220              		.cfi_startproc
+ 221              		@ args = 0, pretend = 0, frame = 0
+ 222              		@ frame_needed = 1, uses_anonymous_args = 0
+ 223              		@ link register save eliminated.
+ 224 0000 80B4     		push	{r7}
+ 225              		.cfi_def_cfa_offset 4
+ 226              		.cfi_offset 7, -4
+ 227 0002 00AF     		add	r7, sp, #0
+ 228              		.cfi_def_cfa_register 7
+ 229              		.loc 1 45 0
+ 230 0004 044A     		ldr	r2, .L17
+ 231 0006 044B     		ldr	r3, .L17
+ 232 0008 5B69     		ldr	r3, [r3, #20]
+ 233 000a 23F40073 		bic	r3, r3, #512
+ 234 000e 5361     		str	r3, [r2, #20]
+ 235 0010 BD46     		mov	sp, r7
+ 236              		.cfi_def_cfa_register 13
+ 237              		@ sp needed
+ 238 0012 5DF8047B 		ldr	r7, [sp], #4
+ 239              		.cfi_restore 7
+ 240              		.cfi_def_cfa_offset 0
+ 241 0016 7047     		bx	lr
+ 242              	.L18:
+ 243              		.align	2
+ 244              	.L17:
+ 245 0018 40F00F40 		.word	1074786368
+ 246              		.cfi_endproc
+ 247              	.LFE5:
+ 249              		.section	.text.SDA_OUT,"ax",%progbits
+ 250              		.align	2
+ 251              		.global	SDA_OUT
+ 252              		.thumb
+ 253              		.thumb_func
+ 255              	SDA_OUT:
+ 256              	.LFB6:
+  46:../bl/ds3231.c **** void SDA_OUT()	{PTB->PDDR |= 1 << 10;     }
+ 257              		.loc 1 46 0
+ 258              		.cfi_startproc
+ 259              		@ args = 0, pretend = 0, frame = 0
+ 260              		@ frame_needed = 1, uses_anonymous_args = 0
+ 261              		@ link register save eliminated.
+ 262 0000 80B4     		push	{r7}
+ 263              		.cfi_def_cfa_offset 4
+ 264              		.cfi_offset 7, -4
+ 265 0002 00AF     		add	r7, sp, #0
+ 266              		.cfi_def_cfa_register 7
+ 267              		.loc 1 46 0
+ 268 0004 044A     		ldr	r2, .L20
+ 269 0006 044B     		ldr	r3, .L20
+ 270 0008 5B69     		ldr	r3, [r3, #20]
+ 271 000a 43F48063 		orr	r3, r3, #1024
+ 272 000e 5361     		str	r3, [r2, #20]
+ 273 0010 BD46     		mov	sp, r7
+ 274              		.cfi_def_cfa_register 13
+ 275              		@ sp needed
+ 276 0012 5DF8047B 		ldr	r7, [sp], #4
+ 277              		.cfi_restore 7
+ 278              		.cfi_def_cfa_offset 0
+ 279 0016 7047     		bx	lr
+ 280              	.L21:
+ 281              		.align	2
+ 282              	.L20:
+ 283 0018 40F00F40 		.word	1074786368
+ 284              		.cfi_endproc
+ 285              	.LFE6:
+ 287              		.section	.text.SDA_IN,"ax",%progbits
+ 288              		.align	2
+ 289              		.global	SDA_IN
+ 290              		.thumb
+ 291              		.thumb_func
+ 293              	SDA_IN:
+ 294              	.LFB7:
+  47:../bl/ds3231.c **** void SDA_IN ()	{PTB->PDDR &= ~(1 << 10);  }
+ 295              		.loc 1 47 0
+ 296              		.cfi_startproc
+ 297              		@ args = 0, pretend = 0, frame = 0
+ 298              		@ frame_needed = 1, uses_anonymous_args = 0
+ 299              		@ link register save eliminated.
+ 300 0000 80B4     		push	{r7}
+ 301              		.cfi_def_cfa_offset 4
+ 302              		.cfi_offset 7, -4
+ 303 0002 00AF     		add	r7, sp, #0
+ 304              		.cfi_def_cfa_register 7
+ 305              		.loc 1 47 0
+ 306 0004 044A     		ldr	r2, .L23
+ 307 0006 044B     		ldr	r3, .L23
+ 308 0008 5B69     		ldr	r3, [r3, #20]
+ 309 000a 23F48063 		bic	r3, r3, #1024
+ 310 000e 5361     		str	r3, [r2, #20]
+ 311 0010 BD46     		mov	sp, r7
+ 312              		.cfi_def_cfa_register 13
+ 313              		@ sp needed
+ 314 0012 5DF8047B 		ldr	r7, [sp], #4
+ 315              		.cfi_restore 7
+ 316              		.cfi_def_cfa_offset 0
+ 317 0016 7047     		bx	lr
+ 318              	.L24:
+ 319              		.align	2
+ 320              	.L23:
+ 321 0018 40F00F40 		.word	1074786368
+ 322              		.cfi_endproc
+ 323              	.LFE7:
+ 325              		.section	.text.SDA_VAL,"ax",%progbits
+ 326              		.align	2
+ 327              		.global	SDA_VAL
+ 328              		.thumb
+ 329              		.thumb_func
+ 331              	SDA_VAL:
+ 332              	.LFB8:
+  48:../bl/ds3231.c **** int  SDA_VAL()	{return PTB->PDIR & (1<<10);}
+ 333              		.loc 1 48 0
+ 334              		.cfi_startproc
+ 335              		@ args = 0, pretend = 0, frame = 0
+ 336              		@ frame_needed = 1, uses_anonymous_args = 0
+ 337              		@ link register save eliminated.
+ 338 0000 80B4     		push	{r7}
+ 339              		.cfi_def_cfa_offset 4
+ 340              		.cfi_offset 7, -4
+ 341 0002 00AF     		add	r7, sp, #0
+ 342              		.cfi_def_cfa_register 7
+ 343              		.loc 1 48 0
+ 344 0004 044B     		ldr	r3, .L27
+ 345 0006 1B69     		ldr	r3, [r3, #16]
+ 346 0008 03F48063 		and	r3, r3, #1024
+ 347 000c 1846     		mov	r0, r3
+ 348 000e BD46     		mov	sp, r7
+ 349              		.cfi_def_cfa_register 13
+ 350              		@ sp needed
+ 351 0010 5DF8047B 		ldr	r7, [sp], #4
+ 352              		.cfi_restore 7
+ 353              		.cfi_def_cfa_offset 0
+ 354 0014 7047     		bx	lr
+ 355              	.L28:
+ 356 0016 00BF     		.align	2
+ 357              	.L27:
+ 358 0018 40F00F40 		.word	1074786368
+ 359              		.cfi_endproc
+ 360              	.LFE8:
+ 362              		.global	I2C0
+ 363              		.section	.rodata.I2C0,"a",%progbits
+ 364              		.align	2
+ 367              	I2C0:
+ 368 0000 00000000 		.word	SET_SCL
+ 369 0004 00000000 		.word	CLR_SCL
+ 370 0008 00000000 		.word	SCL_OUT
+ 371 000c 00000000 		.word	SCL_IN
+ 372 0010 00000000 		.word	SET_SDA
+ 373 0014 00000000 		.word	CLR_SDA
+ 374 0018 00000000 		.word	SDA_OUT
+ 375 001c 00000000 		.word	SDA_IN
+ 376 0020 00000000 		.word	SDA_VAL
+ 377 0024 0A000000 		.word	10
+ 378              		.section	.text.ds3231_settime,"ax",%progbits
+ 379              		.align	2
+ 380              		.global	ds3231_settime
+ 381              		.thumb
+ 382              		.thumb_func
+ 384              	ds3231_settime:
+ 385              	.LFB9:
+  49:../bl/ds3231.c **** 
+  50:../bl/ds3231.c **** const struct SoftI2C I2C0 = {
+  51:../bl/ds3231.c **** 	.SCL_SET 	=SET_SCL,
+  52:../bl/ds3231.c **** 	.SCL_CLR 	=CLR_SCL,
+  53:../bl/ds3231.c **** 	.SDA_SET 	=SET_SDA,
+  54:../bl/ds3231.c **** 	.SDA_CLR 	=CLR_SDA,
+  55:../bl/ds3231.c **** 	.SCL_OUT 	=SCL_OUT,
+  56:../bl/ds3231.c **** 	.SCL_IN 	=SCL_IN,
+  57:../bl/ds3231.c **** 	.SDA_OUT	=SDA_OUT,
+  58:../bl/ds3231.c **** 	.SDA_IN		=SDA_IN,
+  59:../bl/ds3231.c **** 	.SDA_VAL	=SDA_VAL,
+  60:../bl/ds3231.c **** 	.HALF_CLK_CYCLE_US	=	10,
+  61:../bl/ds3231.c **** };
+  62:../bl/ds3231.c **** 
+  63:../bl/ds3231.c **** void ds3231_settime(const struct DS3231_Time *dsdat) {
+ 386              		.loc 1 63 0
+ 387              		.cfi_startproc
+ 388              		@ args = 0, pretend = 0, frame = 8
+ 389              		@ frame_needed = 1, uses_anonymous_args = 0
+ 390 0000 80B5     		push	{r7, lr}
+ 391              		.cfi_def_cfa_offset 8
+ 392              		.cfi_offset 7, -8
+ 393              		.cfi_offset 14, -4
+ 394 0002 82B0     		sub	sp, sp, #8
+ 395              		.cfi_def_cfa_offset 16
+ 396 0004 00AF     		add	r7, sp, #0
+ 397              		.cfi_def_cfa_register 7
+ 398 0006 7860     		str	r0, [r7, #4]
+  64:../bl/ds3231.c **** 	softi2c_send_data(DS3231_CHIP_ADDR,DS3231_SECOND,		7,(uint8_t*)dsdat);   //修改年
+ 399              		.loc 1 64 0
+ 400 0008 D020     		movs	r0, #208
+ 401 000a 0021     		movs	r1, #0
+ 402 000c 0722     		movs	r2, #7
+ 403 000e 7B68     		ldr	r3, [r7, #4]
+ 404 0010 FFF7FEFF 		bl	softi2c_send_data
+  65:../bl/ds3231.c **** }
+ 405              		.loc 1 65 0
+ 406 0014 0837     		adds	r7, r7, #8
+ 407              		.cfi_def_cfa_offset 8
+ 408 0016 BD46     		mov	sp, r7
+ 409              		.cfi_def_cfa_register 13
+ 410              		@ sp needed
+ 411 0018 80BD     		pop	{r7, pc}
+ 412              		.cfi_endproc
+ 413              	.LFE9:
+ 415 001a 00BF     		.section	.text.ds3231_gettime,"ax",%progbits
+ 416              		.align	2
+ 417              		.global	ds3231_gettime
+ 418              		.thumb
+ 419              		.thumb_func
+ 421              	ds3231_gettime:
+ 422              	.LFB10:
+  66:../bl/ds3231.c **** void ds3231_gettime(struct DS3231_Time *dsdat) {
+ 423              		.loc 1 66 0
+ 424              		.cfi_startproc
+ 425              		@ args = 0, pretend = 0, frame = 8
+ 426              		@ frame_needed = 1, uses_anonymous_args = 0
+ 427 0000 80B5     		push	{r7, lr}
+ 428              		.cfi_def_cfa_offset 8
+ 429              		.cfi_offset 7, -8
+ 430              		.cfi_offset 14, -4
+ 431 0002 82B0     		sub	sp, sp, #8
+ 432              		.cfi_def_cfa_offset 16
+ 433 0004 00AF     		add	r7, sp, #0
+ 434              		.cfi_def_cfa_register 7
+ 435 0006 7860     		str	r0, [r7, #4]
+  67:../bl/ds3231.c **** 	softi2c_read_data(DS3231_CHIP_ADDR,DS3231_SECOND,7,(uint8_t*)dsdat);
+ 436              		.loc 1 67 0
+ 437 0008 D020     		movs	r0, #208
+ 438 000a 0021     		movs	r1, #0
+ 439 000c 0722     		movs	r2, #7
+ 440 000e 7B68     		ldr	r3, [r7, #4]
+ 441 0010 FFF7FEFF 		bl	softi2c_read_data
+  68:../bl/ds3231.c **** }
+ 442              		.loc 1 68 0
+ 443 0014 0837     		adds	r7, r7, #8
+ 444              		.cfi_def_cfa_offset 8
+ 445 0016 BD46     		mov	sp, r7
+ 446              		.cfi_def_cfa_register 13
+ 447              		@ sp needed
+ 448 0018 80BD     		pop	{r7, pc}
+ 449              		.cfi_endproc
+ 450              	.LFE10:
+ 452 001a 00BF     		.section	.text.ds3231_gettempr,"ax",%progbits
+ 453              		.align	2
+ 454              		.global	ds3231_gettempr
+ 455              		.thumb
+ 456              		.thumb_func
+ 458              	ds3231_gettempr:
+ 459              	.LFB11:
+  69:../bl/ds3231.c **** float ds3231_gettempr() {
+ 460              		.loc 1 69 0
+ 461              		.cfi_startproc
+ 462              		@ args = 0, pretend = 0, frame = 16
+ 463              		@ frame_needed = 1, uses_anonymous_args = 0
+ 464 0000 80B5     		push	{r7, lr}
+ 465              		.cfi_def_cfa_offset 8
+ 466              		.cfi_offset 7, -8
+ 467              		.cfi_offset 14, -4
+ 468 0002 84B0     		sub	sp, sp, #16
+ 469              		.cfi_def_cfa_offset 24
+ 470 0004 00AF     		add	r7, sp, #0
+ 471              		.cfi_def_cfa_register 7
+  70:../bl/ds3231.c **** 	/*
+  71:../bl/ds3231.c **** 	 *         /------tempr val--\
+  72:../bl/ds3231.c **** 	 * [sign10 dat9...2] [dat1...0 unuse6...0]
+  73:../bl/ds3231.c **** 	 * \-----byteh-----/ \------bytel--------/
+  74:../bl/ds3231.c **** 	 */
+  75:../bl/ds3231.c **** 	uint8_t tempr[2];
+  76:../bl/ds3231.c **** 	softi2c_read_data(DS3231_CHIP_ADDR,DS3231_TEMPERATUREH,2,tempr);
+ 472              		.loc 1 76 0
+ 473 0006 3B46     		mov	r3, r7
+ 474 0008 D020     		movs	r0, #208
+ 475 000a 1121     		movs	r1, #17
+ 476 000c 0222     		movs	r2, #2
+ 477 000e FFF7FEFF 		bl	softi2c_read_data
+  77:../bl/ds3231.c **** 	int sign = tempr[0] & 0b10000000;
+ 478              		.loc 1 77 0
+ 479 0012 3B78     		ldrb	r3, [r7]	@ zero_extendqisi2
+ 480 0014 03F08003 		and	r3, r3, #128
+ 481 0018 BB60     		str	r3, [r7, #8]
+  78:../bl/ds3231.c **** 	uint32_t t = tempr[0] & 0b01111111;
+ 482              		.loc 1 78 0
+ 483 001a 3B78     		ldrb	r3, [r7]	@ zero_extendqisi2
+ 484 001c 03F07F03 		and	r3, r3, #127
+ 485 0020 7B60     		str	r3, [r7, #4]
+  79:../bl/ds3231.c **** 	t<<=2;
+ 486              		.loc 1 79 0
+ 487 0022 7B68     		ldr	r3, [r7, #4]
+ 488 0024 9B00     		lsls	r3, r3, #2
+ 489 0026 7B60     		str	r3, [r7, #4]
+  80:../bl/ds3231.c **** 	t += (tempr[1]>>6)&0b11;
+ 490              		.loc 1 80 0
+ 491 0028 7B78     		ldrb	r3, [r7, #1]	@ zero_extendqisi2
+ 492 002a 9B09     		lsrs	r3, r3, #6
+ 493 002c DBB2     		uxtb	r3, r3
+ 494 002e 03F00303 		and	r3, r3, #3
+ 495 0032 7A68     		ldr	r2, [r7, #4]
+ 496 0034 1344     		add	r3, r3, r2
+ 497 0036 7B60     		str	r3, [r7, #4]
+  81:../bl/ds3231.c **** 	float res = t * 0.25f;	//resolution
+ 498              		.loc 1 81 0
+ 499 0038 7B68     		ldr	r3, [r7, #4]
+ 500 003a 07EE903A 		fmsr	s15, r3	@ int
+ 501 003e F8EE677A 		fuitos	s15, s15
+ 502 0042 B5EE007A 		fconsts	s14, #80
+ 503 0046 67EE877A 		fmuls	s15, s15, s14
+ 504 004a C7ED037A 		fsts	s15, [r7, #12]
+  82:../bl/ds3231.c **** 	if(sign)
+ 505              		.loc 1 82 0
+ 506 004e BB68     		ldr	r3, [r7, #8]
+ 507 0050 002B     		cmp	r3, #0
+ 508 0052 05D0     		beq	.L32
+  83:../bl/ds3231.c **** 		res = -res;
+ 509              		.loc 1 83 0
+ 510 0054 D7ED037A 		flds	s15, [r7, #12]
+ 511 0058 F1EE677A 		fnegs	s15, s15
+ 512 005c C7ED037A 		fsts	s15, [r7, #12]
+ 513              	.L32:
+  84:../bl/ds3231.c **** 	return res;
+ 514              		.loc 1 84 0
+ 515 0060 FB68     		ldr	r3, [r7, #12]	@ float
+ 516 0062 07EE903A 		fmsr	s15, r3
+  85:../bl/ds3231.c **** }
+ 517              		.loc 1 85 0
+ 518 0066 B0EE670A 		fcpys	s0, s15
+ 519 006a 1037     		adds	r7, r7, #16
+ 520              		.cfi_def_cfa_offset 8
+ 521 006c BD46     		mov	sp, r7
+ 522              		.cfi_def_cfa_register 13
+ 523              		@ sp needed
+ 524 006e 80BD     		pop	{r7, pc}
+ 525              		.cfi_endproc
+ 526              	.LFE11:
+ 528              		.section	.text.ds3231_init,"ax",%progbits
+ 529              		.align	2
+ 530              		.global	ds3231_init
+ 531              		.thumb
+ 532              		.thumb_func
+ 534              	ds3231_init:
+ 535              	.LFB12:
+  86:../bl/ds3231.c **** 
+  87:../bl/ds3231.c **** void ds3231_init()
+  88:../bl/ds3231.c **** {
+ 536              		.loc 1 88 0
+ 537              		.cfi_startproc
+ 538              		@ args = 0, pretend = 0, frame = 0
+ 539              		@ frame_needed = 1, uses_anonymous_args = 0
+ 540 0000 80B5     		push	{r7, lr}
+ 541              		.cfi_def_cfa_offset 8
+ 542              		.cfi_offset 7, -8
+ 543              		.cfi_offset 14, -4
+ 544 0002 00AF     		add	r7, sp, #0
+ 545              		.cfi_def_cfa_register 7
+  89:../bl/ds3231.c **** 	softi2c_init_io(&I2C0);
+ 546              		.loc 1 89 0
+ 547 0004 0148     		ldr	r0, .L35
+ 548 0006 FFF7FEFF 		bl	softi2c_init_io
+  90:../bl/ds3231.c **** }
+ 549              		.loc 1 90 0
+ 550 000a 80BD     		pop	{r7, pc}
+ 551              	.L36:
+ 552              		.align	2
+ 553              	.L35:
+ 554 000c 00000000 		.word	I2C0
+ 555              		.cfi_endproc
+ 556              	.LFE12:
+ 558              		.text
+ 559              	.Letext0:
+ 560              		.file 2 "/home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstdint"
+ 561              		.file 3 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/include/S32K144.h"
+ 562              		.file 4 "../bl/ds3231.h"
+ 563              		.file 5 "../bl/softi2c.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 ds3231.c
+     /tmp/ccWpbL5K.s:21     .text.SET_SCL:00000000 $t
+     /tmp/ccWpbL5K.s:26     .text.SET_SCL:00000000 SET_SCL
+     /tmp/ccWpbL5K.s:55     .text.SET_SCL:00000018 $d
+     /tmp/ccWpbL5K.s:60     .text.CLR_SCL:00000000 $t
+     /tmp/ccWpbL5K.s:65     .text.CLR_SCL:00000000 CLR_SCL
+     /tmp/ccWpbL5K.s:93     .text.CLR_SCL:00000018 $d
+     /tmp/ccWpbL5K.s:98     .text.SET_SDA:00000000 $t
+     /tmp/ccWpbL5K.s:103    .text.SET_SDA:00000000 SET_SDA
+     /tmp/ccWpbL5K.s:131    .text.SET_SDA:00000018 $d
+     /tmp/ccWpbL5K.s:136    .text.CLR_SDA:00000000 $t
+     /tmp/ccWpbL5K.s:141    .text.CLR_SDA:00000000 CLR_SDA
+     /tmp/ccWpbL5K.s:169    .text.CLR_SDA:00000018 $d
+     /tmp/ccWpbL5K.s:174    .text.SCL_OUT:00000000 $t
+     /tmp/ccWpbL5K.s:179    .text.SCL_OUT:00000000 SCL_OUT
+     /tmp/ccWpbL5K.s:207    .text.SCL_OUT:00000018 $d
+     /tmp/ccWpbL5K.s:212    .text.SCL_IN:00000000 $t
+     /tmp/ccWpbL5K.s:217    .text.SCL_IN:00000000 SCL_IN
+     /tmp/ccWpbL5K.s:245    .text.SCL_IN:00000018 $d
+     /tmp/ccWpbL5K.s:250    .text.SDA_OUT:00000000 $t
+     /tmp/ccWpbL5K.s:255    .text.SDA_OUT:00000000 SDA_OUT
+     /tmp/ccWpbL5K.s:283    .text.SDA_OUT:00000018 $d
+     /tmp/ccWpbL5K.s:288    .text.SDA_IN:00000000 $t
+     /tmp/ccWpbL5K.s:293    .text.SDA_IN:00000000 SDA_IN
+     /tmp/ccWpbL5K.s:321    .text.SDA_IN:00000018 $d
+     /tmp/ccWpbL5K.s:326    .text.SDA_VAL:00000000 $t
+     /tmp/ccWpbL5K.s:331    .text.SDA_VAL:00000000 SDA_VAL
+     /tmp/ccWpbL5K.s:358    .text.SDA_VAL:00000018 $d
+     /tmp/ccWpbL5K.s:367    .rodata.I2C0:00000000 I2C0
+     /tmp/ccWpbL5K.s:364    .rodata.I2C0:00000000 $d
+     /tmp/ccWpbL5K.s:379    .text.ds3231_settime:00000000 $t
+     /tmp/ccWpbL5K.s:384    .text.ds3231_settime:00000000 ds3231_settime
+     /tmp/ccWpbL5K.s:416    .text.ds3231_gettime:00000000 $t
+     /tmp/ccWpbL5K.s:421    .text.ds3231_gettime:00000000 ds3231_gettime
+     /tmp/ccWpbL5K.s:453    .text.ds3231_gettempr:00000000 $t
+     /tmp/ccWpbL5K.s:458    .text.ds3231_gettempr:00000000 ds3231_gettempr
+     /tmp/ccWpbL5K.s:529    .text.ds3231_init:00000000 $t
+     /tmp/ccWpbL5K.s:534    .text.ds3231_init:00000000 ds3231_init
+     /tmp/ccWpbL5K.s:554    .text.ds3231_init:0000000c $d
+                     .debug_frame:00000010 $d
+                           .group:00000000 wm4.0.728a2e6911dc01ff85c2d70c52e8fae1
+                           .group:00000000 wm4.lib_c99.prefix.8.3580c292f50811c682d980dc4180498e
+                           .group:00000000 wm4.common.prefix.16.d7bf937cdf46fd76dde96b376e3b328a
+                           .group:00000000 wm4.ewl_c_version.h.9.0bcb57d6a3f89baae1f9b121de2772f5
+                           .group:00000000 wm4.os_enum.h.9.f9446d6af68b3fa72a37d4d924d3b347
+                           .group:00000000 wm4.ansi_prefix.ARM.h.13.4b23f4c654df3c3277534542f67d200c
+                           .group:00000000 wm4.ansi_parms.h.64.90aed58330fdde08746db908036e1f37
+                           .group:00000000 wm4.limits_api.h.9.bc6daa20b3abae2bba6c512044e73b43
+                           .group:00000000 wm4.ewl_lib_ext1.h.14.f9b057cc049671136093886db2a3473f
+                           .group:00000000 wm4.cstdint.134.0ece0ba0ee759ce9e45a8fa510ec0d93
+                           .group:00000000 wm4.wchar_t.h.9.94198016f5b5f455e54ea1f3f054b416
+                           .group:00000000 wm4.cstdint.246.0573fcc3ea2319479988f90b448d87e4
+                           .group:00000000 wm4.bl.h.17.b619f0597fd83ead838435dcdbf2cdad
+                           .group:00000000 wm4.S32K144.h.177.db9d6057c342cdeacc7fa44375c761e5
+                           .group:00000000 wm4.SPI_MSD0_Driver.h.10.751670d7185e24a2b9b7290d36663748
+                           .group:00000000 wm4.size_t.h.9.f983491a73b5c81f421ee8223b1ac5c0
+                           .group:00000000 wm4.ewl_rsize_t.h.11.b283831bb803e76ceb1756da2df9a1b5
+                           .group:00000000 wm4.cstddef.32.067e2ea187472b6198f9ace951e27a51
+                           .group:00000000 wm4.va_list.h.9.b0bb078841c0305c2667a31da10a9070
+                           .group:00000000 wm4.file_struc.h.13.96d07f4b7392ecdee9ce60307cac6248
+                           .group:00000000 wm4.stdarg.ARM.h.9.32516e68edcca81ab31f48f233894821
+                           .group:00000000 wm4.stdio_api.h.64.7d83b1caa7fdc34505042751a1c33692
+                           .group:00000000 wm4.cstdio.1187.51197b0e8ec7388017461af9f7851efe
+                           .group:00000000 wm4.softi2c.h.37.336bac63764be53d2dc3c8e01fefaac6
+                           .group:00000000 wm4.convert.h.9.7acfc90acb3e9acc9d0cd761674f1d1e
+
+UNDEFINED SYMBOLS
+softi2c_send_data
+softi2c_read_data
+softi2c_init_io

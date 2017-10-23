@@ -1,0 +1,537 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.eabi_attribute 27, 1
+   4              		.eabi_attribute 28, 1
+   5              		.fpu fpv4-sp-d16
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.thumb
+  16              		.file	"FlexCAN.c"
+  17              		.text
+  18              	.Ltext0:
+  19              		.cfi_sections	.debug_frame
+  20              		.global	CAN
+  21              		.section	.data.CAN,"aw",%progbits
+  22              		.align	2
+  25              	CAN:
+  26 0000 00400240 		.word	1073889280
+  27 0004 00500240 		.word	1073893376
+  28 0008 00B00240 		.word	1073917952
+  29              		.global	PCC_FlexCAN_INDEX
+  30              		.section	.data.PCC_FlexCAN_INDEX,"aw",%progbits
+  31              		.align	2
+  34              	PCC_FlexCAN_INDEX:
+  35 0000 24000000 		.word	36
+  36 0004 25000000 		.word	37
+  37 0008 2B000000 		.word	43
+  38              		.section	.text.FLEXCAN_init,"ax",%progbits
+  39              		.align	2
+  40              		.global	FLEXCAN_init
+  41              		.thumb
+  42              		.thumb_func
+  44              	FLEXCAN_init:
+  45              	.LFB0:
+  46              		.file 1 "../bl/FlexCAN.c"
+   1:../bl/FlexCAN.c **** /* FlexCAN.c              (c) 2016 NXP
+   2:../bl/FlexCAN.c ****  * Descriptions: S32K144 CAN 2.0 A/B example..
+   3:../bl/FlexCAN.c ****  * 2016 Jul 16 S. Mihalik: Initial version
+   4:../bl/FlexCAN.c ****  * 2016 Sep 12 SM: Updated with SBC init, Node A - B communication
+   5:../bl/FlexCAN.c ****  * 2016 Oct 31 SM: Updated for new header symbols for PCCn
+   6:../bl/FlexCAN.c ****  */
+   7:../bl/FlexCAN.c **** 
+   8:../bl/FlexCAN.c **** #include "S32K144.h" /* include peripheral declarations S32K144 */
+   9:../bl/FlexCAN.c **** #include "FlexCAN.h"
+  10:../bl/FlexCAN.c **** #include "convert.h"
+  11:../bl/FlexCAN.c **** 
+  12:../bl/FlexCAN.c **** 
+  13:../bl/FlexCAN.c **** CAN_Type *CAN[3] = {CAN0,CAN1,CAN2};
+  14:../bl/FlexCAN.c **** int PCC_FlexCAN_INDEX[3] = {PCC_FlexCAN0_INDEX,PCC_FlexCAN1_INDEX,PCC_FlexCAN2_INDEX};
+  15:../bl/FlexCAN.c **** 
+  16:../bl/FlexCAN.c **** 
+  17:../bl/FlexCAN.c **** void FLEXCAN_init(int port,uint32_t ID, uint32_t bps)
+  18:../bl/FlexCAN.c **** {
+  47              		.loc 1 18 0
+  48              		.cfi_startproc
+  49              		@ args = 0, pretend = 0, frame = 24
+  50              		@ frame_needed = 1, uses_anonymous_args = 0
+  51              		@ link register save eliminated.
+  52 0000 90B4     		push	{r4, r7}
+  53              		.cfi_def_cfa_offset 8
+  54              		.cfi_offset 4, -8
+  55              		.cfi_offset 7, -4
+  56 0002 86B0     		sub	sp, sp, #24
+  57              		.cfi_def_cfa_offset 32
+  58 0004 00AF     		add	r7, sp, #0
+  59              		.cfi_def_cfa_register 7
+  60 0006 F860     		str	r0, [r7, #12]
+  61 0008 B960     		str	r1, [r7, #8]
+  62 000a 7A60     		str	r2, [r7, #4]
+  19:../bl/FlexCAN.c **** #define MSG_BUF_SIZE  4    /* Msg Buffer Size. (CAN 2.0AB: 2 hdr +  2 data= 4 words) */
+  20:../bl/FlexCAN.c **** 	uint32_t i = 0;
+  63              		.loc 1 20 0
+  64 000c 0023     		movs	r3, #0
+  65 000e 7B61     		str	r3, [r7, #20]
+  21:../bl/FlexCAN.c **** 
+  22:../bl/FlexCAN.c **** 	PCC->PCCn[PCC_FlexCAN_INDEX[port]] |= PCC_PCCn_CGC_MASK; /* CGC=1: enable clock to FlexCAN0 */
+  66              		.loc 1 22 0
+  67 0010 4B49     		ldr	r1, .L9
+  68 0012 4C4A     		ldr	r2, .L9+4
+  69 0014 FB68     		ldr	r3, [r7, #12]
+  70 0016 52F82330 		ldr	r3, [r2, r3, lsl #2]
+  71 001a 4948     		ldr	r0, .L9
+  72 001c 494C     		ldr	r4, .L9+4
+  73 001e FA68     		ldr	r2, [r7, #12]
+  74 0020 54F82220 		ldr	r2, [r4, r2, lsl #2]
+  75 0024 50F82220 		ldr	r2, [r0, r2, lsl #2]
+  76 0028 42F08042 		orr	r2, r2, #1073741824
+  77 002c 41F82320 		str	r2, [r1, r3, lsl #2]
+  23:../bl/FlexCAN.c **** 	CAN[port]->MCR |= CAN_MCR_MDIS_MASK; /* MDIS=1: Disable module before selecting clock */
+  78              		.loc 1 23 0
+  79 0030 454A     		ldr	r2, .L9+8
+  80 0032 FB68     		ldr	r3, [r7, #12]
+  81 0034 52F82330 		ldr	r3, [r2, r3, lsl #2]
+  82 0038 4349     		ldr	r1, .L9+8
+  83 003a FA68     		ldr	r2, [r7, #12]
+  84 003c 51F82220 		ldr	r2, [r1, r2, lsl #2]
+  85 0040 1268     		ldr	r2, [r2]
+  86 0042 42F00042 		orr	r2, r2, #-2147483648
+  87 0046 1A60     		str	r2, [r3]
+  24:../bl/FlexCAN.c **** 	CAN[port]->CTRL1 &= ~CAN_CTRL1_CLKSRC_MASK; /* CLKSRC=0: Clock Source = oscillator (8 MHz) */
+  88              		.loc 1 24 0
+  89 0048 3F4A     		ldr	r2, .L9+8
+  90 004a FB68     		ldr	r3, [r7, #12]
+  91 004c 52F82330 		ldr	r3, [r2, r3, lsl #2]
+  92 0050 3D49     		ldr	r1, .L9+8
+  93 0052 FA68     		ldr	r2, [r7, #12]
+  94 0054 51F82220 		ldr	r2, [r1, r2, lsl #2]
+  95 0058 5268     		ldr	r2, [r2, #4]
+  96 005a 22F40052 		bic	r2, r2, #8192
+  97 005e 5A60     		str	r2, [r3, #4]
+  25:../bl/FlexCAN.c **** 	CAN[port]->MCR &= ~CAN_MCR_MDIS_MASK; /* MDIS=0; Enable module config. (Sets FRZ, HALT)*/
+  98              		.loc 1 25 0
+  99 0060 394A     		ldr	r2, .L9+8
+ 100 0062 FB68     		ldr	r3, [r7, #12]
+ 101 0064 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 102 0068 3749     		ldr	r1, .L9+8
+ 103 006a FA68     		ldr	r2, [r7, #12]
+ 104 006c 51F82220 		ldr	r2, [r1, r2, lsl #2]
+ 105 0070 1268     		ldr	r2, [r2]
+ 106 0072 22F00042 		bic	r2, r2, #-2147483648
+ 107 0076 1A60     		str	r2, [r3]
+  26:../bl/FlexCAN.c **** 	while (!((CAN[port]->MCR & CAN_MCR_FRZACK_MASK) >> CAN_MCR_FRZACK_SHIFT)) {
+ 108              		.loc 1 26 0
+ 109 0078 00BF     		nop
+ 110              	.L2:
+ 111              		.loc 1 26 0 is_stmt 0 discriminator 1
+ 112 007a 334A     		ldr	r2, .L9+8
+ 113 007c FB68     		ldr	r3, [r7, #12]
+ 114 007e 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 115 0082 1B68     		ldr	r3, [r3]
+ 116 0084 03F08073 		and	r3, r3, #16777216
+ 117 0088 1B0E     		lsrs	r3, r3, #24
+ 118 008a 002B     		cmp	r3, #0
+ 119 008c F5D0     		beq	.L2
+  27:../bl/FlexCAN.c **** 	}
+  28:../bl/FlexCAN.c **** 	uint32_t PRESDIV = 8000000 / (16*bps) -1;
+ 120              		.loc 1 28 0 is_stmt 1
+ 121 008e 7B68     		ldr	r3, [r7, #4]
+ 122 0090 1B01     		lsls	r3, r3, #4
+ 123 0092 2E4A     		ldr	r2, .L9+12
+ 124 0094 B2FBF3F3 		udiv	r3, r2, r3
+ 125 0098 013B     		subs	r3, r3, #1
+ 126 009a 3B61     		str	r3, [r7, #16]
+  29:../bl/FlexCAN.c **** 	/* Good practice: wait for FRZACK=1 on freeze mode entry/exit */
+  30:../bl/FlexCAN.c **** 	CAN[port]->CTRL1 = 0x00DB0006 | (PRESDIV<<24); /* Configure for 500 KHz bit time */
+ 127              		.loc 1 30 0
+ 128 009c 2A4A     		ldr	r2, .L9+8
+ 129 009e FB68     		ldr	r3, [r7, #12]
+ 130 00a0 52F82320 		ldr	r2, [r2, r3, lsl #2]
+ 131 00a4 3B69     		ldr	r3, [r7, #16]
+ 132 00a6 1B06     		lsls	r3, r3, #24
+ 133 00a8 43F45B03 		orr	r3, r3, #14352384
+ 134 00ac 43F00603 		orr	r3, r3, #6
+ 135 00b0 5360     		str	r3, [r2, #4]
+  31:../bl/FlexCAN.c **** 	/* Time quanta freq = 16 time quanta x 500 KHz bit time= 8MHz */
+  32:../bl/FlexCAN.c **** 	/* PRESDIV+1 = Fclksrc/Ftq = 8 MHz/8 MHz = 1 */
+  33:../bl/FlexCAN.c **** 	/*    so PRESDIV = 0 */
+  34:../bl/FlexCAN.c **** 	/* PSEG2 = Phase_Seg2 - 1 = 4 - 1 = 3 */
+  35:../bl/FlexCAN.c **** 	/* PSEG1 = PSEG2 = 3 */
+  36:../bl/FlexCAN.c **** 	/* PROPSEG= Prop_Seg - 1 = 7 - 1 = 6 */
+  37:../bl/FlexCAN.c **** 	/* RJW: since Phase_Seg2 >=4, RJW+1=4 so RJW=3. */
+  38:../bl/FlexCAN.c **** 	/* SMP = 1: use 3 bits per CAN sample */
+  39:../bl/FlexCAN.c **** 	/* CLKSRC=0 (unchanged): Fcanclk= Fosc= 8 MHz */
+  40:../bl/FlexCAN.c **** //	for (i = 0; i < 128; i++) { /* CAN[port]: clear 32 msg bufs x 4 words/msg buf = 128 words*/
+  41:../bl/FlexCAN.c **** //		CAN[port]->RAMn[i] = 0; /* Clear msg buf word */
+  42:../bl/FlexCAN.c **** //	}
+  43:../bl/FlexCAN.c **** 	for (i = 0; i < 16; i++) { /* In FRZ mode, init CAN[port] 16 msg buf filters */
+ 136              		.loc 1 43 0
+ 137 00b2 0023     		movs	r3, #0
+ 138 00b4 7B61     		str	r3, [r7, #20]
+ 139 00b6 0DE0     		b	.L3
+ 140              	.L4:
+  44:../bl/FlexCAN.c **** 		CAN[port]->RXIMR[i] = 0xFFFFFFFF; /* Check all ID bits for incoming messages */
+ 141              		.loc 1 44 0 discriminator 3
+ 142 00b8 234A     		ldr	r2, .L9+8
+ 143 00ba FB68     		ldr	r3, [r7, #12]
+ 144 00bc 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 145 00c0 7A69     		ldr	r2, [r7, #20]
+ 146 00c2 02F50872 		add	r2, r2, #544
+ 147 00c6 4FF0FF31 		mov	r1, #-1
+ 148 00ca 43F82210 		str	r1, [r3, r2, lsl #2]
+  43:../bl/FlexCAN.c **** 		CAN[port]->RXIMR[i] = 0xFFFFFFFF; /* Check all ID bits for incoming messages */
+ 149              		.loc 1 43 0 discriminator 3
+ 150 00ce 7B69     		ldr	r3, [r7, #20]
+ 151 00d0 0133     		adds	r3, r3, #1
+ 152 00d2 7B61     		str	r3, [r7, #20]
+ 153              	.L3:
+  43:../bl/FlexCAN.c **** 		CAN[port]->RXIMR[i] = 0xFFFFFFFF; /* Check all ID bits for incoming messages */
+ 154              		.loc 1 43 0 is_stmt 0 discriminator 1
+ 155 00d4 7B69     		ldr	r3, [r7, #20]
+ 156 00d6 0F2B     		cmp	r3, #15
+ 157 00d8 EED9     		bls	.L4
+  45:../bl/FlexCAN.c **** 	}
+  46:../bl/FlexCAN.c **** 	CAN[port]->RXMGMASK = 0x1FFFFFFF; /* Global acceptance mask: check all ID bits */
+ 158              		.loc 1 46 0 is_stmt 1
+ 159 00da 1B4A     		ldr	r2, .L9+8
+ 160 00dc FB68     		ldr	r3, [r7, #12]
+ 161 00de 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 162 00e2 6FF06042 		mvn	r2, #-536870912
+ 163 00e6 1A61     		str	r2, [r3, #16]
+  47:../bl/FlexCAN.c **** 
+  48:../bl/FlexCAN.c **** 	CAN[port]->RAMn[4 * MSG_BUF_SIZE + 0] = 0x04000000; /* Msg Buf 4, word 0: Enable for reception */
+ 164              		.loc 1 48 0
+ 165 00e8 174A     		ldr	r2, .L9+8
+ 166 00ea FB68     		ldr	r3, [r7, #12]
+ 167 00ec 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 168 00f0 4FF08062 		mov	r2, #67108864
+ 169 00f4 C3F8C020 		str	r2, [r3, #192]
+  49:../bl/FlexCAN.c **** 	/* EDL,BRS,ESI=0: CANFD not used */
+  50:../bl/FlexCAN.c **** 	/* CODE=4: MB set to RX inactive */
+  51:../bl/FlexCAN.c **** 	/* IDE=0: Standard ID */
+  52:../bl/FlexCAN.c **** 	/* SRR, RTR, TIME STAMP = 0: not applicable */
+  53:../bl/FlexCAN.c **** 	CAN[port]->RAMn[4 * MSG_BUF_SIZE + 1] = ID<<18; /* Msg Buf 4, word 1: Standard ID = 0x111 */
+ 170              		.loc 1 53 0
+ 171 00f8 134A     		ldr	r2, .L9+8
+ 172 00fa FB68     		ldr	r3, [r7, #12]
+ 173 00fc 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 174 0100 BA68     		ldr	r2, [r7, #8]
+ 175 0102 9204     		lsls	r2, r2, #18
+ 176 0104 C3F8C420 		str	r2, [r3, #196]
+  54:../bl/FlexCAN.c **** 
+  55:../bl/FlexCAN.c **** 	/* PRIO = 0: CANFD not used */
+  56:../bl/FlexCAN.c **** 	CAN[port]->MCR = 0x0000001F; /* Negate FlexCAN 1 halt state for 32 MBs */
+ 177              		.loc 1 56 0
+ 178 0108 0F4A     		ldr	r2, .L9+8
+ 179 010a FB68     		ldr	r3, [r7, #12]
+ 180 010c 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 181 0110 1F22     		movs	r2, #31
+ 182 0112 1A60     		str	r2, [r3]
+  57:../bl/FlexCAN.c **** 	while ((CAN[port]->MCR && CAN_MCR_FRZACK_MASK) >> CAN_MCR_FRZACK_SHIFT) {
+ 183              		.loc 1 57 0
+ 184 0114 00BF     		nop
+ 185 0116 0C4A     		ldr	r2, .L9+8
+ 186 0118 FB68     		ldr	r3, [r7, #12]
+ 187 011a 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 188 011e 1B68     		ldr	r3, [r3]
+ 189 0120 002B     		cmp	r3, #0
+ 190 0122 00D0     		beq	.L6
+ 191 0124 00BF     		nop
+ 192              	.L6:
+  58:../bl/FlexCAN.c **** 	}
+  59:../bl/FlexCAN.c **** 	/* Good practice: wait for FRZACK to clear (not in freeze mode) */
+  60:../bl/FlexCAN.c **** 	while ((CAN[port]->MCR && CAN_MCR_NOTRDY_MASK) >> CAN_MCR_NOTRDY_SHIFT) {
+ 193              		.loc 1 60 0 discriminator 6
+ 194 0126 00BF     		nop
+ 195 0128 074A     		ldr	r2, .L9+8
+ 196 012a FB68     		ldr	r3, [r7, #12]
+ 197 012c 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 198 0130 1B68     		ldr	r3, [r3]
+ 199 0132 002B     		cmp	r3, #0
+ 200 0134 00D0     		beq	.L8
+ 201              		.loc 1 60 0 is_stmt 0
+ 202 0136 00BF     		nop
+ 203              	.L8:
+  61:../bl/FlexCAN.c **** 	}
+  62:../bl/FlexCAN.c **** 	/* Good practice: wait for NOTRDY to clear (module ready)  */
+  63:../bl/FlexCAN.c **** }
+ 204              		.loc 1 63 0 is_stmt 1 discriminator 6
+ 205 0138 1837     		adds	r7, r7, #24
+ 206              		.cfi_def_cfa_offset 8
+ 207 013a BD46     		mov	sp, r7
+ 208              		.cfi_def_cfa_register 13
+ 209              		@ sp needed
+ 210 013c 90BC     		pop	{r4, r7}
+ 211              		.cfi_restore 7
+ 212              		.cfi_restore 4
+ 213              		.cfi_def_cfa_offset 0
+ 214 013e 7047     		bx	lr
+ 215              	.L10:
+ 216              		.align	2
+ 217              	.L9:
+ 218 0140 00500640 		.word	1074155520
+ 219 0144 00000000 		.word	PCC_FlexCAN_INDEX
+ 220 0148 00000000 		.word	CAN
+ 221 014c 00127A00 		.word	8000000
+ 222              		.cfi_endproc
+ 223              	.LFE0:
+ 225              		.section	.text.FLEXCAN_transmit_msg,"ax",%progbits
+ 226              		.align	2
+ 227              		.global	FLEXCAN_transmit_msg
+ 228              		.thumb
+ 229              		.thumb_func
+ 231              	FLEXCAN_transmit_msg:
+ 232              	.LFB1:
+  64:../bl/FlexCAN.c **** 
+  65:../bl/FlexCAN.c **** void FLEXCAN_transmit_msg(
+  66:../bl/FlexCAN.c **** 		int port,
+  67:../bl/FlexCAN.c **** 		uint32_t TxID,
+  68:../bl/FlexCAN.c **** 		uint32_t TxLENGTH,
+  69:../bl/FlexCAN.c **** 		const uint8_t TxDATA[8]) { /* Assumption:  Message buffer CODE is INACTIVE */
+ 233              		.loc 1 69 0
+ 234              		.cfi_startproc
+ 235              		@ args = 0, pretend = 0, frame = 16
+ 236              		@ frame_needed = 1, uses_anonymous_args = 0
+ 237 0000 90B5     		push	{r4, r7, lr}
+ 238              		.cfi_def_cfa_offset 12
+ 239              		.cfi_offset 4, -12
+ 240              		.cfi_offset 7, -8
+ 241              		.cfi_offset 14, -4
+ 242 0002 85B0     		sub	sp, sp, #20
+ 243              		.cfi_def_cfa_offset 32
+ 244 0004 00AF     		add	r7, sp, #0
+ 245              		.cfi_def_cfa_register 7
+ 246 0006 F860     		str	r0, [r7, #12]
+ 247 0008 B960     		str	r1, [r7, #8]
+ 248 000a 7A60     		str	r2, [r7, #4]
+ 249 000c 3B60     		str	r3, [r7]
+  70:../bl/FlexCAN.c **** 	CAN[port]->IFLAG1 = 0x00000001; /* Clear CAN 0 MB 0 flag without clearing others*/
+ 250              		.loc 1 70 0
+ 251 000e 184A     		ldr	r2, .L12
+ 252 0010 FB68     		ldr	r3, [r7, #12]
+ 253 0012 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 254 0016 0122     		movs	r2, #1
+ 255 0018 1A63     		str	r2, [r3, #48]
+  71:../bl/FlexCAN.c **** 	CAN[port]->RAMn[0 * MSG_BUF_SIZE + 2] = HX_MSB_B2DW(&TxDATA[0]); /* MB0 word 2: data word 0 */
+ 256              		.loc 1 71 0
+ 257 001a 154A     		ldr	r2, .L12
+ 258 001c FB68     		ldr	r3, [r7, #12]
+ 259 001e 52F82340 		ldr	r4, [r2, r3, lsl #2]
+ 260 0022 3868     		ldr	r0, [r7]
+ 261 0024 FFF7FEFF 		bl	HX_MSB_B2DW
+ 262 0028 0346     		mov	r3, r0
+ 263 002a C4F88830 		str	r3, [r4, #136]
+  72:../bl/FlexCAN.c **** 	CAN[port]->RAMn[0 * MSG_BUF_SIZE + 3] = HX_MSB_B2DW(&TxDATA[4]); /* MB0 word 3: data word 1 */
+ 264              		.loc 1 72 0
+ 265 002e 104A     		ldr	r2, .L12
+ 266 0030 FB68     		ldr	r3, [r7, #12]
+ 267 0032 52F82340 		ldr	r4, [r2, r3, lsl #2]
+ 268 0036 3B68     		ldr	r3, [r7]
+ 269 0038 0433     		adds	r3, r3, #4
+ 270 003a 1846     		mov	r0, r3
+ 271 003c FFF7FEFF 		bl	HX_MSB_B2DW
+ 272 0040 0346     		mov	r3, r0
+ 273 0042 C4F88C30 		str	r3, [r4, #140]
+  73:../bl/FlexCAN.c **** 	CAN[port]->RAMn[0 * MSG_BUF_SIZE + 1] = TxID<<18; /* MB0 word 1: Tx msg with STD ID 0x555 */
+ 274              		.loc 1 73 0
+ 275 0046 0A4A     		ldr	r2, .L12
+ 276 0048 FB68     		ldr	r3, [r7, #12]
+ 277 004a 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 278 004e BA68     		ldr	r2, [r7, #8]
+ 279 0050 9204     		lsls	r2, r2, #18
+ 280 0052 C3F88420 		str	r2, [r3, #132]
+  74:../bl/FlexCAN.c **** 	CAN[port]->RAMn[0 * MSG_BUF_SIZE + 0] = 0x0C400000 | TxLENGTH << CAN_WMBn_CS_DLC_SHIFT; /* MB0 wor
+ 281              		.loc 1 74 0
+ 282 0056 064A     		ldr	r2, .L12
+ 283 0058 FB68     		ldr	r3, [r7, #12]
+ 284 005a 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 285 005e 7A68     		ldr	r2, [r7, #4]
+ 286 0060 1204     		lsls	r2, r2, #16
+ 287 0062 42F04462 		orr	r2, r2, #205520896
+ 288 0066 C3F88020 		str	r2, [r3, #128]
+  75:../bl/FlexCAN.c **** 	/* EDL,BRS,ESI=0: CANFD not used */
+  76:../bl/FlexCAN.c **** 	/* CODE=0xC: Activate msg buf to transmit */
+  77:../bl/FlexCAN.c **** 	/* IDE=0: Standard ID */
+  78:../bl/FlexCAN.c **** 	/* SRR=1 Tx frame (not req'd for std ID) */
+  79:../bl/FlexCAN.c **** 	/* RTR = 0: data, not remote tx request frame*/
+  80:../bl/FlexCAN.c **** 	/* DLC = 8 bytes */
+  81:../bl/FlexCAN.c **** }
+ 289              		.loc 1 81 0
+ 290 006a 1437     		adds	r7, r7, #20
+ 291              		.cfi_def_cfa_offset 12
+ 292 006c BD46     		mov	sp, r7
+ 293              		.cfi_def_cfa_register 13
+ 294              		@ sp needed
+ 295 006e 90BD     		pop	{r4, r7, pc}
+ 296              	.L13:
+ 297              		.align	2
+ 298              	.L12:
+ 299 0070 00000000 		.word	CAN
+ 300              		.cfi_endproc
+ 301              	.LFE1:
+ 303              		.section	.text.FLEXCAN_receive_msg,"ax",%progbits
+ 304              		.align	2
+ 305              		.global	FLEXCAN_receive_msg
+ 306              		.thumb
+ 307              		.thumb_func
+ 309              	FLEXCAN_receive_msg:
+ 310              	.LFB2:
+  82:../bl/FlexCAN.c **** 
+  83:../bl/FlexCAN.c **** int FLEXCAN_receive_msg(
+  84:../bl/FlexCAN.c **** 		int port,
+  85:../bl/FlexCAN.c **** 		//uint32_t *RxID, /* Received message ID */
+  86:../bl/FlexCAN.c **** 		uint32_t *RxLENGTH, /* Recieved message number of data bytes */
+  87:../bl/FlexCAN.c **** 		uint8_t RxDATA[8]
+  88:../bl/FlexCAN.c **** 		) { /* Receive msg from ID 0x556 using msg buffer 4 */
+ 311              		.loc 1 88 0
+ 312              		.cfi_startproc
+ 313              		@ args = 0, pretend = 0, frame = 32
+ 314              		@ frame_needed = 1, uses_anonymous_args = 0
+ 315 0000 80B5     		push	{r7, lr}
+ 316              		.cfi_def_cfa_offset 8
+ 317              		.cfi_offset 7, -8
+ 318              		.cfi_offset 14, -4
+ 319 0002 88B0     		sub	sp, sp, #32
+ 320              		.cfi_def_cfa_offset 40
+ 321 0004 00AF     		add	r7, sp, #0
+ 322              		.cfi_def_cfa_register 7
+ 323 0006 F860     		str	r0, [r7, #12]
+ 324 0008 B960     		str	r1, [r7, #8]
+ 325 000a 7A60     		str	r2, [r7, #4]
+  89:../bl/FlexCAN.c **** 	uint32_t dummy;
+  90:../bl/FlexCAN.c **** 	if ((CAN[port]->IFLAG1 >> 4) & 1) {  /* If CAN 0 MB 4 flag is set (received msg), read MB4 */
+ 326              		.loc 1 90 0
+ 327 000c 204A     		ldr	r2, .L17
+ 328 000e FB68     		ldr	r3, [r7, #12]
+ 329 0010 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 330 0014 1B6B     		ldr	r3, [r3, #48]
+ 331 0016 1B09     		lsrs	r3, r3, #4
+ 332 0018 03F00103 		and	r3, r3, #1
+ 333 001c 002B     		cmp	r3, #0
+ 334 001e 30D0     		beq	.L15
+ 335              	.LBB2:
+  91:../bl/FlexCAN.c **** 		//*RxCODE = (CAN[port]->RAMn[4 * MSG_BUF_SIZE + 0] & 0x07000000) >> 24; /* Read CODE field */
+  92:../bl/FlexCAN.c **** 		*RxLENGTH = (CAN[port]->RAMn[4 * MSG_BUF_SIZE + 0] & CAN_WMBn_CS_DLC_MASK)>> CAN_WMBn_CS_DLC_SHIF
+ 336              		.loc 1 92 0
+ 337 0020 1B4A     		ldr	r2, .L17
+ 338 0022 FB68     		ldr	r3, [r7, #12]
+ 339 0024 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 340 0028 D3F8C030 		ldr	r3, [r3, #192]
+ 341 002c 03F47023 		and	r3, r3, #983040
+ 342 0030 1A0C     		lsrs	r2, r3, #16
+ 343 0032 BB68     		ldr	r3, [r7, #8]
+ 344 0034 1A60     		str	r2, [r3]
+  93:../bl/FlexCAN.c **** 		//*RxID = (CAN[port]->RAMn[4 * MSG_BUF_SIZE + 1] & CAN_WMBn_ID_ID_MASK)>> CAN_WMBn_ID_ID_SHIFT >>
+  94:../bl/FlexCAN.c **** 		uint32_t w2 = CAN[port]->RAMn[4 * MSG_BUF_SIZE + 2];
+ 345              		.loc 1 94 0
+ 346 0036 164A     		ldr	r2, .L17
+ 347 0038 FB68     		ldr	r3, [r7, #12]
+ 348 003a 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 349 003e D3F8C830 		ldr	r3, [r3, #200]
+ 350 0042 FB61     		str	r3, [r7, #28]
+  95:../bl/FlexCAN.c **** 		uint32_t w3 = CAN[port]->RAMn[4 * MSG_BUF_SIZE + 3];
+ 351              		.loc 1 95 0
+ 352 0044 124A     		ldr	r2, .L17
+ 353 0046 FB68     		ldr	r3, [r7, #12]
+ 354 0048 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 355 004c D3F8CC30 		ldr	r3, [r3, #204]
+ 356 0050 BB61     		str	r3, [r7, #24]
+  96:../bl/FlexCAN.c **** 		HX_MSB_DW2B(w2,&RxDATA[0]);
+ 357              		.loc 1 96 0
+ 358 0052 F869     		ldr	r0, [r7, #28]
+ 359 0054 7968     		ldr	r1, [r7, #4]
+ 360 0056 FFF7FEFF 		bl	HX_MSB_DW2B
+  97:../bl/FlexCAN.c **** 		HX_MSB_DW2B(w3,&RxDATA[4]);
+ 361              		.loc 1 97 0
+ 362 005a 7B68     		ldr	r3, [r7, #4]
+ 363 005c 0433     		adds	r3, r3, #4
+ 364 005e B869     		ldr	r0, [r7, #24]
+ 365 0060 1946     		mov	r1, r3
+ 366 0062 FFF7FEFF 		bl	HX_MSB_DW2B
+  98:../bl/FlexCAN.c **** 		//*RxTIMESTAMP = (CAN[port]->RAMn[0 * MSG_BUF_SIZE + 0] & 0x000FFFF);
+  99:../bl/FlexCAN.c **** 		dummy = CAN[port]->TIMER; /* Read TIMER to unlock message buffers */
+ 367              		.loc 1 99 0
+ 368 0066 0A4A     		ldr	r2, .L17
+ 369 0068 FB68     		ldr	r3, [r7, #12]
+ 370 006a 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 371 006e 9B68     		ldr	r3, [r3, #8]
+ 372 0070 7B61     		str	r3, [r7, #20]
+ 100:../bl/FlexCAN.c **** 		(void)dummy;
+ 101:../bl/FlexCAN.c **** 		CAN[port]->IFLAG1 = 0x00000010; /* Clear CAN 0 MB 4 flag without clearing others*/
+ 373              		.loc 1 101 0
+ 374 0072 074A     		ldr	r2, .L17
+ 375 0074 FB68     		ldr	r3, [r7, #12]
+ 376 0076 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 377 007a 1022     		movs	r2, #16
+ 378 007c 1A63     		str	r2, [r3, #48]
+ 102:../bl/FlexCAN.c **** 		return 0;
+ 379              		.loc 1 102 0
+ 380 007e 0023     		movs	r3, #0
+ 381 0080 01E0     		b	.L16
+ 382              	.L15:
+ 383              	.LBE2:
+ 103:../bl/FlexCAN.c **** 	}
+ 104:../bl/FlexCAN.c **** 	return -1;
+ 384              		.loc 1 104 0
+ 385 0082 4FF0FF33 		mov	r3, #-1
+ 386              	.L16:
+ 105:../bl/FlexCAN.c **** }
+ 387              		.loc 1 105 0
+ 388 0086 1846     		mov	r0, r3
+ 389 0088 2037     		adds	r7, r7, #32
+ 390              		.cfi_def_cfa_offset 8
+ 391 008a BD46     		mov	sp, r7
+ 392              		.cfi_def_cfa_register 13
+ 393              		@ sp needed
+ 394 008c 80BD     		pop	{r7, pc}
+ 395              	.L18:
+ 396 008e 00BF     		.align	2
+ 397              	.L17:
+ 398 0090 00000000 		.word	CAN
+ 399              		.cfi_endproc
+ 400              	.LFE2:
+ 402              		.text
+ 403              	.Letext0:
+ 404              		.file 2 "/home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstdint"
+ 405              		.file 3 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/include/S32K144.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 FlexCAN.c
+     /tmp/ccFnxUG6.s:25     .data.CAN:00000000 CAN
+     /tmp/ccFnxUG6.s:22     .data.CAN:00000000 $d
+     /tmp/ccFnxUG6.s:34     .data.PCC_FlexCAN_INDEX:00000000 PCC_FlexCAN_INDEX
+     /tmp/ccFnxUG6.s:31     .data.PCC_FlexCAN_INDEX:00000000 $d
+     /tmp/ccFnxUG6.s:39     .text.FLEXCAN_init:00000000 $t
+     /tmp/ccFnxUG6.s:44     .text.FLEXCAN_init:00000000 FLEXCAN_init
+     /tmp/ccFnxUG6.s:218    .text.FLEXCAN_init:00000140 $d
+     /tmp/ccFnxUG6.s:226    .text.FLEXCAN_transmit_msg:00000000 $t
+     /tmp/ccFnxUG6.s:231    .text.FLEXCAN_transmit_msg:00000000 FLEXCAN_transmit_msg
+     /tmp/ccFnxUG6.s:299    .text.FLEXCAN_transmit_msg:00000070 $d
+     /tmp/ccFnxUG6.s:304    .text.FLEXCAN_receive_msg:00000000 $t
+     /tmp/ccFnxUG6.s:309    .text.FLEXCAN_receive_msg:00000000 FLEXCAN_receive_msg
+     /tmp/ccFnxUG6.s:398    .text.FLEXCAN_receive_msg:00000090 $d
+                     .debug_frame:00000010 $d
+                           .group:00000000 wm4.0.728a2e6911dc01ff85c2d70c52e8fae1
+                           .group:00000000 wm4.lib_c99.prefix.8.3580c292f50811c682d980dc4180498e
+                           .group:00000000 wm4.common.prefix.16.d7bf937cdf46fd76dde96b376e3b328a
+                           .group:00000000 wm4.ewl_c_version.h.9.0bcb57d6a3f89baae1f9b121de2772f5
+                           .group:00000000 wm4.S32K144.h.177.451251ac556d3b0b8a04170a135f92d4
+                           .group:00000000 wm4.os_enum.h.9.f9446d6af68b3fa72a37d4d924d3b347
+                           .group:00000000 wm4.ansi_prefix.ARM.h.13.4b23f4c654df3c3277534542f67d200c
+                           .group:00000000 wm4.ansi_parms.h.64.90aed58330fdde08746db908036e1f37
+                           .group:00000000 wm4.limits_api.h.9.bc6daa20b3abae2bba6c512044e73b43
+                           .group:00000000 wm4.ewl_lib_ext1.h.14.f9b057cc049671136093886db2a3473f
+                           .group:00000000 wm4.cstdint.134.0ece0ba0ee759ce9e45a8fa510ec0d93
+                           .group:00000000 wm4.wchar_t.h.9.94198016f5b5f455e54ea1f3f054b416
+                           .group:00000000 wm4.cstdint.246.0573fcc3ea2319479988f90b448d87e4
+                           .group:00000000 wm4.S32K144.h.190.037de4cd4cd4f94a273a3fe3e68d3ef7
+                           .group:00000000 wm4.convert.h.9.7acfc90acb3e9acc9d0cd761674f1d1e
+
+UNDEFINED SYMBOLS
+HX_MSB_B2DW
+HX_MSB_DW2B

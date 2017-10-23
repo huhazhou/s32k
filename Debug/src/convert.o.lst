@@ -1,0 +1,4280 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.eabi_attribute 27, 1
+   4              		.eabi_attribute 28, 1
+   5              		.fpu fpv4-sp-d16
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.thumb
+  16              		.file	"convert.c"
+  17              		.text
+  18              	.Ltext0:
+  19              		.cfi_sections	.debug_frame
+  20              		.section	.text.bcd2int,"ax",%progbits
+  21              		.align	2
+  22              		.global	bcd2int
+  23              		.thumb
+  24              		.thumb_func
+  26              	bcd2int:
+  27              	.LFB0:
+  28              		.file 1 "../src/convert.c"
+   1:../src/convert.c **** /*
+   2:../src/convert.c ****  * convert.c
+   3:../src/convert.c ****  *
+   4:../src/convert.c ****  *  Created on: 2016��7��25��
+   5:../src/convert.c ****  *      Author: houxd
+   6:../src/convert.c ****  */
+   7:../src/convert.c **** #include "convert.h"
+   8:../src/convert.c **** 
+   9:../src/convert.c **** #include "stdio.h"
+  10:../src/convert.c **** #include "string.h"
+  11:../src/convert.c **** #include "unistd.h"
+  12:../src/convert.c **** 
+  13:../src/convert.c **** int bcd2int(unsigned char bcd)
+  14:../src/convert.c **** {
+  29              		.loc 1 14 0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 16
+  32              		@ frame_needed = 1, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+  34 0000 80B4     		push	{r7}
+  35              		.cfi_def_cfa_offset 4
+  36              		.cfi_offset 7, -4
+  37 0002 85B0     		sub	sp, sp, #20
+  38              		.cfi_def_cfa_offset 24
+  39 0004 00AF     		add	r7, sp, #0
+  40              		.cfi_def_cfa_register 7
+  41 0006 0346     		mov	r3, r0
+  42 0008 FB71     		strb	r3, [r7, #7]
+  15:../src/convert.c **** 	unsigned int tmp = bcd;
+  43              		.loc 1 15 0
+  44 000a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+  45 000c FB60     		str	r3, [r7, #12]
+  16:../src/convert.c **** 	return (0x0Fu&(tmp>>4))*10+(0x0Fu&(tmp));
+  46              		.loc 1 16 0
+  47 000e FB68     		ldr	r3, [r7, #12]
+  48 0010 1B09     		lsrs	r3, r3, #4
+  49 0012 03F00F02 		and	r2, r3, #15
+  50 0016 1346     		mov	r3, r2
+  51 0018 9B00     		lsls	r3, r3, #2
+  52 001a 1344     		add	r3, r3, r2
+  53 001c 5B00     		lsls	r3, r3, #1
+  54 001e 1A46     		mov	r2, r3
+  55 0020 FB68     		ldr	r3, [r7, #12]
+  56 0022 03F00F03 		and	r3, r3, #15
+  57 0026 1344     		add	r3, r3, r2
+  17:../src/convert.c **** }
+  58              		.loc 1 17 0
+  59 0028 1846     		mov	r0, r3
+  60 002a 1437     		adds	r7, r7, #20
+  61              		.cfi_def_cfa_offset 4
+  62 002c BD46     		mov	sp, r7
+  63              		.cfi_def_cfa_register 13
+  64              		@ sp needed
+  65 002e 5DF8047B 		ldr	r7, [sp], #4
+  66              		.cfi_restore 7
+  67              		.cfi_def_cfa_offset 0
+  68 0032 7047     		bx	lr
+  69              		.cfi_endproc
+  70              	.LFE0:
+  72              		.section	.text.int2bcd,"ax",%progbits
+  73              		.align	2
+  74              		.global	int2bcd
+  75              		.thumb
+  76              		.thumb_func
+  78              	int2bcd:
+  79              	.LFB1:
+  18:../src/convert.c **** 
+  19:../src/convert.c **** unsigned char int2bcd(int d)
+  20:../src/convert.c **** {
+  80              		.loc 1 20 0
+  81              		.cfi_startproc
+  82              		@ args = 0, pretend = 0, frame = 8
+  83              		@ frame_needed = 1, uses_anonymous_args = 0
+  84              		@ link register save eliminated.
+  85 0000 80B4     		push	{r7}
+  86              		.cfi_def_cfa_offset 4
+  87              		.cfi_offset 7, -4
+  88 0002 83B0     		sub	sp, sp, #12
+  89              		.cfi_def_cfa_offset 16
+  90 0004 00AF     		add	r7, sp, #0
+  91              		.cfi_def_cfa_register 7
+  92 0006 7860     		str	r0, [r7, #4]
+  21:../src/convert.c **** 	return (unsigned char)(0x0F0u&((d/10)<<4))+(0x0Fu&(d%10));
+  93              		.loc 1 21 0
+  94 0008 7B68     		ldr	r3, [r7, #4]
+  95 000a 104A     		ldr	r2, .L5
+  96 000c 82FB0312 		smull	r1, r2, r2, r3
+  97 0010 9210     		asrs	r2, r2, #2
+  98 0012 DB17     		asrs	r3, r3, #31
+  99 0014 D31A     		subs	r3, r2, r3
+ 100 0016 DBB2     		uxtb	r3, r3
+ 101 0018 1B01     		lsls	r3, r3, #4
+ 102 001a D8B2     		uxtb	r0, r3
+ 103 001c 7A68     		ldr	r2, [r7, #4]
+ 104 001e 0B4B     		ldr	r3, .L5
+ 105 0020 83FB0213 		smull	r1, r3, r3, r2
+ 106 0024 9910     		asrs	r1, r3, #2
+ 107 0026 D317     		asrs	r3, r2, #31
+ 108 0028 C91A     		subs	r1, r1, r3
+ 109 002a 0B46     		mov	r3, r1
+ 110 002c 9B00     		lsls	r3, r3, #2
+ 111 002e 0B44     		add	r3, r3, r1
+ 112 0030 5B00     		lsls	r3, r3, #1
+ 113 0032 D11A     		subs	r1, r2, r3
+ 114 0034 CBB2     		uxtb	r3, r1
+ 115 0036 03F00F03 		and	r3, r3, #15
+ 116 003a DBB2     		uxtb	r3, r3
+ 117 003c 0344     		add	r3, r3, r0
+ 118 003e DBB2     		uxtb	r3, r3
+  22:../src/convert.c **** }
+ 119              		.loc 1 22 0
+ 120 0040 1846     		mov	r0, r3
+ 121 0042 0C37     		adds	r7, r7, #12
+ 122              		.cfi_def_cfa_offset 4
+ 123 0044 BD46     		mov	sp, r7
+ 124              		.cfi_def_cfa_register 13
+ 125              		@ sp needed
+ 126 0046 5DF8047B 		ldr	r7, [sp], #4
+ 127              		.cfi_restore 7
+ 128              		.cfi_def_cfa_offset 0
+ 129 004a 7047     		bx	lr
+ 130              	.L6:
+ 131              		.align	2
+ 132              	.L5:
+ 133 004c 67666666 		.word	1717986919
+ 134              		.cfi_endproc
+ 135              	.LFE1:
+ 137              		.section	.text.int2asc,"ax",%progbits
+ 138              		.align	2
+ 139              		.global	int2asc
+ 140              		.thumb
+ 141              		.thumb_func
+ 143              	int2asc:
+ 144              	.LFB2:
+  23:../src/convert.c **** /*
+  24:../src/convert.c ****  * -9 -> '0'
+  25:../src/convert.c ****  * 1 -> '1'
+  26:../src/convert.c ****  * 10 -> 'a'
+  27:../src/convert.c ****  * 15 -> 'f'
+  28:../src/convert.c ****  * 100 -> 'f'
+  29:../src/convert.c ****  */
+  30:../src/convert.c **** char int2asc(int n)
+  31:../src/convert.c **** {
+ 145              		.loc 1 31 0
+ 146              		.cfi_startproc
+ 147              		@ args = 0, pretend = 0, frame = 8
+ 148              		@ frame_needed = 1, uses_anonymous_args = 0
+ 149              		@ link register save eliminated.
+ 150 0000 80B4     		push	{r7}
+ 151              		.cfi_def_cfa_offset 4
+ 152              		.cfi_offset 7, -4
+ 153 0002 83B0     		sub	sp, sp, #12
+ 154              		.cfi_def_cfa_offset 16
+ 155 0004 00AF     		add	r7, sp, #0
+ 156              		.cfi_def_cfa_register 7
+ 157 0006 7860     		str	r0, [r7, #4]
+  32:../src/convert.c **** 	if(n<0)
+ 158              		.loc 1 32 0
+ 159 0008 7B68     		ldr	r3, [r7, #4]
+ 160 000a 002B     		cmp	r3, #0
+ 161 000c 01DA     		bge	.L8
+  33:../src/convert.c **** 		return '0';
+ 162              		.loc 1 33 0
+ 163 000e 3023     		movs	r3, #48
+ 164 0010 16E0     		b	.L9
+ 165              	.L8:
+  34:../src/convert.c **** 	else if(n>=0 && n<10)
+ 166              		.loc 1 34 0
+ 167 0012 7B68     		ldr	r3, [r7, #4]
+ 168 0014 002B     		cmp	r3, #0
+ 169 0016 07DB     		blt	.L10
+ 170              		.loc 1 34 0 is_stmt 0 discriminator 1
+ 171 0018 7B68     		ldr	r3, [r7, #4]
+ 172 001a 092B     		cmp	r3, #9
+ 173 001c 04DC     		bgt	.L10
+  35:../src/convert.c **** 		return n+'0';
+ 174              		.loc 1 35 0 is_stmt 1
+ 175 001e 7B68     		ldr	r3, [r7, #4]
+ 176 0020 DBB2     		uxtb	r3, r3
+ 177 0022 3033     		adds	r3, r3, #48
+ 178 0024 DBB2     		uxtb	r3, r3
+ 179 0026 0BE0     		b	.L9
+ 180              	.L10:
+  36:../src/convert.c **** 	else if(n>=10 && n<16)
+ 181              		.loc 1 36 0
+ 182 0028 7B68     		ldr	r3, [r7, #4]
+ 183 002a 092B     		cmp	r3, #9
+ 184 002c 07DD     		ble	.L11
+ 185              		.loc 1 36 0 is_stmt 0 discriminator 1
+ 186 002e 7B68     		ldr	r3, [r7, #4]
+ 187 0030 0F2B     		cmp	r3, #15
+ 188 0032 04DC     		bgt	.L11
+  37:../src/convert.c **** 		return (n-10)+'a';
+ 189              		.loc 1 37 0 is_stmt 1
+ 190 0034 7B68     		ldr	r3, [r7, #4]
+ 191 0036 DBB2     		uxtb	r3, r3
+ 192 0038 5733     		adds	r3, r3, #87
+ 193 003a DBB2     		uxtb	r3, r3
+ 194 003c 00E0     		b	.L9
+ 195              	.L11:
+  38:../src/convert.c **** 	else
+  39:../src/convert.c **** 		return 'f';
+ 196              		.loc 1 39 0
+ 197 003e 6623     		movs	r3, #102
+ 198              	.L9:
+  40:../src/convert.c **** }
+ 199              		.loc 1 40 0
+ 200 0040 1846     		mov	r0, r3
+ 201 0042 0C37     		adds	r7, r7, #12
+ 202              		.cfi_def_cfa_offset 4
+ 203 0044 BD46     		mov	sp, r7
+ 204              		.cfi_def_cfa_register 13
+ 205              		@ sp needed
+ 206 0046 5DF8047B 		ldr	r7, [sp], #4
+ 207              		.cfi_restore 7
+ 208              		.cfi_def_cfa_offset 0
+ 209 004a 7047     		bx	lr
+ 210              		.cfi_endproc
+ 211              	.LFE2:
+ 213              		.section	.text.int2ASC,"ax",%progbits
+ 214              		.align	2
+ 215              		.global	int2ASC
+ 216              		.thumb
+ 217              		.thumb_func
+ 219              	int2ASC:
+ 220              	.LFB3:
+  41:../src/convert.c **** /*
+  42:../src/convert.c ****  * -9 -> '0'
+  43:../src/convert.c ****  * 1 -> '1'
+  44:../src/convert.c ****  * 10 -> 'A'
+  45:../src/convert.c ****  * 15 -> 'F'
+  46:../src/convert.c ****  * 100 -> 'F'
+  47:../src/convert.c ****  */
+  48:../src/convert.c **** char int2ASC(int n)
+  49:../src/convert.c **** {
+ 221              		.loc 1 49 0
+ 222              		.cfi_startproc
+ 223              		@ args = 0, pretend = 0, frame = 8
+ 224              		@ frame_needed = 1, uses_anonymous_args = 0
+ 225              		@ link register save eliminated.
+ 226 0000 80B4     		push	{r7}
+ 227              		.cfi_def_cfa_offset 4
+ 228              		.cfi_offset 7, -4
+ 229 0002 83B0     		sub	sp, sp, #12
+ 230              		.cfi_def_cfa_offset 16
+ 231 0004 00AF     		add	r7, sp, #0
+ 232              		.cfi_def_cfa_register 7
+ 233 0006 7860     		str	r0, [r7, #4]
+  50:../src/convert.c **** 	if(n<0)
+ 234              		.loc 1 50 0
+ 235 0008 7B68     		ldr	r3, [r7, #4]
+ 236 000a 002B     		cmp	r3, #0
+ 237 000c 01DA     		bge	.L13
+  51:../src/convert.c **** 		return '0';
+ 238              		.loc 1 51 0
+ 239 000e 3023     		movs	r3, #48
+ 240 0010 16E0     		b	.L14
+ 241              	.L13:
+  52:../src/convert.c **** 	else if(n>=0 && n<10)
+ 242              		.loc 1 52 0
+ 243 0012 7B68     		ldr	r3, [r7, #4]
+ 244 0014 002B     		cmp	r3, #0
+ 245 0016 07DB     		blt	.L15
+ 246              		.loc 1 52 0 is_stmt 0 discriminator 1
+ 247 0018 7B68     		ldr	r3, [r7, #4]
+ 248 001a 092B     		cmp	r3, #9
+ 249 001c 04DC     		bgt	.L15
+  53:../src/convert.c **** 		return n+'0';
+ 250              		.loc 1 53 0 is_stmt 1
+ 251 001e 7B68     		ldr	r3, [r7, #4]
+ 252 0020 DBB2     		uxtb	r3, r3
+ 253 0022 3033     		adds	r3, r3, #48
+ 254 0024 DBB2     		uxtb	r3, r3
+ 255 0026 0BE0     		b	.L14
+ 256              	.L15:
+  54:../src/convert.c **** 	else if(n>=10 && n<16)
+ 257              		.loc 1 54 0
+ 258 0028 7B68     		ldr	r3, [r7, #4]
+ 259 002a 092B     		cmp	r3, #9
+ 260 002c 07DD     		ble	.L16
+ 261              		.loc 1 54 0 is_stmt 0 discriminator 1
+ 262 002e 7B68     		ldr	r3, [r7, #4]
+ 263 0030 0F2B     		cmp	r3, #15
+ 264 0032 04DC     		bgt	.L16
+  55:../src/convert.c **** 		return (n-10)+'A';
+ 265              		.loc 1 55 0 is_stmt 1
+ 266 0034 7B68     		ldr	r3, [r7, #4]
+ 267 0036 DBB2     		uxtb	r3, r3
+ 268 0038 3733     		adds	r3, r3, #55
+ 269 003a DBB2     		uxtb	r3, r3
+ 270 003c 00E0     		b	.L14
+ 271              	.L16:
+  56:../src/convert.c **** 	else
+  57:../src/convert.c **** 		return 'F';
+ 272              		.loc 1 57 0
+ 273 003e 4623     		movs	r3, #70
+ 274              	.L14:
+  58:../src/convert.c **** }
+ 275              		.loc 1 58 0
+ 276 0040 1846     		mov	r0, r3
+ 277 0042 0C37     		adds	r7, r7, #12
+ 278              		.cfi_def_cfa_offset 4
+ 279 0044 BD46     		mov	sp, r7
+ 280              		.cfi_def_cfa_register 13
+ 281              		@ sp needed
+ 282 0046 5DF8047B 		ldr	r7, [sp], #4
+ 283              		.cfi_restore 7
+ 284              		.cfi_def_cfa_offset 0
+ 285 004a 7047     		bx	lr
+ 286              		.cfi_endproc
+ 287              	.LFE3:
+ 289              		.section	.text.asc2int,"ax",%progbits
+ 290              		.align	2
+ 291              		.global	asc2int
+ 292              		.thumb
+ 293              		.thumb_func
+ 295              	asc2int:
+ 296              	.LFB4:
+  59:../src/convert.c **** int asc2int(char asc)
+  60:../src/convert.c **** {
+ 297              		.loc 1 60 0
+ 298              		.cfi_startproc
+ 299              		@ args = 0, pretend = 0, frame = 8
+ 300              		@ frame_needed = 1, uses_anonymous_args = 0
+ 301              		@ link register save eliminated.
+ 302 0000 80B4     		push	{r7}
+ 303              		.cfi_def_cfa_offset 4
+ 304              		.cfi_offset 7, -4
+ 305 0002 83B0     		sub	sp, sp, #12
+ 306              		.cfi_def_cfa_offset 16
+ 307 0004 00AF     		add	r7, sp, #0
+ 308              		.cfi_def_cfa_register 7
+ 309 0006 0346     		mov	r3, r0
+ 310 0008 FB71     		strb	r3, [r7, #7]
+  61:../src/convert.c **** 	if(asc<'0')
+ 311              		.loc 1 61 0
+ 312 000a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 313 000c 2F2B     		cmp	r3, #47
+ 314 000e 01D8     		bhi	.L18
+  62:../src/convert.c **** 		return 0;
+ 315              		.loc 1 62 0
+ 316 0010 0023     		movs	r3, #0
+ 317 0012 1BE0     		b	.L19
+ 318              	.L18:
+  63:../src/convert.c **** 	else if(asc>='0' && asc<='9')
+ 319              		.loc 1 63 0
+ 320 0014 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 321 0016 2F2B     		cmp	r3, #47
+ 322 0018 05D9     		bls	.L20
+ 323              		.loc 1 63 0 is_stmt 0 discriminator 1
+ 324 001a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 325 001c 392B     		cmp	r3, #57
+ 326 001e 02D8     		bhi	.L20
+  64:../src/convert.c **** 		return asc-'0';
+ 327              		.loc 1 64 0 is_stmt 1
+ 328 0020 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 329 0022 303B     		subs	r3, r3, #48
+ 330 0024 12E0     		b	.L19
+ 331              	.L20:
+  65:../src/convert.c **** 	else if(asc>='A' && asc<='F')
+ 332              		.loc 1 65 0
+ 333 0026 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 334 0028 402B     		cmp	r3, #64
+ 335 002a 05D9     		bls	.L21
+ 336              		.loc 1 65 0 is_stmt 0 discriminator 1
+ 337 002c FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 338 002e 462B     		cmp	r3, #70
+ 339 0030 02D8     		bhi	.L21
+  66:../src/convert.c **** 		return asc-'A'+10;
+ 340              		.loc 1 66 0 is_stmt 1
+ 341 0032 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 342 0034 373B     		subs	r3, r3, #55
+ 343 0036 09E0     		b	.L19
+ 344              	.L21:
+  67:../src/convert.c **** 	else if(asc>='a' && asc<='f')
+ 345              		.loc 1 67 0
+ 346 0038 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 347 003a 602B     		cmp	r3, #96
+ 348 003c 05D9     		bls	.L22
+ 349              		.loc 1 67 0 is_stmt 0 discriminator 1
+ 350 003e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 351 0040 662B     		cmp	r3, #102
+ 352 0042 02D8     		bhi	.L22
+  68:../src/convert.c **** 		return asc-'a'+10;
+ 353              		.loc 1 68 0 is_stmt 1
+ 354 0044 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 355 0046 573B     		subs	r3, r3, #87
+ 356 0048 00E0     		b	.L19
+ 357              	.L22:
+  69:../src/convert.c **** 	else
+  70:../src/convert.c **** 		return 15;
+ 358              		.loc 1 70 0
+ 359 004a 0F23     		movs	r3, #15
+ 360              	.L19:
+  71:../src/convert.c **** }
+ 361              		.loc 1 71 0
+ 362 004c 1846     		mov	r0, r3
+ 363 004e 0C37     		adds	r7, r7, #12
+ 364              		.cfi_def_cfa_offset 4
+ 365 0050 BD46     		mov	sp, r7
+ 366              		.cfi_def_cfa_register 13
+ 367              		@ sp needed
+ 368 0052 5DF8047B 		ldr	r7, [sp], #4
+ 369              		.cfi_restore 7
+ 370              		.cfi_def_cfa_offset 0
+ 371 0056 7047     		bx	lr
+ 372              		.cfi_endproc
+ 373              	.LFE4:
+ 375              		.section	.text.hx_dumphex,"ax",%progbits
+ 376              		.align	2
+ 377              		.global	hx_dumphex
+ 378              		.thumb
+ 379              		.thumb_func
+ 381              	hx_dumphex:
+ 382              	.LFB5:
+  72:../src/convert.c **** 
+  73:../src/convert.c **** uint8_t* hx_dumphex(const void *src,int srclen,void *buf)
+  74:../src/convert.c **** {
+ 383              		.loc 1 74 0
+ 384              		.cfi_startproc
+ 385              		@ args = 0, pretend = 0, frame = 32
+ 386              		@ frame_needed = 1, uses_anonymous_args = 0
+ 387 0000 90B5     		push	{r4, r7, lr}
+ 388              		.cfi_def_cfa_offset 12
+ 389              		.cfi_offset 4, -12
+ 390              		.cfi_offset 7, -8
+ 391              		.cfi_offset 14, -4
+ 392 0002 89B0     		sub	sp, sp, #36
+ 393              		.cfi_def_cfa_offset 48
+ 394 0004 00AF     		add	r7, sp, #0
+ 395              		.cfi_def_cfa_register 7
+ 396 0006 F860     		str	r0, [r7, #12]
+ 397 0008 B960     		str	r1, [r7, #8]
+ 398 000a 7A60     		str	r2, [r7, #4]
+  75:../src/convert.c **** 	uint8_t *p = (uint8_t*)src;
+ 399              		.loc 1 75 0
+ 400 000c FB68     		ldr	r3, [r7, #12]
+ 401 000e FB61     		str	r3, [r7, #28]
+  76:../src/convert.c **** 	uint8_t *q = (uint8_t*)buf;
+ 402              		.loc 1 76 0
+ 403 0010 7B68     		ldr	r3, [r7, #4]
+ 404 0012 BB61     		str	r3, [r7, #24]
+ 405              	.LBB2:
+  77:../src/convert.c **** 	for(int i=0;i<srclen;i++){
+ 406              		.loc 1 77 0
+ 407 0014 0023     		movs	r3, #0
+ 408 0016 7B61     		str	r3, [r7, #20]
+ 409 0018 1FE0     		b	.L24
+ 410              	.L25:
+ 411              	.LBB3:
+  78:../src/convert.c **** 		uint8_t c = *p++;
+ 412              		.loc 1 78 0 discriminator 3
+ 413 001a FB69     		ldr	r3, [r7, #28]
+ 414 001c 5A1C     		adds	r2, r3, #1
+ 415 001e FA61     		str	r2, [r7, #28]
+ 416 0020 1B78     		ldrb	r3, [r3]
+ 417 0022 FB74     		strb	r3, [r7, #19]
+  79:../src/convert.c **** 		*q++ = int2asc((c>>4)&0x0Fu);
+ 418              		.loc 1 79 0 discriminator 3
+ 419 0024 BC69     		ldr	r4, [r7, #24]
+ 420 0026 631C     		adds	r3, r4, #1
+ 421 0028 BB61     		str	r3, [r7, #24]
+ 422 002a FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+ 423 002c 1B09     		lsrs	r3, r3, #4
+ 424 002e DBB2     		uxtb	r3, r3
+ 425 0030 03F00F03 		and	r3, r3, #15
+ 426 0034 1846     		mov	r0, r3
+ 427 0036 FFF7FEFF 		bl	int2asc
+ 428 003a 0346     		mov	r3, r0
+ 429 003c 2370     		strb	r3, [r4]
+  80:../src/convert.c **** 		*q++ = int2asc((c>>0)&0x0Fu);
+ 430              		.loc 1 80 0 discriminator 3
+ 431 003e BC69     		ldr	r4, [r7, #24]
+ 432 0040 631C     		adds	r3, r4, #1
+ 433 0042 BB61     		str	r3, [r7, #24]
+ 434 0044 FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+ 435 0046 03F00F03 		and	r3, r3, #15
+ 436 004a 1846     		mov	r0, r3
+ 437 004c FFF7FEFF 		bl	int2asc
+ 438 0050 0346     		mov	r3, r0
+ 439 0052 2370     		strb	r3, [r4]
+ 440              	.LBE3:
+  77:../src/convert.c **** 		uint8_t c = *p++;
+ 441              		.loc 1 77 0 discriminator 3
+ 442 0054 7B69     		ldr	r3, [r7, #20]
+ 443 0056 0133     		adds	r3, r3, #1
+ 444 0058 7B61     		str	r3, [r7, #20]
+ 445              	.L24:
+  77:../src/convert.c **** 		uint8_t c = *p++;
+ 446              		.loc 1 77 0 is_stmt 0 discriminator 1
+ 447 005a 7A69     		ldr	r2, [r7, #20]
+ 448 005c BB68     		ldr	r3, [r7, #8]
+ 449 005e 9A42     		cmp	r2, r3
+ 450 0060 DBDB     		blt	.L25
+ 451              	.LBE2:
+  81:../src/convert.c **** 	}
+  82:../src/convert.c **** 	return (uint8_t*)buf;
+ 452              		.loc 1 82 0 is_stmt 1
+ 453 0062 7B68     		ldr	r3, [r7, #4]
+  83:../src/convert.c **** }
+ 454              		.loc 1 83 0
+ 455 0064 1846     		mov	r0, r3
+ 456 0066 2437     		adds	r7, r7, #36
+ 457              		.cfi_def_cfa_offset 12
+ 458 0068 BD46     		mov	sp, r7
+ 459              		.cfi_def_cfa_register 13
+ 460              		@ sp needed
+ 461 006a 90BD     		pop	{r4, r7, pc}
+ 462              		.cfi_endproc
+ 463              	.LFE5:
+ 465              		.section	.text.hx_dumpHEX,"ax",%progbits
+ 466              		.align	2
+ 467              		.global	hx_dumpHEX
+ 468              		.thumb
+ 469              		.thumb_func
+ 471              	hx_dumpHEX:
+ 472              	.LFB6:
+  84:../src/convert.c **** uint8_t* hx_dumpHEX(const void *src,int srclen,void *buf)
+  85:../src/convert.c **** {
+ 473              		.loc 1 85 0
+ 474              		.cfi_startproc
+ 475              		@ args = 0, pretend = 0, frame = 32
+ 476              		@ frame_needed = 1, uses_anonymous_args = 0
+ 477 0000 90B5     		push	{r4, r7, lr}
+ 478              		.cfi_def_cfa_offset 12
+ 479              		.cfi_offset 4, -12
+ 480              		.cfi_offset 7, -8
+ 481              		.cfi_offset 14, -4
+ 482 0002 89B0     		sub	sp, sp, #36
+ 483              		.cfi_def_cfa_offset 48
+ 484 0004 00AF     		add	r7, sp, #0
+ 485              		.cfi_def_cfa_register 7
+ 486 0006 F860     		str	r0, [r7, #12]
+ 487 0008 B960     		str	r1, [r7, #8]
+ 488 000a 7A60     		str	r2, [r7, #4]
+  86:../src/convert.c **** 	uint8_t *p = (uint8_t*)src;
+ 489              		.loc 1 86 0
+ 490 000c FB68     		ldr	r3, [r7, #12]
+ 491 000e FB61     		str	r3, [r7, #28]
+  87:../src/convert.c **** 	uint8_t *q = (uint8_t*)buf;
+ 492              		.loc 1 87 0
+ 493 0010 7B68     		ldr	r3, [r7, #4]
+ 494 0012 BB61     		str	r3, [r7, #24]
+ 495              	.LBB4:
+  88:../src/convert.c **** 	for(int i=0;i<srclen;i++){
+ 496              		.loc 1 88 0
+ 497 0014 0023     		movs	r3, #0
+ 498 0016 7B61     		str	r3, [r7, #20]
+ 499 0018 1FE0     		b	.L28
+ 500              	.L29:
+ 501              	.LBB5:
+  89:../src/convert.c **** 		uint8_t c = *p++;
+ 502              		.loc 1 89 0 discriminator 3
+ 503 001a FB69     		ldr	r3, [r7, #28]
+ 504 001c 5A1C     		adds	r2, r3, #1
+ 505 001e FA61     		str	r2, [r7, #28]
+ 506 0020 1B78     		ldrb	r3, [r3]
+ 507 0022 FB74     		strb	r3, [r7, #19]
+  90:../src/convert.c **** 		*q++ = int2ASC((c>>4)&0x0Fu);
+ 508              		.loc 1 90 0 discriminator 3
+ 509 0024 BC69     		ldr	r4, [r7, #24]
+ 510 0026 631C     		adds	r3, r4, #1
+ 511 0028 BB61     		str	r3, [r7, #24]
+ 512 002a FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+ 513 002c 1B09     		lsrs	r3, r3, #4
+ 514 002e DBB2     		uxtb	r3, r3
+ 515 0030 03F00F03 		and	r3, r3, #15
+ 516 0034 1846     		mov	r0, r3
+ 517 0036 FFF7FEFF 		bl	int2ASC
+ 518 003a 0346     		mov	r3, r0
+ 519 003c 2370     		strb	r3, [r4]
+  91:../src/convert.c **** 		*q++ = int2ASC((c>>0)&0x0Fu);
+ 520              		.loc 1 91 0 discriminator 3
+ 521 003e BC69     		ldr	r4, [r7, #24]
+ 522 0040 631C     		adds	r3, r4, #1
+ 523 0042 BB61     		str	r3, [r7, #24]
+ 524 0044 FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+ 525 0046 03F00F03 		and	r3, r3, #15
+ 526 004a 1846     		mov	r0, r3
+ 527 004c FFF7FEFF 		bl	int2ASC
+ 528 0050 0346     		mov	r3, r0
+ 529 0052 2370     		strb	r3, [r4]
+ 530              	.LBE5:
+  88:../src/convert.c **** 		uint8_t c = *p++;
+ 531              		.loc 1 88 0 discriminator 3
+ 532 0054 7B69     		ldr	r3, [r7, #20]
+ 533 0056 0133     		adds	r3, r3, #1
+ 534 0058 7B61     		str	r3, [r7, #20]
+ 535              	.L28:
+  88:../src/convert.c **** 		uint8_t c = *p++;
+ 536              		.loc 1 88 0 is_stmt 0 discriminator 1
+ 537 005a 7A69     		ldr	r2, [r7, #20]
+ 538 005c BB68     		ldr	r3, [r7, #8]
+ 539 005e 9A42     		cmp	r2, r3
+ 540 0060 DBDB     		blt	.L29
+ 541              	.LBE4:
+  92:../src/convert.c **** 	}
+  93:../src/convert.c **** 	return (uint8_t*)buf;
+ 542              		.loc 1 93 0 is_stmt 1
+ 543 0062 7B68     		ldr	r3, [r7, #4]
+  94:../src/convert.c **** }
+ 544              		.loc 1 94 0
+ 545 0064 1846     		mov	r0, r3
+ 546 0066 2437     		adds	r7, r7, #36
+ 547              		.cfi_def_cfa_offset 12
+ 548 0068 BD46     		mov	sp, r7
+ 549              		.cfi_def_cfa_register 13
+ 550              		@ sp needed
+ 551 006a 90BD     		pop	{r4, r7, pc}
+ 552              		.cfi_endproc
+ 553              	.LFE6:
+ 555              		.section	.text.hx_dumphex2str,"ax",%progbits
+ 556              		.align	2
+ 557              		.global	hx_dumphex2str
+ 558              		.thumb
+ 559              		.thumb_func
+ 561              	hx_dumphex2str:
+ 562              	.LFB7:
+  95:../src/convert.c **** char* hx_dumphex2str(const void *src,int srclen,void *buf)
+  96:../src/convert.c **** {
+ 563              		.loc 1 96 0
+ 564              		.cfi_startproc
+ 565              		@ args = 0, pretend = 0, frame = 24
+ 566              		@ frame_needed = 1, uses_anonymous_args = 0
+ 567 0000 80B5     		push	{r7, lr}
+ 568              		.cfi_def_cfa_offset 8
+ 569              		.cfi_offset 7, -8
+ 570              		.cfi_offset 14, -4
+ 571 0002 86B0     		sub	sp, sp, #24
+ 572              		.cfi_def_cfa_offset 32
+ 573 0004 00AF     		add	r7, sp, #0
+ 574              		.cfi_def_cfa_register 7
+ 575 0006 F860     		str	r0, [r7, #12]
+ 576 0008 B960     		str	r1, [r7, #8]
+ 577 000a 7A60     		str	r2, [r7, #4]
+  97:../src/convert.c **** 	char *res = (char*)hx_dumphex(src,srclen,buf);
+ 578              		.loc 1 97 0
+ 579 000c F868     		ldr	r0, [r7, #12]
+ 580 000e B968     		ldr	r1, [r7, #8]
+ 581 0010 7A68     		ldr	r2, [r7, #4]
+ 582 0012 FFF7FEFF 		bl	hx_dumphex
+ 583 0016 7861     		str	r0, [r7, #20]
+  98:../src/convert.c **** 	res[srclen*2] = '\0';
+ 584              		.loc 1 98 0
+ 585 0018 BB68     		ldr	r3, [r7, #8]
+ 586 001a 5B00     		lsls	r3, r3, #1
+ 587 001c 1A46     		mov	r2, r3
+ 588 001e 7B69     		ldr	r3, [r7, #20]
+ 589 0020 1344     		add	r3, r3, r2
+ 590 0022 0022     		movs	r2, #0
+ 591 0024 1A70     		strb	r2, [r3]
+  99:../src/convert.c **** 	return res;
+ 592              		.loc 1 99 0
+ 593 0026 7B69     		ldr	r3, [r7, #20]
+ 100:../src/convert.c **** }
+ 594              		.loc 1 100 0
+ 595 0028 1846     		mov	r0, r3
+ 596 002a 1837     		adds	r7, r7, #24
+ 597              		.cfi_def_cfa_offset 8
+ 598 002c BD46     		mov	sp, r7
+ 599              		.cfi_def_cfa_register 13
+ 600              		@ sp needed
+ 601 002e 80BD     		pop	{r7, pc}
+ 602              		.cfi_endproc
+ 603              	.LFE7:
+ 605              		.section	.text.hx_dumpHEX2str,"ax",%progbits
+ 606              		.align	2
+ 607              		.global	hx_dumpHEX2str
+ 608              		.thumb
+ 609              		.thumb_func
+ 611              	hx_dumpHEX2str:
+ 612              	.LFB8:
+ 101:../src/convert.c **** char* hx_dumpHEX2str(const void *src,int srclen,void *buf)
+ 102:../src/convert.c **** {
+ 613              		.loc 1 102 0
+ 614              		.cfi_startproc
+ 615              		@ args = 0, pretend = 0, frame = 24
+ 616              		@ frame_needed = 1, uses_anonymous_args = 0
+ 617 0000 80B5     		push	{r7, lr}
+ 618              		.cfi_def_cfa_offset 8
+ 619              		.cfi_offset 7, -8
+ 620              		.cfi_offset 14, -4
+ 621 0002 86B0     		sub	sp, sp, #24
+ 622              		.cfi_def_cfa_offset 32
+ 623 0004 00AF     		add	r7, sp, #0
+ 624              		.cfi_def_cfa_register 7
+ 625 0006 F860     		str	r0, [r7, #12]
+ 626 0008 B960     		str	r1, [r7, #8]
+ 627 000a 7A60     		str	r2, [r7, #4]
+ 103:../src/convert.c **** 	char *res = (char*)hx_dumpHEX(src,srclen,buf);
+ 628              		.loc 1 103 0
+ 629 000c F868     		ldr	r0, [r7, #12]
+ 630 000e B968     		ldr	r1, [r7, #8]
+ 631 0010 7A68     		ldr	r2, [r7, #4]
+ 632 0012 FFF7FEFF 		bl	hx_dumpHEX
+ 633 0016 7861     		str	r0, [r7, #20]
+ 104:../src/convert.c **** 	res[srclen*2] = '\0';
+ 634              		.loc 1 104 0
+ 635 0018 BB68     		ldr	r3, [r7, #8]
+ 636 001a 5B00     		lsls	r3, r3, #1
+ 637 001c 1A46     		mov	r2, r3
+ 638 001e 7B69     		ldr	r3, [r7, #20]
+ 639 0020 1344     		add	r3, r3, r2
+ 640 0022 0022     		movs	r2, #0
+ 641 0024 1A70     		strb	r2, [r3]
+ 105:../src/convert.c **** 	return res;
+ 642              		.loc 1 105 0
+ 643 0026 7B69     		ldr	r3, [r7, #20]
+ 106:../src/convert.c **** }
+ 644              		.loc 1 106 0
+ 645 0028 1846     		mov	r0, r3
+ 646 002a 1837     		adds	r7, r7, #24
+ 647              		.cfi_def_cfa_offset 8
+ 648 002c BD46     		mov	sp, r7
+ 649              		.cfi_def_cfa_register 13
+ 650              		@ sp needed
+ 651 002e 80BD     		pop	{r7, pc}
+ 652              		.cfi_endproc
+ 653              	.LFE8:
+ 655              		.section	.text.hx_hexcode2bin,"ax",%progbits
+ 656              		.align	2
+ 657              		.global	hx_hexcode2bin
+ 658              		.thumb
+ 659              		.thumb_func
+ 661              	hx_hexcode2bin:
+ 662              	.LFB9:
+ 107:../src/convert.c **** // "1234" => "\12\x34"
+ 108:../src/convert.c **** char* hx_hexcode2bin(const void *hexcode, int len, void *bin)
+ 109:../src/convert.c **** {
+ 663              		.loc 1 109 0
+ 664              		.cfi_startproc
+ 665              		@ args = 0, pretend = 0, frame = 40
+ 666              		@ frame_needed = 1, uses_anonymous_args = 0
+ 667 0000 80B5     		push	{r7, lr}
+ 668              		.cfi_def_cfa_offset 8
+ 669              		.cfi_offset 7, -8
+ 670              		.cfi_offset 14, -4
+ 671 0002 8AB0     		sub	sp, sp, #40
+ 672              		.cfi_def_cfa_offset 48
+ 673 0004 00AF     		add	r7, sp, #0
+ 674              		.cfi_def_cfa_register 7
+ 675 0006 F860     		str	r0, [r7, #12]
+ 676 0008 B960     		str	r1, [r7, #8]
+ 677 000a 7A60     		str	r2, [r7, #4]
+ 110:../src/convert.c ****     unsigned int tmp;
+ 111:../src/convert.c ****     int c,i;
+ 112:../src/convert.c ****     unsigned char *t = (unsigned char*)bin;
+ 678              		.loc 1 112 0
+ 679 000c 7B68     		ldr	r3, [r7, #4]
+ 680 000e 3B62     		str	r3, [r7, #32]
+ 113:../src/convert.c **** 	const unsigned char *s = (const unsigned char *)hexcode;
+ 681              		.loc 1 113 0
+ 682 0010 FB68     		ldr	r3, [r7, #12]
+ 683 0012 FB61     		str	r3, [r7, #28]
+ 114:../src/convert.c **** 	for(i=0;i<len;i+=2){
+ 684              		.loc 1 114 0
+ 685 0014 0023     		movs	r3, #0
+ 686 0016 7B62     		str	r3, [r7, #36]
+ 687 0018 2AE0     		b	.L36
+ 688              	.L37:
+ 115:../src/convert.c **** 		tmp = s[i];
+ 689              		.loc 1 115 0 discriminator 3
+ 690 001a 7B6A     		ldr	r3, [r7, #36]
+ 691 001c FA69     		ldr	r2, [r7, #28]
+ 692 001e 1344     		add	r3, r3, r2
+ 693 0020 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 694 0022 BB61     		str	r3, [r7, #24]
+ 116:../src/convert.c ****         c = 0x0F & asc2int(tmp);
+ 695              		.loc 1 116 0 discriminator 3
+ 696 0024 BB69     		ldr	r3, [r7, #24]
+ 697 0026 DBB2     		uxtb	r3, r3
+ 698 0028 1846     		mov	r0, r3
+ 699 002a FFF7FEFF 		bl	asc2int
+ 700 002e 0346     		mov	r3, r0
+ 701 0030 03F00F03 		and	r3, r3, #15
+ 702 0034 7B61     		str	r3, [r7, #20]
+ 117:../src/convert.c ****         c<<=4;
+ 703              		.loc 1 117 0 discriminator 3
+ 704 0036 7B69     		ldr	r3, [r7, #20]
+ 705 0038 1B01     		lsls	r3, r3, #4
+ 706 003a 7B61     		str	r3, [r7, #20]
+ 118:../src/convert.c ****         tmp = s[i+1];
+ 707              		.loc 1 118 0 discriminator 3
+ 708 003c 7B6A     		ldr	r3, [r7, #36]
+ 709 003e 0133     		adds	r3, r3, #1
+ 710 0040 FA69     		ldr	r2, [r7, #28]
+ 711 0042 1344     		add	r3, r3, r2
+ 712 0044 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 713 0046 BB61     		str	r3, [r7, #24]
+ 119:../src/convert.c ****         c += 0x0F & asc2int(tmp);
+ 714              		.loc 1 119 0 discriminator 3
+ 715 0048 BB69     		ldr	r3, [r7, #24]
+ 716 004a DBB2     		uxtb	r3, r3
+ 717 004c 1846     		mov	r0, r3
+ 718 004e FFF7FEFF 		bl	asc2int
+ 719 0052 0346     		mov	r3, r0
+ 720 0054 03F00F03 		and	r3, r3, #15
+ 721 0058 7A69     		ldr	r2, [r7, #20]
+ 722 005a 1344     		add	r3, r3, r2
+ 723 005c 7B61     		str	r3, [r7, #20]
+ 120:../src/convert.c ****         *t++ = c;
+ 724              		.loc 1 120 0 discriminator 3
+ 725 005e 3B6A     		ldr	r3, [r7, #32]
+ 726 0060 5A1C     		adds	r2, r3, #1
+ 727 0062 3A62     		str	r2, [r7, #32]
+ 728 0064 7A69     		ldr	r2, [r7, #20]
+ 729 0066 D2B2     		uxtb	r2, r2
+ 730 0068 1A70     		strb	r2, [r3]
+ 114:../src/convert.c **** 		tmp = s[i];
+ 731              		.loc 1 114 0 discriminator 3
+ 732 006a 7B6A     		ldr	r3, [r7, #36]
+ 733 006c 0233     		adds	r3, r3, #2
+ 734 006e 7B62     		str	r3, [r7, #36]
+ 735              	.L36:
+ 114:../src/convert.c **** 		tmp = s[i];
+ 736              		.loc 1 114 0 is_stmt 0 discriminator 1
+ 737 0070 7A6A     		ldr	r2, [r7, #36]
+ 738 0072 BB68     		ldr	r3, [r7, #8]
+ 739 0074 9A42     		cmp	r2, r3
+ 740 0076 D0DB     		blt	.L37
+ 121:../src/convert.c **** 	}
+ 122:../src/convert.c ****     return bin;
+ 741              		.loc 1 122 0 is_stmt 1
+ 742 0078 7B68     		ldr	r3, [r7, #4]
+ 123:../src/convert.c **** }
+ 743              		.loc 1 123 0
+ 744 007a 1846     		mov	r0, r3
+ 745 007c 2837     		adds	r7, r7, #40
+ 746              		.cfi_def_cfa_offset 8
+ 747 007e BD46     		mov	sp, r7
+ 748              		.cfi_def_cfa_register 13
+ 749              		@ sp needed
+ 750 0080 80BD     		pop	{r7, pc}
+ 751              		.cfi_endproc
+ 752              	.LFE9:
+ 754 0082 00BF     		.section	.text.hx_strtrim2,"ax",%progbits
+ 755              		.align	2
+ 756              		.global	hx_strtrim2
+ 757              		.thumb
+ 758              		.thumb_func
+ 760              	hx_strtrim2:
+ 761              	.LFB10:
+ 124:../src/convert.c **** 
+ 125:../src/convert.c **** char *hx_strtrim2(char *p, const char *trim_list)
+ 126:../src/convert.c **** {
+ 762              		.loc 1 126 0
+ 763              		.cfi_startproc
+ 764              		@ args = 0, pretend = 0, frame = 16
+ 765              		@ frame_needed = 1, uses_anonymous_args = 0
+ 766 0000 80B5     		push	{r7, lr}
+ 767              		.cfi_def_cfa_offset 8
+ 768              		.cfi_offset 7, -8
+ 769              		.cfi_offset 14, -4
+ 770 0002 84B0     		sub	sp, sp, #16
+ 771              		.cfi_def_cfa_offset 24
+ 772 0004 00AF     		add	r7, sp, #0
+ 773              		.cfi_def_cfa_register 7
+ 774 0006 7860     		str	r0, [r7, #4]
+ 775 0008 3960     		str	r1, [r7]
+ 127:../src/convert.c **** 	char *s_beg = p;
+ 776              		.loc 1 127 0
+ 777 000a 7B68     		ldr	r3, [r7, #4]
+ 778 000c FB60     		str	r3, [r7, #12]
+ 128:../src/convert.c **** 	char *s_end = s_beg + strlen(s_beg) - 1;
+ 779              		.loc 1 128 0
+ 780 000e F868     		ldr	r0, [r7, #12]
+ 781 0010 FFF7FEFF 		bl	strlen
+ 782 0014 0346     		mov	r3, r0
+ 783 0016 013B     		subs	r3, r3, #1
+ 784 0018 FA68     		ldr	r2, [r7, #12]
+ 785 001a 1344     		add	r3, r3, r2
+ 786 001c BB60     		str	r3, [r7, #8]
+ 129:../src/convert.c **** 	while(strchr(trim_list,*s_end) && s_end > s_beg)
+ 787              		.loc 1 129 0
+ 788 001e 04E0     		b	.L40
+ 789              	.L42:
+ 130:../src/convert.c **** 		*s_end-- = 0;	
+ 790              		.loc 1 130 0
+ 791 0020 BB68     		ldr	r3, [r7, #8]
+ 792 0022 5A1E     		subs	r2, r3, #1
+ 793 0024 BA60     		str	r2, [r7, #8]
+ 794 0026 0022     		movs	r2, #0
+ 795 0028 1A70     		strb	r2, [r3]
+ 796              	.L40:
+ 129:../src/convert.c **** 	while(strchr(trim_list,*s_end) && s_end > s_beg)
+ 797              		.loc 1 129 0
+ 798 002a BB68     		ldr	r3, [r7, #8]
+ 799 002c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 800 002e 3868     		ldr	r0, [r7]
+ 801 0030 1946     		mov	r1, r3
+ 802 0032 FFF7FEFF 		bl	strchr
+ 803 0036 0346     		mov	r3, r0
+ 804 0038 002B     		cmp	r3, #0
+ 805 003a 03D0     		beq	.L41
+ 129:../src/convert.c **** 	while(strchr(trim_list,*s_end) && s_end > s_beg)
+ 806              		.loc 1 129 0 is_stmt 0 discriminator 1
+ 807 003c BA68     		ldr	r2, [r7, #8]
+ 808 003e FB68     		ldr	r3, [r7, #12]
+ 809 0040 9A42     		cmp	r2, r3
+ 810 0042 EDD8     		bhi	.L42
+ 811              	.L41:
+ 131:../src/convert.c **** 	while(strchr(trim_list,*s_beg) && s_beg < s_end)
+ 812              		.loc 1 131 0 is_stmt 1
+ 813 0044 04E0     		b	.L43
+ 814              	.L45:
+ 132:../src/convert.c **** 		*s_beg++ = 0;
+ 815              		.loc 1 132 0
+ 816 0046 FB68     		ldr	r3, [r7, #12]
+ 817 0048 5A1C     		adds	r2, r3, #1
+ 818 004a FA60     		str	r2, [r7, #12]
+ 819 004c 0022     		movs	r2, #0
+ 820 004e 1A70     		strb	r2, [r3]
+ 821              	.L43:
+ 131:../src/convert.c **** 	while(strchr(trim_list,*s_beg) && s_beg < s_end)
+ 822              		.loc 1 131 0
+ 823 0050 FB68     		ldr	r3, [r7, #12]
+ 824 0052 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 825 0054 3868     		ldr	r0, [r7]
+ 826 0056 1946     		mov	r1, r3
+ 827 0058 FFF7FEFF 		bl	strchr
+ 828 005c 0346     		mov	r3, r0
+ 829 005e 002B     		cmp	r3, #0
+ 830 0060 03D0     		beq	.L44
+ 131:../src/convert.c **** 	while(strchr(trim_list,*s_beg) && s_beg < s_end)
+ 831              		.loc 1 131 0 is_stmt 0 discriminator 1
+ 832 0062 FA68     		ldr	r2, [r7, #12]
+ 833 0064 BB68     		ldr	r3, [r7, #8]
+ 834 0066 9A42     		cmp	r2, r3
+ 835 0068 EDD3     		bcc	.L45
+ 836              	.L44:
+ 133:../src/convert.c **** 	//*p = s_beg;
+ 134:../src/convert.c **** 	return s_beg;
+ 837              		.loc 1 134 0 is_stmt 1
+ 838 006a FB68     		ldr	r3, [r7, #12]
+ 135:../src/convert.c **** }
+ 839              		.loc 1 135 0
+ 840 006c 1846     		mov	r0, r3
+ 841 006e 1037     		adds	r7, r7, #16
+ 842              		.cfi_def_cfa_offset 8
+ 843 0070 BD46     		mov	sp, r7
+ 844              		.cfi_def_cfa_register 13
+ 845              		@ sp needed
+ 846 0072 80BD     		pop	{r7, pc}
+ 847              		.cfi_endproc
+ 848              	.LFE10:
+ 850              		.section	.rodata
+ 851              		.align	2
+ 852              	.LC1:
+ 853 0000 090D2000 		.ascii	"\011\015 \000"
+ 854              		.section	.text.hx_strtrim,"ax",%progbits
+ 855              		.align	2
+ 856              		.global	hx_strtrim
+ 857              		.thumb
+ 858              		.thumb_func
+ 860              	hx_strtrim:
+ 861              	.LFB11:
+ 136:../src/convert.c **** char *hx_strtrim(char *s)
+ 137:../src/convert.c **** {
+ 862              		.loc 1 137 0
+ 863              		.cfi_startproc
+ 864              		@ args = 0, pretend = 0, frame = 8
+ 865              		@ frame_needed = 1, uses_anonymous_args = 0
+ 866 0000 80B5     		push	{r7, lr}
+ 867              		.cfi_def_cfa_offset 8
+ 868              		.cfi_offset 7, -8
+ 869              		.cfi_offset 14, -4
+ 870 0002 82B0     		sub	sp, sp, #8
+ 871              		.cfi_def_cfa_offset 16
+ 872 0004 00AF     		add	r7, sp, #0
+ 873              		.cfi_def_cfa_register 7
+ 874 0006 7860     		str	r0, [r7, #4]
+ 138:../src/convert.c **** 	return hx_strtrim2(s,"\t\r ");
+ 875              		.loc 1 138 0
+ 876 0008 7868     		ldr	r0, [r7, #4]
+ 877 000a 0449     		ldr	r1, .L49
+ 878 000c FFF7FEFF 		bl	hx_strtrim2
+ 879 0010 0346     		mov	r3, r0
+ 139:../src/convert.c **** }
+ 880              		.loc 1 139 0
+ 881 0012 1846     		mov	r0, r3
+ 882 0014 0837     		adds	r7, r7, #8
+ 883              		.cfi_def_cfa_offset 8
+ 884 0016 BD46     		mov	sp, r7
+ 885              		.cfi_def_cfa_register 13
+ 886              		@ sp needed
+ 887 0018 80BD     		pop	{r7, pc}
+ 888              	.L50:
+ 889 001a 00BF     		.align	2
+ 890              	.L49:
+ 891 001c 00000000 		.word	.LC1
+ 892              		.cfi_endproc
+ 893              	.LFE11:
+ 895              		.section	.text.HX_LSB_B2W,"ax",%progbits
+ 896              		.align	2
+ 897              		.global	HX_LSB_B2W
+ 898              		.thumb
+ 899              		.thumb_func
+ 901              	HX_LSB_B2W:
+ 902              	.LFB12:
+ 140:../src/convert.c **** 
+ 141:../src/convert.c **** 
+ 142:../src/convert.c **** //==========================================================
+ 143:../src/convert.c **** // uint8_t ARRAY <==>  uint16_t(2Bytes) uint32_t(4Bytes) QWORD(8Bytes)
+ 144:../src/convert.c **** // MSB = Big Endian, LSB = Littie Endian
+ 145:../src/convert.c **** 
+ 146:../src/convert.c **** uint16_t HX_LSB_B2W(const void *data)
+ 147:../src/convert.c **** {
+ 903              		.loc 1 147 0
+ 904              		.cfi_startproc
+ 905              		@ args = 0, pretend = 0, frame = 16
+ 906              		@ frame_needed = 1, uses_anonymous_args = 0
+ 907              		@ link register save eliminated.
+ 908 0000 80B4     		push	{r7}
+ 909              		.cfi_def_cfa_offset 4
+ 910              		.cfi_offset 7, -4
+ 911 0002 85B0     		sub	sp, sp, #20
+ 912              		.cfi_def_cfa_offset 24
+ 913 0004 00AF     		add	r7, sp, #0
+ 914              		.cfi_def_cfa_register 7
+ 915 0006 7860     		str	r0, [r7, #4]
+ 148:../src/convert.c **** 	const uint8_t *d = data;
+ 916              		.loc 1 148 0
+ 917 0008 7B68     		ldr	r3, [r7, #4]
+ 918 000a FB60     		str	r3, [r7, #12]
+ 149:../src/convert.c ****     uint16_t res;
+ 150:../src/convert.c ****     res = (uint16_t)(d[1]);
+ 919              		.loc 1 150 0
+ 920 000c FB68     		ldr	r3, [r7, #12]
+ 921 000e 0133     		adds	r3, r3, #1
+ 922 0010 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 923 0012 7B81     		strh	r3, [r7, #10]	@ movhi
+ 151:../src/convert.c ****     res <<= 8;
+ 924              		.loc 1 151 0
+ 925 0014 7B89     		ldrh	r3, [r7, #10]	@ movhi
+ 926 0016 1B02     		lsls	r3, r3, #8
+ 927 0018 7B81     		strh	r3, [r7, #10]	@ movhi
+ 152:../src/convert.c ****     res += (uint16_t)(d[0]);
+ 928              		.loc 1 152 0
+ 929 001a FB68     		ldr	r3, [r7, #12]
+ 930 001c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 931 001e 9AB2     		uxth	r2, r3
+ 932 0020 7B89     		ldrh	r3, [r7, #10]	@ movhi
+ 933 0022 1344     		add	r3, r3, r2
+ 934 0024 7B81     		strh	r3, [r7, #10]	@ movhi
+ 153:../src/convert.c ****     return res;
+ 935              		.loc 1 153 0
+ 936 0026 7B89     		ldrh	r3, [r7, #10]
+ 154:../src/convert.c **** }
+ 937              		.loc 1 154 0
+ 938 0028 1846     		mov	r0, r3
+ 939 002a 1437     		adds	r7, r7, #20
+ 940              		.cfi_def_cfa_offset 4
+ 941 002c BD46     		mov	sp, r7
+ 942              		.cfi_def_cfa_register 13
+ 943              		@ sp needed
+ 944 002e 5DF8047B 		ldr	r7, [sp], #4
+ 945              		.cfi_restore 7
+ 946              		.cfi_def_cfa_offset 0
+ 947 0032 7047     		bx	lr
+ 948              		.cfi_endproc
+ 949              	.LFE12:
+ 951              		.section	.text.HX_MSB_B2W,"ax",%progbits
+ 952              		.align	2
+ 953              		.global	HX_MSB_B2W
+ 954              		.thumb
+ 955              		.thumb_func
+ 957              	HX_MSB_B2W:
+ 958              	.LFB13:
+ 155:../src/convert.c **** uint16_t HX_MSB_B2W(const void *data)
+ 156:../src/convert.c **** {
+ 959              		.loc 1 156 0
+ 960              		.cfi_startproc
+ 961              		@ args = 0, pretend = 0, frame = 16
+ 962              		@ frame_needed = 1, uses_anonymous_args = 0
+ 963              		@ link register save eliminated.
+ 964 0000 80B4     		push	{r7}
+ 965              		.cfi_def_cfa_offset 4
+ 966              		.cfi_offset 7, -4
+ 967 0002 85B0     		sub	sp, sp, #20
+ 968              		.cfi_def_cfa_offset 24
+ 969 0004 00AF     		add	r7, sp, #0
+ 970              		.cfi_def_cfa_register 7
+ 971 0006 7860     		str	r0, [r7, #4]
+ 157:../src/convert.c **** 	const uint8_t *d = data;
+ 972              		.loc 1 157 0
+ 973 0008 7B68     		ldr	r3, [r7, #4]
+ 974 000a FB60     		str	r3, [r7, #12]
+ 158:../src/convert.c ****     uint16_t res;
+ 159:../src/convert.c ****     res = (uint16_t)(d[0]);
+ 975              		.loc 1 159 0
+ 976 000c FB68     		ldr	r3, [r7, #12]
+ 977 000e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 978 0010 7B81     		strh	r3, [r7, #10]	@ movhi
+ 160:../src/convert.c ****     res <<= 8;
+ 979              		.loc 1 160 0
+ 980 0012 7B89     		ldrh	r3, [r7, #10]	@ movhi
+ 981 0014 1B02     		lsls	r3, r3, #8
+ 982 0016 7B81     		strh	r3, [r7, #10]	@ movhi
+ 161:../src/convert.c ****     res += (uint16_t)(d[1]);
+ 983              		.loc 1 161 0
+ 984 0018 FB68     		ldr	r3, [r7, #12]
+ 985 001a 0133     		adds	r3, r3, #1
+ 986 001c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 987 001e 9AB2     		uxth	r2, r3
+ 988 0020 7B89     		ldrh	r3, [r7, #10]	@ movhi
+ 989 0022 1344     		add	r3, r3, r2
+ 990 0024 7B81     		strh	r3, [r7, #10]	@ movhi
+ 162:../src/convert.c ****     return res;
+ 991              		.loc 1 162 0
+ 992 0026 7B89     		ldrh	r3, [r7, #10]
+ 163:../src/convert.c **** }
+ 993              		.loc 1 163 0
+ 994 0028 1846     		mov	r0, r3
+ 995 002a 1437     		adds	r7, r7, #20
+ 996              		.cfi_def_cfa_offset 4
+ 997 002c BD46     		mov	sp, r7
+ 998              		.cfi_def_cfa_register 13
+ 999              		@ sp needed
+ 1000 002e 5DF8047B 		ldr	r7, [sp], #4
+ 1001              		.cfi_restore 7
+ 1002              		.cfi_def_cfa_offset 0
+ 1003 0032 7047     		bx	lr
+ 1004              		.cfi_endproc
+ 1005              	.LFE13:
+ 1007              		.section	.text.HX_MSB_B2DW,"ax",%progbits
+ 1008              		.align	2
+ 1009              		.global	HX_MSB_B2DW
+ 1010              		.thumb
+ 1011              		.thumb_func
+ 1013              	HX_MSB_B2DW:
+ 1014              	.LFB14:
+ 164:../src/convert.c **** 
+ 165:../src/convert.c **** uint32_t HX_MSB_B2DW(const void *data)
+ 166:../src/convert.c **** {
+ 1015              		.loc 1 166 0
+ 1016              		.cfi_startproc
+ 1017              		@ args = 0, pretend = 0, frame = 16
+ 1018              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1019              		@ link register save eliminated.
+ 1020 0000 80B4     		push	{r7}
+ 1021              		.cfi_def_cfa_offset 4
+ 1022              		.cfi_offset 7, -4
+ 1023 0002 85B0     		sub	sp, sp, #20
+ 1024              		.cfi_def_cfa_offset 24
+ 1025 0004 00AF     		add	r7, sp, #0
+ 1026              		.cfi_def_cfa_register 7
+ 1027 0006 7860     		str	r0, [r7, #4]
+ 167:../src/convert.c **** 	const uint8_t *d = data;
+ 1028              		.loc 1 167 0
+ 1029 0008 7B68     		ldr	r3, [r7, #4]
+ 1030 000a FB60     		str	r3, [r7, #12]
+ 168:../src/convert.c ****     uint32_t res;
+ 169:../src/convert.c ****     res = (uint32_t)d[0];
+ 1031              		.loc 1 169 0
+ 1032 000c FB68     		ldr	r3, [r7, #12]
+ 1033 000e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1034 0010 BB60     		str	r3, [r7, #8]
+ 170:../src/convert.c ****     res <<=8;
+ 1035              		.loc 1 170 0
+ 1036 0012 BB68     		ldr	r3, [r7, #8]
+ 1037 0014 1B02     		lsls	r3, r3, #8
+ 1038 0016 BB60     		str	r3, [r7, #8]
+ 171:../src/convert.c ****     res += (uint32_t) d[1];
+ 1039              		.loc 1 171 0
+ 1040 0018 FB68     		ldr	r3, [r7, #12]
+ 1041 001a 0133     		adds	r3, r3, #1
+ 1042 001c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1043 001e 1A46     		mov	r2, r3
+ 1044 0020 BB68     		ldr	r3, [r7, #8]
+ 1045 0022 1344     		add	r3, r3, r2
+ 1046 0024 BB60     		str	r3, [r7, #8]
+ 172:../src/convert.c ****     res <<=8;
+ 1047              		.loc 1 172 0
+ 1048 0026 BB68     		ldr	r3, [r7, #8]
+ 1049 0028 1B02     		lsls	r3, r3, #8
+ 1050 002a BB60     		str	r3, [r7, #8]
+ 173:../src/convert.c ****     res += (uint32_t) d[2];
+ 1051              		.loc 1 173 0
+ 1052 002c FB68     		ldr	r3, [r7, #12]
+ 1053 002e 0233     		adds	r3, r3, #2
+ 1054 0030 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1055 0032 1A46     		mov	r2, r3
+ 1056 0034 BB68     		ldr	r3, [r7, #8]
+ 1057 0036 1344     		add	r3, r3, r2
+ 1058 0038 BB60     		str	r3, [r7, #8]
+ 174:../src/convert.c ****     res <<=8;
+ 1059              		.loc 1 174 0
+ 1060 003a BB68     		ldr	r3, [r7, #8]
+ 1061 003c 1B02     		lsls	r3, r3, #8
+ 1062 003e BB60     		str	r3, [r7, #8]
+ 175:../src/convert.c ****     res += (uint32_t) d[3];
+ 1063              		.loc 1 175 0
+ 1064 0040 FB68     		ldr	r3, [r7, #12]
+ 1065 0042 0333     		adds	r3, r3, #3
+ 1066 0044 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1067 0046 1A46     		mov	r2, r3
+ 1068 0048 BB68     		ldr	r3, [r7, #8]
+ 1069 004a 1344     		add	r3, r3, r2
+ 1070 004c BB60     		str	r3, [r7, #8]
+ 176:../src/convert.c ****     return res;
+ 1071              		.loc 1 176 0
+ 1072 004e BB68     		ldr	r3, [r7, #8]
+ 177:../src/convert.c **** }
+ 1073              		.loc 1 177 0
+ 1074 0050 1846     		mov	r0, r3
+ 1075 0052 1437     		adds	r7, r7, #20
+ 1076              		.cfi_def_cfa_offset 4
+ 1077 0054 BD46     		mov	sp, r7
+ 1078              		.cfi_def_cfa_register 13
+ 1079              		@ sp needed
+ 1080 0056 5DF8047B 		ldr	r7, [sp], #4
+ 1081              		.cfi_restore 7
+ 1082              		.cfi_def_cfa_offset 0
+ 1083 005a 7047     		bx	lr
+ 1084              		.cfi_endproc
+ 1085              	.LFE14:
+ 1087              		.section	.text.HX_LSB_B2DW,"ax",%progbits
+ 1088              		.align	2
+ 1089              		.global	HX_LSB_B2DW
+ 1090              		.thumb
+ 1091              		.thumb_func
+ 1093              	HX_LSB_B2DW:
+ 1094              	.LFB15:
+ 178:../src/convert.c **** uint32_t HX_LSB_B2DW(const void *data)
+ 179:../src/convert.c **** {
+ 1095              		.loc 1 179 0
+ 1096              		.cfi_startproc
+ 1097              		@ args = 0, pretend = 0, frame = 16
+ 1098              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1099              		@ link register save eliminated.
+ 1100 0000 80B4     		push	{r7}
+ 1101              		.cfi_def_cfa_offset 4
+ 1102              		.cfi_offset 7, -4
+ 1103 0002 85B0     		sub	sp, sp, #20
+ 1104              		.cfi_def_cfa_offset 24
+ 1105 0004 00AF     		add	r7, sp, #0
+ 1106              		.cfi_def_cfa_register 7
+ 1107 0006 7860     		str	r0, [r7, #4]
+ 180:../src/convert.c **** 	const uint8_t *d = data;
+ 1108              		.loc 1 180 0
+ 1109 0008 7B68     		ldr	r3, [r7, #4]
+ 1110 000a FB60     		str	r3, [r7, #12]
+ 181:../src/convert.c ****     uint32_t res;
+ 182:../src/convert.c ****     res = (uint32_t)d[3];
+ 1111              		.loc 1 182 0
+ 1112 000c FB68     		ldr	r3, [r7, #12]
+ 1113 000e 0333     		adds	r3, r3, #3
+ 1114 0010 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1115 0012 BB60     		str	r3, [r7, #8]
+ 183:../src/convert.c ****     res <<=8;
+ 1116              		.loc 1 183 0
+ 1117 0014 BB68     		ldr	r3, [r7, #8]
+ 1118 0016 1B02     		lsls	r3, r3, #8
+ 1119 0018 BB60     		str	r3, [r7, #8]
+ 184:../src/convert.c ****     res += (uint32_t) d[2];
+ 1120              		.loc 1 184 0
+ 1121 001a FB68     		ldr	r3, [r7, #12]
+ 1122 001c 0233     		adds	r3, r3, #2
+ 1123 001e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1124 0020 1A46     		mov	r2, r3
+ 1125 0022 BB68     		ldr	r3, [r7, #8]
+ 1126 0024 1344     		add	r3, r3, r2
+ 1127 0026 BB60     		str	r3, [r7, #8]
+ 185:../src/convert.c ****     res <<=8;
+ 1128              		.loc 1 185 0
+ 1129 0028 BB68     		ldr	r3, [r7, #8]
+ 1130 002a 1B02     		lsls	r3, r3, #8
+ 1131 002c BB60     		str	r3, [r7, #8]
+ 186:../src/convert.c ****     res += (uint32_t) d[1];
+ 1132              		.loc 1 186 0
+ 1133 002e FB68     		ldr	r3, [r7, #12]
+ 1134 0030 0133     		adds	r3, r3, #1
+ 1135 0032 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1136 0034 1A46     		mov	r2, r3
+ 1137 0036 BB68     		ldr	r3, [r7, #8]
+ 1138 0038 1344     		add	r3, r3, r2
+ 1139 003a BB60     		str	r3, [r7, #8]
+ 187:../src/convert.c ****     res <<=8;
+ 1140              		.loc 1 187 0
+ 1141 003c BB68     		ldr	r3, [r7, #8]
+ 1142 003e 1B02     		lsls	r3, r3, #8
+ 1143 0040 BB60     		str	r3, [r7, #8]
+ 188:../src/convert.c ****     res += (uint32_t) d[0];
+ 1144              		.loc 1 188 0
+ 1145 0042 FB68     		ldr	r3, [r7, #12]
+ 1146 0044 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1147 0046 1A46     		mov	r2, r3
+ 1148 0048 BB68     		ldr	r3, [r7, #8]
+ 1149 004a 1344     		add	r3, r3, r2
+ 1150 004c BB60     		str	r3, [r7, #8]
+ 189:../src/convert.c ****     return res;
+ 1151              		.loc 1 189 0
+ 1152 004e BB68     		ldr	r3, [r7, #8]
+ 190:../src/convert.c **** }
+ 1153              		.loc 1 190 0
+ 1154 0050 1846     		mov	r0, r3
+ 1155 0052 1437     		adds	r7, r7, #20
+ 1156              		.cfi_def_cfa_offset 4
+ 1157 0054 BD46     		mov	sp, r7
+ 1158              		.cfi_def_cfa_register 13
+ 1159              		@ sp needed
+ 1160 0056 5DF8047B 		ldr	r7, [sp], #4
+ 1161              		.cfi_restore 7
+ 1162              		.cfi_def_cfa_offset 0
+ 1163 005a 7047     		bx	lr
+ 1164              		.cfi_endproc
+ 1165              	.LFE15:
+ 1167              		.section	.text.HX_MSB_B2DW24,"ax",%progbits
+ 1168              		.align	2
+ 1169              		.global	HX_MSB_B2DW24
+ 1170              		.thumb
+ 1171              		.thumb_func
+ 1173              	HX_MSB_B2DW24:
+ 1174              	.LFB16:
+ 191:../src/convert.c **** 
+ 192:../src/convert.c **** uint32_t HX_MSB_B2DW24(const void *data)
+ 193:../src/convert.c **** {
+ 1175              		.loc 1 193 0
+ 1176              		.cfi_startproc
+ 1177              		@ args = 0, pretend = 0, frame = 16
+ 1178              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1179              		@ link register save eliminated.
+ 1180 0000 80B4     		push	{r7}
+ 1181              		.cfi_def_cfa_offset 4
+ 1182              		.cfi_offset 7, -4
+ 1183 0002 85B0     		sub	sp, sp, #20
+ 1184              		.cfi_def_cfa_offset 24
+ 1185 0004 00AF     		add	r7, sp, #0
+ 1186              		.cfi_def_cfa_register 7
+ 1187 0006 7860     		str	r0, [r7, #4]
+ 194:../src/convert.c **** 	const uint8_t *d = data;
+ 1188              		.loc 1 194 0
+ 1189 0008 7B68     		ldr	r3, [r7, #4]
+ 1190 000a FB60     		str	r3, [r7, #12]
+ 195:../src/convert.c ****     uint32_t res;
+ 196:../src/convert.c ****     res = (uint32_t)d[0];
+ 1191              		.loc 1 196 0
+ 1192 000c FB68     		ldr	r3, [r7, #12]
+ 1193 000e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1194 0010 BB60     		str	r3, [r7, #8]
+ 197:../src/convert.c ****     res <<=8;
+ 1195              		.loc 1 197 0
+ 1196 0012 BB68     		ldr	r3, [r7, #8]
+ 1197 0014 1B02     		lsls	r3, r3, #8
+ 1198 0016 BB60     		str	r3, [r7, #8]
+ 198:../src/convert.c ****     res += (uint32_t) d[1];
+ 1199              		.loc 1 198 0
+ 1200 0018 FB68     		ldr	r3, [r7, #12]
+ 1201 001a 0133     		adds	r3, r3, #1
+ 1202 001c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1203 001e 1A46     		mov	r2, r3
+ 1204 0020 BB68     		ldr	r3, [r7, #8]
+ 1205 0022 1344     		add	r3, r3, r2
+ 1206 0024 BB60     		str	r3, [r7, #8]
+ 199:../src/convert.c ****     res <<=8;
+ 1207              		.loc 1 199 0
+ 1208 0026 BB68     		ldr	r3, [r7, #8]
+ 1209 0028 1B02     		lsls	r3, r3, #8
+ 1210 002a BB60     		str	r3, [r7, #8]
+ 200:../src/convert.c ****     res += (uint32_t) d[2];
+ 1211              		.loc 1 200 0
+ 1212 002c FB68     		ldr	r3, [r7, #12]
+ 1213 002e 0233     		adds	r3, r3, #2
+ 1214 0030 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1215 0032 1A46     		mov	r2, r3
+ 1216 0034 BB68     		ldr	r3, [r7, #8]
+ 1217 0036 1344     		add	r3, r3, r2
+ 1218 0038 BB60     		str	r3, [r7, #8]
+ 201:../src/convert.c ****     return res;
+ 1219              		.loc 1 201 0
+ 1220 003a BB68     		ldr	r3, [r7, #8]
+ 202:../src/convert.c **** }
+ 1221              		.loc 1 202 0
+ 1222 003c 1846     		mov	r0, r3
+ 1223 003e 1437     		adds	r7, r7, #20
+ 1224              		.cfi_def_cfa_offset 4
+ 1225 0040 BD46     		mov	sp, r7
+ 1226              		.cfi_def_cfa_register 13
+ 1227              		@ sp needed
+ 1228 0042 5DF8047B 		ldr	r7, [sp], #4
+ 1229              		.cfi_restore 7
+ 1230              		.cfi_def_cfa_offset 0
+ 1231 0046 7047     		bx	lr
+ 1232              		.cfi_endproc
+ 1233              	.LFE16:
+ 1235              		.section	.text.HX_LSB_B2DW24,"ax",%progbits
+ 1236              		.align	2
+ 1237              		.global	HX_LSB_B2DW24
+ 1238              		.thumb
+ 1239              		.thumb_func
+ 1241              	HX_LSB_B2DW24:
+ 1242              	.LFB17:
+ 203:../src/convert.c **** uint32_t HX_LSB_B2DW24(const void *data)
+ 204:../src/convert.c **** {
+ 1243              		.loc 1 204 0
+ 1244              		.cfi_startproc
+ 1245              		@ args = 0, pretend = 0, frame = 16
+ 1246              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1247              		@ link register save eliminated.
+ 1248 0000 80B4     		push	{r7}
+ 1249              		.cfi_def_cfa_offset 4
+ 1250              		.cfi_offset 7, -4
+ 1251 0002 85B0     		sub	sp, sp, #20
+ 1252              		.cfi_def_cfa_offset 24
+ 1253 0004 00AF     		add	r7, sp, #0
+ 1254              		.cfi_def_cfa_register 7
+ 1255 0006 7860     		str	r0, [r7, #4]
+ 205:../src/convert.c **** 	const uint8_t *d = data;
+ 1256              		.loc 1 205 0
+ 1257 0008 7B68     		ldr	r3, [r7, #4]
+ 1258 000a FB60     		str	r3, [r7, #12]
+ 206:../src/convert.c ****     uint32_t res;
+ 207:../src/convert.c ****     res = (uint32_t)d[2];
+ 1259              		.loc 1 207 0
+ 1260 000c FB68     		ldr	r3, [r7, #12]
+ 1261 000e 0233     		adds	r3, r3, #2
+ 1262 0010 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1263 0012 BB60     		str	r3, [r7, #8]
+ 208:../src/convert.c ****     res <<=8;
+ 1264              		.loc 1 208 0
+ 1265 0014 BB68     		ldr	r3, [r7, #8]
+ 1266 0016 1B02     		lsls	r3, r3, #8
+ 1267 0018 BB60     		str	r3, [r7, #8]
+ 209:../src/convert.c ****     res += (uint32_t) d[1];
+ 1268              		.loc 1 209 0
+ 1269 001a FB68     		ldr	r3, [r7, #12]
+ 1270 001c 0133     		adds	r3, r3, #1
+ 1271 001e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1272 0020 1A46     		mov	r2, r3
+ 1273 0022 BB68     		ldr	r3, [r7, #8]
+ 1274 0024 1344     		add	r3, r3, r2
+ 1275 0026 BB60     		str	r3, [r7, #8]
+ 210:../src/convert.c ****     res <<=8;
+ 1276              		.loc 1 210 0
+ 1277 0028 BB68     		ldr	r3, [r7, #8]
+ 1278 002a 1B02     		lsls	r3, r3, #8
+ 1279 002c BB60     		str	r3, [r7, #8]
+ 211:../src/convert.c ****     res += (uint32_t) d[0];
+ 1280              		.loc 1 211 0
+ 1281 002e FB68     		ldr	r3, [r7, #12]
+ 1282 0030 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1283 0032 1A46     		mov	r2, r3
+ 1284 0034 BB68     		ldr	r3, [r7, #8]
+ 1285 0036 1344     		add	r3, r3, r2
+ 1286 0038 BB60     		str	r3, [r7, #8]
+ 212:../src/convert.c ****     return res;
+ 1287              		.loc 1 212 0
+ 1288 003a BB68     		ldr	r3, [r7, #8]
+ 213:../src/convert.c **** }
+ 1289              		.loc 1 213 0
+ 1290 003c 1846     		mov	r0, r3
+ 1291 003e 1437     		adds	r7, r7, #20
+ 1292              		.cfi_def_cfa_offset 4
+ 1293 0040 BD46     		mov	sp, r7
+ 1294              		.cfi_def_cfa_register 13
+ 1295              		@ sp needed
+ 1296 0042 5DF8047B 		ldr	r7, [sp], #4
+ 1297              		.cfi_restore 7
+ 1298              		.cfi_def_cfa_offset 0
+ 1299 0046 7047     		bx	lr
+ 1300              		.cfi_endproc
+ 1301              	.LFE17:
+ 1303              		.section	.text.HX_MSB_B2QW,"ax",%progbits
+ 1304              		.align	2
+ 1305              		.global	HX_MSB_B2QW
+ 1306              		.thumb
+ 1307              		.thumb_func
+ 1309              	HX_MSB_B2QW:
+ 1310              	.LFB18:
+ 214:../src/convert.c **** 
+ 215:../src/convert.c **** uint64_t HX_MSB_B2QW(const void *data)
+ 216:../src/convert.c **** {
+ 1311              		.loc 1 216 0
+ 1312              		.cfi_startproc
+ 1313              		@ args = 0, pretend = 0, frame = 56
+ 1314              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1315              		@ link register save eliminated.
+ 1316 0000 2DE9B00F 		push	{r4, r5, r7, r8, r9, r10, fp}
+ 1317              		.cfi_def_cfa_offset 28
+ 1318              		.cfi_offset 4, -28
+ 1319              		.cfi_offset 5, -24
+ 1320              		.cfi_offset 7, -20
+ 1321              		.cfi_offset 8, -16
+ 1322              		.cfi_offset 9, -12
+ 1323              		.cfi_offset 10, -8
+ 1324              		.cfi_offset 11, -4
+ 1325 0004 8FB0     		sub	sp, sp, #60
+ 1326              		.cfi_def_cfa_offset 88
+ 1327 0006 00AF     		add	r7, sp, #0
+ 1328              		.cfi_def_cfa_register 7
+ 1329 0008 7862     		str	r0, [r7, #36]
+ 217:../src/convert.c ****     const uint8_t *d = data;
+ 1330              		.loc 1 217 0
+ 1331 000a 7B6A     		ldr	r3, [r7, #36]
+ 1332 000c 7B63     		str	r3, [r7, #52]
+ 218:../src/convert.c ****     uint64_t res;
+ 219:../src/convert.c **** 	res = (uint64_t)d[0];
+ 1333              		.loc 1 219 0
+ 1334 000e 7B6B     		ldr	r3, [r7, #52]
+ 1335 0010 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1336 0012 DAB2     		uxtb	r2, r3
+ 1337 0014 4FF00003 		mov	r3, #0
+ 1338 0018 C7E90A23 		strd	r2, [r7, #40]
+ 220:../src/convert.c ****     res <<=8;
+ 1339              		.loc 1 220 0
+ 1340 001c D7E90A23 		ldrd	r2, [r7, #40]
+ 1341 0020 1D02     		lsls	r5, r3, #8
+ 1342 0022 45EA1265 		orr	r5, r5, r2, lsr #24
+ 1343 0026 1402     		lsls	r4, r2, #8
+ 1344 0028 C7E90A45 		strd	r4, [r7, #40]
+ 221:../src/convert.c ****     res += (uint64_t) d[1];
+ 1345              		.loc 1 221 0
+ 1346 002c 7B6B     		ldr	r3, [r7, #52]
+ 1347 002e 0133     		adds	r3, r3, #1
+ 1348 0030 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1349 0032 D8B2     		uxtb	r0, r3
+ 1350 0034 4FF00001 		mov	r1, #0
+ 1351 0038 D7E90A23 		ldrd	r2, [r7, #40]
+ 1352 003c 1218     		adds	r2, r2, r0
+ 1353 003e 43EB0103 		adc	r3, r3, r1
+ 1354 0042 C7E90A23 		strd	r2, [r7, #40]
+ 222:../src/convert.c ****     res <<=8;
+ 1355              		.loc 1 222 0
+ 1356 0046 D7E90A23 		ldrd	r2, [r7, #40]
+ 1357 004a 4FEA0329 		lsl	r9, r3, #8
+ 1358 004e 49EA1269 		orr	r9, r9, r2, lsr #24
+ 1359 0052 4FEA0228 		lsl	r8, r2, #8
+ 1360 0056 C7E90A89 		strd	r8, [r7, #40]
+ 223:../src/convert.c ****     res += (uint64_t) d[2];
+ 1361              		.loc 1 223 0
+ 1362 005a 7B6B     		ldr	r3, [r7, #52]
+ 1363 005c 0233     		adds	r3, r3, #2
+ 1364 005e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1365 0060 DAB2     		uxtb	r2, r3
+ 1366 0062 4FF00003 		mov	r3, #0
+ 1367 0066 D7E90A01 		ldrd	r0, [r7, #40]
+ 1368 006a 1218     		adds	r2, r2, r0
+ 1369 006c 43EB0103 		adc	r3, r3, r1
+ 1370 0070 C7E90A23 		strd	r2, [r7, #40]
+ 224:../src/convert.c ****     res <<=8;
+ 1371              		.loc 1 224 0
+ 1372 0074 D7E90A23 		ldrd	r2, [r7, #40]
+ 1373 0078 1902     		lsls	r1, r3, #8
+ 1374 007a F961     		str	r1, [r7, #28]
+ 1375 007c F969     		ldr	r1, [r7, #28]
+ 1376 007e 41EA1261 		orr	r1, r1, r2, lsr #24
+ 1377 0082 F961     		str	r1, [r7, #28]
+ 1378 0084 1302     		lsls	r3, r2, #8
+ 1379 0086 BB61     		str	r3, [r7, #24]
+ 1380 0088 D7E90623 		ldrd	r2, [r7, #24]
+ 1381 008c C7E90A23 		strd	r2, [r7, #40]
+ 225:../src/convert.c ****     res += (uint64_t) d[3];
+ 1382              		.loc 1 225 0
+ 1383 0090 7B6B     		ldr	r3, [r7, #52]
+ 1384 0092 0333     		adds	r3, r3, #3
+ 1385 0094 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1386 0096 DAB2     		uxtb	r2, r3
+ 1387 0098 4FF00003 		mov	r3, #0
+ 1388 009c D7E90A01 		ldrd	r0, [r7, #40]
+ 1389 00a0 1218     		adds	r2, r2, r0
+ 1390 00a2 43EB0103 		adc	r3, r3, r1
+ 1391 00a6 C7E90A23 		strd	r2, [r7, #40]
+ 226:../src/convert.c **** 	res <<=8;
+ 1392              		.loc 1 226 0
+ 1393 00aa D7E90A23 		ldrd	r2, [r7, #40]
+ 1394 00ae 1902     		lsls	r1, r3, #8
+ 1395 00b0 7961     		str	r1, [r7, #20]
+ 1396 00b2 7969     		ldr	r1, [r7, #20]
+ 1397 00b4 41EA1261 		orr	r1, r1, r2, lsr #24
+ 1398 00b8 7961     		str	r1, [r7, #20]
+ 1399 00ba 1302     		lsls	r3, r2, #8
+ 1400 00bc 3B61     		str	r3, [r7, #16]
+ 1401 00be D7E90423 		ldrd	r2, [r7, #16]
+ 1402 00c2 C7E90A23 		strd	r2, [r7, #40]
+ 227:../src/convert.c ****     res += (uint64_t) d[4];
+ 1403              		.loc 1 227 0
+ 1404 00c6 7B6B     		ldr	r3, [r7, #52]
+ 1405 00c8 0433     		adds	r3, r3, #4
+ 1406 00ca 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1407 00cc DAB2     		uxtb	r2, r3
+ 1408 00ce 4FF00003 		mov	r3, #0
+ 1409 00d2 D7E90A01 		ldrd	r0, [r7, #40]
+ 1410 00d6 1218     		adds	r2, r2, r0
+ 1411 00d8 43EB0103 		adc	r3, r3, r1
+ 1412 00dc C7E90A23 		strd	r2, [r7, #40]
+ 228:../src/convert.c ****     res <<=8;
+ 1413              		.loc 1 228 0
+ 1414 00e0 D7E90A23 		ldrd	r2, [r7, #40]
+ 1415 00e4 1902     		lsls	r1, r3, #8
+ 1416 00e6 F960     		str	r1, [r7, #12]
+ 1417 00e8 F968     		ldr	r1, [r7, #12]
+ 1418 00ea 41EA1261 		orr	r1, r1, r2, lsr #24
+ 1419 00ee F960     		str	r1, [r7, #12]
+ 1420 00f0 1302     		lsls	r3, r2, #8
+ 1421 00f2 BB60     		str	r3, [r7, #8]
+ 1422 00f4 D7E90223 		ldrd	r2, [r7, #8]
+ 1423 00f8 C7E90A23 		strd	r2, [r7, #40]
+ 229:../src/convert.c ****     res += (uint64_t) d[5];
+ 1424              		.loc 1 229 0
+ 1425 00fc 7B6B     		ldr	r3, [r7, #52]
+ 1426 00fe 0533     		adds	r3, r3, #5
+ 1427 0100 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1428 0102 DAB2     		uxtb	r2, r3
+ 1429 0104 4FF00003 		mov	r3, #0
+ 1430 0108 D7E90A01 		ldrd	r0, [r7, #40]
+ 1431 010c 1218     		adds	r2, r2, r0
+ 1432 010e 43EB0103 		adc	r3, r3, r1
+ 1433 0112 C7E90A23 		strd	r2, [r7, #40]
+ 230:../src/convert.c ****     res <<=8;
+ 1434              		.loc 1 230 0
+ 1435 0116 D7E90A23 		ldrd	r2, [r7, #40]
+ 1436 011a 1902     		lsls	r1, r3, #8
+ 1437 011c 7960     		str	r1, [r7, #4]
+ 1438 011e 7968     		ldr	r1, [r7, #4]
+ 1439 0120 41EA1261 		orr	r1, r1, r2, lsr #24
+ 1440 0124 7960     		str	r1, [r7, #4]
+ 1441 0126 1302     		lsls	r3, r2, #8
+ 1442 0128 3B60     		str	r3, [r7]
+ 1443 012a D7E90023 		ldrd	r2, [r7]
+ 1444 012e C7E90A23 		strd	r2, [r7, #40]
+ 231:../src/convert.c ****     res += (uint64_t) d[6];
+ 1445              		.loc 1 231 0
+ 1446 0132 7B6B     		ldr	r3, [r7, #52]
+ 1447 0134 0633     		adds	r3, r3, #6
+ 1448 0136 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1449 0138 DAB2     		uxtb	r2, r3
+ 1450 013a 4FF00003 		mov	r3, #0
+ 1451 013e D7E90A01 		ldrd	r0, [r7, #40]
+ 1452 0142 1218     		adds	r2, r2, r0
+ 1453 0144 43EB0103 		adc	r3, r3, r1
+ 1454 0148 C7E90A23 		strd	r2, [r7, #40]
+ 232:../src/convert.c ****     res <<=8;
+ 1455              		.loc 1 232 0
+ 1456 014c D7E90A23 		ldrd	r2, [r7, #40]
+ 1457 0150 4FEA032B 		lsl	fp, r3, #8
+ 1458 0154 4BEA126B 		orr	fp, fp, r2, lsr #24
+ 1459 0158 4FEA022A 		lsl	r10, r2, #8
+ 1460 015c C7E90AAB 		strd	r10, [r7, #40]
+ 233:../src/convert.c ****     res += (uint64_t) d[7];
+ 1461              		.loc 1 233 0
+ 1462 0160 7B6B     		ldr	r3, [r7, #52]
+ 1463 0162 0733     		adds	r3, r3, #7
+ 1464 0164 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1465 0166 DAB2     		uxtb	r2, r3
+ 1466 0168 4FF00003 		mov	r3, #0
+ 1467 016c D7E90A01 		ldrd	r0, [r7, #40]
+ 1468 0170 1218     		adds	r2, r2, r0
+ 1469 0172 43EB0103 		adc	r3, r3, r1
+ 1470 0176 C7E90A23 		strd	r2, [r7, #40]
+ 234:../src/convert.c ****     return res;
+ 1471              		.loc 1 234 0
+ 1472 017a D7E90A23 		ldrd	r2, [r7, #40]
+ 235:../src/convert.c **** }
+ 1473              		.loc 1 235 0
+ 1474 017e 1046     		mov	r0, r2
+ 1475 0180 1946     		mov	r1, r3
+ 1476 0182 3C37     		adds	r7, r7, #60
+ 1477              		.cfi_def_cfa_offset 28
+ 1478 0184 BD46     		mov	sp, r7
+ 1479              		.cfi_def_cfa_register 13
+ 1480              		@ sp needed
+ 1481 0186 BDE8B00F 		pop	{r4, r5, r7, r8, r9, r10, fp}
+ 1482              		.cfi_restore 11
+ 1483              		.cfi_restore 10
+ 1484              		.cfi_restore 9
+ 1485              		.cfi_restore 8
+ 1486              		.cfi_restore 7
+ 1487              		.cfi_restore 5
+ 1488              		.cfi_restore 4
+ 1489              		.cfi_def_cfa_offset 0
+ 1490 018a 7047     		bx	lr
+ 1491              		.cfi_endproc
+ 1492              	.LFE18:
+ 1494              		.section	.text.HX_LSB_B2QW,"ax",%progbits
+ 1495              		.align	2
+ 1496              		.global	HX_LSB_B2QW
+ 1497              		.thumb
+ 1498              		.thumb_func
+ 1500              	HX_LSB_B2QW:
+ 1501              	.LFB19:
+ 236:../src/convert.c **** uint64_t HX_LSB_B2QW(const void *data)
+ 237:../src/convert.c **** {
+ 1502              		.loc 1 237 0
+ 1503              		.cfi_startproc
+ 1504              		@ args = 0, pretend = 0, frame = 56
+ 1505              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1506              		@ link register save eliminated.
+ 1507 0000 2DE9B00F 		push	{r4, r5, r7, r8, r9, r10, fp}
+ 1508              		.cfi_def_cfa_offset 28
+ 1509              		.cfi_offset 4, -28
+ 1510              		.cfi_offset 5, -24
+ 1511              		.cfi_offset 7, -20
+ 1512              		.cfi_offset 8, -16
+ 1513              		.cfi_offset 9, -12
+ 1514              		.cfi_offset 10, -8
+ 1515              		.cfi_offset 11, -4
+ 1516 0004 8FB0     		sub	sp, sp, #60
+ 1517              		.cfi_def_cfa_offset 88
+ 1518 0006 00AF     		add	r7, sp, #0
+ 1519              		.cfi_def_cfa_register 7
+ 1520 0008 7862     		str	r0, [r7, #36]
+ 238:../src/convert.c **** 	const uint8_t *d = data;
+ 1521              		.loc 1 238 0
+ 1522 000a 7B6A     		ldr	r3, [r7, #36]
+ 1523 000c 7B63     		str	r3, [r7, #52]
+ 239:../src/convert.c ****     uint64_t res;
+ 240:../src/convert.c **** 	res = (uint64_t)d[7];
+ 1524              		.loc 1 240 0
+ 1525 000e 7B6B     		ldr	r3, [r7, #52]
+ 1526 0010 0733     		adds	r3, r3, #7
+ 1527 0012 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1528 0014 DAB2     		uxtb	r2, r3
+ 1529 0016 4FF00003 		mov	r3, #0
+ 1530 001a C7E90A23 		strd	r2, [r7, #40]
+ 241:../src/convert.c ****     res <<=8;
+ 1531              		.loc 1 241 0
+ 1532 001e D7E90A23 		ldrd	r2, [r7, #40]
+ 1533 0022 1D02     		lsls	r5, r3, #8
+ 1534 0024 45EA1265 		orr	r5, r5, r2, lsr #24
+ 1535 0028 1402     		lsls	r4, r2, #8
+ 1536 002a C7E90A45 		strd	r4, [r7, #40]
+ 242:../src/convert.c ****     res += (uint64_t) d[6];
+ 1537              		.loc 1 242 0
+ 1538 002e 7B6B     		ldr	r3, [r7, #52]
+ 1539 0030 0633     		adds	r3, r3, #6
+ 1540 0032 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1541 0034 D8B2     		uxtb	r0, r3
+ 1542 0036 4FF00001 		mov	r1, #0
+ 1543 003a D7E90A23 		ldrd	r2, [r7, #40]
+ 1544 003e 1218     		adds	r2, r2, r0
+ 1545 0040 43EB0103 		adc	r3, r3, r1
+ 1546 0044 C7E90A23 		strd	r2, [r7, #40]
+ 243:../src/convert.c ****     res <<=8;
+ 1547              		.loc 1 243 0
+ 1548 0048 D7E90A23 		ldrd	r2, [r7, #40]
+ 1549 004c 4FEA0329 		lsl	r9, r3, #8
+ 1550 0050 49EA1269 		orr	r9, r9, r2, lsr #24
+ 1551 0054 4FEA0228 		lsl	r8, r2, #8
+ 1552 0058 C7E90A89 		strd	r8, [r7, #40]
+ 244:../src/convert.c ****     res += (uint64_t) d[5];
+ 1553              		.loc 1 244 0
+ 1554 005c 7B6B     		ldr	r3, [r7, #52]
+ 1555 005e 0533     		adds	r3, r3, #5
+ 1556 0060 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1557 0062 DAB2     		uxtb	r2, r3
+ 1558 0064 4FF00003 		mov	r3, #0
+ 1559 0068 D7E90A01 		ldrd	r0, [r7, #40]
+ 1560 006c 1218     		adds	r2, r2, r0
+ 1561 006e 43EB0103 		adc	r3, r3, r1
+ 1562 0072 C7E90A23 		strd	r2, [r7, #40]
+ 245:../src/convert.c ****     res <<=8;
+ 1563              		.loc 1 245 0
+ 1564 0076 D7E90A23 		ldrd	r2, [r7, #40]
+ 1565 007a 1902     		lsls	r1, r3, #8
+ 1566 007c F961     		str	r1, [r7, #28]
+ 1567 007e F969     		ldr	r1, [r7, #28]
+ 1568 0080 41EA1261 		orr	r1, r1, r2, lsr #24
+ 1569 0084 F961     		str	r1, [r7, #28]
+ 1570 0086 1302     		lsls	r3, r2, #8
+ 1571 0088 BB61     		str	r3, [r7, #24]
+ 1572 008a D7E90623 		ldrd	r2, [r7, #24]
+ 1573 008e C7E90A23 		strd	r2, [r7, #40]
+ 246:../src/convert.c ****     res += (uint64_t) d[4];
+ 1574              		.loc 1 246 0
+ 1575 0092 7B6B     		ldr	r3, [r7, #52]
+ 1576 0094 0433     		adds	r3, r3, #4
+ 1577 0096 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1578 0098 DAB2     		uxtb	r2, r3
+ 1579 009a 4FF00003 		mov	r3, #0
+ 1580 009e D7E90A01 		ldrd	r0, [r7, #40]
+ 1581 00a2 1218     		adds	r2, r2, r0
+ 1582 00a4 43EB0103 		adc	r3, r3, r1
+ 1583 00a8 C7E90A23 		strd	r2, [r7, #40]
+ 247:../src/convert.c **** 	res <<=8;
+ 1584              		.loc 1 247 0
+ 1585 00ac D7E90A23 		ldrd	r2, [r7, #40]
+ 1586 00b0 1902     		lsls	r1, r3, #8
+ 1587 00b2 7961     		str	r1, [r7, #20]
+ 1588 00b4 7969     		ldr	r1, [r7, #20]
+ 1589 00b6 41EA1261 		orr	r1, r1, r2, lsr #24
+ 1590 00ba 7961     		str	r1, [r7, #20]
+ 1591 00bc 1302     		lsls	r3, r2, #8
+ 1592 00be 3B61     		str	r3, [r7, #16]
+ 1593 00c0 D7E90423 		ldrd	r2, [r7, #16]
+ 1594 00c4 C7E90A23 		strd	r2, [r7, #40]
+ 248:../src/convert.c ****     res += (uint64_t) d[3];
+ 1595              		.loc 1 248 0
+ 1596 00c8 7B6B     		ldr	r3, [r7, #52]
+ 1597 00ca 0333     		adds	r3, r3, #3
+ 1598 00cc 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1599 00ce DAB2     		uxtb	r2, r3
+ 1600 00d0 4FF00003 		mov	r3, #0
+ 1601 00d4 D7E90A01 		ldrd	r0, [r7, #40]
+ 1602 00d8 1218     		adds	r2, r2, r0
+ 1603 00da 43EB0103 		adc	r3, r3, r1
+ 1604 00de C7E90A23 		strd	r2, [r7, #40]
+ 249:../src/convert.c ****     res <<=8;
+ 1605              		.loc 1 249 0
+ 1606 00e2 D7E90A23 		ldrd	r2, [r7, #40]
+ 1607 00e6 1902     		lsls	r1, r3, #8
+ 1608 00e8 F960     		str	r1, [r7, #12]
+ 1609 00ea F968     		ldr	r1, [r7, #12]
+ 1610 00ec 41EA1261 		orr	r1, r1, r2, lsr #24
+ 1611 00f0 F960     		str	r1, [r7, #12]
+ 1612 00f2 1302     		lsls	r3, r2, #8
+ 1613 00f4 BB60     		str	r3, [r7, #8]
+ 1614 00f6 D7E90223 		ldrd	r2, [r7, #8]
+ 1615 00fa C7E90A23 		strd	r2, [r7, #40]
+ 250:../src/convert.c ****     res += (uint64_t) d[2];
+ 1616              		.loc 1 250 0
+ 1617 00fe 7B6B     		ldr	r3, [r7, #52]
+ 1618 0100 0233     		adds	r3, r3, #2
+ 1619 0102 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1620 0104 DAB2     		uxtb	r2, r3
+ 1621 0106 4FF00003 		mov	r3, #0
+ 1622 010a D7E90A01 		ldrd	r0, [r7, #40]
+ 1623 010e 1218     		adds	r2, r2, r0
+ 1624 0110 43EB0103 		adc	r3, r3, r1
+ 1625 0114 C7E90A23 		strd	r2, [r7, #40]
+ 251:../src/convert.c ****     res <<=8;
+ 1626              		.loc 1 251 0
+ 1627 0118 D7E90A23 		ldrd	r2, [r7, #40]
+ 1628 011c 1902     		lsls	r1, r3, #8
+ 1629 011e 7960     		str	r1, [r7, #4]
+ 1630 0120 7968     		ldr	r1, [r7, #4]
+ 1631 0122 41EA1261 		orr	r1, r1, r2, lsr #24
+ 1632 0126 7960     		str	r1, [r7, #4]
+ 1633 0128 1302     		lsls	r3, r2, #8
+ 1634 012a 3B60     		str	r3, [r7]
+ 1635 012c D7E90023 		ldrd	r2, [r7]
+ 1636 0130 C7E90A23 		strd	r2, [r7, #40]
+ 252:../src/convert.c ****     res += (uint64_t) d[1];
+ 1637              		.loc 1 252 0
+ 1638 0134 7B6B     		ldr	r3, [r7, #52]
+ 1639 0136 0133     		adds	r3, r3, #1
+ 1640 0138 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1641 013a DAB2     		uxtb	r2, r3
+ 1642 013c 4FF00003 		mov	r3, #0
+ 1643 0140 D7E90A01 		ldrd	r0, [r7, #40]
+ 1644 0144 1218     		adds	r2, r2, r0
+ 1645 0146 43EB0103 		adc	r3, r3, r1
+ 1646 014a C7E90A23 		strd	r2, [r7, #40]
+ 253:../src/convert.c ****     res <<=8;
+ 1647              		.loc 1 253 0
+ 1648 014e D7E90A23 		ldrd	r2, [r7, #40]
+ 1649 0152 4FEA032B 		lsl	fp, r3, #8
+ 1650 0156 4BEA126B 		orr	fp, fp, r2, lsr #24
+ 1651 015a 4FEA022A 		lsl	r10, r2, #8
+ 1652 015e C7E90AAB 		strd	r10, [r7, #40]
+ 254:../src/convert.c ****     res += (uint64_t) d[0];
+ 1653              		.loc 1 254 0
+ 1654 0162 7B6B     		ldr	r3, [r7, #52]
+ 1655 0164 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1656 0166 DAB2     		uxtb	r2, r3
+ 1657 0168 4FF00003 		mov	r3, #0
+ 1658 016c D7E90A01 		ldrd	r0, [r7, #40]
+ 1659 0170 1218     		adds	r2, r2, r0
+ 1660 0172 43EB0103 		adc	r3, r3, r1
+ 1661 0176 C7E90A23 		strd	r2, [r7, #40]
+ 255:../src/convert.c ****     return res;
+ 1662              		.loc 1 255 0
+ 1663 017a D7E90A23 		ldrd	r2, [r7, #40]
+ 256:../src/convert.c **** }
+ 1664              		.loc 1 256 0
+ 1665 017e 1046     		mov	r0, r2
+ 1666 0180 1946     		mov	r1, r3
+ 1667 0182 3C37     		adds	r7, r7, #60
+ 1668              		.cfi_def_cfa_offset 28
+ 1669 0184 BD46     		mov	sp, r7
+ 1670              		.cfi_def_cfa_register 13
+ 1671              		@ sp needed
+ 1672 0186 BDE8B00F 		pop	{r4, r5, r7, r8, r9, r10, fp}
+ 1673              		.cfi_restore 11
+ 1674              		.cfi_restore 10
+ 1675              		.cfi_restore 9
+ 1676              		.cfi_restore 8
+ 1677              		.cfi_restore 7
+ 1678              		.cfi_restore 5
+ 1679              		.cfi_restore 4
+ 1680              		.cfi_def_cfa_offset 0
+ 1681 018a 7047     		bx	lr
+ 1682              		.cfi_endproc
+ 1683              	.LFE19:
+ 1685              		.section	.text.HX_LSB_W2B,"ax",%progbits
+ 1686              		.align	2
+ 1687              		.global	HX_LSB_W2B
+ 1688              		.thumb
+ 1689              		.thumb_func
+ 1691              	HX_LSB_W2B:
+ 1692              	.LFB20:
+ 257:../src/convert.c **** 
+ 258:../src/convert.c **** uint8_t * HX_LSB_W2B(uint16_t v,void *p)
+ 259:../src/convert.c **** {
+ 1693              		.loc 1 259 0
+ 1694              		.cfi_startproc
+ 1695              		@ args = 0, pretend = 0, frame = 16
+ 1696              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1697              		@ link register save eliminated.
+ 1698 0000 80B4     		push	{r7}
+ 1699              		.cfi_def_cfa_offset 4
+ 1700              		.cfi_offset 7, -4
+ 1701 0002 85B0     		sub	sp, sp, #20
+ 1702              		.cfi_def_cfa_offset 24
+ 1703 0004 00AF     		add	r7, sp, #0
+ 1704              		.cfi_def_cfa_register 7
+ 1705 0006 0346     		mov	r3, r0
+ 1706 0008 3960     		str	r1, [r7]
+ 1707 000a FB80     		strh	r3, [r7, #6]	@ movhi
+ 260:../src/convert.c **** 	uint8_t *_p = p;
+ 1708              		.loc 1 260 0
+ 1709 000c 3B68     		ldr	r3, [r7]
+ 1710 000e FB60     		str	r3, [r7, #12]
+ 261:../src/convert.c ****     _p[0] =  0xFF & (v>>0);
+ 1711              		.loc 1 261 0
+ 1712 0010 FB88     		ldrh	r3, [r7, #6]	@ movhi
+ 1713 0012 DAB2     		uxtb	r2, r3
+ 1714 0014 FB68     		ldr	r3, [r7, #12]
+ 1715 0016 1A70     		strb	r2, [r3]
+ 262:../src/convert.c ****     _p[1] =  0xFF & (v>>8);
+ 1716              		.loc 1 262 0
+ 1717 0018 FB68     		ldr	r3, [r7, #12]
+ 1718 001a 0133     		adds	r3, r3, #1
+ 1719 001c FA88     		ldrh	r2, [r7, #6]
+ 1720 001e 120A     		lsrs	r2, r2, #8
+ 1721 0020 92B2     		uxth	r2, r2
+ 1722 0022 D2B2     		uxtb	r2, r2
+ 1723 0024 1A70     		strb	r2, [r3]
+ 263:../src/convert.c **** 	return _p;
+ 1724              		.loc 1 263 0
+ 1725 0026 FB68     		ldr	r3, [r7, #12]
+ 264:../src/convert.c **** }
+ 1726              		.loc 1 264 0
+ 1727 0028 1846     		mov	r0, r3
+ 1728 002a 1437     		adds	r7, r7, #20
+ 1729              		.cfi_def_cfa_offset 4
+ 1730 002c BD46     		mov	sp, r7
+ 1731              		.cfi_def_cfa_register 13
+ 1732              		@ sp needed
+ 1733 002e 5DF8047B 		ldr	r7, [sp], #4
+ 1734              		.cfi_restore 7
+ 1735              		.cfi_def_cfa_offset 0
+ 1736 0032 7047     		bx	lr
+ 1737              		.cfi_endproc
+ 1738              	.LFE20:
+ 1740              		.section	.text.HX_MSB_W2B,"ax",%progbits
+ 1741              		.align	2
+ 1742              		.global	HX_MSB_W2B
+ 1743              		.thumb
+ 1744              		.thumb_func
+ 1746              	HX_MSB_W2B:
+ 1747              	.LFB21:
+ 265:../src/convert.c **** uint8_t * HX_MSB_W2B(uint16_t v,void *p)
+ 266:../src/convert.c **** {
+ 1748              		.loc 1 266 0
+ 1749              		.cfi_startproc
+ 1750              		@ args = 0, pretend = 0, frame = 16
+ 1751              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1752              		@ link register save eliminated.
+ 1753 0000 80B4     		push	{r7}
+ 1754              		.cfi_def_cfa_offset 4
+ 1755              		.cfi_offset 7, -4
+ 1756 0002 85B0     		sub	sp, sp, #20
+ 1757              		.cfi_def_cfa_offset 24
+ 1758 0004 00AF     		add	r7, sp, #0
+ 1759              		.cfi_def_cfa_register 7
+ 1760 0006 0346     		mov	r3, r0
+ 1761 0008 3960     		str	r1, [r7]
+ 1762 000a FB80     		strh	r3, [r7, #6]	@ movhi
+ 267:../src/convert.c ****     uint8_t *_p = p;
+ 1763              		.loc 1 267 0
+ 1764 000c 3B68     		ldr	r3, [r7]
+ 1765 000e FB60     		str	r3, [r7, #12]
+ 268:../src/convert.c ****     _p[0] =  0xFF & (v>>8);
+ 1766              		.loc 1 268 0
+ 1767 0010 FB88     		ldrh	r3, [r7, #6]
+ 1768 0012 1B0A     		lsrs	r3, r3, #8
+ 1769 0014 9BB2     		uxth	r3, r3
+ 1770 0016 DAB2     		uxtb	r2, r3
+ 1771 0018 FB68     		ldr	r3, [r7, #12]
+ 1772 001a 1A70     		strb	r2, [r3]
+ 269:../src/convert.c ****     _p[1] =  0xFF & (v>>0);
+ 1773              		.loc 1 269 0
+ 1774 001c FB68     		ldr	r3, [r7, #12]
+ 1775 001e 0133     		adds	r3, r3, #1
+ 1776 0020 FA88     		ldrh	r2, [r7, #6]	@ movhi
+ 1777 0022 D2B2     		uxtb	r2, r2
+ 1778 0024 1A70     		strb	r2, [r3]
+ 270:../src/convert.c **** 	return _p;
+ 1779              		.loc 1 270 0
+ 1780 0026 FB68     		ldr	r3, [r7, #12]
+ 271:../src/convert.c **** }
+ 1781              		.loc 1 271 0
+ 1782 0028 1846     		mov	r0, r3
+ 1783 002a 1437     		adds	r7, r7, #20
+ 1784              		.cfi_def_cfa_offset 4
+ 1785 002c BD46     		mov	sp, r7
+ 1786              		.cfi_def_cfa_register 13
+ 1787              		@ sp needed
+ 1788 002e 5DF8047B 		ldr	r7, [sp], #4
+ 1789              		.cfi_restore 7
+ 1790              		.cfi_def_cfa_offset 0
+ 1791 0032 7047     		bx	lr
+ 1792              		.cfi_endproc
+ 1793              	.LFE21:
+ 1795              		.section	.text.HX_MSB_DW2B,"ax",%progbits
+ 1796              		.align	2
+ 1797              		.global	HX_MSB_DW2B
+ 1798              		.thumb
+ 1799              		.thumb_func
+ 1801              	HX_MSB_DW2B:
+ 1802              	.LFB22:
+ 272:../src/convert.c **** uint8_t * HX_MSB_DW2B(uint32_t v,void *p)
+ 273:../src/convert.c **** {
+ 1803              		.loc 1 273 0
+ 1804              		.cfi_startproc
+ 1805              		@ args = 0, pretend = 0, frame = 16
+ 1806              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1807              		@ link register save eliminated.
+ 1808 0000 80B4     		push	{r7}
+ 1809              		.cfi_def_cfa_offset 4
+ 1810              		.cfi_offset 7, -4
+ 1811 0002 85B0     		sub	sp, sp, #20
+ 1812              		.cfi_def_cfa_offset 24
+ 1813 0004 00AF     		add	r7, sp, #0
+ 1814              		.cfi_def_cfa_register 7
+ 1815 0006 7860     		str	r0, [r7, #4]
+ 1816 0008 3960     		str	r1, [r7]
+ 274:../src/convert.c ****     uint8_t *_p = p;
+ 1817              		.loc 1 274 0
+ 1818 000a 3B68     		ldr	r3, [r7]
+ 1819 000c FB60     		str	r3, [r7, #12]
+ 275:../src/convert.c ****     _p[0] =  0xFF & (v>>24);
+ 1820              		.loc 1 275 0
+ 1821 000e 7B68     		ldr	r3, [r7, #4]
+ 1822 0010 1B0E     		lsrs	r3, r3, #24
+ 1823 0012 DAB2     		uxtb	r2, r3
+ 1824 0014 FB68     		ldr	r3, [r7, #12]
+ 1825 0016 1A70     		strb	r2, [r3]
+ 276:../src/convert.c ****     _p[1] =  0xFF & (v>>16);
+ 1826              		.loc 1 276 0
+ 1827 0018 FB68     		ldr	r3, [r7, #12]
+ 1828 001a 0133     		adds	r3, r3, #1
+ 1829 001c 7A68     		ldr	r2, [r7, #4]
+ 1830 001e 120C     		lsrs	r2, r2, #16
+ 1831 0020 D2B2     		uxtb	r2, r2
+ 1832 0022 1A70     		strb	r2, [r3]
+ 277:../src/convert.c ****     _p[2] =  0xFF & (v>>8);
+ 1833              		.loc 1 277 0
+ 1834 0024 FB68     		ldr	r3, [r7, #12]
+ 1835 0026 0233     		adds	r3, r3, #2
+ 1836 0028 7A68     		ldr	r2, [r7, #4]
+ 1837 002a 120A     		lsrs	r2, r2, #8
+ 1838 002c D2B2     		uxtb	r2, r2
+ 1839 002e 1A70     		strb	r2, [r3]
+ 278:../src/convert.c ****     _p[3] =  0xFF & (v>>0);
+ 1840              		.loc 1 278 0
+ 1841 0030 FB68     		ldr	r3, [r7, #12]
+ 1842 0032 0333     		adds	r3, r3, #3
+ 1843 0034 7A68     		ldr	r2, [r7, #4]
+ 1844 0036 D2B2     		uxtb	r2, r2
+ 1845 0038 1A70     		strb	r2, [r3]
+ 279:../src/convert.c **** 	return _p;
+ 1846              		.loc 1 279 0
+ 1847 003a FB68     		ldr	r3, [r7, #12]
+ 280:../src/convert.c **** }
+ 1848              		.loc 1 280 0
+ 1849 003c 1846     		mov	r0, r3
+ 1850 003e 1437     		adds	r7, r7, #20
+ 1851              		.cfi_def_cfa_offset 4
+ 1852 0040 BD46     		mov	sp, r7
+ 1853              		.cfi_def_cfa_register 13
+ 1854              		@ sp needed
+ 1855 0042 5DF8047B 		ldr	r7, [sp], #4
+ 1856              		.cfi_restore 7
+ 1857              		.cfi_def_cfa_offset 0
+ 1858 0046 7047     		bx	lr
+ 1859              		.cfi_endproc
+ 1860              	.LFE22:
+ 1862              		.section	.text.HX_MSB_DW24_2B,"ax",%progbits
+ 1863              		.align	2
+ 1864              		.global	HX_MSB_DW24_2B
+ 1865              		.thumb
+ 1866              		.thumb_func
+ 1868              	HX_MSB_DW24_2B:
+ 1869              	.LFB23:
+ 281:../src/convert.c **** uint8_t * HX_MSB_DW24_2B(uint32_t v,void *p)
+ 282:../src/convert.c **** {
+ 1870              		.loc 1 282 0
+ 1871              		.cfi_startproc
+ 1872              		@ args = 0, pretend = 0, frame = 16
+ 1873              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1874              		@ link register save eliminated.
+ 1875 0000 80B4     		push	{r7}
+ 1876              		.cfi_def_cfa_offset 4
+ 1877              		.cfi_offset 7, -4
+ 1878 0002 85B0     		sub	sp, sp, #20
+ 1879              		.cfi_def_cfa_offset 24
+ 1880 0004 00AF     		add	r7, sp, #0
+ 1881              		.cfi_def_cfa_register 7
+ 1882 0006 7860     		str	r0, [r7, #4]
+ 1883 0008 3960     		str	r1, [r7]
+ 283:../src/convert.c ****     uint8_t *_p = p;
+ 1884              		.loc 1 283 0
+ 1885 000a 3B68     		ldr	r3, [r7]
+ 1886 000c FB60     		str	r3, [r7, #12]
+ 284:../src/convert.c ****     _p[0] =  0xFF & (v>>16);
+ 1887              		.loc 1 284 0
+ 1888 000e 7B68     		ldr	r3, [r7, #4]
+ 1889 0010 1B0C     		lsrs	r3, r3, #16
+ 1890 0012 DAB2     		uxtb	r2, r3
+ 1891 0014 FB68     		ldr	r3, [r7, #12]
+ 1892 0016 1A70     		strb	r2, [r3]
+ 285:../src/convert.c ****     _p[1] =  0xFF & (v>>8);
+ 1893              		.loc 1 285 0
+ 1894 0018 FB68     		ldr	r3, [r7, #12]
+ 1895 001a 0133     		adds	r3, r3, #1
+ 1896 001c 7A68     		ldr	r2, [r7, #4]
+ 1897 001e 120A     		lsrs	r2, r2, #8
+ 1898 0020 D2B2     		uxtb	r2, r2
+ 1899 0022 1A70     		strb	r2, [r3]
+ 286:../src/convert.c ****     _p[2] =  0xFF & (v>>0);
+ 1900              		.loc 1 286 0
+ 1901 0024 FB68     		ldr	r3, [r7, #12]
+ 1902 0026 0233     		adds	r3, r3, #2
+ 1903 0028 7A68     		ldr	r2, [r7, #4]
+ 1904 002a D2B2     		uxtb	r2, r2
+ 1905 002c 1A70     		strb	r2, [r3]
+ 287:../src/convert.c **** 	return _p;
+ 1906              		.loc 1 287 0
+ 1907 002e FB68     		ldr	r3, [r7, #12]
+ 288:../src/convert.c **** }
+ 1908              		.loc 1 288 0
+ 1909 0030 1846     		mov	r0, r3
+ 1910 0032 1437     		adds	r7, r7, #20
+ 1911              		.cfi_def_cfa_offset 4
+ 1912 0034 BD46     		mov	sp, r7
+ 1913              		.cfi_def_cfa_register 13
+ 1914              		@ sp needed
+ 1915 0036 5DF8047B 		ldr	r7, [sp], #4
+ 1916              		.cfi_restore 7
+ 1917              		.cfi_def_cfa_offset 0
+ 1918 003a 7047     		bx	lr
+ 1919              		.cfi_endproc
+ 1920              	.LFE23:
+ 1922              		.section	.text.HX_MSB_QW2B,"ax",%progbits
+ 1923              		.align	2
+ 1924              		.global	HX_MSB_QW2B
+ 1925              		.thumb
+ 1926              		.thumb_func
+ 1928              	HX_MSB_QW2B:
+ 1929              	.LFB24:
+ 289:../src/convert.c **** uint8_t * HX_MSB_QW2B(uint64_t v,void *p)
+ 290:../src/convert.c **** {
+ 1930              		.loc 1 290 0
+ 1931              		.cfi_startproc
+ 1932              		@ args = 0, pretend = 0, frame = 56
+ 1933              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1934              		@ link register save eliminated.
+ 1935 0000 2DE9B00F 		push	{r4, r5, r7, r8, r9, r10, fp}
+ 1936              		.cfi_def_cfa_offset 28
+ 1937              		.cfi_offset 4, -28
+ 1938              		.cfi_offset 5, -24
+ 1939              		.cfi_offset 7, -20
+ 1940              		.cfi_offset 8, -16
+ 1941              		.cfi_offset 9, -12
+ 1942              		.cfi_offset 10, -8
+ 1943              		.cfi_offset 11, -4
+ 1944 0004 8FB0     		sub	sp, sp, #60
+ 1945              		.cfi_def_cfa_offset 88
+ 1946 0006 00AF     		add	r7, sp, #0
+ 1947              		.cfi_def_cfa_register 7
+ 1948 0008 C7E90A01 		strd	r0, [r7, #40]
+ 1949 000c 7A62     		str	r2, [r7, #36]
+ 291:../src/convert.c **** 	uint8_t *_p = p;
+ 1950              		.loc 1 291 0
+ 1951 000e 7B6A     		ldr	r3, [r7, #36]
+ 1952 0010 7B63     		str	r3, [r7, #52]
+ 292:../src/convert.c ****     _p[0] =  0xFF & (v>>56);
+ 1953              		.loc 1 292 0
+ 1954 0012 D7E90A23 		ldrd	r2, [r7, #40]
+ 1955 0016 1B0E     		lsrs	r3, r3, #24
+ 1956 0018 BB61     		str	r3, [r7, #24]
+ 1957 001a 0023     		movs	r3, #0
+ 1958 001c FB61     		str	r3, [r7, #28]
+ 1959 001e 3B7E     		ldrb	r3, [r7, #24]	@ zero_extendqisi2
+ 1960 0020 7A6B     		ldr	r2, [r7, #52]
+ 1961 0022 1370     		strb	r3, [r2]
+ 293:../src/convert.c ****     _p[1] =  0xFF & (v>>48);
+ 1962              		.loc 1 293 0
+ 1963 0024 7B6B     		ldr	r3, [r7, #52]
+ 1964 0026 591C     		adds	r1, r3, #1
+ 1965 0028 D7E90A23 		ldrd	r2, [r7, #40]
+ 1966 002c 1B0C     		lsrs	r3, r3, #16
+ 1967 002e 3B61     		str	r3, [r7, #16]
+ 1968 0030 0023     		movs	r3, #0
+ 1969 0032 7B61     		str	r3, [r7, #20]
+ 1970 0034 3B7C     		ldrb	r3, [r7, #16]	@ zero_extendqisi2
+ 1971 0036 0B70     		strb	r3, [r1]
+ 294:../src/convert.c ****     _p[2] =  0xFF & (v>>40);
+ 1972              		.loc 1 294 0
+ 1973 0038 7B6B     		ldr	r3, [r7, #52]
+ 1974 003a 991C     		adds	r1, r3, #2
+ 1975 003c D7E90A23 		ldrd	r2, [r7, #40]
+ 1976 0040 1B0A     		lsrs	r3, r3, #8
+ 1977 0042 BB60     		str	r3, [r7, #8]
+ 1978 0044 0023     		movs	r3, #0
+ 1979 0046 FB60     		str	r3, [r7, #12]
+ 1980 0048 3B7A     		ldrb	r3, [r7, #8]	@ zero_extendqisi2
+ 1981 004a 0B70     		strb	r3, [r1]
+ 295:../src/convert.c ****     _p[3] =  0xFF & (v>>32);
+ 1982              		.loc 1 295 0
+ 1983 004c 7B6B     		ldr	r3, [r7, #52]
+ 1984 004e D91C     		adds	r1, r3, #3
+ 1985 0050 D7E90A23 		ldrd	r2, [r7, #40]
+ 1986 0054 1B00     		movs	r3, r3
+ 1987 0056 3B60     		str	r3, [r7]
+ 1988 0058 0023     		movs	r3, #0
+ 1989 005a 7B60     		str	r3, [r7, #4]
+ 1990 005c 3B78     		ldrb	r3, [r7]	@ zero_extendqisi2
+ 1991 005e 0B70     		strb	r3, [r1]
+ 296:../src/convert.c ****     _p[4] =  0xFF & (v>>24);
+ 1992              		.loc 1 296 0
+ 1993 0060 7B6B     		ldr	r3, [r7, #52]
+ 1994 0062 191D     		adds	r1, r3, #4
+ 1995 0064 D7E90A23 		ldrd	r2, [r7, #40]
+ 1996 0068 4FEA126A 		lsr	r10, r2, #24
+ 1997 006c 4AEA032A 		orr	r10, r10, r3, lsl #8
+ 1998 0070 4FEA136B 		lsr	fp, r3, #24
+ 1999 0074 5FFA8AF3 		uxtb	r3, r10
+ 2000 0078 0B70     		strb	r3, [r1]
+ 297:../src/convert.c ****     _p[5] =  0xFF & (v>>16);
+ 2001              		.loc 1 297 0
+ 2002 007a 7B6B     		ldr	r3, [r7, #52]
+ 2003 007c 591D     		adds	r1, r3, #5
+ 2004 007e D7E90A23 		ldrd	r2, [r7, #40]
+ 2005 0082 4FEA1248 		lsr	r8, r2, #16
+ 2006 0086 48EA0348 		orr	r8, r8, r3, lsl #16
+ 2007 008a 4FEA1349 		lsr	r9, r3, #16
+ 2008 008e 5FFA88F3 		uxtb	r3, r8
+ 2009 0092 0B70     		strb	r3, [r1]
+ 298:../src/convert.c ****     _p[6] =  0xFF & (v>>8);
+ 2010              		.loc 1 298 0
+ 2011 0094 7B6B     		ldr	r3, [r7, #52]
+ 2012 0096 991D     		adds	r1, r3, #6
+ 2013 0098 D7E90A23 		ldrd	r2, [r7, #40]
+ 2014 009c 140A     		lsrs	r4, r2, #8
+ 2015 009e 44EA0364 		orr	r4, r4, r3, lsl #24
+ 2016 00a2 1D0A     		lsrs	r5, r3, #8
+ 2017 00a4 E3B2     		uxtb	r3, r4
+ 2018 00a6 0B70     		strb	r3, [r1]
+ 299:../src/convert.c ****     _p[7] =  0xFF & (v>>0);
+ 2019              		.loc 1 299 0
+ 2020 00a8 7B6B     		ldr	r3, [r7, #52]
+ 2021 00aa 0733     		adds	r3, r3, #7
+ 2022 00ac 97F82820 		ldrb	r2, [r7, #40]	@ zero_extendqisi2
+ 2023 00b0 1A70     		strb	r2, [r3]
+ 300:../src/convert.c **** 	return _p;
+ 2024              		.loc 1 300 0
+ 2025 00b2 7B6B     		ldr	r3, [r7, #52]
+ 301:../src/convert.c **** }
+ 2026              		.loc 1 301 0
+ 2027 00b4 1846     		mov	r0, r3
+ 2028 00b6 3C37     		adds	r7, r7, #60
+ 2029              		.cfi_def_cfa_offset 28
+ 2030 00b8 BD46     		mov	sp, r7
+ 2031              		.cfi_def_cfa_register 13
+ 2032              		@ sp needed
+ 2033 00ba BDE8B00F 		pop	{r4, r5, r7, r8, r9, r10, fp}
+ 2034              		.cfi_restore 11
+ 2035              		.cfi_restore 10
+ 2036              		.cfi_restore 9
+ 2037              		.cfi_restore 8
+ 2038              		.cfi_restore 7
+ 2039              		.cfi_restore 5
+ 2040              		.cfi_restore 4
+ 2041              		.cfi_def_cfa_offset 0
+ 2042 00be 7047     		bx	lr
+ 2043              		.cfi_endproc
+ 2044              	.LFE24:
+ 2046              		.section	.text.HX_LSB_DW2B,"ax",%progbits
+ 2047              		.align	2
+ 2048              		.global	HX_LSB_DW2B
+ 2049              		.thumb
+ 2050              		.thumb_func
+ 2052              	HX_LSB_DW2B:
+ 2053              	.LFB25:
+ 302:../src/convert.c **** uint8_t * HX_LSB_DW2B(uint32_t v,void *p)
+ 303:../src/convert.c **** {
+ 2054              		.loc 1 303 0
+ 2055              		.cfi_startproc
+ 2056              		@ args = 0, pretend = 0, frame = 16
+ 2057              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2058              		@ link register save eliminated.
+ 2059 0000 80B4     		push	{r7}
+ 2060              		.cfi_def_cfa_offset 4
+ 2061              		.cfi_offset 7, -4
+ 2062 0002 85B0     		sub	sp, sp, #20
+ 2063              		.cfi_def_cfa_offset 24
+ 2064 0004 00AF     		add	r7, sp, #0
+ 2065              		.cfi_def_cfa_register 7
+ 2066 0006 7860     		str	r0, [r7, #4]
+ 2067 0008 3960     		str	r1, [r7]
+ 304:../src/convert.c ****     uint8_t *_p = p;
+ 2068              		.loc 1 304 0
+ 2069 000a 3B68     		ldr	r3, [r7]
+ 2070 000c FB60     		str	r3, [r7, #12]
+ 305:../src/convert.c ****     _p[3] =  0xFF & (v>>24);
+ 2071              		.loc 1 305 0
+ 2072 000e FB68     		ldr	r3, [r7, #12]
+ 2073 0010 0333     		adds	r3, r3, #3
+ 2074 0012 7A68     		ldr	r2, [r7, #4]
+ 2075 0014 120E     		lsrs	r2, r2, #24
+ 2076 0016 D2B2     		uxtb	r2, r2
+ 2077 0018 1A70     		strb	r2, [r3]
+ 306:../src/convert.c ****     _p[2] =  0xFF & (v>>16);
+ 2078              		.loc 1 306 0
+ 2079 001a FB68     		ldr	r3, [r7, #12]
+ 2080 001c 0233     		adds	r3, r3, #2
+ 2081 001e 7A68     		ldr	r2, [r7, #4]
+ 2082 0020 120C     		lsrs	r2, r2, #16
+ 2083 0022 D2B2     		uxtb	r2, r2
+ 2084 0024 1A70     		strb	r2, [r3]
+ 307:../src/convert.c ****     _p[1] =  0xFF & (v>>8);
+ 2085              		.loc 1 307 0
+ 2086 0026 FB68     		ldr	r3, [r7, #12]
+ 2087 0028 0133     		adds	r3, r3, #1
+ 2088 002a 7A68     		ldr	r2, [r7, #4]
+ 2089 002c 120A     		lsrs	r2, r2, #8
+ 2090 002e D2B2     		uxtb	r2, r2
+ 2091 0030 1A70     		strb	r2, [r3]
+ 308:../src/convert.c ****     _p[0] =  0xFF & (v>>0);
+ 2092              		.loc 1 308 0
+ 2093 0032 7B68     		ldr	r3, [r7, #4]
+ 2094 0034 DAB2     		uxtb	r2, r3
+ 2095 0036 FB68     		ldr	r3, [r7, #12]
+ 2096 0038 1A70     		strb	r2, [r3]
+ 309:../src/convert.c **** 	return _p;
+ 2097              		.loc 1 309 0
+ 2098 003a FB68     		ldr	r3, [r7, #12]
+ 310:../src/convert.c **** }
+ 2099              		.loc 1 310 0
+ 2100 003c 1846     		mov	r0, r3
+ 2101 003e 1437     		adds	r7, r7, #20
+ 2102              		.cfi_def_cfa_offset 4
+ 2103 0040 BD46     		mov	sp, r7
+ 2104              		.cfi_def_cfa_register 13
+ 2105              		@ sp needed
+ 2106 0042 5DF8047B 		ldr	r7, [sp], #4
+ 2107              		.cfi_restore 7
+ 2108              		.cfi_def_cfa_offset 0
+ 2109 0046 7047     		bx	lr
+ 2110              		.cfi_endproc
+ 2111              	.LFE25:
+ 2113              		.section	.text.HX_LSB_DW24_2B,"ax",%progbits
+ 2114              		.align	2
+ 2115              		.global	HX_LSB_DW24_2B
+ 2116              		.thumb
+ 2117              		.thumb_func
+ 2119              	HX_LSB_DW24_2B:
+ 2120              	.LFB26:
+ 311:../src/convert.c **** uint8_t * HX_LSB_DW24_2B(uint32_t v,void *p)
+ 312:../src/convert.c **** {
+ 2121              		.loc 1 312 0
+ 2122              		.cfi_startproc
+ 2123              		@ args = 0, pretend = 0, frame = 16
+ 2124              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2125              		@ link register save eliminated.
+ 2126 0000 80B4     		push	{r7}
+ 2127              		.cfi_def_cfa_offset 4
+ 2128              		.cfi_offset 7, -4
+ 2129 0002 85B0     		sub	sp, sp, #20
+ 2130              		.cfi_def_cfa_offset 24
+ 2131 0004 00AF     		add	r7, sp, #0
+ 2132              		.cfi_def_cfa_register 7
+ 2133 0006 7860     		str	r0, [r7, #4]
+ 2134 0008 3960     		str	r1, [r7]
+ 313:../src/convert.c ****     uint8_t *_p = p;
+ 2135              		.loc 1 313 0
+ 2136 000a 3B68     		ldr	r3, [r7]
+ 2137 000c FB60     		str	r3, [r7, #12]
+ 314:../src/convert.c ****     _p[2] =  0xFF & (v>>16);
+ 2138              		.loc 1 314 0
+ 2139 000e FB68     		ldr	r3, [r7, #12]
+ 2140 0010 0233     		adds	r3, r3, #2
+ 2141 0012 7A68     		ldr	r2, [r7, #4]
+ 2142 0014 120C     		lsrs	r2, r2, #16
+ 2143 0016 D2B2     		uxtb	r2, r2
+ 2144 0018 1A70     		strb	r2, [r3]
+ 315:../src/convert.c ****     _p[1] =  0xFF & (v>>8);
+ 2145              		.loc 1 315 0
+ 2146 001a FB68     		ldr	r3, [r7, #12]
+ 2147 001c 0133     		adds	r3, r3, #1
+ 2148 001e 7A68     		ldr	r2, [r7, #4]
+ 2149 0020 120A     		lsrs	r2, r2, #8
+ 2150 0022 D2B2     		uxtb	r2, r2
+ 2151 0024 1A70     		strb	r2, [r3]
+ 316:../src/convert.c ****     _p[0] =  0xFF & (v>>0);
+ 2152              		.loc 1 316 0
+ 2153 0026 7B68     		ldr	r3, [r7, #4]
+ 2154 0028 DAB2     		uxtb	r2, r3
+ 2155 002a FB68     		ldr	r3, [r7, #12]
+ 2156 002c 1A70     		strb	r2, [r3]
+ 317:../src/convert.c **** 	return _p;
+ 2157              		.loc 1 317 0
+ 2158 002e FB68     		ldr	r3, [r7, #12]
+ 318:../src/convert.c **** }
+ 2159              		.loc 1 318 0
+ 2160 0030 1846     		mov	r0, r3
+ 2161 0032 1437     		adds	r7, r7, #20
+ 2162              		.cfi_def_cfa_offset 4
+ 2163 0034 BD46     		mov	sp, r7
+ 2164              		.cfi_def_cfa_register 13
+ 2165              		@ sp needed
+ 2166 0036 5DF8047B 		ldr	r7, [sp], #4
+ 2167              		.cfi_restore 7
+ 2168              		.cfi_def_cfa_offset 0
+ 2169 003a 7047     		bx	lr
+ 2170              		.cfi_endproc
+ 2171              	.LFE26:
+ 2173              		.section	.text.HX_LSB_QW2B,"ax",%progbits
+ 2174              		.align	2
+ 2175              		.global	HX_LSB_QW2B
+ 2176              		.thumb
+ 2177              		.thumb_func
+ 2179              	HX_LSB_QW2B:
+ 2180              	.LFB27:
+ 319:../src/convert.c **** uint8_t *HX_LSB_QW2B(uint64_t v,void *p)
+ 320:../src/convert.c **** {
+ 2181              		.loc 1 320 0
+ 2182              		.cfi_startproc
+ 2183              		@ args = 0, pretend = 0, frame = 56
+ 2184              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2185              		@ link register save eliminated.
+ 2186 0000 2DE9B00F 		push	{r4, r5, r7, r8, r9, r10, fp}
+ 2187              		.cfi_def_cfa_offset 28
+ 2188              		.cfi_offset 4, -28
+ 2189              		.cfi_offset 5, -24
+ 2190              		.cfi_offset 7, -20
+ 2191              		.cfi_offset 8, -16
+ 2192              		.cfi_offset 9, -12
+ 2193              		.cfi_offset 10, -8
+ 2194              		.cfi_offset 11, -4
+ 2195 0004 8FB0     		sub	sp, sp, #60
+ 2196              		.cfi_def_cfa_offset 88
+ 2197 0006 00AF     		add	r7, sp, #0
+ 2198              		.cfi_def_cfa_register 7
+ 2199 0008 C7E90A01 		strd	r0, [r7, #40]
+ 2200 000c 7A62     		str	r2, [r7, #36]
+ 321:../src/convert.c **** 	uint8_t *_p = p;
+ 2201              		.loc 1 321 0
+ 2202 000e 7B6A     		ldr	r3, [r7, #36]
+ 2203 0010 7B63     		str	r3, [r7, #52]
+ 322:../src/convert.c ****     _p[7] =  0xFF & (v>>56);
+ 2204              		.loc 1 322 0
+ 2205 0012 7B6B     		ldr	r3, [r7, #52]
+ 2206 0014 D91D     		adds	r1, r3, #7
+ 2207 0016 D7E90A23 		ldrd	r2, [r7, #40]
+ 2208 001a 1B0E     		lsrs	r3, r3, #24
+ 2209 001c BB61     		str	r3, [r7, #24]
+ 2210 001e 0023     		movs	r3, #0
+ 2211 0020 FB61     		str	r3, [r7, #28]
+ 2212 0022 3B7E     		ldrb	r3, [r7, #24]	@ zero_extendqisi2
+ 2213 0024 0B70     		strb	r3, [r1]
+ 323:../src/convert.c ****     _p[6] =  0xFF & (v>>48);
+ 2214              		.loc 1 323 0
+ 2215 0026 7B6B     		ldr	r3, [r7, #52]
+ 2216 0028 991D     		adds	r1, r3, #6
+ 2217 002a D7E90A23 		ldrd	r2, [r7, #40]
+ 2218 002e 1B0C     		lsrs	r3, r3, #16
+ 2219 0030 3B61     		str	r3, [r7, #16]
+ 2220 0032 0023     		movs	r3, #0
+ 2221 0034 7B61     		str	r3, [r7, #20]
+ 2222 0036 3B7C     		ldrb	r3, [r7, #16]	@ zero_extendqisi2
+ 2223 0038 0B70     		strb	r3, [r1]
+ 324:../src/convert.c ****     _p[5] =  0xFF & (v>>40);
+ 2224              		.loc 1 324 0
+ 2225 003a 7B6B     		ldr	r3, [r7, #52]
+ 2226 003c 591D     		adds	r1, r3, #5
+ 2227 003e D7E90A23 		ldrd	r2, [r7, #40]
+ 2228 0042 1B0A     		lsrs	r3, r3, #8
+ 2229 0044 BB60     		str	r3, [r7, #8]
+ 2230 0046 0023     		movs	r3, #0
+ 2231 0048 FB60     		str	r3, [r7, #12]
+ 2232 004a 3B7A     		ldrb	r3, [r7, #8]	@ zero_extendqisi2
+ 2233 004c 0B70     		strb	r3, [r1]
+ 325:../src/convert.c ****     _p[4] =  0xFF & (v>>32);
+ 2234              		.loc 1 325 0
+ 2235 004e 7B6B     		ldr	r3, [r7, #52]
+ 2236 0050 191D     		adds	r1, r3, #4
+ 2237 0052 D7E90A23 		ldrd	r2, [r7, #40]
+ 2238 0056 1B00     		movs	r3, r3
+ 2239 0058 3B60     		str	r3, [r7]
+ 2240 005a 0023     		movs	r3, #0
+ 2241 005c 7B60     		str	r3, [r7, #4]
+ 2242 005e 3B78     		ldrb	r3, [r7]	@ zero_extendqisi2
+ 2243 0060 0B70     		strb	r3, [r1]
+ 326:../src/convert.c ****     _p[3] =  0xFF & (v>>24);
+ 2244              		.loc 1 326 0
+ 2245 0062 7B6B     		ldr	r3, [r7, #52]
+ 2246 0064 D91C     		adds	r1, r3, #3
+ 2247 0066 D7E90A23 		ldrd	r2, [r7, #40]
+ 2248 006a 4FEA126A 		lsr	r10, r2, #24
+ 2249 006e 4AEA032A 		orr	r10, r10, r3, lsl #8
+ 2250 0072 4FEA136B 		lsr	fp, r3, #24
+ 2251 0076 5FFA8AF3 		uxtb	r3, r10
+ 2252 007a 0B70     		strb	r3, [r1]
+ 327:../src/convert.c ****     _p[2] =  0xFF & (v>>16);
+ 2253              		.loc 1 327 0
+ 2254 007c 7B6B     		ldr	r3, [r7, #52]
+ 2255 007e 991C     		adds	r1, r3, #2
+ 2256 0080 D7E90A23 		ldrd	r2, [r7, #40]
+ 2257 0084 4FEA1248 		lsr	r8, r2, #16
+ 2258 0088 48EA0348 		orr	r8, r8, r3, lsl #16
+ 2259 008c 4FEA1349 		lsr	r9, r3, #16
+ 2260 0090 5FFA88F3 		uxtb	r3, r8
+ 2261 0094 0B70     		strb	r3, [r1]
+ 328:../src/convert.c ****     _p[1] =  0xFF & (v>>8);
+ 2262              		.loc 1 328 0
+ 2263 0096 7B6B     		ldr	r3, [r7, #52]
+ 2264 0098 591C     		adds	r1, r3, #1
+ 2265 009a D7E90A23 		ldrd	r2, [r7, #40]
+ 2266 009e 140A     		lsrs	r4, r2, #8
+ 2267 00a0 44EA0364 		orr	r4, r4, r3, lsl #24
+ 2268 00a4 1D0A     		lsrs	r5, r3, #8
+ 2269 00a6 E3B2     		uxtb	r3, r4
+ 2270 00a8 0B70     		strb	r3, [r1]
+ 329:../src/convert.c ****     _p[0] =  0xFF & (v>>0);
+ 2271              		.loc 1 329 0
+ 2272 00aa 97F82820 		ldrb	r2, [r7, #40]	@ zero_extendqisi2
+ 2273 00ae 7B6B     		ldr	r3, [r7, #52]
+ 2274 00b0 1A70     		strb	r2, [r3]
+ 330:../src/convert.c **** 	return _p;
+ 2275              		.loc 1 330 0
+ 2276 00b2 7B6B     		ldr	r3, [r7, #52]
+ 331:../src/convert.c **** }
+ 2277              		.loc 1 331 0
+ 2278 00b4 1846     		mov	r0, r3
+ 2279 00b6 3C37     		adds	r7, r7, #60
+ 2280              		.cfi_def_cfa_offset 28
+ 2281 00b8 BD46     		mov	sp, r7
+ 2282              		.cfi_def_cfa_register 13
+ 2283              		@ sp needed
+ 2284 00ba BDE8B00F 		pop	{r4, r5, r7, r8, r9, r10, fp}
+ 2285              		.cfi_restore 11
+ 2286              		.cfi_restore 10
+ 2287              		.cfi_restore 9
+ 2288              		.cfi_restore 8
+ 2289              		.cfi_restore 7
+ 2290              		.cfi_restore 5
+ 2291              		.cfi_restore 4
+ 2292              		.cfi_def_cfa_offset 0
+ 2293 00be 7047     		bx	lr
+ 2294              		.cfi_endproc
+ 2295              	.LFE27:
+ 2297              		.section	.text.HX_W_REV,"ax",%progbits
+ 2298              		.align	2
+ 2299              		.global	HX_W_REV
+ 2300              		.thumb
+ 2301              		.thumb_func
+ 2303              	HX_W_REV:
+ 2304              	.LFB28:
+ 332:../src/convert.c **** void HX_W_REV( uint16_t *v)
+ 333:../src/convert.c **** {
+ 2305              		.loc 1 333 0
+ 2306              		.cfi_startproc
+ 2307              		@ args = 0, pretend = 0, frame = 16
+ 2308              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2309 0000 80B5     		push	{r7, lr}
+ 2310              		.cfi_def_cfa_offset 8
+ 2311              		.cfi_offset 7, -8
+ 2312              		.cfi_offset 14, -4
+ 2313 0002 84B0     		sub	sp, sp, #16
+ 2314              		.cfi_def_cfa_offset 24
+ 2315 0004 00AF     		add	r7, sp, #0
+ 2316              		.cfi_def_cfa_register 7
+ 2317 0006 7860     		str	r0, [r7, #4]
+ 334:../src/convert.c **** 	uint8_t buf[2];
+ 335:../src/convert.c **** 	*v = HX_LSB_B2W(HX_MSB_W2B(*v,buf));
+ 2318              		.loc 1 335 0
+ 2319 0008 7B68     		ldr	r3, [r7, #4]
+ 2320 000a 1A88     		ldrh	r2, [r3]
+ 2321 000c 07F10C03 		add	r3, r7, #12
+ 2322 0010 1046     		mov	r0, r2
+ 2323 0012 1946     		mov	r1, r3
+ 2324 0014 FFF7FEFF 		bl	HX_MSB_W2B
+ 2325 0018 0346     		mov	r3, r0
+ 2326 001a 1846     		mov	r0, r3
+ 2327 001c FFF7FEFF 		bl	HX_LSB_B2W
+ 2328 0020 0346     		mov	r3, r0
+ 2329 0022 1A46     		mov	r2, r3
+ 2330 0024 7B68     		ldr	r3, [r7, #4]
+ 2331 0026 1A80     		strh	r2, [r3]	@ movhi
+ 336:../src/convert.c **** }
+ 2332              		.loc 1 336 0
+ 2333 0028 1037     		adds	r7, r7, #16
+ 2334              		.cfi_def_cfa_offset 8
+ 2335 002a BD46     		mov	sp, r7
+ 2336              		.cfi_def_cfa_register 13
+ 2337              		@ sp needed
+ 2338 002c 80BD     		pop	{r7, pc}
+ 2339              		.cfi_endproc
+ 2340              	.LFE28:
+ 2342 002e 00BF     		.section	.text.HX_DW_REV,"ax",%progbits
+ 2343              		.align	2
+ 2344              		.global	HX_DW_REV
+ 2345              		.thumb
+ 2346              		.thumb_func
+ 2348              	HX_DW_REV:
+ 2349              	.LFB29:
+ 337:../src/convert.c **** void HX_DW_REV( uint32_t *v)
+ 338:../src/convert.c **** {
+ 2350              		.loc 1 338 0
+ 2351              		.cfi_startproc
+ 2352              		@ args = 0, pretend = 0, frame = 16
+ 2353              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2354 0000 80B5     		push	{r7, lr}
+ 2355              		.cfi_def_cfa_offset 8
+ 2356              		.cfi_offset 7, -8
+ 2357              		.cfi_offset 14, -4
+ 2358 0002 84B0     		sub	sp, sp, #16
+ 2359              		.cfi_def_cfa_offset 24
+ 2360 0004 00AF     		add	r7, sp, #0
+ 2361              		.cfi_def_cfa_register 7
+ 2362 0006 7860     		str	r0, [r7, #4]
+ 339:../src/convert.c **** 	uint8_t buf[4];
+ 340:../src/convert.c **** 	*v = HX_LSB_B2DW(HX_MSB_DW2B(*v,buf));
+ 2363              		.loc 1 340 0
+ 2364 0008 7B68     		ldr	r3, [r7, #4]
+ 2365 000a 1A68     		ldr	r2, [r3]
+ 2366 000c 07F10C03 		add	r3, r7, #12
+ 2367 0010 1046     		mov	r0, r2
+ 2368 0012 1946     		mov	r1, r3
+ 2369 0014 FFF7FEFF 		bl	HX_MSB_DW2B
+ 2370 0018 0346     		mov	r3, r0
+ 2371 001a 1846     		mov	r0, r3
+ 2372 001c FFF7FEFF 		bl	HX_LSB_B2DW
+ 2373 0020 0246     		mov	r2, r0
+ 2374 0022 7B68     		ldr	r3, [r7, #4]
+ 2375 0024 1A60     		str	r2, [r3]
+ 341:../src/convert.c **** }
+ 2376              		.loc 1 341 0
+ 2377 0026 1037     		adds	r7, r7, #16
+ 2378              		.cfi_def_cfa_offset 8
+ 2379 0028 BD46     		mov	sp, r7
+ 2380              		.cfi_def_cfa_register 13
+ 2381              		@ sp needed
+ 2382 002a 80BD     		pop	{r7, pc}
+ 2383              		.cfi_endproc
+ 2384              	.LFE29:
+ 2386              		.section	.text.HX_QW_REV,"ax",%progbits
+ 2387              		.align	2
+ 2388              		.global	HX_QW_REV
+ 2389              		.thumb
+ 2390              		.thumb_func
+ 2392              	HX_QW_REV:
+ 2393              	.LFB30:
+ 342:../src/convert.c **** void HX_QW_REV( uint64_t *v)
+ 343:../src/convert.c **** {
+ 2394              		.loc 1 343 0
+ 2395              		.cfi_startproc
+ 2396              		@ args = 0, pretend = 0, frame = 16
+ 2397              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2398 0000 90B5     		push	{r4, r7, lr}
+ 2399              		.cfi_def_cfa_offset 12
+ 2400              		.cfi_offset 4, -12
+ 2401              		.cfi_offset 7, -8
+ 2402              		.cfi_offset 14, -4
+ 2403 0002 85B0     		sub	sp, sp, #20
+ 2404              		.cfi_def_cfa_offset 32
+ 2405 0004 00AF     		add	r7, sp, #0
+ 2406              		.cfi_def_cfa_register 7
+ 2407 0006 7860     		str	r0, [r7, #4]
+ 344:../src/convert.c **** 	uint8_t buf[8];
+ 345:../src/convert.c **** 	*v = HX_LSB_B2QW(HX_MSB_QW2B(*v,buf));
+ 2408              		.loc 1 345 0
+ 2409 0008 7B68     		ldr	r3, [r7, #4]
+ 2410 000a D3E90023 		ldrd	r2, [r3]
+ 2411 000e 07F10804 		add	r4, r7, #8
+ 2412 0012 1046     		mov	r0, r2
+ 2413 0014 1946     		mov	r1, r3
+ 2414 0016 2246     		mov	r2, r4
+ 2415 0018 FFF7FEFF 		bl	HX_MSB_QW2B
+ 2416 001c 0346     		mov	r3, r0
+ 2417 001e 1846     		mov	r0, r3
+ 2418 0020 FFF7FEFF 		bl	HX_LSB_B2QW
+ 2419 0024 0246     		mov	r2, r0
+ 2420 0026 0B46     		mov	r3, r1
+ 2421 0028 7968     		ldr	r1, [r7, #4]
+ 2422 002a C1E90023 		strd	r2, [r1]
+ 346:../src/convert.c **** }
+ 2423              		.loc 1 346 0
+ 2424 002e 1437     		adds	r7, r7, #20
+ 2425              		.cfi_def_cfa_offset 12
+ 2426 0030 BD46     		mov	sp, r7
+ 2427              		.cfi_def_cfa_register 13
+ 2428              		@ sp needed
+ 2429 0032 90BD     		pop	{r4, r7, pc}
+ 2430              		.cfi_endproc
+ 2431              	.LFE30:
+ 2433              		.section	.text.HX_W_REV2,"ax",%progbits
+ 2434              		.align	2
+ 2435              		.global	HX_W_REV2
+ 2436              		.thumb
+ 2437              		.thumb_func
+ 2439              	HX_W_REV2:
+ 2440              	.LFB31:
+ 347:../src/convert.c **** uint64_t HX_W_REV2(uint16_t v)
+ 348:../src/convert.c **** {
+ 2441              		.loc 1 348 0
+ 2442              		.cfi_startproc
+ 2443              		@ args = 0, pretend = 0, frame = 16
+ 2444              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2445 0000 80B5     		push	{r7, lr}
+ 2446              		.cfi_def_cfa_offset 8
+ 2447              		.cfi_offset 7, -8
+ 2448              		.cfi_offset 14, -4
+ 2449 0002 84B0     		sub	sp, sp, #16
+ 2450              		.cfi_def_cfa_offset 24
+ 2451 0004 00AF     		add	r7, sp, #0
+ 2452              		.cfi_def_cfa_register 7
+ 2453 0006 0346     		mov	r3, r0
+ 2454 0008 FB80     		strh	r3, [r7, #6]	@ movhi
+ 349:../src/convert.c **** 	uint8_t buf[2];
+ 350:../src/convert.c **** 	return HX_LSB_B2W(HX_MSB_W2B(v,buf));
+ 2455              		.loc 1 350 0
+ 2456 000a FA88     		ldrh	r2, [r7, #6]
+ 2457 000c 07F10C03 		add	r3, r7, #12
+ 2458 0010 1046     		mov	r0, r2
+ 2459 0012 1946     		mov	r1, r3
+ 2460 0014 FFF7FEFF 		bl	HX_MSB_W2B
+ 2461 0018 0346     		mov	r3, r0
+ 2462 001a 1846     		mov	r0, r3
+ 2463 001c FFF7FEFF 		bl	HX_LSB_B2W
+ 2464 0020 0346     		mov	r3, r0
+ 2465 0022 9AB2     		uxth	r2, r3
+ 2466 0024 4FF00003 		mov	r3, #0
+ 351:../src/convert.c **** }
+ 2467              		.loc 1 351 0
+ 2468 0028 1046     		mov	r0, r2
+ 2469 002a 1946     		mov	r1, r3
+ 2470 002c 1037     		adds	r7, r7, #16
+ 2471              		.cfi_def_cfa_offset 8
+ 2472 002e BD46     		mov	sp, r7
+ 2473              		.cfi_def_cfa_register 13
+ 2474              		@ sp needed
+ 2475 0030 80BD     		pop	{r7, pc}
+ 2476              		.cfi_endproc
+ 2477              	.LFE31:
+ 2479 0032 00BF     		.section	.text.HX_DW_REV2,"ax",%progbits
+ 2480              		.align	2
+ 2481              		.global	HX_DW_REV2
+ 2482              		.thumb
+ 2483              		.thumb_func
+ 2485              	HX_DW_REV2:
+ 2486              	.LFB32:
+ 352:../src/convert.c **** uint64_t HX_DW_REV2(uint32_t v)
+ 353:../src/convert.c **** {
+ 2487              		.loc 1 353 0
+ 2488              		.cfi_startproc
+ 2489              		@ args = 0, pretend = 0, frame = 16
+ 2490              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2491 0000 80B5     		push	{r7, lr}
+ 2492              		.cfi_def_cfa_offset 8
+ 2493              		.cfi_offset 7, -8
+ 2494              		.cfi_offset 14, -4
+ 2495 0002 84B0     		sub	sp, sp, #16
+ 2496              		.cfi_def_cfa_offset 24
+ 2497 0004 00AF     		add	r7, sp, #0
+ 2498              		.cfi_def_cfa_register 7
+ 2499 0006 7860     		str	r0, [r7, #4]
+ 354:../src/convert.c **** 	uint8_t buf[4];
+ 355:../src/convert.c **** 	return HX_LSB_B2DW(HX_MSB_DW2B(v,buf));
+ 2500              		.loc 1 355 0
+ 2501 0008 07F10C03 		add	r3, r7, #12
+ 2502 000c 7868     		ldr	r0, [r7, #4]
+ 2503 000e 1946     		mov	r1, r3
+ 2504 0010 FFF7FEFF 		bl	HX_MSB_DW2B
+ 2505 0014 0346     		mov	r3, r0
+ 2506 0016 1846     		mov	r0, r3
+ 2507 0018 FFF7FEFF 		bl	HX_LSB_B2DW
+ 2508 001c 0346     		mov	r3, r0
+ 2509 001e 1A46     		mov	r2, r3
+ 2510 0020 4FF00003 		mov	r3, #0
+ 356:../src/convert.c **** }
+ 2511              		.loc 1 356 0
+ 2512 0024 1046     		mov	r0, r2
+ 2513 0026 1946     		mov	r1, r3
+ 2514 0028 1037     		adds	r7, r7, #16
+ 2515              		.cfi_def_cfa_offset 8
+ 2516 002a BD46     		mov	sp, r7
+ 2517              		.cfi_def_cfa_register 13
+ 2518              		@ sp needed
+ 2519 002c 80BD     		pop	{r7, pc}
+ 2520              		.cfi_endproc
+ 2521              	.LFE32:
+ 2523 002e 00BF     		.section	.text.HX_QW_REV2,"ax",%progbits
+ 2524              		.align	2
+ 2525              		.global	HX_QW_REV2
+ 2526              		.thumb
+ 2527              		.thumb_func
+ 2529              	HX_QW_REV2:
+ 2530              	.LFB33:
+ 357:../src/convert.c **** uint64_t HX_QW_REV2(uint64_t v)
+ 358:../src/convert.c **** {
+ 2531              		.loc 1 358 0
+ 2532              		.cfi_startproc
+ 2533              		@ args = 0, pretend = 0, frame = 16
+ 2534              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2535 0000 80B5     		push	{r7, lr}
+ 2536              		.cfi_def_cfa_offset 8
+ 2537              		.cfi_offset 7, -8
+ 2538              		.cfi_offset 14, -4
+ 2539 0002 84B0     		sub	sp, sp, #16
+ 2540              		.cfi_def_cfa_offset 24
+ 2541 0004 00AF     		add	r7, sp, #0
+ 2542              		.cfi_def_cfa_register 7
+ 2543 0006 C7E90001 		strd	r0, [r7]
+ 359:../src/convert.c **** 	uint8_t buf[8];
+ 360:../src/convert.c **** 	return HX_LSB_B2QW(HX_MSB_QW2B(v,buf));
+ 2544              		.loc 1 360 0
+ 2545 000a 07F10803 		add	r3, r7, #8
+ 2546 000e D7E90001 		ldrd	r0, [r7]
+ 2547 0012 1A46     		mov	r2, r3
+ 2548 0014 FFF7FEFF 		bl	HX_MSB_QW2B
+ 2549 0018 0346     		mov	r3, r0
+ 2550 001a 1846     		mov	r0, r3
+ 2551 001c FFF7FEFF 		bl	HX_LSB_B2QW
+ 2552 0020 0246     		mov	r2, r0
+ 2553 0022 0B46     		mov	r3, r1
+ 361:../src/convert.c **** }
+ 2554              		.loc 1 361 0
+ 2555 0024 1046     		mov	r0, r2
+ 2556 0026 1946     		mov	r1, r3
+ 2557 0028 1037     		adds	r7, r7, #16
+ 2558              		.cfi_def_cfa_offset 8
+ 2559 002a BD46     		mov	sp, r7
+ 2560              		.cfi_def_cfa_register 13
+ 2561              		@ sp needed
+ 2562 002c 80BD     		pop	{r7, pc}
+ 2563              		.cfi_endproc
+ 2564              	.LFE33:
+ 2566 002e 00BF     		.section	.text.make_bcc2,"ax",%progbits
+ 2567              		.align	2
+ 2568              		.global	make_bcc2
+ 2569              		.thumb
+ 2570              		.thumb_func
+ 2572              	make_bcc2:
+ 2573              	.LFB34:
+ 362:../src/convert.c **** uint8_t make_bcc2(uint8_t init, const void *data, int len)
+ 363:../src/convert.c **** {
+ 2574              		.loc 1 363 0
+ 2575              		.cfi_startproc
+ 2576              		@ args = 0, pretend = 0, frame = 32
+ 2577              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2578              		@ link register save eliminated.
+ 2579 0000 80B4     		push	{r7}
+ 2580              		.cfi_def_cfa_offset 4
+ 2581              		.cfi_offset 7, -4
+ 2582 0002 89B0     		sub	sp, sp, #36
+ 2583              		.cfi_def_cfa_offset 40
+ 2584 0004 00AF     		add	r7, sp, #0
+ 2585              		.cfi_def_cfa_register 7
+ 2586 0006 0346     		mov	r3, r0
+ 2587 0008 B960     		str	r1, [r7, #8]
+ 2588 000a 7A60     		str	r2, [r7, #4]
+ 2589 000c FB73     		strb	r3, [r7, #15]
+ 364:../src/convert.c **** 	uint8_t res = init;
+ 2590              		.loc 1 364 0
+ 2591 000e FB7B     		ldrb	r3, [r7, #15]
+ 2592 0010 FB77     		strb	r3, [r7, #31]
+ 365:../src/convert.c **** 	const uint8_t *p = (const uint8_t*)data;
+ 2593              		.loc 1 365 0
+ 2594 0012 BB68     		ldr	r3, [r7, #8]
+ 2595 0014 7B61     		str	r3, [r7, #20]
+ 2596              	.LBB6:
+ 366:../src/convert.c **** 	for(int i=0;i<len;i++){
+ 2597              		.loc 1 366 0
+ 2598 0016 0023     		movs	r3, #0
+ 2599 0018 BB61     		str	r3, [r7, #24]
+ 2600 001a 09E0     		b	.L93
+ 2601              	.L94:
+ 367:../src/convert.c **** 		res ^= p[i];
+ 2602              		.loc 1 367 0 discriminator 3
+ 2603 001c BB69     		ldr	r3, [r7, #24]
+ 2604 001e 7A69     		ldr	r2, [r7, #20]
+ 2605 0020 1344     		add	r3, r3, r2
+ 2606 0022 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 2607 0024 FB7F     		ldrb	r3, [r7, #31]
+ 2608 0026 5340     		eors	r3, r3, r2
+ 2609 0028 FB77     		strb	r3, [r7, #31]
+ 366:../src/convert.c **** 	for(int i=0;i<len;i++){
+ 2610              		.loc 1 366 0 discriminator 3
+ 2611 002a BB69     		ldr	r3, [r7, #24]
+ 2612 002c 0133     		adds	r3, r3, #1
+ 2613 002e BB61     		str	r3, [r7, #24]
+ 2614              	.L93:
+ 366:../src/convert.c **** 	for(int i=0;i<len;i++){
+ 2615              		.loc 1 366 0 is_stmt 0 discriminator 1
+ 2616 0030 BA69     		ldr	r2, [r7, #24]
+ 2617 0032 7B68     		ldr	r3, [r7, #4]
+ 2618 0034 9A42     		cmp	r2, r3
+ 2619 0036 F1DB     		blt	.L94
+ 2620              	.LBE6:
+ 368:../src/convert.c **** 	}
+ 369:../src/convert.c **** 	return res;
+ 2621              		.loc 1 369 0 is_stmt 1
+ 2622 0038 FB7F     		ldrb	r3, [r7, #31]	@ zero_extendqisi2
+ 370:../src/convert.c **** }
+ 2623              		.loc 1 370 0
+ 2624 003a 1846     		mov	r0, r3
+ 2625 003c 2437     		adds	r7, r7, #36
+ 2626              		.cfi_def_cfa_offset 4
+ 2627 003e BD46     		mov	sp, r7
+ 2628              		.cfi_def_cfa_register 13
+ 2629              		@ sp needed
+ 2630 0040 5DF8047B 		ldr	r7, [sp], #4
+ 2631              		.cfi_restore 7
+ 2632              		.cfi_def_cfa_offset 0
+ 2633 0044 7047     		bx	lr
+ 2634              		.cfi_endproc
+ 2635              	.LFE34:
+ 2637 0046 00BF     		.section	.text.make_bcc,"ax",%progbits
+ 2638              		.align	2
+ 2639              		.global	make_bcc
+ 2640              		.thumb
+ 2641              		.thumb_func
+ 2643              	make_bcc:
+ 2644              	.LFB35:
+ 371:../src/convert.c **** uint8_t make_bcc(const void *data, int len)
+ 372:../src/convert.c **** {
+ 2645              		.loc 1 372 0
+ 2646              		.cfi_startproc
+ 2647              		@ args = 0, pretend = 0, frame = 8
+ 2648              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2649 0000 80B5     		push	{r7, lr}
+ 2650              		.cfi_def_cfa_offset 8
+ 2651              		.cfi_offset 7, -8
+ 2652              		.cfi_offset 14, -4
+ 2653 0002 82B0     		sub	sp, sp, #8
+ 2654              		.cfi_def_cfa_offset 16
+ 2655 0004 00AF     		add	r7, sp, #0
+ 2656              		.cfi_def_cfa_register 7
+ 2657 0006 7860     		str	r0, [r7, #4]
+ 2658 0008 3960     		str	r1, [r7]
+ 373:../src/convert.c **** 	return make_bcc2(0,data,len);
+ 2659              		.loc 1 373 0
+ 2660 000a 0020     		movs	r0, #0
+ 2661 000c 7968     		ldr	r1, [r7, #4]
+ 2662 000e 3A68     		ldr	r2, [r7]
+ 2663 0010 FFF7FEFF 		bl	make_bcc2
+ 2664 0014 0346     		mov	r3, r0
+ 374:../src/convert.c **** }
+ 2665              		.loc 1 374 0
+ 2666 0016 1846     		mov	r0, r3
+ 2667 0018 0837     		adds	r7, r7, #8
+ 2668              		.cfi_def_cfa_offset 8
+ 2669 001a BD46     		mov	sp, r7
+ 2670              		.cfi_def_cfa_register 13
+ 2671              		@ sp needed
+ 2672 001c 80BD     		pop	{r7, pc}
+ 2673              		.cfi_endproc
+ 2674              	.LFE35:
+ 2676 001e 00BF     		.section	.text.make_sum2,"ax",%progbits
+ 2677              		.align	2
+ 2678              		.global	make_sum2
+ 2679              		.thumb
+ 2680              		.thumb_func
+ 2682              	make_sum2:
+ 2683              	.LFB36:
+ 375:../src/convert.c **** uint8_t make_sum2(uint8_t init,const void *buf, int len)
+ 376:../src/convert.c **** {
+ 2684              		.loc 1 376 0
+ 2685              		.cfi_startproc
+ 2686              		@ args = 0, pretend = 0, frame = 32
+ 2687              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2688              		@ link register save eliminated.
+ 2689 0000 80B4     		push	{r7}
+ 2690              		.cfi_def_cfa_offset 4
+ 2691              		.cfi_offset 7, -4
+ 2692 0002 89B0     		sub	sp, sp, #36
+ 2693              		.cfi_def_cfa_offset 40
+ 2694 0004 00AF     		add	r7, sp, #0
+ 2695              		.cfi_def_cfa_register 7
+ 2696 0006 0346     		mov	r3, r0
+ 2697 0008 B960     		str	r1, [r7, #8]
+ 2698 000a 7A60     		str	r2, [r7, #4]
+ 2699 000c FB73     		strb	r3, [r7, #15]
+ 377:../src/convert.c **** 	const uint8_t *p = buf;
+ 2700              		.loc 1 377 0
+ 2701 000e BB68     		ldr	r3, [r7, #8]
+ 2702 0010 7B61     		str	r3, [r7, #20]
+ 378:../src/convert.c **** 	uint8_t res = init;
+ 2703              		.loc 1 378 0
+ 2704 0012 FB7B     		ldrb	r3, [r7, #15]
+ 2705 0014 FB77     		strb	r3, [r7, #31]
+ 2706              	.LBB7:
+ 379:../src/convert.c **** 	for(int i=0;i<len;i++){
+ 2707              		.loc 1 379 0
+ 2708 0016 0023     		movs	r3, #0
+ 2709 0018 BB61     		str	r3, [r7, #24]
+ 2710 001a 09E0     		b	.L99
+ 2711              	.L100:
+ 380:../src/convert.c **** 		res += p[i];
+ 2712              		.loc 1 380 0 discriminator 3
+ 2713 001c BB69     		ldr	r3, [r7, #24]
+ 2714 001e 7A69     		ldr	r2, [r7, #20]
+ 2715 0020 1344     		add	r3, r3, r2
+ 2716 0022 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 2717 0024 FB7F     		ldrb	r3, [r7, #31]
+ 2718 0026 1344     		add	r3, r3, r2
+ 2719 0028 FB77     		strb	r3, [r7, #31]
+ 379:../src/convert.c **** 	for(int i=0;i<len;i++){
+ 2720              		.loc 1 379 0 discriminator 3
+ 2721 002a BB69     		ldr	r3, [r7, #24]
+ 2722 002c 0133     		adds	r3, r3, #1
+ 2723 002e BB61     		str	r3, [r7, #24]
+ 2724              	.L99:
+ 379:../src/convert.c **** 	for(int i=0;i<len;i++){
+ 2725              		.loc 1 379 0 is_stmt 0 discriminator 1
+ 2726 0030 BA69     		ldr	r2, [r7, #24]
+ 2727 0032 7B68     		ldr	r3, [r7, #4]
+ 2728 0034 9A42     		cmp	r2, r3
+ 2729 0036 F1DB     		blt	.L100
+ 2730              	.LBE7:
+ 381:../src/convert.c **** 	}
+ 382:../src/convert.c **** 	return res;
+ 2731              		.loc 1 382 0 is_stmt 1
+ 2732 0038 FB7F     		ldrb	r3, [r7, #31]	@ zero_extendqisi2
+ 383:../src/convert.c **** }
+ 2733              		.loc 1 383 0
+ 2734 003a 1846     		mov	r0, r3
+ 2735 003c 2437     		adds	r7, r7, #36
+ 2736              		.cfi_def_cfa_offset 4
+ 2737 003e BD46     		mov	sp, r7
+ 2738              		.cfi_def_cfa_register 13
+ 2739              		@ sp needed
+ 2740 0040 5DF8047B 		ldr	r7, [sp], #4
+ 2741              		.cfi_restore 7
+ 2742              		.cfi_def_cfa_offset 0
+ 2743 0044 7047     		bx	lr
+ 2744              		.cfi_endproc
+ 2745              	.LFE36:
+ 2747 0046 00BF     		.section	.text.make_sum,"ax",%progbits
+ 2748              		.align	2
+ 2749              		.global	make_sum
+ 2750              		.thumb
+ 2751              		.thumb_func
+ 2753              	make_sum:
+ 2754              	.LFB37:
+ 384:../src/convert.c **** uint8_t make_sum(const void *buf, int len)
+ 385:../src/convert.c **** {
+ 2755              		.loc 1 385 0
+ 2756              		.cfi_startproc
+ 2757              		@ args = 0, pretend = 0, frame = 8
+ 2758              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2759 0000 80B5     		push	{r7, lr}
+ 2760              		.cfi_def_cfa_offset 8
+ 2761              		.cfi_offset 7, -8
+ 2762              		.cfi_offset 14, -4
+ 2763 0002 82B0     		sub	sp, sp, #8
+ 2764              		.cfi_def_cfa_offset 16
+ 2765 0004 00AF     		add	r7, sp, #0
+ 2766              		.cfi_def_cfa_register 7
+ 2767 0006 7860     		str	r0, [r7, #4]
+ 2768 0008 3960     		str	r1, [r7]
+ 386:../src/convert.c **** 	return make_sum2(0,buf,len);
+ 2769              		.loc 1 386 0
+ 2770 000a 0020     		movs	r0, #0
+ 2771 000c 7968     		ldr	r1, [r7, #4]
+ 2772 000e 3A68     		ldr	r2, [r7]
+ 2773 0010 FFF7FEFF 		bl	make_sum2
+ 2774 0014 0346     		mov	r3, r0
+ 387:../src/convert.c **** }
+ 2775              		.loc 1 387 0
+ 2776 0016 1846     		mov	r0, r3
+ 2777 0018 0837     		adds	r7, r7, #8
+ 2778              		.cfi_def_cfa_offset 8
+ 2779 001a BD46     		mov	sp, r7
+ 2780              		.cfi_def_cfa_register 13
+ 2781              		@ sp needed
+ 2782 001c 80BD     		pop	{r7, pc}
+ 2783              		.cfi_endproc
+ 2784              	.LFE37:
+ 2786 001e 00BF     		.section	.text.pk_fill,"ax",%progbits
+ 2787              		.align	2
+ 2788              		.global	pk_fill
+ 2789              		.thumb
+ 2790              		.thumb_func
+ 2792              	pk_fill:
+ 2793              	.LFB38:
+ 388:../src/convert.c **** 
+ 389:../src/convert.c **** 
+ 390:../src/convert.c **** void* pk_fill(void *to, int len, int d)
+ 391:../src/convert.c **** {
+ 2794              		.loc 1 391 0
+ 2795              		.cfi_startproc
+ 2796              		@ args = 0, pretend = 0, frame = 24
+ 2797              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2798 0000 80B5     		push	{r7, lr}
+ 2799              		.cfi_def_cfa_offset 8
+ 2800              		.cfi_offset 7, -8
+ 2801              		.cfi_offset 14, -4
+ 2802 0002 86B0     		sub	sp, sp, #24
+ 2803              		.cfi_def_cfa_offset 32
+ 2804 0004 00AF     		add	r7, sp, #0
+ 2805              		.cfi_def_cfa_register 7
+ 2806 0006 F860     		str	r0, [r7, #12]
+ 2807 0008 B960     		str	r1, [r7, #8]
+ 2808 000a 7A60     		str	r2, [r7, #4]
+ 392:../src/convert.c ****     char *res = memset(to,d,len);
+ 2809              		.loc 1 392 0
+ 2810 000c BB68     		ldr	r3, [r7, #8]
+ 2811 000e F868     		ldr	r0, [r7, #12]
+ 2812 0010 7968     		ldr	r1, [r7, #4]
+ 2813 0012 1A46     		mov	r2, r3
+ 2814 0014 FFF7FEFF 		bl	memset
+ 2815 0018 7861     		str	r0, [r7, #20]
+ 393:../src/convert.c ****     return res + len;
+ 2816              		.loc 1 393 0
+ 2817 001a BB68     		ldr	r3, [r7, #8]
+ 2818 001c 7A69     		ldr	r2, [r7, #20]
+ 2819 001e 1344     		add	r3, r3, r2
+ 394:../src/convert.c **** }
+ 2820              		.loc 1 394 0
+ 2821 0020 1846     		mov	r0, r3
+ 2822 0022 1837     		adds	r7, r7, #24
+ 2823              		.cfi_def_cfa_offset 8
+ 2824 0024 BD46     		mov	sp, r7
+ 2825              		.cfi_def_cfa_register 13
+ 2826              		@ sp needed
+ 2827 0026 80BD     		pop	{r7, pc}
+ 2828              		.cfi_endproc
+ 2829              	.LFE38:
+ 2831              		.section	.text.pk_add,"ax",%progbits
+ 2832              		.align	2
+ 2833              		.global	pk_add
+ 2834              		.thumb
+ 2835              		.thumb_func
+ 2837              	pk_add:
+ 2838              	.LFB39:
+ 395:../src/convert.c **** void* pk_add(void *to, int len, const void *from)
+ 396:../src/convert.c **** {
+ 2839              		.loc 1 396 0
+ 2840              		.cfi_startproc
+ 2841              		@ args = 0, pretend = 0, frame = 24
+ 2842              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2843 0000 80B5     		push	{r7, lr}
+ 2844              		.cfi_def_cfa_offset 8
+ 2845              		.cfi_offset 7, -8
+ 2846              		.cfi_offset 14, -4
+ 2847 0002 86B0     		sub	sp, sp, #24
+ 2848              		.cfi_def_cfa_offset 32
+ 2849 0004 00AF     		add	r7, sp, #0
+ 2850              		.cfi_def_cfa_register 7
+ 2851 0006 F860     		str	r0, [r7, #12]
+ 2852 0008 B960     		str	r1, [r7, #8]
+ 2853 000a 7A60     		str	r2, [r7, #4]
+ 397:../src/convert.c ****     char *res = (char*)memcpy(to,from,len);
+ 2854              		.loc 1 397 0
+ 2855 000c BB68     		ldr	r3, [r7, #8]
+ 2856 000e F868     		ldr	r0, [r7, #12]
+ 2857 0010 7968     		ldr	r1, [r7, #4]
+ 2858 0012 1A46     		mov	r2, r3
+ 2859 0014 FFF7FEFF 		bl	memcpy
+ 2860 0018 7861     		str	r0, [r7, #20]
+ 398:../src/convert.c ****     return res + len;
+ 2861              		.loc 1 398 0
+ 2862 001a BB68     		ldr	r3, [r7, #8]
+ 2863 001c 7A69     		ldr	r2, [r7, #20]
+ 2864 001e 1344     		add	r3, r3, r2
+ 399:../src/convert.c **** }
+ 2865              		.loc 1 399 0
+ 2866 0020 1846     		mov	r0, r3
+ 2867 0022 1837     		adds	r7, r7, #24
+ 2868              		.cfi_def_cfa_offset 8
+ 2869 0024 BD46     		mov	sp, r7
+ 2870              		.cfi_def_cfa_register 13
+ 2871              		@ sp needed
+ 2872 0026 80BD     		pop	{r7, pc}
+ 2873              		.cfi_endproc
+ 2874              	.LFE39:
+ 2876              		.section	.text.pk_get,"ax",%progbits
+ 2877              		.align	2
+ 2878              		.global	pk_get
+ 2879              		.thumb
+ 2880              		.thumb_func
+ 2882              	pk_get:
+ 2883              	.LFB40:
+ 400:../src/convert.c **** void* pk_get(void*from,int len,void* to)
+ 401:../src/convert.c **** {
+ 2884              		.loc 1 401 0
+ 2885              		.cfi_startproc
+ 2886              		@ args = 0, pretend = 0, frame = 24
+ 2887              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2888 0000 80B5     		push	{r7, lr}
+ 2889              		.cfi_def_cfa_offset 8
+ 2890              		.cfi_offset 7, -8
+ 2891              		.cfi_offset 14, -4
+ 2892 0002 86B0     		sub	sp, sp, #24
+ 2893              		.cfi_def_cfa_offset 32
+ 2894 0004 00AF     		add	r7, sp, #0
+ 2895              		.cfi_def_cfa_register 7
+ 2896 0006 F860     		str	r0, [r7, #12]
+ 2897 0008 B960     		str	r1, [r7, #8]
+ 2898 000a 7A60     		str	r2, [r7, #4]
+ 402:../src/convert.c ****     char *res = (char*)from;
+ 2899              		.loc 1 402 0
+ 2900 000c FB68     		ldr	r3, [r7, #12]
+ 2901 000e 7B61     		str	r3, [r7, #20]
+ 403:../src/convert.c ****     memcpy(to,from,len);
+ 2902              		.loc 1 403 0
+ 2903 0010 BB68     		ldr	r3, [r7, #8]
+ 2904 0012 7868     		ldr	r0, [r7, #4]
+ 2905 0014 F968     		ldr	r1, [r7, #12]
+ 2906 0016 1A46     		mov	r2, r3
+ 2907 0018 FFF7FEFF 		bl	memcpy
+ 404:../src/convert.c ****     return  res + len;
+ 2908              		.loc 1 404 0
+ 2909 001c BB68     		ldr	r3, [r7, #8]
+ 2910 001e 7A69     		ldr	r2, [r7, #20]
+ 2911 0020 1344     		add	r3, r3, r2
+ 405:../src/convert.c **** }
+ 2912              		.loc 1 405 0
+ 2913 0022 1846     		mov	r0, r3
+ 2914 0024 1837     		adds	r7, r7, #24
+ 2915              		.cfi_def_cfa_offset 8
+ 2916 0026 BD46     		mov	sp, r7
+ 2917              		.cfi_def_cfa_register 13
+ 2918              		@ sp needed
+ 2919 0028 80BD     		pop	{r7, pc}
+ 2920              		.cfi_endproc
+ 2921              	.LFE40:
+ 2923 002a 00BF     		.section	.rodata
+ 2924              		.align	2
+ 2925              	.LC0:
+ 2926 0004 1F000000 		.word	31
+ 2927 0008 3B000000 		.word	59
+ 2928 000c 5A000000 		.word	90
+ 2929 0010 78000000 		.word	120
+ 2930 0014 97000000 		.word	151
+ 2931 0018 B5000000 		.word	181
+ 2932 001c D4000000 		.word	212
+ 2933 0020 F3000000 		.word	243
+ 2934 0024 11010000 		.word	273
+ 2935 0028 30010000 		.word	304
+ 2936 002c 4E010000 		.word	334
+ 2937 0030 6D010000 		.word	365
+ 2938              		.section	.text.ymd2days,"ax",%progbits
+ 2939              		.align	2
+ 2940              		.global	ymd2days
+ 2941              		.thumb
+ 2942              		.thumb_func
+ 2944              	ymd2days:
+ 2945              	.LFB41:
+ 406:../src/convert.c **** 
+ 407:../src/convert.c **** 
+ 408:../src/convert.c **** //------------------------------------------------------------------------------
+ 409:../src/convert.c **** int ymd2days(int y,int m,int d)
+ 410:../src/convert.c **** {
+ 2946              		.loc 1 410 0
+ 2947              		.cfi_startproc
+ 2948              		@ args = 0, pretend = 0, frame = 72
+ 2949              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2950              		@ link register save eliminated.
+ 2951 0000 B0B4     		push	{r4, r5, r7}
+ 2952              		.cfi_def_cfa_offset 12
+ 2953              		.cfi_offset 4, -12
+ 2954              		.cfi_offset 5, -8
+ 2955              		.cfi_offset 7, -4
+ 2956 0002 93B0     		sub	sp, sp, #76
+ 2957              		.cfi_def_cfa_offset 88
+ 2958 0004 00AF     		add	r7, sp, #0
+ 2959              		.cfi_def_cfa_register 7
+ 2960 0006 F860     		str	r0, [r7, #12]
+ 2961 0008 B960     		str	r1, [r7, #8]
+ 2962 000a 7A60     		str	r2, [r7, #4]
+ 411:../src/convert.c **** 	const int tbl[] = {
+ 2963              		.loc 1 411 0
+ 2964 000c 1A4B     		ldr	r3, .L114
+ 2965 000e 07F11404 		add	r4, r7, #20
+ 2966 0012 1D46     		mov	r5, r3
+ 2967 0014 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 2968 0016 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+ 2969 0018 0FCD     		ldmia	r5!, {r0, r1, r2, r3}
+ 2970 001a 0FC4     		stmia	r4!, {r0, r1, r2, r3}
+ 2971 001c 95E80F00 		ldmia	r5, {r0, r1, r2, r3}
+ 2972 0020 84E80F00 		stmia	r4, {r0, r1, r2, r3}
+ 412:../src/convert.c **** 		31,
+ 413:../src/convert.c **** 		31+28,
+ 414:../src/convert.c **** 		31+28+31,
+ 415:../src/convert.c **** 		31+28+31+30,
+ 416:../src/convert.c **** 		31+28+31+30+31,
+ 417:../src/convert.c **** 		31+28+31+30+31+30,
+ 418:../src/convert.c **** 		31+28+31+30+31+30+31,
+ 419:../src/convert.c **** 		31+28+31+30+31+30+31+31,
+ 420:../src/convert.c **** 		31+28+31+30+31+30+31+31+30,
+ 421:../src/convert.c **** 		31+28+31+30+31+30+31+31+30+31,
+ 422:../src/convert.c **** 		31+28+31+30+31+30+31+31+30+31+30,
+ 423:../src/convert.c **** 		31+28+31+30+31+30+31+31+30+31+30+31,
+ 424:../src/convert.c **** 	};
+ 425:../src/convert.c **** 	//if(y>1970)
+ 426:../src/convert.c **** 		y-=1970;
+ 2973              		.loc 1 426 0
+ 2974 0024 FB68     		ldr	r3, [r7, #12]
+ 2975 0026 A3F2B273 		subw	r3, r3, #1970
+ 2976 002a FB60     		str	r3, [r7, #12]
+ 427:../src/convert.c **** 	int f = y%4?0:1;
+ 2977              		.loc 1 427 0
+ 2978 002c FB68     		ldr	r3, [r7, #12]
+ 2979 002e 03F00303 		and	r3, r3, #3
+ 2980 0032 002B     		cmp	r3, #0
+ 2981 0034 0CBF     		ite	eq
+ 2982 0036 0123     		moveq	r3, #1
+ 2983 0038 0023     		movne	r3, #0
+ 2984 003a DBB2     		uxtb	r3, r3
+ 2985 003c 7B64     		str	r3, [r7, #68]
+ 428:../src/convert.c **** 	return (y * (365+f)) + (tbl[m]+(m>2?f:0)) + d;
+ 2986              		.loc 1 428 0
+ 2987 003e 7B6C     		ldr	r3, [r7, #68]
+ 2988 0040 03F26D13 		addw	r3, r3, #365
+ 2989 0044 FA68     		ldr	r2, [r7, #12]
+ 2990 0046 02FB03F2 		mul	r2, r2, r3
+ 2991 004a BB68     		ldr	r3, [r7, #8]
+ 2992 004c 9B00     		lsls	r3, r3, #2
+ 2993 004e 07F14801 		add	r1, r7, #72
+ 2994 0052 0B44     		add	r3, r3, r1
+ 2995 0054 53F8341C 		ldr	r1, [r3, #-52]
+ 2996 0058 BB68     		ldr	r3, [r7, #8]
+ 2997 005a 022B     		cmp	r3, #2
+ 2998 005c 01DD     		ble	.L111
+ 2999              		.loc 1 428 0 is_stmt 0 discriminator 1
+ 3000 005e 7B6C     		ldr	r3, [r7, #68]
+ 3001 0060 00E0     		b	.L112
+ 3002              	.L111:
+ 3003              		.loc 1 428 0 discriminator 2
+ 3004 0062 0023     		movs	r3, #0
+ 3005              	.L112:
+ 3006              		.loc 1 428 0 discriminator 4
+ 3007 0064 0B44     		add	r3, r3, r1
+ 3008 0066 1A44     		add	r2, r2, r3
+ 3009 0068 7B68     		ldr	r3, [r7, #4]
+ 3010 006a 1344     		add	r3, r3, r2
+ 429:../src/convert.c **** 
+ 430:../src/convert.c **** }
+ 3011              		.loc 1 430 0 is_stmt 1 discriminator 4
+ 3012 006c 1846     		mov	r0, r3
+ 3013 006e 4C37     		adds	r7, r7, #76
+ 3014              		.cfi_def_cfa_offset 12
+ 3015 0070 BD46     		mov	sp, r7
+ 3016              		.cfi_def_cfa_register 13
+ 3017              		@ sp needed
+ 3018 0072 B0BC     		pop	{r4, r5, r7}
+ 3019              		.cfi_restore 7
+ 3020              		.cfi_restore 5
+ 3021              		.cfi_restore 4
+ 3022              		.cfi_def_cfa_offset 0
+ 3023 0074 7047     		bx	lr
+ 3024              	.L115:
+ 3025 0076 00BF     		.align	2
+ 3026              	.L114:
+ 3027 0078 04000000 		.word	.LC0
+ 3028              		.cfi_endproc
+ 3029              	.LFE41:
+ 3031              		.section	.text.ymdhms2sec,"ax",%progbits
+ 3032              		.align	2
+ 3033              		.global	ymdhms2sec
+ 3034              		.thumb
+ 3035              		.thumb_func
+ 3037              	ymdhms2sec:
+ 3038              	.LFB42:
+ 431:../src/convert.c **** long long ymdhms2sec(int y,int m,int d,int H,int M,int S)
+ 432:../src/convert.c **** {
+ 3039              		.loc 1 432 0
+ 3040              		.cfi_startproc
+ 3041              		@ args = 8, pretend = 0, frame = 24
+ 3042              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3043 0000 80B5     		push	{r7, lr}
+ 3044              		.cfi_def_cfa_offset 8
+ 3045              		.cfi_offset 7, -8
+ 3046              		.cfi_offset 14, -4
+ 3047 0002 86B0     		sub	sp, sp, #24
+ 3048              		.cfi_def_cfa_offset 32
+ 3049 0004 00AF     		add	r7, sp, #0
+ 3050              		.cfi_def_cfa_register 7
+ 3051 0006 F860     		str	r0, [r7, #12]
+ 3052 0008 B960     		str	r1, [r7, #8]
+ 3053 000a 7A60     		str	r2, [r7, #4]
+ 3054 000c 3B60     		str	r3, [r7]
+ 433:../src/convert.c **** 	int ds = ymd2days(y,m,d);
+ 3055              		.loc 1 433 0
+ 3056 000e F868     		ldr	r0, [r7, #12]
+ 3057 0010 B968     		ldr	r1, [r7, #8]
+ 3058 0012 7A68     		ldr	r2, [r7, #4]
+ 3059 0014 FFF7FEFF 		bl	ymd2days
+ 3060 0018 7861     		str	r0, [r7, #20]
+ 434:../src/convert.c **** 	return ds*3600*24+H*3600+M*60+S;
+ 3061              		.loc 1 434 0
+ 3062 001a 7B69     		ldr	r3, [r7, #20]
+ 3063 001c 0C4A     		ldr	r2, .L118
+ 3064 001e 02FB03F2 		mul	r2, r2, r3
+ 3065 0022 3B68     		ldr	r3, [r7]
+ 3066 0024 4FF46161 		mov	r1, #3600
+ 3067 0028 01FB03F3 		mul	r3, r1, r3
+ 3068 002c D118     		adds	r1, r2, r3
+ 3069 002e 3A6A     		ldr	r2, [r7, #32]
+ 3070 0030 1346     		mov	r3, r2
+ 3071 0032 1B01     		lsls	r3, r3, #4
+ 3072 0034 9B1A     		subs	r3, r3, r2
+ 3073 0036 9B00     		lsls	r3, r3, #2
+ 3074 0038 CA18     		adds	r2, r1, r3
+ 3075 003a 7B6A     		ldr	r3, [r7, #36]
+ 3076 003c 1344     		add	r3, r3, r2
+ 3077 003e 1A46     		mov	r2, r3
+ 3078 0040 4FEAE273 		asr	r3, r2, #31
+ 435:../src/convert.c **** }
+ 3079              		.loc 1 435 0
+ 3080 0044 1046     		mov	r0, r2
+ 3081 0046 1946     		mov	r1, r3
+ 3082 0048 1837     		adds	r7, r7, #24
+ 3083              		.cfi_def_cfa_offset 8
+ 3084 004a BD46     		mov	sp, r7
+ 3085              		.cfi_def_cfa_register 13
+ 3086              		@ sp needed
+ 3087 004c 80BD     		pop	{r7, pc}
+ 3088              	.L119:
+ 3089 004e 00BF     		.align	2
+ 3090              	.L118:
+ 3091 0050 80510100 		.word	86400
+ 3092              		.cfi_endproc
+ 3093              	.LFE42:
+ 3095              		.section	.text.ymdbcd2days,"ax",%progbits
+ 3096              		.align	2
+ 3097              		.global	ymdbcd2days
+ 3098              		.thumb
+ 3099              		.thumb_func
+ 3101              	ymdbcd2days:
+ 3102              	.LFB43:
+ 436:../src/convert.c **** 
+ 437:../src/convert.c **** int ymdbcd2days(uint8_t *yyyymmdd)
+ 438:../src/convert.c **** {
+ 3103              		.loc 1 438 0
+ 3104              		.cfi_startproc
+ 3105              		@ args = 0, pretend = 0, frame = 8
+ 3106              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3107 0000 B0B5     		push	{r4, r5, r7, lr}
+ 3108              		.cfi_def_cfa_offset 16
+ 3109              		.cfi_offset 4, -16
+ 3110              		.cfi_offset 5, -12
+ 3111              		.cfi_offset 7, -8
+ 3112              		.cfi_offset 14, -4
+ 3113 0002 82B0     		sub	sp, sp, #8
+ 3114              		.cfi_def_cfa_offset 24
+ 3115 0004 00AF     		add	r7, sp, #0
+ 3116              		.cfi_def_cfa_register 7
+ 3117 0006 7860     		str	r0, [r7, #4]
+ 439:../src/convert.c **** 	return ymd2days(
+ 440:../src/convert.c **** 			bcd2int(yyyymmdd[0])*100+bcd2int(yyyymmdd[1]),
+ 3118              		.loc 1 440 0
+ 3119 0008 7B68     		ldr	r3, [r7, #4]
+ 3120 000a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 3121 000c 1846     		mov	r0, r3
+ 3122 000e FFF7FEFF 		bl	bcd2int
+ 3123 0012 0246     		mov	r2, r0
+ 3124 0014 6423     		movs	r3, #100
+ 3125 0016 03FB02F4 		mul	r4, r3, r2
+ 3126 001a 7B68     		ldr	r3, [r7, #4]
+ 3127 001c 0133     		adds	r3, r3, #1
+ 3128 001e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 3129 0020 1846     		mov	r0, r3
+ 3130 0022 FFF7FEFF 		bl	bcd2int
+ 3131 0026 0346     		mov	r3, r0
+ 439:../src/convert.c **** 	return ymd2days(
+ 3132              		.loc 1 439 0
+ 3133 0028 1C44     		add	r4, r4, r3
+ 441:../src/convert.c **** 			bcd2int(yyyymmdd[2]),
+ 3134              		.loc 1 441 0
+ 3135 002a 7B68     		ldr	r3, [r7, #4]
+ 3136 002c 0233     		adds	r3, r3, #2
+ 439:../src/convert.c **** 	return ymd2days(
+ 3137              		.loc 1 439 0
+ 3138 002e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 3139 0030 1846     		mov	r0, r3
+ 3140 0032 FFF7FEFF 		bl	bcd2int
+ 3141 0036 0546     		mov	r5, r0
+ 442:../src/convert.c **** 			bcd2int(yyyymmdd[3])
+ 3142              		.loc 1 442 0
+ 3143 0038 7B68     		ldr	r3, [r7, #4]
+ 3144 003a 0333     		adds	r3, r3, #3
+ 439:../src/convert.c **** 	return ymd2days(
+ 3145              		.loc 1 439 0
+ 3146 003c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 3147 003e 1846     		mov	r0, r3
+ 3148 0040 FFF7FEFF 		bl	bcd2int
+ 3149 0044 0346     		mov	r3, r0
+ 3150 0046 2046     		mov	r0, r4
+ 3151 0048 2946     		mov	r1, r5
+ 3152 004a 1A46     		mov	r2, r3
+ 3153 004c FFF7FEFF 		bl	ymd2days
+ 3154 0050 0346     		mov	r3, r0
+ 443:../src/convert.c **** 	);
+ 444:../src/convert.c **** }
+ 3155              		.loc 1 444 0
+ 3156 0052 1846     		mov	r0, r3
+ 3157 0054 0837     		adds	r7, r7, #8
+ 3158              		.cfi_def_cfa_offset 16
+ 3159 0056 BD46     		mov	sp, r7
+ 3160              		.cfi_def_cfa_register 13
+ 3161              		@ sp needed
+ 3162 0058 B0BD     		pop	{r4, r5, r7, pc}
+ 3163              		.cfi_endproc
+ 3164              	.LFE43:
+ 3166 005a 00BF     		.section	.text.ymdhmsbcd2sec,"ax",%progbits
+ 3167              		.align	2
+ 3168              		.global	ymdhmsbcd2sec
+ 3169              		.thumb
+ 3170              		.thumb_func
+ 3172              	ymdhmsbcd2sec:
+ 3173              	.LFB44:
+ 445:../src/convert.c **** long long ymdhmsbcd2sec(uint8_t *yyyymmddHHMMSS)
+ 446:../src/convert.c **** {
+ 3174              		.loc 1 446 0
+ 3175              		.cfi_startproc
+ 3176              		@ args = 0, pretend = 0, frame = 16
+ 3177              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3178 0000 2DE9F04F 		push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+ 3179              		.cfi_def_cfa_offset 36
+ 3180              		.cfi_offset 4, -36
+ 3181              		.cfi_offset 5, -32
+ 3182              		.cfi_offset 6, -28
+ 3183              		.cfi_offset 7, -24
+ 3184              		.cfi_offset 8, -20
+ 3185              		.cfi_offset 9, -16
+ 3186              		.cfi_offset 10, -12
+ 3187              		.cfi_offset 11, -8
+ 3188              		.cfi_offset 14, -4
+ 3189 0004 87B0     		sub	sp, sp, #28
+ 3190              		.cfi_def_cfa_offset 64
+ 3191 0006 02AF     		add	r7, sp, #8
+ 3192              		.cfi_def_cfa 7, 56
+ 3193 0008 7860     		str	r0, [r7, #4]
+ 447:../src/convert.c **** 	long long ds = ymdbcd2days(yyyymmddHHMMSS);
+ 3194              		.loc 1 447 0
+ 3195 000a 7868     		ldr	r0, [r7, #4]
+ 3196 000c FFF7FEFF 		bl	ymdbcd2days
+ 3197 0010 0346     		mov	r3, r0
+ 3198 0012 1A46     		mov	r2, r3
+ 3199 0014 4FEAE273 		asr	r3, r2, #31
+ 3200 0018 C7E90223 		strd	r2, [r7, #8]
+ 448:../src/convert.c **** 	return ds*3600*24+ymdhms2sec(0,0,0,
+ 3201              		.loc 1 448 0
+ 3202 001c D7E90201 		ldrd	r0, [r7, #8]
+ 3203 0020 0246     		mov	r2, r0
+ 3204 0022 0B46     		mov	r3, r1
+ 3205 0024 9218     		adds	r2, r2, r2
+ 3206 0026 43EB0303 		adc	r3, r3, r3
+ 3207 002a 1218     		adds	r2, r2, r0
+ 3208 002c 43EB0103 		adc	r3, r3, r1
+ 3209 0030 1D01     		lsls	r5, r3, #4
+ 3210 0032 45EA1275 		orr	r5, r5, r2, lsr #28
+ 3211 0036 1401     		lsls	r4, r2, #4
+ 3212 0038 A41A     		subs	r4, r4, r2
+ 3213 003a 65EB0305 		sbc	r5, r5, r3
+ 3214 003e 4FEA0519 		lsl	r9, r5, #4
+ 3215 0042 49EA1479 		orr	r9, r9, r4, lsr #28
+ 3216 0046 4FEA0418 		lsl	r8, r4, #4
+ 3217 004a B8EB0408 		subs	r8, r8, r4
+ 3218 004e 69EB0509 		sbc	r9, r9, r5
+ 3219 0052 4FEAC91B 		lsl	fp, r9, #7
+ 3220 0056 4BEA586B 		orr	fp, fp, r8, lsr #25
+ 3221 005a 4FEAC81A 		lsl	r10, r8, #7
+ 3222 005e D046     		mov	r8, r10
+ 3223 0060 D946     		mov	r9, fp
+ 3224 0062 4446     		mov	r4, r8
+ 3225 0064 4D46     		mov	r5, r9
+ 449:../src/convert.c **** 			bcd2int(yyyymmddHHMMSS[4]),
+ 3226              		.loc 1 449 0
+ 3227 0066 7B68     		ldr	r3, [r7, #4]
+ 3228 0068 0433     		adds	r3, r3, #4
+ 448:../src/convert.c **** 	return ds*3600*24+ymdhms2sec(0,0,0,
+ 3229              		.loc 1 448 0
+ 3230 006a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 3231 006c 1846     		mov	r0, r3
+ 3232 006e FFF7FEFF 		bl	bcd2int
+ 3233 0072 8046     		mov	r8, r0
+ 450:../src/convert.c **** 			bcd2int(yyyymmddHHMMSS[5]),
+ 3234              		.loc 1 450 0
+ 3235 0074 7B68     		ldr	r3, [r7, #4]
+ 3236 0076 0533     		adds	r3, r3, #5
+ 448:../src/convert.c **** 	return ds*3600*24+ymdhms2sec(0,0,0,
+ 3237              		.loc 1 448 0
+ 3238 0078 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 3239 007a 1846     		mov	r0, r3
+ 3240 007c FFF7FEFF 		bl	bcd2int
+ 3241 0080 0646     		mov	r6, r0
+ 451:../src/convert.c **** 			bcd2int(yyyymmddHHMMSS[6])
+ 3242              		.loc 1 451 0
+ 3243 0082 7B68     		ldr	r3, [r7, #4]
+ 3244 0084 0633     		adds	r3, r3, #6
+ 448:../src/convert.c **** 			bcd2int(yyyymmddHHMMSS[4]),
+ 3245              		.loc 1 448 0
+ 3246 0086 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 3247 0088 1846     		mov	r0, r3
+ 3248 008a FFF7FEFF 		bl	bcd2int
+ 3249 008e 0346     		mov	r3, r0
+ 3250 0090 0096     		str	r6, [sp]
+ 3251 0092 0193     		str	r3, [sp, #4]
+ 3252 0094 0020     		movs	r0, #0
+ 3253 0096 0021     		movs	r1, #0
+ 3254 0098 0022     		movs	r2, #0
+ 3255 009a 4346     		mov	r3, r8
+ 3256 009c FFF7FEFF 		bl	ymdhms2sec
+ 3257 00a0 0246     		mov	r2, r0
+ 3258 00a2 0B46     		mov	r3, r1
+ 3259 00a4 1219     		adds	r2, r2, r4
+ 3260 00a6 43EB0503 		adc	r3, r3, r5
+ 452:../src/convert.c **** 	);
+ 453:../src/convert.c **** }
+ 3261              		.loc 1 453 0
+ 3262 00aa 1046     		mov	r0, r2
+ 3263 00ac 1946     		mov	r1, r3
+ 3264 00ae 1437     		adds	r7, r7, #20
+ 3265              		.cfi_def_cfa_offset 36
+ 3266 00b0 BD46     		mov	sp, r7
+ 3267              		.cfi_def_cfa_register 13
+ 3268              		@ sp needed
+ 3269 00b2 BDE8F08F 		pop	{r4, r5, r6, r7, r8, r9, r10, fp, pc}
+ 3270              		.cfi_endproc
+ 3271              	.LFE44:
+ 3273 00b6 00BF     		.section	.rodata.fcstab,"a",%progbits
+ 3274              		.align	2
+ 3277              	fcstab:
+ 3278 0000 0000     		.short	0
+ 3279 0002 8911     		.short	4489
+ 3280 0004 1223     		.short	8978
+ 3281 0006 9B32     		.short	12955
+ 3282 0008 2446     		.short	17956
+ 3283 000a AD57     		.short	22445
+ 3284 000c 3665     		.short	25910
+ 3285 000e BF74     		.short	29887
+ 3286 0010 488C     		.short	-29624
+ 3287 0012 C19D     		.short	-25151
+ 3288 0014 5AAF     		.short	-20646
+ 3289 0016 D3BE     		.short	-16685
+ 3290 0018 6CCA     		.short	-13716
+ 3291 001a E5DB     		.short	-9243
+ 3292 001c 7EE9     		.short	-5762
+ 3293 001e F7F8     		.short	-1801
+ 3294 0020 8110     		.short	4225
+ 3295 0022 0801     		.short	264
+ 3296 0024 9333     		.short	13203
+ 3297 0026 1A22     		.short	8730
+ 3298 0028 A556     		.short	22181
+ 3299 002a 2C47     		.short	18220
+ 3300 002c B775     		.short	30135
+ 3301 002e 3E64     		.short	25662
+ 3302 0030 C99C     		.short	-25399
+ 3303 0032 408D     		.short	-29376
+ 3304 0034 DBBF     		.short	-16421
+ 3305 0036 52AE     		.short	-20910
+ 3306 0038 EDDA     		.short	-9491
+ 3307 003a 64CB     		.short	-13468
+ 3308 003c FFF9     		.short	-1537
+ 3309 003e 76E8     		.short	-6026
+ 3310 0040 0221     		.short	8450
+ 3311 0042 8B30     		.short	12427
+ 3312 0044 1002     		.short	528
+ 3313 0046 9913     		.short	5017
+ 3314 0048 2667     		.short	26406
+ 3315 004a AF76     		.short	30383
+ 3316 004c 3444     		.short	17460
+ 3317 004e BD55     		.short	21949
+ 3318 0050 4AAD     		.short	-21174
+ 3319 0052 C3BC     		.short	-17213
+ 3320 0054 588E     		.short	-29096
+ 3321 0056 D19F     		.short	-24623
+ 3322 0058 6EEB     		.short	-5266
+ 3323 005a E7FA     		.short	-1305
+ 3324 005c 7CC8     		.short	-14212
+ 3325 005e F5D9     		.short	-9739
+ 3326 0060 8331     		.short	12675
+ 3327 0062 0A20     		.short	8202
+ 3328 0064 9112     		.short	4753
+ 3329 0066 1803     		.short	792
+ 3330 0068 A777     		.short	30631
+ 3331 006a 2E66     		.short	26158
+ 3332 006c B554     		.short	21685
+ 3333 006e 3C45     		.short	17724
+ 3334 0070 CBBD     		.short	-16949
+ 3335 0072 42AC     		.short	-21438
+ 3336 0074 D99E     		.short	-24871
+ 3337 0076 508F     		.short	-28848
+ 3338 0078 EFFB     		.short	-1041
+ 3339 007a 66EA     		.short	-5530
+ 3340 007c FDD8     		.short	-9987
+ 3341 007e 74C9     		.short	-13964
+ 3342 0080 0442     		.short	16900
+ 3343 0082 8D53     		.short	21389
+ 3344 0084 1661     		.short	24854
+ 3345 0086 9F70     		.short	28831
+ 3346 0088 2004     		.short	1056
+ 3347 008a A915     		.short	5545
+ 3348 008c 3227     		.short	10034
+ 3349 008e BB36     		.short	14011
+ 3350 0090 4CCE     		.short	-12724
+ 3351 0092 C5DF     		.short	-8251
+ 3352 0094 5EED     		.short	-4770
+ 3353 0096 D7FC     		.short	-809
+ 3354 0098 6888     		.short	-30616
+ 3355 009a E199     		.short	-26143
+ 3356 009c 7AAB     		.short	-21638
+ 3357 009e F3BA     		.short	-17677
+ 3358 00a0 8552     		.short	21125
+ 3359 00a2 0C43     		.short	17164
+ 3360 00a4 9771     		.short	29079
+ 3361 00a6 1E60     		.short	24606
+ 3362 00a8 A114     		.short	5281
+ 3363 00aa 2805     		.short	1320
+ 3364 00ac B337     		.short	14259
+ 3365 00ae 3A26     		.short	9786
+ 3366 00b0 CDDE     		.short	-8499
+ 3367 00b2 44CF     		.short	-12476
+ 3368 00b4 DFFD     		.short	-545
+ 3369 00b6 56EC     		.short	-5034
+ 3370 00b8 E998     		.short	-26391
+ 3371 00ba 6089     		.short	-30368
+ 3372 00bc FBBB     		.short	-17413
+ 3373 00be 72AA     		.short	-21902
+ 3374 00c0 0663     		.short	25350
+ 3375 00c2 8F72     		.short	29327
+ 3376 00c4 1440     		.short	16404
+ 3377 00c6 9D51     		.short	20893
+ 3378 00c8 2225     		.short	9506
+ 3379 00ca AB34     		.short	13483
+ 3380 00cc 3006     		.short	1584
+ 3381 00ce B917     		.short	6073
+ 3382 00d0 4EEF     		.short	-4274
+ 3383 00d2 C7FE     		.short	-313
+ 3384 00d4 5CCC     		.short	-13220
+ 3385 00d6 D5DD     		.short	-8747
+ 3386 00d8 6AA9     		.short	-22166
+ 3387 00da E3B8     		.short	-18205
+ 3388 00dc 788A     		.short	-30088
+ 3389 00de F19B     		.short	-25615
+ 3390 00e0 8773     		.short	29575
+ 3391 00e2 0E62     		.short	25102
+ 3392 00e4 9550     		.short	20629
+ 3393 00e6 1C41     		.short	16668
+ 3394 00e8 A335     		.short	13731
+ 3395 00ea 2A24     		.short	9258
+ 3396 00ec B116     		.short	5809
+ 3397 00ee 3807     		.short	1848
+ 3398 00f0 CFFF     		.short	-49
+ 3399 00f2 46EE     		.short	-4538
+ 3400 00f4 DDDC     		.short	-8995
+ 3401 00f6 54CD     		.short	-12972
+ 3402 00f8 EBB9     		.short	-17941
+ 3403 00fa 62A8     		.short	-22430
+ 3404 00fc F99A     		.short	-25863
+ 3405 00fe 708B     		.short	-29840
+ 3406 0100 0884     		.short	-31736
+ 3407 0102 8195     		.short	-27263
+ 3408 0104 1AA7     		.short	-22758
+ 3409 0106 93B6     		.short	-18797
+ 3410 0108 2CC2     		.short	-15828
+ 3411 010a A5D3     		.short	-11355
+ 3412 010c 3EE1     		.short	-7874
+ 3413 010e B7F0     		.short	-3913
+ 3414 0110 4008     		.short	2112
+ 3415 0112 C919     		.short	6601
+ 3416 0114 522B     		.short	11090
+ 3417 0116 DB3A     		.short	15067
+ 3418 0118 644E     		.short	20068
+ 3419 011a ED5F     		.short	24557
+ 3420 011c 766D     		.short	28022
+ 3421 011e FF7C     		.short	31999
+ 3422 0120 8994     		.short	-27511
+ 3423 0122 0085     		.short	-31488
+ 3424 0124 9BB7     		.short	-18533
+ 3425 0126 12A6     		.short	-23022
+ 3426 0128 ADD2     		.short	-11603
+ 3427 012a 24C3     		.short	-15580
+ 3428 012c BFF1     		.short	-3649
+ 3429 012e 36E0     		.short	-8138
+ 3430 0130 C118     		.short	6337
+ 3431 0132 4809     		.short	2376
+ 3432 0134 D33B     		.short	15315
+ 3433 0136 5A2A     		.short	10842
+ 3434 0138 E55E     		.short	24293
+ 3435 013a 6C4F     		.short	20332
+ 3436 013c F77D     		.short	32247
+ 3437 013e 7E6C     		.short	27774
+ 3438 0140 0AA5     		.short	-23286
+ 3439 0142 83B4     		.short	-19325
+ 3440 0144 1886     		.short	-31208
+ 3441 0146 9197     		.short	-26735
+ 3442 0148 2EE3     		.short	-7378
+ 3443 014a A7F2     		.short	-3417
+ 3444 014c 3CC0     		.short	-16324
+ 3445 014e B5D1     		.short	-11851
+ 3446 0150 4229     		.short	10562
+ 3447 0152 CB38     		.short	14539
+ 3448 0154 500A     		.short	2640
+ 3449 0156 D91B     		.short	7129
+ 3450 0158 666F     		.short	28518
+ 3451 015a EF7E     		.short	32495
+ 3452 015c 744C     		.short	19572
+ 3453 015e FD5D     		.short	24061
+ 3454 0160 8BB5     		.short	-19061
+ 3455 0162 02A4     		.short	-23550
+ 3456 0164 9996     		.short	-26983
+ 3457 0166 1087     		.short	-30960
+ 3458 0168 AFF3     		.short	-3153
+ 3459 016a 26E2     		.short	-7642
+ 3460 016c BDD0     		.short	-12099
+ 3461 016e 34C1     		.short	-16076
+ 3462 0170 C339     		.short	14787
+ 3463 0172 4A28     		.short	10314
+ 3464 0174 D11A     		.short	6865
+ 3465 0176 580B     		.short	2904
+ 3466 0178 E77F     		.short	32743
+ 3467 017a 6E6E     		.short	28270
+ 3468 017c F55C     		.short	23797
+ 3469 017e 7C4D     		.short	19836
+ 3470 0180 0CC6     		.short	-14836
+ 3471 0182 85D7     		.short	-10363
+ 3472 0184 1EE5     		.short	-6882
+ 3473 0186 97F4     		.short	-2921
+ 3474 0188 2880     		.short	-32728
+ 3475 018a A191     		.short	-28255
+ 3476 018c 3AA3     		.short	-23750
+ 3477 018e B3B2     		.short	-19789
+ 3478 0190 444A     		.short	19012
+ 3479 0192 CD5B     		.short	23501
+ 3480 0194 5669     		.short	26966
+ 3481 0196 DF78     		.short	30943
+ 3482 0198 600C     		.short	3168
+ 3483 019a E91D     		.short	7657
+ 3484 019c 722F     		.short	12146
+ 3485 019e FB3E     		.short	16123
+ 3486 01a0 8DD6     		.short	-10611
+ 3487 01a2 04C7     		.short	-14588
+ 3488 01a4 9FF5     		.short	-2657
+ 3489 01a6 16E4     		.short	-7146
+ 3490 01a8 A990     		.short	-28503
+ 3491 01aa 2081     		.short	-32480
+ 3492 01ac BBB3     		.short	-19525
+ 3493 01ae 32A2     		.short	-24014
+ 3494 01b0 C55A     		.short	23237
+ 3495 01b2 4C4B     		.short	19276
+ 3496 01b4 D779     		.short	31191
+ 3497 01b6 5E68     		.short	26718
+ 3498 01b8 E11C     		.short	7393
+ 3499 01ba 680D     		.short	3432
+ 3500 01bc F33F     		.short	16371
+ 3501 01be 7A2E     		.short	11898
+ 3502 01c0 0EE7     		.short	-6386
+ 3503 01c2 87F6     		.short	-2425
+ 3504 01c4 1CC4     		.short	-15332
+ 3505 01c6 95D5     		.short	-10859
+ 3506 01c8 2AA1     		.short	-24278
+ 3507 01ca A3B0     		.short	-20317
+ 3508 01cc 3882     		.short	-32200
+ 3509 01ce B193     		.short	-27727
+ 3510 01d0 466B     		.short	27462
+ 3511 01d2 CF7A     		.short	31439
+ 3512 01d4 5448     		.short	18516
+ 3513 01d6 DD59     		.short	23005
+ 3514 01d8 622D     		.short	11618
+ 3515 01da EB3C     		.short	15595
+ 3516 01dc 700E     		.short	3696
+ 3517 01de F91F     		.short	8185
+ 3518 01e0 8FF7     		.short	-2161
+ 3519 01e2 06E6     		.short	-6650
+ 3520 01e4 9DD4     		.short	-11107
+ 3521 01e6 14C5     		.short	-15084
+ 3522 01e8 ABB1     		.short	-20053
+ 3523 01ea 22A0     		.short	-24542
+ 3524 01ec B992     		.short	-27975
+ 3525 01ee 3083     		.short	-31952
+ 3526 01f0 C77B     		.short	31687
+ 3527 01f2 4E6A     		.short	27214
+ 3528 01f4 D558     		.short	22741
+ 3529 01f6 5C49     		.short	18780
+ 3530 01f8 E33D     		.short	15843
+ 3531 01fa 6A2C     		.short	11370
+ 3532 01fc F11E     		.short	7921
+ 3533 01fe 780F     		.short	3960
+ 3534              		.section	.text.calc_crc,"ax",%progbits
+ 3535              		.align	2
+ 3536              		.global	calc_crc
+ 3537              		.thumb
+ 3538              		.thumb_func
+ 3540              	calc_crc:
+ 3541              	.LFB45:
+ 454:../src/convert.c **** 
+ 455:../src/convert.c **** static const uint16_t fcstab[] = { 
+ 456:../src/convert.c **** 	0x0000, 0x1189, 0x2312, 0x329b, 0x4624, 0x57ad, 0x6536, 0x74bf, 
+ 457:../src/convert.c **** 	0x8c48, 0x9dc1, 0xaf5a, 0xbed3, 0xca6c, 0xdbe5, 0xe97e, 0xf8f7, 
+ 458:../src/convert.c **** 	0x1081, 0x0108, 0x3393, 0x221a, 0x56a5, 0x472c, 0x75b7, 0x643e, 
+ 459:../src/convert.c **** 	0x9cc9, 0x8d40, 0xbfdb, 0xae52, 0xdaed, 0xcb64, 0xf9ff, 0xe876, 
+ 460:../src/convert.c **** 	0x2102, 0x308b, 0x0210, 0x1399, 0x6726, 0x76af, 0x4434, 0x55bd, 
+ 461:../src/convert.c **** 	0xad4a, 0xbcc3, 0x8e58, 0x9fd1, 0xeb6e, 0xfae7, 0xc87c, 0xd9f5, 
+ 462:../src/convert.c **** 	0x3183, 0x200a, 0x1291, 0x0318, 0x77a7, 0x662e, 0x54b5, 0x453c, 
+ 463:../src/convert.c **** 	0xbdcb, 0xac42, 0x9ed9, 0x8f50, 0xfbef, 0xea66, 0xd8fd, 0xc974, 
+ 464:../src/convert.c **** 	0x4204, 0x538d, 0x6116, 0x709f, 0x0420, 0x15a9, 0x2732, 0x36bb, 
+ 465:../src/convert.c **** 	0xce4c, 0xdfc5, 0xed5e, 0xfcd7, 0x8868, 0x99e1, 0xab7a, 0xbaf3, 
+ 466:../src/convert.c **** 	0x5285, 0x430c, 0x7197, 0x601e, 0x14a1, 0x0528, 0x37b3, 0x263a, 
+ 467:../src/convert.c **** 	0xdecd, 0xcf44, 0xfddf, 0xec56, 0x98e9, 0x8960, 0xbbfb, 0xaa72, 
+ 468:../src/convert.c **** 	0x6306, 0x728f, 0x4014, 0x519d, 0x2522, 0x34ab, 0x0630, 0x17b9, 
+ 469:../src/convert.c **** 	0xef4e, 0xfec7, 0xcc5c, 0xddd5, 0xa96a, 0xb8e3, 0x8a78, 0x9bf1, 
+ 470:../src/convert.c **** 	0x7387, 0x620e, 0x5095, 0x411c, 0x35a3, 0x242a, 0x16b1, 0x0738, 
+ 471:../src/convert.c **** 	0xffcf, 0xee46, 0xdcdd, 0xcd54, 0xb9eb, 0xa862, 0x9af9, 0x8b70, 
+ 472:../src/convert.c **** 	0x8408, 0x9581, 0xa71a, 0xb693, 0xc22c, 0xd3a5, 0xe13e, 0xf0b7, 
+ 473:../src/convert.c **** 	0x0840, 0x19c9, 0x2b52, 0x3adb, 0x4e64, 0x5fed, 0x6d76, 0x7cff, 
+ 474:../src/convert.c **** 	0x9489, 0x8500, 0xb79b, 0xa612, 0xd2ad, 0xc324, 0xf1bf, 0xe036, 
+ 475:../src/convert.c **** 	0x18c1, 0x0948, 0x3bd3, 0x2a5a, 0x5ee5, 0x4f6c, 0x7df7, 0x6c7e, 
+ 476:../src/convert.c **** 	0xa50a, 0xb483, 0x8618, 0x9791, 0xe32e, 0xf2a7, 0xc03c, 0xd1b5, 
+ 477:../src/convert.c **** 	0x2942, 0x38cb, 0x0a50, 0x1bd9, 0x6f66, 0x7eef, 0x4c74, 0x5dfd, 
+ 478:../src/convert.c **** 	0xb58b, 0xa402, 0x9699, 0x8710, 0xf3af, 0xe226, 0xd0bd, 0xc134, 
+ 479:../src/convert.c **** 	0x39c3, 0x284a, 0x1ad1, 0x0b58, 0x7fe7, 0x6e6e, 0x5cf5, 0x4d7c, 
+ 480:../src/convert.c **** 	0xc60c, 0xd785, 0xe51e, 0xf497, 0x8028, 0x91a1, 0xa33a, 0xb2b3, 
+ 481:../src/convert.c **** 	0x4a44, 0x5bcd, 0x6956, 0x78df, 0x0c60, 0x1de9, 0x2f72, 0x3efb, 
+ 482:../src/convert.c **** 	0xd68d, 0xc704, 0xf59f, 0xe416, 0x90a9, 0x8120, 0xb3bb, 0xa232, 
+ 483:../src/convert.c **** 	0x5ac5, 0x4b4c, 0x79d7, 0x685e, 0x1ce1, 0x0d68, 0x3ff3, 0x2e7a, 
+ 484:../src/convert.c **** 	0xe70e, 0xf687, 0xc41c, 0xd595, 0xa12a, 0xb0a3, 0x8238, 0x93b1, 
+ 485:../src/convert.c **** 	0x6b46, 0x7acf, 0x4854, 0x59dd, 0x2d62, 0x3ceb, 0x0e70, 0x1ff9, 
+ 486:../src/convert.c **** 	0xf78f, 0xe606, 0xd49d, 0xc514, 0xb1ab, 0xa022, 0x92b9, 0x8330, 
+ 487:../src/convert.c **** 	0x7bc7, 0x6a4e, 0x58d5, 0x495c, 0x3de3, 0x2c6a, 0x1ef1, 0x0f78 
+ 488:../src/convert.c **** };
+ 489:../src/convert.c **** uint16_t calc_crc(const unsigned char *data, int length)
+ 490:../src/convert.c **** {
+ 3542              		.loc 1 490 0
+ 3543              		.cfi_startproc
+ 3544              		@ args = 0, pretend = 0, frame = 24
+ 3545              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3546              		@ link register save eliminated.
+ 3547 0000 80B4     		push	{r7}
+ 3548              		.cfi_def_cfa_offset 4
+ 3549              		.cfi_offset 7, -4
+ 3550 0002 87B0     		sub	sp, sp, #28
+ 3551              		.cfi_def_cfa_offset 32
+ 3552 0004 00AF     		add	r7, sp, #0
+ 3553              		.cfi_def_cfa_register 7
+ 3554 0006 7860     		str	r0, [r7, #4]
+ 3555 0008 3960     		str	r1, [r7]
+ 491:../src/convert.c **** 	uint16_t fcs = 0xFFFF;
+ 3556              		.loc 1 491 0
+ 3557 000a 4FF6FF73 		movw	r3, #65535
+ 3558 000e FB82     		strh	r3, [r7, #22]	@ movhi
+ 492:../src/convert.c **** 
+ 493:../src/convert.c **** 	int end = length;
+ 3559              		.loc 1 493 0
+ 3560 0010 3B68     		ldr	r3, [r7]
+ 3561 0012 FB60     		str	r3, [r7, #12]
+ 3562              	.LBB8:
+ 494:../src/convert.c **** 
+ 495:../src/convert.c **** 	for (int i = 0; i < end; i++)
+ 3563              		.loc 1 495 0
+ 3564 0014 0023     		movs	r3, #0
+ 3565 0016 3B61     		str	r3, [r7, #16]
+ 3566 0018 11E0     		b	.L125
+ 3567              	.L126:
+ 496:../src/convert.c **** 	{
+ 497:../src/convert.c **** 		fcs = (uint16_t)(((uint16_t)(fcs >> 8)) ^ fcstab[(fcs ^ data[i]) & 0xFF]);
+ 3568              		.loc 1 497 0 discriminator 3
+ 3569 001a FB8A     		ldrh	r3, [r7, #22]
+ 3570 001c 1B0A     		lsrs	r3, r3, #8
+ 3571 001e 9AB2     		uxth	r2, r3
+ 3572 0020 FB8A     		ldrh	r3, [r7, #22]
+ 3573 0022 3969     		ldr	r1, [r7, #16]
+ 3574 0024 7868     		ldr	r0, [r7, #4]
+ 3575 0026 0144     		add	r1, r1, r0
+ 3576 0028 0978     		ldrb	r1, [r1]	@ zero_extendqisi2
+ 3577 002a 4B40     		eors	r3, r3, r1
+ 3578 002c DBB2     		uxtb	r3, r3
+ 3579 002e 0A49     		ldr	r1, .L128
+ 3580 0030 31F81330 		ldrh	r3, [r1, r3, lsl #1]
+ 3581 0034 5340     		eors	r3, r3, r2
+ 3582 0036 FB82     		strh	r3, [r7, #22]	@ movhi
+ 495:../src/convert.c **** 	{
+ 3583              		.loc 1 495 0 discriminator 3
+ 3584 0038 3B69     		ldr	r3, [r7, #16]
+ 3585 003a 0133     		adds	r3, r3, #1
+ 3586 003c 3B61     		str	r3, [r7, #16]
+ 3587              	.L125:
+ 495:../src/convert.c **** 	{
+ 3588              		.loc 1 495 0 is_stmt 0 discriminator 1
+ 3589 003e 3A69     		ldr	r2, [r7, #16]
+ 3590 0040 FB68     		ldr	r3, [r7, #12]
+ 3591 0042 9A42     		cmp	r2, r3
+ 3592 0044 E9DB     		blt	.L126
+ 3593              	.LBE8:
+ 498:../src/convert.c **** 	}
+ 499:../src/convert.c **** 
+ 500:../src/convert.c **** 	return (uint16_t)(~fcs);
+ 3594              		.loc 1 500 0 is_stmt 1
+ 3595 0046 FB8A     		ldrh	r3, [r7, #22]	@ movhi
+ 3596 0048 DB43     		mvns	r3, r3
+ 3597 004a 9BB2     		uxth	r3, r3
+ 501:../src/convert.c **** }
+ 3598              		.loc 1 501 0
+ 3599 004c 1846     		mov	r0, r3
+ 3600 004e 1C37     		adds	r7, r7, #28
+ 3601              		.cfi_def_cfa_offset 4
+ 3602 0050 BD46     		mov	sp, r7
+ 3603              		.cfi_def_cfa_register 13
+ 3604              		@ sp needed
+ 3605 0052 5DF8047B 		ldr	r7, [sp], #4
+ 3606              		.cfi_restore 7
+ 3607              		.cfi_def_cfa_offset 0
+ 3608 0056 7047     		bx	lr
+ 3609              	.L129:
+ 3610              		.align	2
+ 3611              	.L128:
+ 3612 0058 00000000 		.word	fcstab
+ 3613              		.cfi_endproc
+ 3614              	.LFE45:
+ 3616              		.section	.text.calc_crc2,"ax",%progbits
+ 3617              		.align	2
+ 3618              		.global	calc_crc2
+ 3619              		.thumb
+ 3620              		.thumb_func
+ 3622              	calc_crc2:
+ 3623              	.LFB46:
+ 502:../src/convert.c **** uint16_t calc_crc2(uint16_t init, const void *_data, int length)
+ 503:../src/convert.c **** {
+ 3624              		.loc 1 503 0
+ 3625              		.cfi_startproc
+ 3626              		@ args = 0, pretend = 0, frame = 32
+ 3627              		@ frame_needed = 1, uses_anonymous_args = 0
+ 3628              		@ link register save eliminated.
+ 3629 0000 80B4     		push	{r7}
+ 3630              		.cfi_def_cfa_offset 4
+ 3631              		.cfi_offset 7, -4
+ 3632 0002 89B0     		sub	sp, sp, #36
+ 3633              		.cfi_def_cfa_offset 40
+ 3634 0004 00AF     		add	r7, sp, #0
+ 3635              		.cfi_def_cfa_register 7
+ 3636 0006 0346     		mov	r3, r0
+ 3637 0008 B960     		str	r1, [r7, #8]
+ 3638 000a 7A60     		str	r2, [r7, #4]
+ 3639 000c FB81     		strh	r3, [r7, #14]	@ movhi
+ 504:../src/convert.c **** 	uint16_t fcs = init;
+ 3640              		.loc 1 504 0
+ 3641 000e FB89     		ldrh	r3, [r7, #14]	@ movhi
+ 3642 0010 FB83     		strh	r3, [r7, #30]	@ movhi
+ 505:../src/convert.c **** 	const uint8_t *data = _data;
+ 3643              		.loc 1 505 0
+ 3644 0012 BB68     		ldr	r3, [r7, #8]
+ 3645 0014 7B61     		str	r3, [r7, #20]
+ 506:../src/convert.c **** 
+ 507:../src/convert.c **** 	int end = length;
+ 3646              		.loc 1 507 0
+ 3647 0016 7B68     		ldr	r3, [r7, #4]
+ 3648 0018 3B61     		str	r3, [r7, #16]
+ 3649              	.LBB9:
+ 508:../src/convert.c **** 
+ 509:../src/convert.c **** 	for (int i = 0; i < end; i++)
+ 3650              		.loc 1 509 0
+ 3651 001a 0023     		movs	r3, #0
+ 3652 001c BB61     		str	r3, [r7, #24]
+ 3653 001e 11E0     		b	.L131
+ 3654              	.L132:
+ 510:../src/convert.c **** 	{
+ 511:../src/convert.c **** 		fcs = (uint16_t)(((uint16_t)(fcs >> 8)) ^ fcstab[(fcs ^ data[i]) & 0xFF]);
+ 3655              		.loc 1 511 0 discriminator 3
+ 3656 0020 FB8B     		ldrh	r3, [r7, #30]
+ 3657 0022 1B0A     		lsrs	r3, r3, #8
+ 3658 0024 9AB2     		uxth	r2, r3
+ 3659 0026 FB8B     		ldrh	r3, [r7, #30]
+ 3660 0028 B969     		ldr	r1, [r7, #24]
+ 3661 002a 7869     		ldr	r0, [r7, #20]
+ 3662 002c 0144     		add	r1, r1, r0
+ 3663 002e 0978     		ldrb	r1, [r1]	@ zero_extendqisi2
+ 3664 0030 4B40     		eors	r3, r3, r1
+ 3665 0032 DBB2     		uxtb	r3, r3
+ 3666 0034 0949     		ldr	r1, .L134
+ 3667 0036 31F81330 		ldrh	r3, [r1, r3, lsl #1]
+ 3668 003a 5340     		eors	r3, r3, r2
+ 3669 003c FB83     		strh	r3, [r7, #30]	@ movhi
+ 509:../src/convert.c **** 	{
+ 3670              		.loc 1 509 0 discriminator 3
+ 3671 003e BB69     		ldr	r3, [r7, #24]
+ 3672 0040 0133     		adds	r3, r3, #1
+ 3673 0042 BB61     		str	r3, [r7, #24]
+ 3674              	.L131:
+ 509:../src/convert.c **** 	{
+ 3675              		.loc 1 509 0 is_stmt 0 discriminator 1
+ 3676 0044 BA69     		ldr	r2, [r7, #24]
+ 3677 0046 3B69     		ldr	r3, [r7, #16]
+ 3678 0048 9A42     		cmp	r2, r3
+ 3679 004a E9DB     		blt	.L132
+ 3680              	.LBE9:
+ 512:../src/convert.c **** 	}
+ 513:../src/convert.c **** 
+ 514:../src/convert.c **** 	return (uint16_t)(fcs);
+ 3681              		.loc 1 514 0 is_stmt 1
+ 3682 004c FB8B     		ldrh	r3, [r7, #30]
+ 515:../src/convert.c **** }
+ 3683              		.loc 1 515 0
+ 3684 004e 1846     		mov	r0, r3
+ 3685 0050 2437     		adds	r7, r7, #36
+ 3686              		.cfi_def_cfa_offset 4
+ 3687 0052 BD46     		mov	sp, r7
+ 3688              		.cfi_def_cfa_register 13
+ 3689              		@ sp needed
+ 3690 0054 5DF8047B 		ldr	r7, [sp], #4
+ 3691              		.cfi_restore 7
+ 3692              		.cfi_def_cfa_offset 0
+ 3693 0058 7047     		bx	lr
+ 3694              	.L135:
+ 3695 005a 00BF     		.align	2
+ 3696              	.L134:
+ 3697 005c 00000000 		.word	fcstab
+ 3698              		.cfi_endproc
+ 3699              	.LFE46:
+ 3701              		.text
+ 3702              	.Letext0:
+ 3703              		.file 2 "/home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstdint"
+DEFINED SYMBOLS
+                            *ABS*:00000000 convert.c
+     /tmp/ccNDnSZi.s:21     .text.bcd2int:00000000 $t
+     /tmp/ccNDnSZi.s:26     .text.bcd2int:00000000 bcd2int
+     /tmp/ccNDnSZi.s:73     .text.int2bcd:00000000 $t
+     /tmp/ccNDnSZi.s:78     .text.int2bcd:00000000 int2bcd
+     /tmp/ccNDnSZi.s:133    .text.int2bcd:0000004c $d
+     /tmp/ccNDnSZi.s:138    .text.int2asc:00000000 $t
+     /tmp/ccNDnSZi.s:143    .text.int2asc:00000000 int2asc
+     /tmp/ccNDnSZi.s:214    .text.int2ASC:00000000 $t
+     /tmp/ccNDnSZi.s:219    .text.int2ASC:00000000 int2ASC
+     /tmp/ccNDnSZi.s:290    .text.asc2int:00000000 $t
+     /tmp/ccNDnSZi.s:295    .text.asc2int:00000000 asc2int
+     /tmp/ccNDnSZi.s:376    .text.hx_dumphex:00000000 $t
+     /tmp/ccNDnSZi.s:381    .text.hx_dumphex:00000000 hx_dumphex
+     /tmp/ccNDnSZi.s:466    .text.hx_dumpHEX:00000000 $t
+     /tmp/ccNDnSZi.s:471    .text.hx_dumpHEX:00000000 hx_dumpHEX
+     /tmp/ccNDnSZi.s:556    .text.hx_dumphex2str:00000000 $t
+     /tmp/ccNDnSZi.s:561    .text.hx_dumphex2str:00000000 hx_dumphex2str
+     /tmp/ccNDnSZi.s:606    .text.hx_dumpHEX2str:00000000 $t
+     /tmp/ccNDnSZi.s:611    .text.hx_dumpHEX2str:00000000 hx_dumpHEX2str
+     /tmp/ccNDnSZi.s:656    .text.hx_hexcode2bin:00000000 $t
+     /tmp/ccNDnSZi.s:661    .text.hx_hexcode2bin:00000000 hx_hexcode2bin
+     /tmp/ccNDnSZi.s:755    .text.hx_strtrim2:00000000 $t
+     /tmp/ccNDnSZi.s:760    .text.hx_strtrim2:00000000 hx_strtrim2
+     /tmp/ccNDnSZi.s:851    .rodata:00000000 $d
+     /tmp/ccNDnSZi.s:855    .text.hx_strtrim:00000000 $t
+     /tmp/ccNDnSZi.s:860    .text.hx_strtrim:00000000 hx_strtrim
+     /tmp/ccNDnSZi.s:891    .text.hx_strtrim:0000001c $d
+     /tmp/ccNDnSZi.s:896    .text.HX_LSB_B2W:00000000 $t
+     /tmp/ccNDnSZi.s:901    .text.HX_LSB_B2W:00000000 HX_LSB_B2W
+     /tmp/ccNDnSZi.s:952    .text.HX_MSB_B2W:00000000 $t
+     /tmp/ccNDnSZi.s:957    .text.HX_MSB_B2W:00000000 HX_MSB_B2W
+     /tmp/ccNDnSZi.s:1008   .text.HX_MSB_B2DW:00000000 $t
+     /tmp/ccNDnSZi.s:1013   .text.HX_MSB_B2DW:00000000 HX_MSB_B2DW
+     /tmp/ccNDnSZi.s:1088   .text.HX_LSB_B2DW:00000000 $t
+     /tmp/ccNDnSZi.s:1093   .text.HX_LSB_B2DW:00000000 HX_LSB_B2DW
+     /tmp/ccNDnSZi.s:1168   .text.HX_MSB_B2DW24:00000000 $t
+     /tmp/ccNDnSZi.s:1173   .text.HX_MSB_B2DW24:00000000 HX_MSB_B2DW24
+     /tmp/ccNDnSZi.s:1236   .text.HX_LSB_B2DW24:00000000 $t
+     /tmp/ccNDnSZi.s:1241   .text.HX_LSB_B2DW24:00000000 HX_LSB_B2DW24
+     /tmp/ccNDnSZi.s:1304   .text.HX_MSB_B2QW:00000000 $t
+     /tmp/ccNDnSZi.s:1309   .text.HX_MSB_B2QW:00000000 HX_MSB_B2QW
+     /tmp/ccNDnSZi.s:1495   .text.HX_LSB_B2QW:00000000 $t
+     /tmp/ccNDnSZi.s:1500   .text.HX_LSB_B2QW:00000000 HX_LSB_B2QW
+     /tmp/ccNDnSZi.s:1686   .text.HX_LSB_W2B:00000000 $t
+     /tmp/ccNDnSZi.s:1691   .text.HX_LSB_W2B:00000000 HX_LSB_W2B
+     /tmp/ccNDnSZi.s:1741   .text.HX_MSB_W2B:00000000 $t
+     /tmp/ccNDnSZi.s:1746   .text.HX_MSB_W2B:00000000 HX_MSB_W2B
+     /tmp/ccNDnSZi.s:1796   .text.HX_MSB_DW2B:00000000 $t
+     /tmp/ccNDnSZi.s:1801   .text.HX_MSB_DW2B:00000000 HX_MSB_DW2B
+     /tmp/ccNDnSZi.s:1863   .text.HX_MSB_DW24_2B:00000000 $t
+     /tmp/ccNDnSZi.s:1868   .text.HX_MSB_DW24_2B:00000000 HX_MSB_DW24_2B
+     /tmp/ccNDnSZi.s:1923   .text.HX_MSB_QW2B:00000000 $t
+     /tmp/ccNDnSZi.s:1928   .text.HX_MSB_QW2B:00000000 HX_MSB_QW2B
+     /tmp/ccNDnSZi.s:2047   .text.HX_LSB_DW2B:00000000 $t
+     /tmp/ccNDnSZi.s:2052   .text.HX_LSB_DW2B:00000000 HX_LSB_DW2B
+     /tmp/ccNDnSZi.s:2114   .text.HX_LSB_DW24_2B:00000000 $t
+     /tmp/ccNDnSZi.s:2119   .text.HX_LSB_DW24_2B:00000000 HX_LSB_DW24_2B
+     /tmp/ccNDnSZi.s:2174   .text.HX_LSB_QW2B:00000000 $t
+     /tmp/ccNDnSZi.s:2179   .text.HX_LSB_QW2B:00000000 HX_LSB_QW2B
+     /tmp/ccNDnSZi.s:2298   .text.HX_W_REV:00000000 $t
+     /tmp/ccNDnSZi.s:2303   .text.HX_W_REV:00000000 HX_W_REV
+     /tmp/ccNDnSZi.s:2343   .text.HX_DW_REV:00000000 $t
+     /tmp/ccNDnSZi.s:2348   .text.HX_DW_REV:00000000 HX_DW_REV
+     /tmp/ccNDnSZi.s:2387   .text.HX_QW_REV:00000000 $t
+     /tmp/ccNDnSZi.s:2392   .text.HX_QW_REV:00000000 HX_QW_REV
+     /tmp/ccNDnSZi.s:2434   .text.HX_W_REV2:00000000 $t
+     /tmp/ccNDnSZi.s:2439   .text.HX_W_REV2:00000000 HX_W_REV2
+     /tmp/ccNDnSZi.s:2480   .text.HX_DW_REV2:00000000 $t
+     /tmp/ccNDnSZi.s:2485   .text.HX_DW_REV2:00000000 HX_DW_REV2
+     /tmp/ccNDnSZi.s:2524   .text.HX_QW_REV2:00000000 $t
+     /tmp/ccNDnSZi.s:2529   .text.HX_QW_REV2:00000000 HX_QW_REV2
+     /tmp/ccNDnSZi.s:2567   .text.make_bcc2:00000000 $t
+     /tmp/ccNDnSZi.s:2572   .text.make_bcc2:00000000 make_bcc2
+     /tmp/ccNDnSZi.s:2638   .text.make_bcc:00000000 $t
+     /tmp/ccNDnSZi.s:2643   .text.make_bcc:00000000 make_bcc
+     /tmp/ccNDnSZi.s:2677   .text.make_sum2:00000000 $t
+     /tmp/ccNDnSZi.s:2682   .text.make_sum2:00000000 make_sum2
+     /tmp/ccNDnSZi.s:2748   .text.make_sum:00000000 $t
+     /tmp/ccNDnSZi.s:2753   .text.make_sum:00000000 make_sum
+     /tmp/ccNDnSZi.s:2787   .text.pk_fill:00000000 $t
+     /tmp/ccNDnSZi.s:2792   .text.pk_fill:00000000 pk_fill
+     /tmp/ccNDnSZi.s:2832   .text.pk_add:00000000 $t
+     /tmp/ccNDnSZi.s:2837   .text.pk_add:00000000 pk_add
+     /tmp/ccNDnSZi.s:2877   .text.pk_get:00000000 $t
+     /tmp/ccNDnSZi.s:2882   .text.pk_get:00000000 pk_get
+     /tmp/ccNDnSZi.s:2939   .text.ymd2days:00000000 $t
+     /tmp/ccNDnSZi.s:2944   .text.ymd2days:00000000 ymd2days
+     /tmp/ccNDnSZi.s:3027   .text.ymd2days:00000078 $d
+     /tmp/ccNDnSZi.s:3032   .text.ymdhms2sec:00000000 $t
+     /tmp/ccNDnSZi.s:3037   .text.ymdhms2sec:00000000 ymdhms2sec
+     /tmp/ccNDnSZi.s:3091   .text.ymdhms2sec:00000050 $d
+     /tmp/ccNDnSZi.s:3096   .text.ymdbcd2days:00000000 $t
+     /tmp/ccNDnSZi.s:3101   .text.ymdbcd2days:00000000 ymdbcd2days
+     /tmp/ccNDnSZi.s:3167   .text.ymdhmsbcd2sec:00000000 $t
+     /tmp/ccNDnSZi.s:3172   .text.ymdhmsbcd2sec:00000000 ymdhmsbcd2sec
+     /tmp/ccNDnSZi.s:3274   .rodata.fcstab:00000000 $d
+     /tmp/ccNDnSZi.s:3277   .rodata.fcstab:00000000 fcstab
+     /tmp/ccNDnSZi.s:3535   .text.calc_crc:00000000 $t
+     /tmp/ccNDnSZi.s:3540   .text.calc_crc:00000000 calc_crc
+     /tmp/ccNDnSZi.s:3612   .text.calc_crc:00000058 $d
+     /tmp/ccNDnSZi.s:3617   .text.calc_crc2:00000000 $t
+     /tmp/ccNDnSZi.s:3622   .text.calc_crc2:00000000 calc_crc2
+     /tmp/ccNDnSZi.s:3697   .text.calc_crc2:0000005c $d
+                     .debug_frame:00000010 $d
+                           .group:00000000 wm4.0.728a2e6911dc01ff85c2d70c52e8fae1
+                           .group:00000000 wm4.lib_c99.prefix.8.3580c292f50811c682d980dc4180498e
+                           .group:00000000 wm4.common.prefix.16.d7bf937cdf46fd76dde96b376e3b328a
+                           .group:00000000 wm4.ewl_c_version.h.9.0bcb57d6a3f89baae1f9b121de2772f5
+                           .group:00000000 wm4.os_enum.h.9.f9446d6af68b3fa72a37d4d924d3b347
+                           .group:00000000 wm4.ansi_prefix.ARM.h.13.4b23f4c654df3c3277534542f67d200c
+                           .group:00000000 wm4.ansi_parms.h.64.90aed58330fdde08746db908036e1f37
+                           .group:00000000 wm4.limits_api.h.9.bc6daa20b3abae2bba6c512044e73b43
+                           .group:00000000 wm4.ewl_lib_ext1.h.14.f9b057cc049671136093886db2a3473f
+                           .group:00000000 wm4.cstdint.134.0ece0ba0ee759ce9e45a8fa510ec0d93
+                           .group:00000000 wm4.wchar_t.h.9.94198016f5b5f455e54ea1f3f054b416
+                           .group:00000000 wm4.cstdint.246.0573fcc3ea2319479988f90b448d87e4
+                           .group:00000000 wm4.convert.h.64.883777d675073a6c78205f7b8cbae34e
+                           .group:00000000 wm4.size_t.h.9.f983491a73b5c81f421ee8223b1ac5c0
+                           .group:00000000 wm4.ewl_rsize_t.h.11.b283831bb803e76ceb1756da2df9a1b5
+                           .group:00000000 wm4.cstddef.32.067e2ea187472b6198f9ace951e27a51
+                           .group:00000000 wm4.va_list.h.9.b0bb078841c0305c2667a31da10a9070
+                           .group:00000000 wm4.file_struc.h.13.96d07f4b7392ecdee9ce60307cac6248
+                           .group:00000000 wm4.stdarg.ARM.h.9.32516e68edcca81ab31f48f233894821
+                           .group:00000000 wm4.stdio_api.h.64.7d83b1caa7fdc34505042751a1c33692
+                           .group:00000000 wm4.cstdio.1187.51197b0e8ec7388017461af9f7851efe
+                           .group:00000000 wm4.string_api.h.9.a9265430fd330d238bc93998aef29e99
+
+UNDEFINED SYMBOLS
+strlen
+strchr
+memset
+memcpy

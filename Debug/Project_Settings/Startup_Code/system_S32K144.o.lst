@@ -1,0 +1,534 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.eabi_attribute 27, 1
+   4              		.eabi_attribute 28, 1
+   5              		.fpu fpv4-sp-d16
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.thumb
+  16              		.file	"system_S32K144.c"
+  17              		.text
+  18              	.Ltext0:
+  19              		.cfi_sections	.debug_frame
+  20              		.global	SystemCoreClock
+  21              		.section	.data.SystemCoreClock,"aw",%progbits
+  22              		.align	2
+  25              	SystemCoreClock:
+  26 0000 006CDC02 		.word	48000000
+  27              		.section	.text.SystemInit,"ax",%progbits
+  28              		.align	2
+  29              		.global	SystemInit
+  30              		.thumb
+  31              		.thumb_func
+  33              	SystemInit:
+  34              	.LFB0:
+  35              		.file 1 "../Project_Settings/Startup_Code/system_S32K144.c"
+   1:../Project_Settings/Startup_Code/system_S32K144.c **** /*
+   2:../Project_Settings/Startup_Code/system_S32K144.c ****  * Copyright (c) 2015 Freescale Semiconductor, Inc.
+   3:../Project_Settings/Startup_Code/system_S32K144.c ****  * Copyright 2016-2017 NXP
+   4:../Project_Settings/Startup_Code/system_S32K144.c ****  * All rights reserved.
+   5:../Project_Settings/Startup_Code/system_S32K144.c ****  *
+   6:../Project_Settings/Startup_Code/system_S32K144.c ****  * THIS SOFTWARE IS PROVIDED BY NXP "AS IS" AND ANY EXPRESSED OR
+   7:../Project_Settings/Startup_Code/system_S32K144.c ****  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+   8:../Project_Settings/Startup_Code/system_S32K144.c ****  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+   9:../Project_Settings/Startup_Code/system_S32K144.c ****  * IN NO EVENT SHALL NXP OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+  10:../Project_Settings/Startup_Code/system_S32K144.c ****  * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  11:../Project_Settings/Startup_Code/system_S32K144.c ****  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+  12:../Project_Settings/Startup_Code/system_S32K144.c ****  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  13:../Project_Settings/Startup_Code/system_S32K144.c ****  * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+  14:../Project_Settings/Startup_Code/system_S32K144.c ****  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+  15:../Project_Settings/Startup_Code/system_S32K144.c ****  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+  16:../Project_Settings/Startup_Code/system_S32K144.c ****  * THE POSSIBILITY OF SUCH DAMAGE.
+  17:../Project_Settings/Startup_Code/system_S32K144.c ****  */
+  18:../Project_Settings/Startup_Code/system_S32K144.c **** 
+  19:../Project_Settings/Startup_Code/system_S32K144.c **** /**
+  20:../Project_Settings/Startup_Code/system_S32K144.c ****  * @page misra_violations MISRA-C:2012 violations
+  21:../Project_Settings/Startup_Code/system_S32K144.c ****  *
+  22:../Project_Settings/Startup_Code/system_S32K144.c ****  * @section [global]
+  23:../Project_Settings/Startup_Code/system_S32K144.c ****  * Violates MISRA 2012 Advisory Rule 8.9, An object should be defined at block
+  24:../Project_Settings/Startup_Code/system_S32K144.c ****  * scope if its identifier only appears in a single function.
+  25:../Project_Settings/Startup_Code/system_S32K144.c ****  * An object with static storage duration declared at block scope cannot be
+  26:../Project_Settings/Startup_Code/system_S32K144.c ****  * accessed directly from outside the block.
+  27:../Project_Settings/Startup_Code/system_S32K144.c ****  *
+  28:../Project_Settings/Startup_Code/system_S32K144.c ****  * @section [global]
+  29:../Project_Settings/Startup_Code/system_S32K144.c ****  * Violates MISRA 2012 Advisory Rule 11.4, A conversion should not be performed
+  30:../Project_Settings/Startup_Code/system_S32K144.c ****  * between a pointer to object and an integer type.
+  31:../Project_Settings/Startup_Code/system_S32K144.c ****  * The cast is required to initialize a pointer with an unsigned int define,
+  32:../Project_Settings/Startup_Code/system_S32K144.c ****  * representing an address.
+  33:../Project_Settings/Startup_Code/system_S32K144.c ****  *
+  34:../Project_Settings/Startup_Code/system_S32K144.c ****  * @section [global]
+  35:../Project_Settings/Startup_Code/system_S32K144.c ****  * Violates MISRA 2012 Required Rule 11.6, A cast shall not be performed
+  36:../Project_Settings/Startup_Code/system_S32K144.c ****  * between pointer to void and an arithmetic type.
+  37:../Project_Settings/Startup_Code/system_S32K144.c ****  * The cast is required to initialize a pointer with an unsigned int define,
+  38:../Project_Settings/Startup_Code/system_S32K144.c ****  * representing an address.
+  39:../Project_Settings/Startup_Code/system_S32K144.c ****  *
+  40:../Project_Settings/Startup_Code/system_S32K144.c ****  * @section [global]
+  41:../Project_Settings/Startup_Code/system_S32K144.c ****  * Violates MISRA 2012 Advisory Rule 8.7, External could be made static.
+  42:../Project_Settings/Startup_Code/system_S32K144.c ****  * Function is defined for usage by application code.
+  43:../Project_Settings/Startup_Code/system_S32K144.c ****  *
+  44:../Project_Settings/Startup_Code/system_S32K144.c ****  */
+  45:../Project_Settings/Startup_Code/system_S32K144.c **** 
+  46:../Project_Settings/Startup_Code/system_S32K144.c **** #include "device_registers.h"
+  47:../Project_Settings/Startup_Code/system_S32K144.c **** #include "system_S32K144.h"
+  48:../Project_Settings/Startup_Code/system_S32K144.c **** #include "stdbool.h"
+  49:../Project_Settings/Startup_Code/system_S32K144.c **** 
+  50:../Project_Settings/Startup_Code/system_S32K144.c **** /* ----------------------------------------------------------------------------
+  51:../Project_Settings/Startup_Code/system_S32K144.c ****    -- Core clock
+  52:../Project_Settings/Startup_Code/system_S32K144.c ****    ---------------------------------------------------------------------------- */
+  53:../Project_Settings/Startup_Code/system_S32K144.c **** 
+  54:../Project_Settings/Startup_Code/system_S32K144.c **** uint32_t SystemCoreClock = DEFAULT_SYSTEM_CLOCK;
+  55:../Project_Settings/Startup_Code/system_S32K144.c **** 
+  56:../Project_Settings/Startup_Code/system_S32K144.c **** /*FUNCTION**********************************************************************
+  57:../Project_Settings/Startup_Code/system_S32K144.c ****  *
+  58:../Project_Settings/Startup_Code/system_S32K144.c ****  * Function Name : SystemInit
+  59:../Project_Settings/Startup_Code/system_S32K144.c ****  * Description   : This function disables the watchdog, enables FPU
+  60:../Project_Settings/Startup_Code/system_S32K144.c ****  * and the power mode protection if the corresponding feature macro
+  61:../Project_Settings/Startup_Code/system_S32K144.c ****  * is enabled. SystemInit is called from startup_device file.
+  62:../Project_Settings/Startup_Code/system_S32K144.c ****  *
+  63:../Project_Settings/Startup_Code/system_S32K144.c ****  * Implements    : SystemInit_Activity
+  64:../Project_Settings/Startup_Code/system_S32K144.c ****  *END**************************************************************************/
+  65:../Project_Settings/Startup_Code/system_S32K144.c **** void SystemInit(void)
+  66:../Project_Settings/Startup_Code/system_S32K144.c **** {
+  36              		.loc 1 66 0
+  37              		.cfi_startproc
+  38              		@ args = 0, pretend = 0, frame = 0
+  39              		@ frame_needed = 1, uses_anonymous_args = 0
+  40              		@ link register save eliminated.
+  41 0000 80B4     		push	{r7}
+  42              		.cfi_def_cfa_offset 4
+  43              		.cfi_offset 7, -4
+  44 0002 00AF     		add	r7, sp, #0
+  45              		.cfi_def_cfa_register 7
+  67:../Project_Settings/Startup_Code/system_S32K144.c **** /**************************************************************************/
+  68:../Project_Settings/Startup_Code/system_S32K144.c ****                       /* FPU ENABLE*/
+  69:../Project_Settings/Startup_Code/system_S32K144.c **** /**************************************************************************/
+  70:../Project_Settings/Startup_Code/system_S32K144.c **** #ifdef ENABLE_FPU
+  71:../Project_Settings/Startup_Code/system_S32K144.c ****   /* Enable CP10 and CP11 coprocessors */
+  72:../Project_Settings/Startup_Code/system_S32K144.c ****   S32_SCB->CPACR |= (S32_SCB_CPACR_CP10_MASK | S32_SCB_CPACR_CP11_MASK);
+  46              		.loc 1 72 0
+  47 0004 4FF0E022 		mov	r2, #-536813568
+  48 0008 4FF0E023 		mov	r3, #-536813568
+  49 000c D3F8883D 		ldr	r3, [r3, #3464]
+  50 0010 43F47003 		orr	r3, r3, #15728640
+  51 0014 C2F8883D 		str	r3, [r2, #3464]
+  73:../Project_Settings/Startup_Code/system_S32K144.c **** #ifdef  ERRATA_E6940
+  74:../Project_Settings/Startup_Code/system_S32K144.c ****   /* Disable lazy context save of floating point state by clearing LSPEN bit
+  75:../Project_Settings/Startup_Code/system_S32K144.c ****    * Workaround for errata e6940 */
+  76:../Project_Settings/Startup_Code/system_S32K144.c ****   S32_SCB->FPCCR &= ~(S32_SCB_FPCCR_LSPEN_MASK);
+  52              		.loc 1 76 0
+  53 0018 4FF0E022 		mov	r2, #-536813568
+  54 001c 4FF0E023 		mov	r3, #-536813568
+  55 0020 D3F8343F 		ldr	r3, [r3, #3892]
+  56 0024 23F08043 		bic	r3, r3, #1073741824
+  57 0028 C2F8343F 		str	r3, [r2, #3892]
+  77:../Project_Settings/Startup_Code/system_S32K144.c **** #endif
+  78:../Project_Settings/Startup_Code/system_S32K144.c **** #endif /* ENABLE_FPU */
+  79:../Project_Settings/Startup_Code/system_S32K144.c **** 
+  80:../Project_Settings/Startup_Code/system_S32K144.c **** /**************************************************************************/
+  81:../Project_Settings/Startup_Code/system_S32K144.c ****                       /* WDOG DISABLE*/
+  82:../Project_Settings/Startup_Code/system_S32K144.c **** /**************************************************************************/
+  83:../Project_Settings/Startup_Code/system_S32K144.c **** 
+  84:../Project_Settings/Startup_Code/system_S32K144.c **** #if (DISABLE_WDOG)
+  85:../Project_Settings/Startup_Code/system_S32K144.c ****   /* Write of the WDOG unlock key to CNT register, must be done in order to allow any modifications
+  86:../Project_Settings/Startup_Code/system_S32K144.c ****   WDOG->CNT = (uint32_t ) FEATURE_WDOG_UNLOCK_VALUE;
+  58              		.loc 1 86 0
+  59 002c 084B     		ldr	r3, .L2
+  60 002e 094A     		ldr	r2, .L2+4
+  61 0030 5A60     		str	r2, [r3, #4]
+  87:../Project_Settings/Startup_Code/system_S32K144.c ****   /* The dummy read is used in order to make sure that the WDOG registers will be configured only
+  88:../Project_Settings/Startup_Code/system_S32K144.c ****    * after the write of the unlock value was completed. */
+  89:../Project_Settings/Startup_Code/system_S32K144.c ****   (void)WDOG->CNT;
+  62              		.loc 1 89 0
+  63 0032 074B     		ldr	r3, .L2
+  64 0034 5B68     		ldr	r3, [r3, #4]
+  90:../Project_Settings/Startup_Code/system_S32K144.c **** 
+  91:../Project_Settings/Startup_Code/system_S32K144.c ****   /* Initial write of WDOG configuration register:
+  92:../Project_Settings/Startup_Code/system_S32K144.c ****    * enables support for 32-bit refresh/unlock command write words,
+  93:../Project_Settings/Startup_Code/system_S32K144.c ****    * clock select from LPO, update enable, watchdog disabled */
+  94:../Project_Settings/Startup_Code/system_S32K144.c ****   WDOG->CS  = (uint32_t ) ( (1UL << WDOG_CS_CMD32EN_SHIFT)                       |
+  65              		.loc 1 94 0
+  66 0036 064B     		ldr	r3, .L2
+  67 0038 42F22012 		movw	r2, #8480
+  68 003c 1A60     		str	r2, [r3]
+  95:../Project_Settings/Startup_Code/system_S32K144.c ****                             (FEATURE_WDOG_CLK_FROM_LPO << WDOG_CS_CLK_SHIFT) |
+  96:../Project_Settings/Startup_Code/system_S32K144.c ****                             (0U << WDOG_CS_EN_SHIFT)                             |
+  97:../Project_Settings/Startup_Code/system_S32K144.c ****                             (1U << WDOG_CS_UPDATE_SHIFT)                         );
+  98:../Project_Settings/Startup_Code/system_S32K144.c **** 
+  99:../Project_Settings/Startup_Code/system_S32K144.c ****   /* Configure timeout */
+ 100:../Project_Settings/Startup_Code/system_S32K144.c ****   WDOG->TOVAL = (uint32_t )0xFFFF;
+  69              		.loc 1 100 0
+  70 003e 044B     		ldr	r3, .L2
+  71 0040 4FF6FF72 		movw	r2, #65535
+  72 0044 9A60     		str	r2, [r3, #8]
+ 101:../Project_Settings/Startup_Code/system_S32K144.c **** #endif /* (DISABLE_WDOG) */
+ 102:../Project_Settings/Startup_Code/system_S32K144.c **** 
+ 103:../Project_Settings/Startup_Code/system_S32K144.c **** /**************************************************************************/
+ 104:../Project_Settings/Startup_Code/system_S32K144.c ****                       /* Power mode protection */
+ 105:../Project_Settings/Startup_Code/system_S32K144.c **** /**************************************************************************/
+ 106:../Project_Settings/Startup_Code/system_S32K144.c **** #ifdef SYSTEM_SMC_PMPROT_VALUE
+ 107:../Project_Settings/Startup_Code/system_S32K144.c ****   /* Power mode protection initialization */
+ 108:../Project_Settings/Startup_Code/system_S32K144.c ****   SMC->PMPROT = SYSTEM_SMC_PMPROT_VALUE;
+ 109:../Project_Settings/Startup_Code/system_S32K144.c **** #endif
+ 110:../Project_Settings/Startup_Code/system_S32K144.c **** }
+  73              		.loc 1 110 0
+  74 0046 BD46     		mov	sp, r7
+  75              		.cfi_def_cfa_register 13
+  76              		@ sp needed
+  77 0048 5DF8047B 		ldr	r7, [sp], #4
+  78              		.cfi_restore 7
+  79              		.cfi_def_cfa_offset 0
+  80 004c 7047     		bx	lr
+  81              	.L3:
+  82 004e 00BF     		.align	2
+  83              	.L2:
+  84 0050 00200540 		.word	1074077696
+  85 0054 20C528D9 		.word	-651639520
+  86              		.cfi_endproc
+  87              	.LFE0:
+  89              		.section	.text.SystemCoreClockUpdate,"ax",%progbits
+  90              		.align	2
+  91              		.global	SystemCoreClockUpdate
+  92              		.thumb
+  93              		.thumb_func
+  95              	SystemCoreClockUpdate:
+  96              	.LFB1:
+ 111:../Project_Settings/Startup_Code/system_S32K144.c **** 
+ 112:../Project_Settings/Startup_Code/system_S32K144.c **** /*FUNCTION**********************************************************************
+ 113:../Project_Settings/Startup_Code/system_S32K144.c ****  *
+ 114:../Project_Settings/Startup_Code/system_S32K144.c ****  * Function Name : SystemCoreClockUpdate
+ 115:../Project_Settings/Startup_Code/system_S32K144.c ****  * Description   : This function must be called whenever the core clock is changed
+ 116:../Project_Settings/Startup_Code/system_S32K144.c ****  * during program execution. It evaluates the clock register settings and calculates
+ 117:../Project_Settings/Startup_Code/system_S32K144.c ****  * the current core clock.
+ 118:../Project_Settings/Startup_Code/system_S32K144.c ****  *
+ 119:../Project_Settings/Startup_Code/system_S32K144.c ****  * Implements    : SystemCoreClockUpdate_Activity
+ 120:../Project_Settings/Startup_Code/system_S32K144.c ****  *END**************************************************************************/
+ 121:../Project_Settings/Startup_Code/system_S32K144.c **** void SystemCoreClockUpdate(void)
+ 122:../Project_Settings/Startup_Code/system_S32K144.c **** {
+  97              		.loc 1 122 0
+  98              		.cfi_startproc
+  99              		@ args = 0, pretend = 0, frame = 24
+ 100              		@ frame_needed = 1, uses_anonymous_args = 0
+ 101              		@ link register save eliminated.
+ 102 0000 80B4     		push	{r7}
+ 103              		.cfi_def_cfa_offset 4
+ 104              		.cfi_offset 7, -4
+ 105 0002 87B0     		sub	sp, sp, #28
+ 106              		.cfi_def_cfa_offset 32
+ 107 0004 00AF     		add	r7, sp, #0
+ 108              		.cfi_def_cfa_register 7
+ 123:../Project_Settings/Startup_Code/system_S32K144.c ****   uint32_t SCGOUTClock = 0U;      /* Variable to store output clock frequency of the SCG module */
+ 109              		.loc 1 123 0
+ 110 0006 0023     		movs	r3, #0
+ 111 0008 7B61     		str	r3, [r7, #20]
+ 124:../Project_Settings/Startup_Code/system_S32K144.c ****   uint32_t regValue;              /* Temporary variable */
+ 125:../Project_Settings/Startup_Code/system_S32K144.c ****   uint32_t divider, prediv, multi;
+ 126:../Project_Settings/Startup_Code/system_S32K144.c ****   bool validSystemClockSource = true;
+ 112              		.loc 1 126 0
+ 113 000a 0123     		movs	r3, #1
+ 114 000c FB74     		strb	r3, [r7, #19]
+ 127:../Project_Settings/Startup_Code/system_S32K144.c ****   static const uint32_t fircFreq[] = {
+ 128:../Project_Settings/Startup_Code/system_S32K144.c ****       FEATURE_SCG_FIRC_FREQ0,
+ 129:../Project_Settings/Startup_Code/system_S32K144.c ****       FEATURE_SCG_FIRC_FREQ1,
+ 130:../Project_Settings/Startup_Code/system_S32K144.c ****       FEATURE_SCG_FIRC_FREQ2,
+ 131:../Project_Settings/Startup_Code/system_S32K144.c ****       FEATURE_SCG_FIRC_FREQ3,
+ 132:../Project_Settings/Startup_Code/system_S32K144.c ****   };
+ 133:../Project_Settings/Startup_Code/system_S32K144.c **** 
+ 134:../Project_Settings/Startup_Code/system_S32K144.c ****   divider = ((SCG->CSR & SCG_CSR_DIVCORE_MASK) >> SCG_CSR_DIVCORE_SHIFT) + 1U;
+ 115              		.loc 1 134 0
+ 116 000e 344B     		ldr	r3, .L15
+ 117 0010 1B69     		ldr	r3, [r3, #16]
+ 118 0012 03F47023 		and	r3, r3, #983040
+ 119 0016 1B0C     		lsrs	r3, r3, #16
+ 120 0018 0133     		adds	r3, r3, #1
+ 121 001a FB60     		str	r3, [r7, #12]
+ 135:../Project_Settings/Startup_Code/system_S32K144.c **** 
+ 136:../Project_Settings/Startup_Code/system_S32K144.c ****   switch ((SCG->CSR & SCG_CSR_SCS_MASK) >> SCG_CSR_SCS_SHIFT) {
+ 122              		.loc 1 136 0
+ 123 001c 304B     		ldr	r3, .L15
+ 124 001e 1B69     		ldr	r3, [r3, #16]
+ 125 0020 03F07063 		and	r3, r3, #251658240
+ 126 0024 1B0E     		lsrs	r3, r3, #24
+ 127 0026 013B     		subs	r3, r3, #1
+ 128 0028 052B     		cmp	r3, #5
+ 129 002a 48D8     		bhi	.L5
+ 130 002c 01A2     		adr	r2, .L7
+ 131 002e 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 132 0032 00BF     		.p2align 2
+ 133              	.L7:
+ 134 0034 4D000000 		.word	.L6+1
+ 135 0038 53000000 		.word	.L8+1
+ 136 003c 6F000000 		.word	.L9+1
+ 137 0040 BF000000 		.word	.L5+1
+ 138 0044 BF000000 		.word	.L5+1
+ 139 0048 87000000 		.word	.L10+1
+ 140              		.p2align 1
+ 141              	.L6:
+ 137:../Project_Settings/Startup_Code/system_S32K144.c ****     case 0x1:
+ 138:../Project_Settings/Startup_Code/system_S32K144.c ****       /* System OSC */
+ 139:../Project_Settings/Startup_Code/system_S32K144.c ****       SCGOUTClock = CPU_XTAL_CLK_HZ;
+ 142              		.loc 1 139 0
+ 143 004c 254B     		ldr	r3, .L15+4
+ 144 004e 7B61     		str	r3, [r7, #20]
+ 140:../Project_Settings/Startup_Code/system_S32K144.c ****       break;
+ 145              		.loc 1 140 0
+ 146 0050 38E0     		b	.L11
+ 147              	.L8:
+ 141:../Project_Settings/Startup_Code/system_S32K144.c ****     case 0x2:
+ 142:../Project_Settings/Startup_Code/system_S32K144.c ****       /* Slow IRC */
+ 143:../Project_Settings/Startup_Code/system_S32K144.c ****       regValue = (SCG->SIRCCFG & SCG_SIRCCFG_RANGE_MASK) >> SCG_SIRCCFG_RANGE_SHIFT;
+ 148              		.loc 1 143 0
+ 149 0052 234B     		ldr	r3, .L15
+ 150 0054 D3F80832 		ldr	r3, [r3, #520]
+ 151 0058 03F00103 		and	r3, r3, #1
+ 152 005c BB60     		str	r3, [r7, #8]
+ 144:../Project_Settings/Startup_Code/system_S32K144.c ****       SCGOUTClock = (regValue != 0U) ?
+ 153              		.loc 1 144 0
+ 154 005e BB68     		ldr	r3, [r7, #8]
+ 155 0060 002B     		cmp	r3, #0
+ 156 0062 01D0     		beq	.L12
+ 157              		.loc 1 144 0 is_stmt 0 discriminator 1
+ 158 0064 1F4B     		ldr	r3, .L15+4
+ 159 0066 00E0     		b	.L13
+ 160              	.L12:
+ 161              		.loc 1 144 0 discriminator 2
+ 162 0068 1F4B     		ldr	r3, .L15+8
+ 163              	.L13:
+ 164              		.loc 1 144 0 discriminator 4
+ 165 006a 7B61     		str	r3, [r7, #20]
+ 145:../Project_Settings/Startup_Code/system_S32K144.c ****                     FEATURE_SCG_SIRC_HIGH_RANGE_FREQ : FEATURE_SCG_SIRC_LOW_RANGE_FREQ;
+ 146:../Project_Settings/Startup_Code/system_S32K144.c ****       break;
+ 166              		.loc 1 146 0 is_stmt 1 discriminator 4
+ 167 006c 2AE0     		b	.L11
+ 168              	.L9:
+ 147:../Project_Settings/Startup_Code/system_S32K144.c ****     case 0x3:
+ 148:../Project_Settings/Startup_Code/system_S32K144.c ****       /* Fast IRC */
+ 149:../Project_Settings/Startup_Code/system_S32K144.c ****       regValue = (SCG->FIRCCFG & SCG_FIRCCFG_RANGE_MASK) >> SCG_FIRCCFG_RANGE_SHIFT;
+ 169              		.loc 1 149 0
+ 170 006e 1C4B     		ldr	r3, .L15
+ 171 0070 D3F80833 		ldr	r3, [r3, #776]
+ 172 0074 03F00303 		and	r3, r3, #3
+ 173 0078 BB60     		str	r3, [r7, #8]
+ 150:../Project_Settings/Startup_Code/system_S32K144.c ****       SCGOUTClock= fircFreq[regValue];
+ 174              		.loc 1 150 0
+ 175 007a 1C4A     		ldr	r2, .L15+12
+ 176 007c BB68     		ldr	r3, [r7, #8]
+ 177 007e 52F82330 		ldr	r3, [r2, r3, lsl #2]
+ 178 0082 7B61     		str	r3, [r7, #20]
+ 151:../Project_Settings/Startup_Code/system_S32K144.c ****       break;
+ 179              		.loc 1 151 0
+ 180 0084 1EE0     		b	.L11
+ 181              	.L10:
+ 152:../Project_Settings/Startup_Code/system_S32K144.c ****     case 0x6:
+ 153:../Project_Settings/Startup_Code/system_S32K144.c ****       /* System PLL */
+ 154:../Project_Settings/Startup_Code/system_S32K144.c ****       SCGOUTClock = CPU_XTAL_CLK_HZ;
+ 182              		.loc 1 154 0
+ 183 0086 174B     		ldr	r3, .L15+4
+ 184 0088 7B61     		str	r3, [r7, #20]
+ 155:../Project_Settings/Startup_Code/system_S32K144.c ****       prediv = ((SCG->SPLLCFG & SCG_SPLLCFG_PREDIV_MASK) >> SCG_SPLLCFG_PREDIV_SHIFT) + 1U;
+ 185              		.loc 1 155 0
+ 186 008a 154B     		ldr	r3, .L15
+ 187 008c D3F80836 		ldr	r3, [r3, #1544]
+ 188 0090 03F4E063 		and	r3, r3, #1792
+ 189 0094 1B0A     		lsrs	r3, r3, #8
+ 190 0096 0133     		adds	r3, r3, #1
+ 191 0098 7B60     		str	r3, [r7, #4]
+ 156:../Project_Settings/Startup_Code/system_S32K144.c ****       multi = ((SCG->SPLLCFG & SCG_SPLLCFG_MULT_MASK) >> SCG_SPLLCFG_MULT_SHIFT) + 16U;
+ 192              		.loc 1 156 0
+ 193 009a 114B     		ldr	r3, .L15
+ 194 009c D3F80836 		ldr	r3, [r3, #1544]
+ 195 00a0 03F4F813 		and	r3, r3, #2031616
+ 196 00a4 1B0C     		lsrs	r3, r3, #16
+ 197 00a6 1033     		adds	r3, r3, #16
+ 198 00a8 3B60     		str	r3, [r7]
+ 157:../Project_Settings/Startup_Code/system_S32K144.c ****       SCGOUTClock = SCGOUTClock * multi / (prediv * 2U);
+ 199              		.loc 1 157 0
+ 200 00aa 7B69     		ldr	r3, [r7, #20]
+ 201 00ac 3A68     		ldr	r2, [r7]
+ 202 00ae 02FB03F2 		mul	r2, r2, r3
+ 203 00b2 7B68     		ldr	r3, [r7, #4]
+ 204 00b4 5B00     		lsls	r3, r3, #1
+ 205 00b6 B2FBF3F3 		udiv	r3, r2, r3
+ 206 00ba 7B61     		str	r3, [r7, #20]
+ 158:../Project_Settings/Startup_Code/system_S32K144.c ****       break;
+ 207              		.loc 1 158 0
+ 208 00bc 02E0     		b	.L11
+ 209              	.L5:
+ 159:../Project_Settings/Startup_Code/system_S32K144.c ****     default:
+ 160:../Project_Settings/Startup_Code/system_S32K144.c ****       validSystemClockSource = false;
+ 210              		.loc 1 160 0
+ 211 00be 0023     		movs	r3, #0
+ 212 00c0 FB74     		strb	r3, [r7, #19]
+ 161:../Project_Settings/Startup_Code/system_S32K144.c ****       break;
+ 213              		.loc 1 161 0
+ 214 00c2 00BF     		nop
+ 215              	.L11:
+ 162:../Project_Settings/Startup_Code/system_S32K144.c ****   }
+ 163:../Project_Settings/Startup_Code/system_S32K144.c **** 
+ 164:../Project_Settings/Startup_Code/system_S32K144.c ****   if (validSystemClockSource == true) {
+ 216              		.loc 1 164 0
+ 217 00c4 FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+ 218 00c6 002B     		cmp	r3, #0
+ 219 00c8 05D0     		beq	.L4
+ 165:../Project_Settings/Startup_Code/system_S32K144.c ****      SystemCoreClock = (SCGOUTClock / divider);
+ 220              		.loc 1 165 0
+ 221 00ca 7A69     		ldr	r2, [r7, #20]
+ 222 00cc FB68     		ldr	r3, [r7, #12]
+ 223 00ce B2FBF3F3 		udiv	r3, r2, r3
+ 224 00d2 074A     		ldr	r2, .L15+16
+ 225 00d4 1360     		str	r3, [r2]
+ 226              	.L4:
+ 166:../Project_Settings/Startup_Code/system_S32K144.c ****   }
+ 167:../Project_Settings/Startup_Code/system_S32K144.c **** }
+ 227              		.loc 1 167 0
+ 228 00d6 1C37     		adds	r7, r7, #28
+ 229              		.cfi_def_cfa_offset 4
+ 230 00d8 BD46     		mov	sp, r7
+ 231              		.cfi_def_cfa_register 13
+ 232              		@ sp needed
+ 233 00da 5DF8047B 		ldr	r7, [sp], #4
+ 234              		.cfi_restore 7
+ 235              		.cfi_def_cfa_offset 0
+ 236 00de 7047     		bx	lr
+ 237              	.L16:
+ 238              		.align	2
+ 239              	.L15:
+ 240 00e0 00400640 		.word	1074151424
+ 241 00e4 00127A00 		.word	8000000
+ 242 00e8 80841E00 		.word	2000000
+ 243 00ec 00000000 		.word	fircFreq.4912
+ 244 00f0 00000000 		.word	SystemCoreClock
+ 245              		.cfi_endproc
+ 246              	.LFE1:
+ 248              		.section	.text.SystemSoftwareReset,"ax",%progbits
+ 249              		.align	2
+ 250              		.global	SystemSoftwareReset
+ 251              		.thumb
+ 252              		.thumb_func
+ 254              	SystemSoftwareReset:
+ 255              	.LFB2:
+ 168:../Project_Settings/Startup_Code/system_S32K144.c **** 
+ 169:../Project_Settings/Startup_Code/system_S32K144.c **** /*FUNCTION**********************************************************************
+ 170:../Project_Settings/Startup_Code/system_S32K144.c ****  *
+ 171:../Project_Settings/Startup_Code/system_S32K144.c ****  * Function Name : SystemSoftwareReset
+ 172:../Project_Settings/Startup_Code/system_S32K144.c ****  * Description   : This function is used to initiate a system reset
+ 173:../Project_Settings/Startup_Code/system_S32K144.c ****  *
+ 174:../Project_Settings/Startup_Code/system_S32K144.c ****  * Implements    : SystemSoftwareReset_Activity
+ 175:../Project_Settings/Startup_Code/system_S32K144.c ****  *END**************************************************************************/
+ 176:../Project_Settings/Startup_Code/system_S32K144.c **** void SystemSoftwareReset(void)
+ 177:../Project_Settings/Startup_Code/system_S32K144.c **** {
+ 256              		.loc 1 177 0
+ 257              		.cfi_startproc
+ 258              		@ args = 0, pretend = 0, frame = 8
+ 259              		@ frame_needed = 1, uses_anonymous_args = 0
+ 260              		@ link register save eliminated.
+ 261 0000 80B4     		push	{r7}
+ 262              		.cfi_def_cfa_offset 4
+ 263              		.cfi_offset 7, -4
+ 264 0002 83B0     		sub	sp, sp, #12
+ 265              		.cfi_def_cfa_offset 16
+ 266 0004 00AF     		add	r7, sp, #0
+ 267              		.cfi_def_cfa_register 7
+ 178:../Project_Settings/Startup_Code/system_S32K144.c ****     uint32_t regValue;
+ 179:../Project_Settings/Startup_Code/system_S32K144.c **** 
+ 180:../Project_Settings/Startup_Code/system_S32K144.c ****     /* Read Application Interrupt and Reset Control Register */
+ 181:../Project_Settings/Startup_Code/system_S32K144.c ****     regValue = S32_SCB->AIRCR;
+ 268              		.loc 1 181 0
+ 269 0006 4FF0E023 		mov	r3, #-536813568
+ 270 000a D3F80C3D 		ldr	r3, [r3, #3340]
+ 271 000e 7B60     		str	r3, [r7, #4]
+ 182:../Project_Settings/Startup_Code/system_S32K144.c **** 
+ 183:../Project_Settings/Startup_Code/system_S32K144.c ****     /* Clear register key */
+ 184:../Project_Settings/Startup_Code/system_S32K144.c ****     regValue &= ~( S32_SCB_AIRCR_VECTKEY_MASK);
+ 272              		.loc 1 184 0
+ 273 0010 7B68     		ldr	r3, [r7, #4]
+ 274 0012 9BB2     		uxth	r3, r3
+ 275 0014 7B60     		str	r3, [r7, #4]
+ 185:../Project_Settings/Startup_Code/system_S32K144.c **** 
+ 186:../Project_Settings/Startup_Code/system_S32K144.c ****     /* Configure System reset request bit and Register Key */
+ 187:../Project_Settings/Startup_Code/system_S32K144.c ****     regValue |= S32_SCB_AIRCR_VECTKEY(FEATURE_SCB_VECTKEY);
+ 276              		.loc 1 187 0
+ 277 0016 7B68     		ldr	r3, [r7, #4]
+ 278 0018 43F0BF63 		orr	r3, r3, #100139008
+ 279 001c 43F40033 		orr	r3, r3, #131072
+ 280 0020 7B60     		str	r3, [r7, #4]
+ 188:../Project_Settings/Startup_Code/system_S32K144.c ****     regValue |= S32_SCB_AIRCR_SYSRESETREQ(0x1u);
+ 281              		.loc 1 188 0
+ 282 0022 7B68     		ldr	r3, [r7, #4]
+ 283 0024 43F00403 		orr	r3, r3, #4
+ 284 0028 7B60     		str	r3, [r7, #4]
+ 189:../Project_Settings/Startup_Code/system_S32K144.c **** 
+ 190:../Project_Settings/Startup_Code/system_S32K144.c ****     /* Write computed register value */
+ 191:../Project_Settings/Startup_Code/system_S32K144.c ****     S32_SCB->AIRCR = regValue;
+ 285              		.loc 1 191 0
+ 286 002a 4FF0E022 		mov	r2, #-536813568
+ 287 002e 7B68     		ldr	r3, [r7, #4]
+ 288 0030 C2F80C3D 		str	r3, [r2, #3340]
+ 192:../Project_Settings/Startup_Code/system_S32K144.c **** }
+ 289              		.loc 1 192 0
+ 290 0034 0C37     		adds	r7, r7, #12
+ 291              		.cfi_def_cfa_offset 4
+ 292 0036 BD46     		mov	sp, r7
+ 293              		.cfi_def_cfa_register 13
+ 294              		@ sp needed
+ 295 0038 5DF8047B 		ldr	r7, [sp], #4
+ 296              		.cfi_restore 7
+ 297              		.cfi_def_cfa_offset 0
+ 298 003c 7047     		bx	lr
+ 299              		.cfi_endproc
+ 300              	.LFE2:
+ 302 003e 00BF     		.section	.rodata.fircFreq.4912,"a",%progbits
+ 303              		.align	2
+ 306              	fircFreq.4912:
+ 307 0000 006CDC02 		.word	48000000
+ 308 0004 00751903 		.word	52000000
+ 309 0008 007E5603 		.word	56000000
+ 310 000c 00879303 		.word	60000000
+ 311              		.text
+ 312              	.Letext0:
+ 313              		.file 2 "/home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstdint"
+ 314              		.file 3 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/include/S32K144.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 system_S32K144.c
+     /tmp/ccEFoATV.s:25     .data.SystemCoreClock:00000000 SystemCoreClock
+     /tmp/ccEFoATV.s:22     .data.SystemCoreClock:00000000 $d
+     /tmp/ccEFoATV.s:28     .text.SystemInit:00000000 $t
+     /tmp/ccEFoATV.s:33     .text.SystemInit:00000000 SystemInit
+     /tmp/ccEFoATV.s:84     .text.SystemInit:00000050 $d
+     /tmp/ccEFoATV.s:90     .text.SystemCoreClockUpdate:00000000 $t
+     /tmp/ccEFoATV.s:95     .text.SystemCoreClockUpdate:00000000 SystemCoreClockUpdate
+     /tmp/ccEFoATV.s:134    .text.SystemCoreClockUpdate:00000034 $d
+     /tmp/ccEFoATV.s:140    .text.SystemCoreClockUpdate:0000004c $t
+     /tmp/ccEFoATV.s:240    .text.SystemCoreClockUpdate:000000e0 $d
+     /tmp/ccEFoATV.s:306    .rodata.fircFreq.4912:00000000 fircFreq.4912
+     /tmp/ccEFoATV.s:249    .text.SystemSoftwareReset:00000000 $t
+     /tmp/ccEFoATV.s:254    .text.SystemSoftwareReset:00000000 SystemSoftwareReset
+     /tmp/ccEFoATV.s:303    .rodata.fircFreq.4912:00000000 $d
+                     .debug_frame:00000010 $d
+                           .group:00000000 wm4.0.728a2e6911dc01ff85c2d70c52e8fae1
+                           .group:00000000 wm4.lib_c99.prefix.8.3580c292f50811c682d980dc4180498e
+                           .group:00000000 wm4.common.prefix.16.d7bf937cdf46fd76dde96b376e3b328a
+                           .group:00000000 wm4.ewl_c_version.h.9.0bcb57d6a3f89baae1f9b121de2772f5
+                           .group:00000000 wm4.device_registers.h.28.5f158ec6559b3636dff84b94830a157f
+                           .group:00000000 wm4.s32_core_cm4.h.46.1c812d13e1fa6d41d91f93ed881f5ca0
+                           .group:00000000 wm4.S32K144.h.177.451251ac556d3b0b8a04170a135f92d4
+                           .group:00000000 wm4.os_enum.h.9.f9446d6af68b3fa72a37d4d924d3b347
+                           .group:00000000 wm4.ansi_prefix.ARM.h.13.4b23f4c654df3c3277534542f67d200c
+                           .group:00000000 wm4.ansi_parms.h.64.90aed58330fdde08746db908036e1f37
+                           .group:00000000 wm4.limits_api.h.9.bc6daa20b3abae2bba6c512044e73b43
+                           .group:00000000 wm4.ewl_lib_ext1.h.14.f9b057cc049671136093886db2a3473f
+                           .group:00000000 wm4.cstdint.134.0ece0ba0ee759ce9e45a8fa510ec0d93
+                           .group:00000000 wm4.wchar_t.h.9.94198016f5b5f455e54ea1f3f054b416
+                           .group:00000000 wm4.cstdint.246.0573fcc3ea2319479988f90b448d87e4
+                           .group:00000000 wm4.S32K144.h.190.037de4cd4cd4f94a273a3fe3e68d3ef7
+                           .group:00000000 wm4.S32K144_features.h.58.0316094f25a36ca6960c15db460db611
+                           .group:00000000 wm4.stdbool.h.9.d885baa6cedb035a1c381d9ef9fbc069
+                           .group:00000000 wm4.system_S32K144.h.29.52b3110768ecfd816ead41210096d848
+
+NO UNDEFINED SYMBOLS

@@ -1,0 +1,886 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.eabi_attribute 27, 1
+   4              		.eabi_attribute 28, 1
+   5              		.fpu fpv4-sp-d16
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.thumb
+  16              		.file	"softonewire.c"
+  17              		.text
+  18              	.Ltext0:
+  19              		.cfi_sections	.debug_frame
+  20              		.global	onewire_def_timing_tbl
+  21              		.section	.rodata.onewire_def_timing_tbl,"a",%progbits
+  22              		.align	2
+  25              	onewire_def_timing_tbl:
+  26 0000 B0040000 		.word	1200
+  27 0004 46000000 		.word	70
+  28 0008 9A010000 		.word	410
+  29 000c 06000000 		.word	6
+  30 0010 40000000 		.word	64
+  31 0014 3C000000 		.word	60
+  32 0018 0A000000 		.word	10
+  33 001c 04000000 		.word	4
+  34 0020 08000000 		.word	8
+  35 0024 41000000 		.word	65
+  36              		.section	.text.onewire_delay_us,"ax",%progbits
+  37              		.align	2
+  38              		.thumb
+  39              		.thumb_func
+  41              	onewire_delay_us:
+  42              	.LFB0:
+  43              		.file 1 "../bl/softonewire.c"
+   1:../bl/softonewire.c **** /*
+   2:../bl/softonewire.c ****  * softonewire.c
+   3:../bl/softonewire.c ****  *
+   4:../bl/softonewire.c ****  *  Created on: 2017年10月19日
+   5:../bl/softonewire.c ****  *      Author: houxd
+   6:../bl/softonewire.c ****  */
+   7:../bl/softonewire.c **** 
+   8:../bl/softonewire.c **** #include <softonewire.h>
+   9:../bl/softonewire.c **** #include <string.h>
+  10:../bl/softonewire.c **** 
+  11:../bl/softonewire.c **** const unsigned onewire_def_timing_tbl[_OW_INDEX_MAX] = {
+  12:../bl/softonewire.c **** 	[OW_RESET_BEGAIN] = 1200,
+  13:../bl/softonewire.c **** 	[OW_RESET_WAIT_ACK] = 70,
+  14:../bl/softonewire.c **** 	[OW_RESET_END] = 410,
+  15:../bl/softonewire.c **** 	[OW_WRITE_1_L] = 6,
+  16:../bl/softonewire.c **** 	[OW_WRITE_1_H] = 64,
+  17:../bl/softonewire.c **** 	[OW_WRITE_0_L] = 60,
+  18:../bl/softonewire.c **** 	[OW_WRITE_0_H] = 10,
+  19:../bl/softonewire.c **** 	[OW_READ_LOW] = 4,
+  20:../bl/softonewire.c **** 	[OW_READ_BEFORE_SAMPLE] = 8,
+  21:../bl/softonewire.c **** 	[OW_READ_END] = 65,
+  22:../bl/softonewire.c **** };
+  23:../bl/softonewire.c **** 
+  24:../bl/softonewire.c **** static void onewire_delay_us(int _us) {
+  44              		.loc 1 24 0
+  45              		.cfi_startproc
+  46              		@ args = 0, pretend = 0, frame = 16
+  47              		@ frame_needed = 1, uses_anonymous_args = 0
+  48              		@ link register save eliminated.
+  49 0000 80B4     		push	{r7}
+  50              		.cfi_def_cfa_offset 4
+  51              		.cfi_offset 7, -4
+  52 0002 85B0     		sub	sp, sp, #20
+  53              		.cfi_def_cfa_offset 24
+  54 0004 00AF     		add	r7, sp, #0
+  55              		.cfi_def_cfa_register 7
+  56 0006 7860     		str	r0, [r7, #4]
+  25:../bl/softonewire.c **** 	int us = _us;
+  57              		.loc 1 25 0
+  58 0008 7B68     		ldr	r3, [r7, #4]
+  59 000a FB60     		str	r3, [r7, #12]
+  26:../bl/softonewire.c **** 	while (us--)
+  60              		.loc 1 26 0
+  61 000c 08E0     		b	.L2
+  62              	.L5:
+  63              	.LBB2:
+  27:../bl/softonewire.c **** 		for (int i = 5; i; --i)
+  64              		.loc 1 27 0
+  65 000e 0523     		movs	r3, #5
+  66 0010 BB60     		str	r3, [r7, #8]
+  67 0012 02E0     		b	.L3
+  68              	.L4:
+  69              		.loc 1 27 0 is_stmt 0 discriminator 3
+  70 0014 BB68     		ldr	r3, [r7, #8]
+  71 0016 013B     		subs	r3, r3, #1
+  72 0018 BB60     		str	r3, [r7, #8]
+  73              	.L3:
+  74              		.loc 1 27 0 discriminator 1
+  75 001a BB68     		ldr	r3, [r7, #8]
+  76 001c 002B     		cmp	r3, #0
+  77 001e F9D1     		bne	.L4
+  78              	.L2:
+  79              	.LBE2:
+  26:../bl/softonewire.c **** 	while (us--)
+  80              		.loc 1 26 0 is_stmt 1
+  81 0020 FB68     		ldr	r3, [r7, #12]
+  82 0022 5A1E     		subs	r2, r3, #1
+  83 0024 FA60     		str	r2, [r7, #12]
+  84 0026 002B     		cmp	r3, #0
+  85 0028 F1D1     		bne	.L5
+  28:../bl/softonewire.c **** 			;
+  29:../bl/softonewire.c **** }
+  86              		.loc 1 29 0
+  87 002a 1437     		adds	r7, r7, #20
+  88              		.cfi_def_cfa_offset 4
+  89 002c BD46     		mov	sp, r7
+  90              		.cfi_def_cfa_register 13
+  91              		@ sp needed
+  92 002e 5DF8047B 		ldr	r7, [sp], #4
+  93              		.cfi_restore 7
+  94              		.cfi_def_cfa_offset 0
+  95 0032 7047     		bx	lr
+  96              		.cfi_endproc
+  97              	.LFE0:
+  99              		.comm	this_dev,4,4
+ 100              		.section	.text.onewrie_io_init,"ax",%progbits
+ 101              		.align	2
+ 102              		.global	onewrie_io_init
+ 103              		.thumb
+ 104              		.thumb_func
+ 106              	onewrie_io_init:
+ 107              	.LFB1:
+  30:../bl/softonewire.c **** const struct SoftOneWire* this_dev;
+  31:../bl/softonewire.c **** void onewrie_io_init(const struct SoftOneWire* OW_DEV)
+  32:../bl/softonewire.c **** {
+ 108              		.loc 1 32 0
+ 109              		.cfi_startproc
+ 110              		@ args = 0, pretend = 0, frame = 8
+ 111              		@ frame_needed = 1, uses_anonymous_args = 0
+ 112 0000 80B5     		push	{r7, lr}
+ 113              		.cfi_def_cfa_offset 8
+ 114              		.cfi_offset 7, -8
+ 115              		.cfi_offset 14, -4
+ 116 0002 82B0     		sub	sp, sp, #8
+ 117              		.cfi_def_cfa_offset 16
+ 118 0004 00AF     		add	r7, sp, #0
+ 119              		.cfi_def_cfa_register 7
+ 120 0006 7860     		str	r0, [r7, #4]
+  33:../bl/softonewire.c **** 	this_dev = OW_DEV;
+ 121              		.loc 1 33 0
+ 122 0008 044A     		ldr	r2, .L7
+ 123 000a 7B68     		ldr	r3, [r7, #4]
+ 124 000c 1360     		str	r3, [r2]
+  34:../bl/softonewire.c **** 	this_dev->IO_OUT_CLR();
+ 125              		.loc 1 34 0
+ 126 000e 034B     		ldr	r3, .L7
+ 127 0010 1B68     		ldr	r3, [r3]
+ 128 0012 5B68     		ldr	r3, [r3, #4]
+ 129 0014 9847     		blx	r3
+  35:../bl/softonewire.c **** }
+ 130              		.loc 1 35 0
+ 131 0016 0837     		adds	r7, r7, #8
+ 132              		.cfi_def_cfa_offset 8
+ 133 0018 BD46     		mov	sp, r7
+ 134              		.cfi_def_cfa_register 13
+ 135              		@ sp needed
+ 136 001a 80BD     		pop	{r7, pc}
+ 137              	.L8:
+ 138              		.align	2
+ 139              	.L7:
+ 140 001c 00000000 		.word	this_dev
+ 141              		.cfi_endproc
+ 142              	.LFE1:
+ 144              		.section	.text.onewrie_reset,"ax",%progbits
+ 145              		.align	2
+ 146              		.global	onewrie_reset
+ 147              		.thumb
+ 148              		.thumb_func
+ 150              	onewrie_reset:
+ 151              	.LFB2:
+  36:../bl/softonewire.c **** int onewrie_reset(void) {
+ 152              		.loc 1 36 0
+ 153              		.cfi_startproc
+ 154              		@ args = 0, pretend = 0, frame = 8
+ 155              		@ frame_needed = 1, uses_anonymous_args = 0
+ 156 0000 80B5     		push	{r7, lr}
+ 157              		.cfi_def_cfa_offset 8
+ 158              		.cfi_offset 7, -8
+ 159              		.cfi_offset 14, -4
+ 160 0002 82B0     		sub	sp, sp, #8
+ 161              		.cfi_def_cfa_offset 16
+ 162 0004 00AF     		add	r7, sp, #0
+ 163              		.cfi_def_cfa_register 7
+  37:../bl/softonewire.c **** 	int result = 0;
+ 164              		.loc 1 37 0
+ 165 0006 0023     		movs	r3, #0
+ 166 0008 7B60     		str	r3, [r7, #4]
+  38:../bl/softonewire.c **** 	//先将端口拉低480us,再拉高，等70us后采样响应信号
+  39:../bl/softonewire.c **** 	this_dev->IO_OUT_CLR();
+ 167              		.loc 1 39 0
+ 168 000a 144B     		ldr	r3, .L11
+ 169 000c 1B68     		ldr	r3, [r3]
+ 170 000e 5B68     		ldr	r3, [r3, #4]
+ 171 0010 9847     		blx	r3
+  40:../bl/softonewire.c **** 	onewire_delay_us(this_dev->TIMING_TABLE[OW_RESET_BEGAIN]);
+ 172              		.loc 1 40 0
+ 173 0012 124B     		ldr	r3, .L11
+ 174 0014 1B68     		ldr	r3, [r3]
+ 175 0016 DB68     		ldr	r3, [r3, #12]
+ 176 0018 1B68     		ldr	r3, [r3]
+ 177 001a 1846     		mov	r0, r3
+ 178 001c FFF7FEFF 		bl	onewire_delay_us
+  41:../bl/softonewire.c **** 	this_dev->IO_OUT_SET();
+ 179              		.loc 1 41 0
+ 180 0020 0E4B     		ldr	r3, .L11
+ 181 0022 1B68     		ldr	r3, [r3]
+ 182 0024 1B68     		ldr	r3, [r3]
+ 183 0026 9847     		blx	r3
+  42:../bl/softonewire.c **** 	onewire_delay_us(this_dev->TIMING_TABLE[OW_RESET_WAIT_ACK]);
+ 184              		.loc 1 42 0
+ 185 0028 0C4B     		ldr	r3, .L11
+ 186 002a 1B68     		ldr	r3, [r3]
+ 187 002c DB68     		ldr	r3, [r3, #12]
+ 188 002e 0433     		adds	r3, r3, #4
+ 189 0030 1B68     		ldr	r3, [r3]
+ 190 0032 1846     		mov	r0, r3
+ 191 0034 FFF7FEFF 		bl	onewire_delay_us
+  43:../bl/softonewire.c **** 	result = this_dev->IO_IN_VAL();
+ 192              		.loc 1 43 0
+ 193 0038 084B     		ldr	r3, .L11
+ 194 003a 1B68     		ldr	r3, [r3]
+ 195 003c 9B68     		ldr	r3, [r3, #8]
+ 196 003e 9847     		blx	r3
+ 197 0040 7860     		str	r0, [r7, #4]
+  44:../bl/softonewire.c **** 	//等待复位周期完成
+  45:../bl/softonewire.c **** 	onewire_delay_us(this_dev->TIMING_TABLE[OW_RESET_END]);
+ 198              		.loc 1 45 0
+ 199 0042 064B     		ldr	r3, .L11
+ 200 0044 1B68     		ldr	r3, [r3]
+ 201 0046 DB68     		ldr	r3, [r3, #12]
+ 202 0048 0833     		adds	r3, r3, #8
+ 203 004a 1B68     		ldr	r3, [r3]
+ 204 004c 1846     		mov	r0, r3
+ 205 004e FFF7FEFF 		bl	onewire_delay_us
+  46:../bl/softonewire.c **** 	return result;
+ 206              		.loc 1 46 0
+ 207 0052 7B68     		ldr	r3, [r7, #4]
+  47:../bl/softonewire.c **** }
+ 208              		.loc 1 47 0
+ 209 0054 1846     		mov	r0, r3
+ 210 0056 0837     		adds	r7, r7, #8
+ 211              		.cfi_def_cfa_offset 8
+ 212 0058 BD46     		mov	sp, r7
+ 213              		.cfi_def_cfa_register 13
+ 214              		@ sp needed
+ 215 005a 80BD     		pop	{r7, pc}
+ 216              	.L12:
+ 217              		.align	2
+ 218              	.L11:
+ 219 005c 00000000 		.word	this_dev
+ 220              		.cfi_endproc
+ 221              	.LFE2:
+ 223              		.section	.text.onewrite_write_bit,"ax",%progbits
+ 224              		.align	2
+ 225              		.global	onewrite_write_bit
+ 226              		.thumb
+ 227              		.thumb_func
+ 229              	onewrite_write_bit:
+ 230              	.LFB3:
+  48:../bl/softonewire.c **** 
+  49:../bl/softonewire.c **** void onewrite_write_bit(int v) {
+ 231              		.loc 1 49 0
+ 232              		.cfi_startproc
+ 233              		@ args = 0, pretend = 0, frame = 8
+ 234              		@ frame_needed = 1, uses_anonymous_args = 0
+ 235 0000 80B5     		push	{r7, lr}
+ 236              		.cfi_def_cfa_offset 8
+ 237              		.cfi_offset 7, -8
+ 238              		.cfi_offset 14, -4
+ 239 0002 82B0     		sub	sp, sp, #8
+ 240              		.cfi_def_cfa_offset 16
+ 241 0004 00AF     		add	r7, sp, #0
+ 242              		.cfi_def_cfa_register 7
+ 243 0006 7860     		str	r0, [r7, #4]
+  50:../bl/softonewire.c **** 	if (v) {
+ 244              		.loc 1 50 0
+ 245 0008 7B68     		ldr	r3, [r7, #4]
+ 246 000a 002B     		cmp	r3, #0
+ 247 000c 18D0     		beq	.L14
+  51:../bl/softonewire.c **** 		//写'1'操作，先拉低，然后拉高完成时序和恢复
+  52:../bl/softonewire.c **** 		this_dev->IO_OUT_CLR();
+ 248              		.loc 1 52 0
+ 249 000e 1A4B     		ldr	r3, .L16
+ 250 0010 1B68     		ldr	r3, [r3]
+ 251 0012 5B68     		ldr	r3, [r3, #4]
+ 252 0014 9847     		blx	r3
+  53:../bl/softonewire.c **** 		onewire_delay_us(this_dev->TIMING_TABLE[OW_WRITE_1_L]);
+ 253              		.loc 1 53 0
+ 254 0016 184B     		ldr	r3, .L16
+ 255 0018 1B68     		ldr	r3, [r3]
+ 256 001a DB68     		ldr	r3, [r3, #12]
+ 257 001c 0C33     		adds	r3, r3, #12
+ 258 001e 1B68     		ldr	r3, [r3]
+ 259 0020 1846     		mov	r0, r3
+ 260 0022 FFF7FEFF 		bl	onewire_delay_us
+  54:../bl/softonewire.c **** 		this_dev->IO_OUT_SET();
+ 261              		.loc 1 54 0
+ 262 0026 144B     		ldr	r3, .L16
+ 263 0028 1B68     		ldr	r3, [r3]
+ 264 002a 1B68     		ldr	r3, [r3]
+ 265 002c 9847     		blx	r3
+  55:../bl/softonewire.c **** 		onewire_delay_us(this_dev->TIMING_TABLE[OW_WRITE_1_H]);
+ 266              		.loc 1 55 0
+ 267 002e 124B     		ldr	r3, .L16
+ 268 0030 1B68     		ldr	r3, [r3]
+ 269 0032 DB68     		ldr	r3, [r3, #12]
+ 270 0034 1033     		adds	r3, r3, #16
+ 271 0036 1B68     		ldr	r3, [r3]
+ 272 0038 1846     		mov	r0, r3
+ 273 003a FFF7FEFF 		bl	onewire_delay_us
+ 274 003e 17E0     		b	.L13
+ 275              	.L14:
+  56:../bl/softonewire.c **** 	} else {
+  57:../bl/softonewire.c **** 		//写'0'操作，拉低并保持到时序结束，然后释放总线，留足恢复时间
+  58:../bl/softonewire.c **** 		this_dev->IO_OUT_CLR();
+ 276              		.loc 1 58 0
+ 277 0040 0D4B     		ldr	r3, .L16
+ 278 0042 1B68     		ldr	r3, [r3]
+ 279 0044 5B68     		ldr	r3, [r3, #4]
+ 280 0046 9847     		blx	r3
+  59:../bl/softonewire.c **** 		onewire_delay_us(this_dev->TIMING_TABLE[OW_WRITE_0_L]);
+ 281              		.loc 1 59 0
+ 282 0048 0B4B     		ldr	r3, .L16
+ 283 004a 1B68     		ldr	r3, [r3]
+ 284 004c DB68     		ldr	r3, [r3, #12]
+ 285 004e 1433     		adds	r3, r3, #20
+ 286 0050 1B68     		ldr	r3, [r3]
+ 287 0052 1846     		mov	r0, r3
+ 288 0054 FFF7FEFF 		bl	onewire_delay_us
+  60:../bl/softonewire.c **** 		this_dev->IO_OUT_SET();
+ 289              		.loc 1 60 0
+ 290 0058 074B     		ldr	r3, .L16
+ 291 005a 1B68     		ldr	r3, [r3]
+ 292 005c 1B68     		ldr	r3, [r3]
+ 293 005e 9847     		blx	r3
+  61:../bl/softonewire.c **** 		onewire_delay_us(this_dev->TIMING_TABLE[OW_WRITE_0_H]);
+ 294              		.loc 1 61 0
+ 295 0060 054B     		ldr	r3, .L16
+ 296 0062 1B68     		ldr	r3, [r3]
+ 297 0064 DB68     		ldr	r3, [r3, #12]
+ 298 0066 1833     		adds	r3, r3, #24
+ 299 0068 1B68     		ldr	r3, [r3]
+ 300 006a 1846     		mov	r0, r3
+ 301 006c FFF7FEFF 		bl	onewire_delay_us
+ 302              	.L13:
+  62:../bl/softonewire.c **** 	}
+  63:../bl/softonewire.c **** }
+ 303              		.loc 1 63 0
+ 304 0070 0837     		adds	r7, r7, #8
+ 305              		.cfi_def_cfa_offset 8
+ 306 0072 BD46     		mov	sp, r7
+ 307              		.cfi_def_cfa_register 13
+ 308              		@ sp needed
+ 309 0074 80BD     		pop	{r7, pc}
+ 310              	.L17:
+ 311 0076 00BF     		.align	2
+ 312              	.L16:
+ 313 0078 00000000 		.word	this_dev
+ 314              		.cfi_endproc
+ 315              	.LFE3:
+ 317              		.section	.text.onewire_read_bit,"ax",%progbits
+ 318              		.align	2
+ 319              		.global	onewire_read_bit
+ 320              		.thumb
+ 321              		.thumb_func
+ 323              	onewire_read_bit:
+ 324              	.LFB4:
+  64:../bl/softonewire.c **** 
+  65:../bl/softonewire.c **** int onewire_read_bit(void) {
+ 325              		.loc 1 65 0
+ 326              		.cfi_startproc
+ 327              		@ args = 0, pretend = 0, frame = 8
+ 328              		@ frame_needed = 1, uses_anonymous_args = 0
+ 329 0000 80B5     		push	{r7, lr}
+ 330              		.cfi_def_cfa_offset 8
+ 331              		.cfi_offset 7, -8
+ 332              		.cfi_offset 14, -4
+ 333 0002 82B0     		sub	sp, sp, #8
+ 334              		.cfi_def_cfa_offset 16
+ 335 0004 00AF     		add	r7, sp, #0
+ 336              		.cfi_def_cfa_register 7
+  66:../bl/softonewire.c **** 	int result = 0;
+ 337              		.loc 1 66 0
+ 338 0006 0023     		movs	r3, #0
+ 339 0008 7B60     		str	r3, [r7, #4]
+  67:../bl/softonewire.c **** 	//读时序，拉低后数个us，并在时隙开始后15us内采样端口数据
+  68:../bl/softonewire.c **** 	this_dev->IO_OUT_CLR();
+ 340              		.loc 1 68 0
+ 341 000a 154B     		ldr	r3, .L20
+ 342 000c 1B68     		ldr	r3, [r3]
+ 343 000e 5B68     		ldr	r3, [r3, #4]
+ 344 0010 9847     		blx	r3
+  69:../bl/softonewire.c **** 	onewire_delay_us(this_dev->TIMING_TABLE[OW_READ_LOW]);
+ 345              		.loc 1 69 0
+ 346 0012 134B     		ldr	r3, .L20
+ 347 0014 1B68     		ldr	r3, [r3]
+ 348 0016 DB68     		ldr	r3, [r3, #12]
+ 349 0018 1C33     		adds	r3, r3, #28
+ 350 001a 1B68     		ldr	r3, [r3]
+ 351 001c 1846     		mov	r0, r3
+ 352 001e FFF7FEFF 		bl	onewire_delay_us
+  70:../bl/softonewire.c **** 	this_dev->IO_OUT_SET();
+ 353              		.loc 1 70 0
+ 354 0022 0F4B     		ldr	r3, .L20
+ 355 0024 1B68     		ldr	r3, [r3]
+ 356 0026 1B68     		ldr	r3, [r3]
+ 357 0028 9847     		blx	r3
+  71:../bl/softonewire.c **** 	onewire_delay_us(this_dev->TIMING_TABLE[OW_READ_BEFORE_SAMPLE]);
+ 358              		.loc 1 71 0
+ 359 002a 0D4B     		ldr	r3, .L20
+ 360 002c 1B68     		ldr	r3, [r3]
+ 361 002e DB68     		ldr	r3, [r3, #12]
+ 362 0030 2033     		adds	r3, r3, #32
+ 363 0032 1B68     		ldr	r3, [r3]
+ 364 0034 1846     		mov	r0, r3
+ 365 0036 FFF7FEFF 		bl	onewire_delay_us
+  72:../bl/softonewire.c **** 	result = this_dev->IO_IN_VAL();
+ 366              		.loc 1 72 0
+ 367 003a 094B     		ldr	r3, .L20
+ 368 003c 1B68     		ldr	r3, [r3]
+ 369 003e 9B68     		ldr	r3, [r3, #8]
+ 370 0040 9847     		blx	r3
+ 371 0042 7860     		str	r0, [r7, #4]
+  73:../bl/softonewire.c **** 	onewire_delay_us(this_dev->TIMING_TABLE[OW_READ_END]);
+ 372              		.loc 1 73 0
+ 373 0044 064B     		ldr	r3, .L20
+ 374 0046 1B68     		ldr	r3, [r3]
+ 375 0048 DB68     		ldr	r3, [r3, #12]
+ 376 004a 2433     		adds	r3, r3, #36
+ 377 004c 1B68     		ldr	r3, [r3]
+ 378 004e 1846     		mov	r0, r3
+ 379 0050 FFF7FEFF 		bl	onewire_delay_us
+  74:../bl/softonewire.c **** 	return result;
+ 380              		.loc 1 74 0
+ 381 0054 7B68     		ldr	r3, [r7, #4]
+  75:../bl/softonewire.c **** }
+ 382              		.loc 1 75 0
+ 383 0056 1846     		mov	r0, r3
+ 384 0058 0837     		adds	r7, r7, #8
+ 385              		.cfi_def_cfa_offset 8
+ 386 005a BD46     		mov	sp, r7
+ 387              		.cfi_def_cfa_register 13
+ 388              		@ sp needed
+ 389 005c 80BD     		pop	{r7, pc}
+ 390              	.L21:
+ 391 005e 00BF     		.align	2
+ 392              	.L20:
+ 393 0060 00000000 		.word	this_dev
+ 394              		.cfi_endproc
+ 395              	.LFE4:
+ 397              		.section	.text.onewire_write_byte,"ax",%progbits
+ 398              		.align	2
+ 399              		.global	onewire_write_byte
+ 400              		.thumb
+ 401              		.thumb_func
+ 403              	onewire_write_byte:
+ 404              	.LFB5:
+  76:../bl/softonewire.c **** 
+  77:../bl/softonewire.c **** void onewire_write_byte(uint8_t v) {
+ 405              		.loc 1 77 0
+ 406              		.cfi_startproc
+ 407              		@ args = 0, pretend = 0, frame = 16
+ 408              		@ frame_needed = 1, uses_anonymous_args = 0
+ 409 0000 80B5     		push	{r7, lr}
+ 410              		.cfi_def_cfa_offset 8
+ 411              		.cfi_offset 7, -8
+ 412              		.cfi_offset 14, -4
+ 413 0002 84B0     		sub	sp, sp, #16
+ 414              		.cfi_def_cfa_offset 24
+ 415 0004 00AF     		add	r7, sp, #0
+ 416              		.cfi_def_cfa_register 7
+ 417 0006 0346     		mov	r3, r0
+ 418 0008 FB71     		strb	r3, [r7, #7]
+  78:../bl/softonewire.c **** 	uint8_t i = 0;
+ 419              		.loc 1 78 0
+ 420 000a 0023     		movs	r3, #0
+ 421 000c FB73     		strb	r3, [r7, #15]
+  79:../bl/softonewire.c **** 	uint8_t tmp = v;
+ 422              		.loc 1 79 0
+ 423 000e FB79     		ldrb	r3, [r7, #7]
+ 424 0010 BB73     		strb	r3, [r7, #14]
+  80:../bl/softonewire.c **** 	//用循环和移位完成每一位的写操作，从LS开始
+  81:../bl/softonewire.c **** 	for (i = 0; i < 8; i++) {
+ 425              		.loc 1 81 0
+ 426 0012 0023     		movs	r3, #0
+ 427 0014 FB73     		strb	r3, [r7, #15]
+ 428 0016 0BE0     		b	.L23
+ 429              	.L24:
+  82:../bl/softonewire.c **** 		onewrite_write_bit(tmp & 0x01);
+ 430              		.loc 1 82 0 discriminator 3
+ 431 0018 BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 432 001a 03F00103 		and	r3, r3, #1
+ 433 001e 1846     		mov	r0, r3
+ 434 0020 FFF7FEFF 		bl	onewrite_write_bit
+  83:../bl/softonewire.c **** 		tmp >>= 1;
+ 435              		.loc 1 83 0 discriminator 3
+ 436 0024 BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 437 0026 5B08     		lsrs	r3, r3, #1
+ 438 0028 BB73     		strb	r3, [r7, #14]
+  81:../bl/softonewire.c **** 		onewrite_write_bit(tmp & 0x01);
+ 439              		.loc 1 81 0 discriminator 3
+ 440 002a FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 441 002c 0133     		adds	r3, r3, #1
+ 442 002e FB73     		strb	r3, [r7, #15]
+ 443              	.L23:
+  81:../bl/softonewire.c **** 		onewrite_write_bit(tmp & 0x01);
+ 444              		.loc 1 81 0 is_stmt 0 discriminator 1
+ 445 0030 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 446 0032 072B     		cmp	r3, #7
+ 447 0034 F0D9     		bls	.L24
+  84:../bl/softonewire.c **** 	}
+  85:../bl/softonewire.c **** }
+ 448              		.loc 1 85 0 is_stmt 1
+ 449 0036 1037     		adds	r7, r7, #16
+ 450              		.cfi_def_cfa_offset 8
+ 451 0038 BD46     		mov	sp, r7
+ 452              		.cfi_def_cfa_register 13
+ 453              		@ sp needed
+ 454 003a 80BD     		pop	{r7, pc}
+ 455              		.cfi_endproc
+ 456              	.LFE5:
+ 458              		.section	.text.onewire_read_byte,"ax",%progbits
+ 459              		.align	2
+ 460              		.global	onewire_read_byte
+ 461              		.thumb
+ 462              		.thumb_func
+ 464              	onewire_read_byte:
+ 465              	.LFB6:
+  86:../bl/softonewire.c **** 
+  87:../bl/softonewire.c **** uint8_t onewire_read_byte(void) {
+ 466              		.loc 1 87 0
+ 467              		.cfi_startproc
+ 468              		@ args = 0, pretend = 0, frame = 8
+ 469              		@ frame_needed = 1, uses_anonymous_args = 0
+ 470 0000 80B5     		push	{r7, lr}
+ 471              		.cfi_def_cfa_offset 8
+ 472              		.cfi_offset 7, -8
+ 473              		.cfi_offset 14, -4
+ 474 0002 82B0     		sub	sp, sp, #8
+ 475              		.cfi_def_cfa_offset 16
+ 476 0004 00AF     		add	r7, sp, #0
+ 477              		.cfi_def_cfa_register 7
+  88:../bl/softonewire.c **** 	uint8_t i = 0;
+ 478              		.loc 1 88 0
+ 479 0006 0023     		movs	r3, #0
+ 480 0008 FB71     		strb	r3, [r7, #7]
+  89:../bl/softonewire.c **** 	uint8_t result = 0;
+ 481              		.loc 1 89 0
+ 482 000a 0023     		movs	r3, #0
+ 483 000c BB71     		strb	r3, [r7, #6]
+  90:../bl/softonewire.c **** 	for (i = 0; i < 8; i++) {
+ 484              		.loc 1 90 0
+ 485 000e 0023     		movs	r3, #0
+ 486 0010 FB71     		strb	r3, [r7, #7]
+ 487 0012 11E0     		b	.L26
+ 488              	.L28:
+  91:../bl/softonewire.c **** 		//从低位开始读起，每读一位变向右移动一位
+  92:../bl/softonewire.c **** 		result >>= 1;
+ 489              		.loc 1 92 0
+ 490 0014 BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 491 0016 5B08     		lsrs	r3, r3, #1
+ 492 0018 BB71     		strb	r3, [r7, #6]
+  93:../bl/softonewire.c **** 		if (onewire_read_bit()) {
+ 493              		.loc 1 93 0
+ 494 001a FFF7FEFF 		bl	onewire_read_bit
+ 495 001e 0346     		mov	r3, r0
+ 496 0020 002B     		cmp	r3, #0
+ 497 0022 03D0     		beq	.L27
+  94:../bl/softonewire.c **** 			//printf("read bit %d is 1 ===", i);
+  95:../bl/softonewire.c **** 			result |= 0x80;
+ 498              		.loc 1 95 0
+ 499 0024 BB79     		ldrb	r3, [r7, #6]
+ 500 0026 63F07F03 		orn	r3, r3, #127
+ 501 002a BB71     		strb	r3, [r7, #6]
+ 502              	.L27:
+  96:../bl/softonewire.c **** 		} else {
+  97:../bl/softonewire.c **** 			//printf("read bit %d is 0 ===", i);
+  98:../bl/softonewire.c **** 		}
+  99:../bl/softonewire.c **** 		onewire_delay_us(3);
+ 503              		.loc 1 99 0 discriminator 2
+ 504 002c 0320     		movs	r0, #3
+ 505 002e FFF7FEFF 		bl	onewire_delay_us
+  90:../bl/softonewire.c **** 		//从低位开始读起，每读一位变向右移动一位
+ 506              		.loc 1 90 0 discriminator 2
+ 507 0032 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 508 0034 0133     		adds	r3, r3, #1
+ 509 0036 FB71     		strb	r3, [r7, #7]
+ 510              	.L26:
+  90:../bl/softonewire.c **** 		//从低位开始读起，每读一位变向右移动一位
+ 511              		.loc 1 90 0 is_stmt 0 discriminator 1
+ 512 0038 FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 513 003a 072B     		cmp	r3, #7
+ 514 003c EAD9     		bls	.L28
+ 100:../bl/softonewire.c **** 	}
+ 101:../bl/softonewire.c **** 	return result;
+ 515              		.loc 1 101 0 is_stmt 1
+ 516 003e BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 102:../bl/softonewire.c **** }
+ 517              		.loc 1 102 0
+ 518 0040 1846     		mov	r0, r3
+ 519 0042 0837     		adds	r7, r7, #8
+ 520              		.cfi_def_cfa_offset 8
+ 521 0044 BD46     		mov	sp, r7
+ 522              		.cfi_def_cfa_register 13
+ 523              		@ sp needed
+ 524 0046 80BD     		pop	{r7, pc}
+ 525              		.cfi_endproc
+ 526              	.LFE6:
+ 528              		.section	.text.onewire_read,"ax",%progbits
+ 529              		.align	2
+ 530              		.global	onewire_read
+ 531              		.thumb
+ 532              		.thumb_func
+ 534              	onewire_read:
+ 535              	.LFB7:
+ 103:../bl/softonewire.c **** 
+ 104:../bl/softonewire.c **** int onewire_read(uint8_t slave_addr, int len, uint8_t *rbuf)
+ 105:../bl/softonewire.c **** {
+ 536              		.loc 1 105 0
+ 537              		.cfi_startproc
+ 538              		@ args = 0, pretend = 0, frame = 24
+ 539              		@ frame_needed = 1, uses_anonymous_args = 0
+ 540 0000 90B5     		push	{r4, r7, lr}
+ 541              		.cfi_def_cfa_offset 12
+ 542              		.cfi_offset 4, -12
+ 543              		.cfi_offset 7, -8
+ 544              		.cfi_offset 14, -4
+ 545 0002 87B0     		sub	sp, sp, #28
+ 546              		.cfi_def_cfa_offset 40
+ 547 0004 00AF     		add	r7, sp, #0
+ 548              		.cfi_def_cfa_register 7
+ 549 0006 0346     		mov	r3, r0
+ 550 0008 B960     		str	r1, [r7, #8]
+ 551 000a 7A60     		str	r2, [r7, #4]
+ 552 000c FB73     		strb	r3, [r7, #15]
+ 106:../bl/softonewire.c **** 	int rst_val = onewrie_reset();
+ 553              		.loc 1 106 0
+ 554 000e FFF7FEFF 		bl	onewrie_reset
+ 555 0012 3861     		str	r0, [r7, #16]
+ 107:../bl/softonewire.c **** 	if(0!=rst_val)
+ 556              		.loc 1 107 0
+ 557 0014 3B69     		ldr	r3, [r7, #16]
+ 558 0016 002B     		cmp	r3, #0
+ 559 0018 02D0     		beq	.L31
+ 108:../bl/softonewire.c **** 		return -1;
+ 560              		.loc 1 108 0
+ 561 001a 4FF0FF33 		mov	r3, #-1
+ 562 001e 15E0     		b	.L32
+ 563              	.L31:
+ 109:../bl/softonewire.c **** 	onewire_write_byte(slave_addr);
+ 564              		.loc 1 109 0
+ 565 0020 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 566 0022 1846     		mov	r0, r3
+ 567 0024 FFF7FEFF 		bl	onewire_write_byte
+ 568              	.LBB3:
+ 110:../bl/softonewire.c **** 	for (int i = 0; i < len; i++) {
+ 569              		.loc 1 110 0
+ 570 0028 0023     		movs	r3, #0
+ 571 002a 7B61     		str	r3, [r7, #20]
+ 572 002c 09E0     		b	.L33
+ 573              	.L34:
+ 111:../bl/softonewire.c **** 		rbuf[i] = onewire_read_byte();
+ 574              		.loc 1 111 0 discriminator 3
+ 575 002e 7B69     		ldr	r3, [r7, #20]
+ 576 0030 7A68     		ldr	r2, [r7, #4]
+ 577 0032 D418     		adds	r4, r2, r3
+ 578 0034 FFF7FEFF 		bl	onewire_read_byte
+ 579 0038 0346     		mov	r3, r0
+ 580 003a 2370     		strb	r3, [r4]
+ 110:../bl/softonewire.c **** 	for (int i = 0; i < len; i++) {
+ 581              		.loc 1 110 0 discriminator 3
+ 582 003c 7B69     		ldr	r3, [r7, #20]
+ 583 003e 0133     		adds	r3, r3, #1
+ 584 0040 7B61     		str	r3, [r7, #20]
+ 585              	.L33:
+ 110:../bl/softonewire.c **** 	for (int i = 0; i < len; i++) {
+ 586              		.loc 1 110 0 is_stmt 0 discriminator 1
+ 587 0042 7A69     		ldr	r2, [r7, #20]
+ 588 0044 BB68     		ldr	r3, [r7, #8]
+ 589 0046 9A42     		cmp	r2, r3
+ 590 0048 F1DB     		blt	.L34
+ 591              	.LBE3:
+ 112:../bl/softonewire.c **** 	}
+ 113:../bl/softonewire.c **** 	return 0;
+ 592              		.loc 1 113 0 is_stmt 1
+ 593 004a 0023     		movs	r3, #0
+ 594              	.L32:
+ 114:../bl/softonewire.c **** }
+ 595              		.loc 1 114 0
+ 596 004c 1846     		mov	r0, r3
+ 597 004e 1C37     		adds	r7, r7, #28
+ 598              		.cfi_def_cfa_offset 12
+ 599 0050 BD46     		mov	sp, r7
+ 600              		.cfi_def_cfa_register 13
+ 601              		@ sp needed
+ 602 0052 90BD     		pop	{r4, r7, pc}
+ 603              		.cfi_endproc
+ 604              	.LFE7:
+ 606              		.section	.text.onewrie_crc8,"ax",%progbits
+ 607              		.align	2
+ 608              		.global	onewrie_crc8
+ 609              		.thumb
+ 610              		.thumb_func
+ 612              	onewrie_crc8:
+ 613              	.LFB8:
+ 115:../bl/softonewire.c **** 
+ 116:../bl/softonewire.c **** uint8_t onewrie_crc8(uint8_t *_dat, uint8_t length) {
+ 614              		.loc 1 116 0
+ 615              		.cfi_startproc
+ 616              		@ args = 0, pretend = 0, frame = 24
+ 617              		@ frame_needed = 1, uses_anonymous_args = 0
+ 618              		@ link register save eliminated.
+ 619 0000 80B4     		push	{r7}
+ 620              		.cfi_def_cfa_offset 4
+ 621              		.cfi_offset 7, -4
+ 622 0002 87B0     		sub	sp, sp, #28
+ 623              		.cfi_def_cfa_offset 32
+ 624 0004 00AF     		add	r7, sp, #0
+ 625              		.cfi_def_cfa_register 7
+ 626 0006 7860     		str	r0, [r7, #4]
+ 627 0008 0B46     		mov	r3, r1
+ 628 000a FB70     		strb	r3, [r7, #3]
+ 117:../bl/softonewire.c **** 	uint8_t *dat = _dat;
+ 629              		.loc 1 117 0
+ 630 000c 7B68     		ldr	r3, [r7, #4]
+ 631 000e 7B61     		str	r3, [r7, #20]
+ 118:../bl/softonewire.c **** 	uint8_t i, j, aa, check, flag;
+ 119:../bl/softonewire.c **** 	check = 0;
+ 632              		.loc 1 119 0
+ 633 0010 0023     		movs	r3, #0
+ 634 0012 3B74     		strb	r3, [r7, #16]
+ 120:../bl/softonewire.c **** 	for (i = 0; i < length; i++) {
+ 635              		.loc 1 120 0
+ 636 0014 0023     		movs	r3, #0
+ 637 0016 FB74     		strb	r3, [r7, #19]
+ 638 0018 28E0     		b	.L36
+ 639              	.L40:
+ 121:../bl/softonewire.c **** 		aa = *dat++;
+ 640              		.loc 1 121 0
+ 641 001a 7B69     		ldr	r3, [r7, #20]
+ 642 001c 5A1C     		adds	r2, r3, #1
+ 643 001e 7A61     		str	r2, [r7, #20]
+ 644 0020 1B78     		ldrb	r3, [r3]
+ 645 0022 7B74     		strb	r3, [r7, #17]
+ 122:../bl/softonewire.c **** 		for (j = 0; j < 8; j++) {
+ 646              		.loc 1 122 0
+ 647 0024 0023     		movs	r3, #0
+ 648 0026 BB74     		strb	r3, [r7, #18]
+ 649 0028 1AE0     		b	.L37
+ 650              	.L39:
+ 123:../bl/softonewire.c **** 			flag = (check ^ aa) & 1;
+ 651              		.loc 1 123 0
+ 652 002a 3A7C     		ldrb	r2, [r7, #16]
+ 653 002c 7B7C     		ldrb	r3, [r7, #17]
+ 654 002e 5340     		eors	r3, r3, r2
+ 655 0030 DBB2     		uxtb	r3, r3
+ 656 0032 03F00103 		and	r3, r3, #1
+ 657 0036 FB73     		strb	r3, [r7, #15]
+ 124:../bl/softonewire.c **** 			check >>= 1;
+ 658              		.loc 1 124 0
+ 659 0038 3B7C     		ldrb	r3, [r7, #16]	@ zero_extendqisi2
+ 660 003a 5B08     		lsrs	r3, r3, #1
+ 661 003c 3B74     		strb	r3, [r7, #16]
+ 125:../bl/softonewire.c **** 			if (flag) {
+ 662              		.loc 1 125 0
+ 663 003e FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 664 0040 002B     		cmp	r3, #0
+ 665 0042 07D0     		beq	.L38
+ 126:../bl/softonewire.c **** 				check ^= 0x0c;
+ 666              		.loc 1 126 0
+ 667 0044 3B7C     		ldrb	r3, [r7, #16]
+ 668 0046 83F00C03 		eor	r3, r3, #12
+ 669 004a 3B74     		strb	r3, [r7, #16]
+ 127:../bl/softonewire.c **** 				check |= 0x80;
+ 670              		.loc 1 127 0
+ 671 004c 3B7C     		ldrb	r3, [r7, #16]
+ 672 004e 63F07F03 		orn	r3, r3, #127
+ 673 0052 3B74     		strb	r3, [r7, #16]
+ 674              	.L38:
+ 128:../bl/softonewire.c **** 			}
+ 129:../bl/softonewire.c **** 			aa >>= 1;
+ 675              		.loc 1 129 0 discriminator 2
+ 676 0054 7B7C     		ldrb	r3, [r7, #17]	@ zero_extendqisi2
+ 677 0056 5B08     		lsrs	r3, r3, #1
+ 678 0058 7B74     		strb	r3, [r7, #17]
+ 122:../bl/softonewire.c **** 			flag = (check ^ aa) & 1;
+ 679              		.loc 1 122 0 discriminator 2
+ 680 005a BB7C     		ldrb	r3, [r7, #18]	@ zero_extendqisi2
+ 681 005c 0133     		adds	r3, r3, #1
+ 682 005e BB74     		strb	r3, [r7, #18]
+ 683              	.L37:
+ 122:../bl/softonewire.c **** 			flag = (check ^ aa) & 1;
+ 684              		.loc 1 122 0 is_stmt 0 discriminator 1
+ 685 0060 BB7C     		ldrb	r3, [r7, #18]	@ zero_extendqisi2
+ 686 0062 072B     		cmp	r3, #7
+ 687 0064 E1D9     		bls	.L39
+ 120:../bl/softonewire.c **** 		aa = *dat++;
+ 688              		.loc 1 120 0 is_stmt 1 discriminator 2
+ 689 0066 FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+ 690 0068 0133     		adds	r3, r3, #1
+ 691 006a FB74     		strb	r3, [r7, #19]
+ 692              	.L36:
+ 120:../bl/softonewire.c **** 		aa = *dat++;
+ 693              		.loc 1 120 0 is_stmt 0 discriminator 1
+ 694 006c FA7C     		ldrb	r2, [r7, #19]	@ zero_extendqisi2
+ 695 006e FB78     		ldrb	r3, [r7, #3]	@ zero_extendqisi2
+ 696 0070 9A42     		cmp	r2, r3
+ 697 0072 D2D3     		bcc	.L40
+ 130:../bl/softonewire.c **** 		}
+ 131:../bl/softonewire.c **** 	}
+ 132:../bl/softonewire.c **** 	return check;
+ 698              		.loc 1 132 0 is_stmt 1
+ 699 0074 3B7C     		ldrb	r3, [r7, #16]	@ zero_extendqisi2
+ 133:../bl/softonewire.c **** }
+ 700              		.loc 1 133 0
+ 701 0076 1846     		mov	r0, r3
+ 702 0078 1C37     		adds	r7, r7, #28
+ 703              		.cfi_def_cfa_offset 4
+ 704 007a BD46     		mov	sp, r7
+ 705              		.cfi_def_cfa_register 13
+ 706              		@ sp needed
+ 707 007c 5DF8047B 		ldr	r7, [sp], #4
+ 708              		.cfi_restore 7
+ 709              		.cfi_def_cfa_offset 0
+ 710 0080 7047     		bx	lr
+ 711              		.cfi_endproc
+ 712              	.LFE8:
+ 714 0082 00BF     		.text
+ 715              	.Letext0:
+ 716              		.file 2 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/bl/softonewire.h"
+ 717              		.file 3 "/home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstdint"
+DEFINED SYMBOLS
+                            *ABS*:00000000 softonewire.c
+     /tmp/cctI9rPT.s:25     .rodata.onewire_def_timing_tbl:00000000 onewire_def_timing_tbl
+     /tmp/cctI9rPT.s:22     .rodata.onewire_def_timing_tbl:00000000 $d
+     /tmp/cctI9rPT.s:37     .text.onewire_delay_us:00000000 $t
+     /tmp/cctI9rPT.s:41     .text.onewire_delay_us:00000000 onewire_delay_us
+                            *COM*:00000004 this_dev
+     /tmp/cctI9rPT.s:101    .text.onewrie_io_init:00000000 $t
+     /tmp/cctI9rPT.s:106    .text.onewrie_io_init:00000000 onewrie_io_init
+     /tmp/cctI9rPT.s:140    .text.onewrie_io_init:0000001c $d
+     /tmp/cctI9rPT.s:145    .text.onewrie_reset:00000000 $t
+     /tmp/cctI9rPT.s:150    .text.onewrie_reset:00000000 onewrie_reset
+     /tmp/cctI9rPT.s:219    .text.onewrie_reset:0000005c $d
+     /tmp/cctI9rPT.s:224    .text.onewrite_write_bit:00000000 $t
+     /tmp/cctI9rPT.s:229    .text.onewrite_write_bit:00000000 onewrite_write_bit
+     /tmp/cctI9rPT.s:313    .text.onewrite_write_bit:00000078 $d
+     /tmp/cctI9rPT.s:318    .text.onewire_read_bit:00000000 $t
+     /tmp/cctI9rPT.s:323    .text.onewire_read_bit:00000000 onewire_read_bit
+     /tmp/cctI9rPT.s:393    .text.onewire_read_bit:00000060 $d
+     /tmp/cctI9rPT.s:398    .text.onewire_write_byte:00000000 $t
+     /tmp/cctI9rPT.s:403    .text.onewire_write_byte:00000000 onewire_write_byte
+     /tmp/cctI9rPT.s:459    .text.onewire_read_byte:00000000 $t
+     /tmp/cctI9rPT.s:464    .text.onewire_read_byte:00000000 onewire_read_byte
+     /tmp/cctI9rPT.s:529    .text.onewire_read:00000000 $t
+     /tmp/cctI9rPT.s:534    .text.onewire_read:00000000 onewire_read
+     /tmp/cctI9rPT.s:607    .text.onewrie_crc8:00000000 $t
+     /tmp/cctI9rPT.s:612    .text.onewrie_crc8:00000000 onewrie_crc8
+                     .debug_frame:00000010 $d
+                           .group:00000000 wm4.0.728a2e6911dc01ff85c2d70c52e8fae1
+                           .group:00000000 wm4.lib_c99.prefix.8.3580c292f50811c682d980dc4180498e
+                           .group:00000000 wm4.common.prefix.16.d7bf937cdf46fd76dde96b376e3b328a
+                           .group:00000000 wm4.ewl_c_version.h.9.0bcb57d6a3f89baae1f9b121de2772f5
+                           .group:00000000 wm4.os_enum.h.9.f9446d6af68b3fa72a37d4d924d3b347
+                           .group:00000000 wm4.ansi_prefix.ARM.h.13.4b23f4c654df3c3277534542f67d200c
+                           .group:00000000 wm4.ansi_parms.h.64.90aed58330fdde08746db908036e1f37
+                           .group:00000000 wm4.limits_api.h.9.bc6daa20b3abae2bba6c512044e73b43
+                           .group:00000000 wm4.ewl_lib_ext1.h.14.f9b057cc049671136093886db2a3473f
+                           .group:00000000 wm4.cstdint.134.0ece0ba0ee759ce9e45a8fa510ec0d93
+                           .group:00000000 wm4.wchar_t.h.9.94198016f5b5f455e54ea1f3f054b416
+                           .group:00000000 wm4.cstdint.246.0573fcc3ea2319479988f90b448d87e4
+                           .group:00000000 wm4.size_t.h.9.f983491a73b5c81f421ee8223b1ac5c0
+                           .group:00000000 wm4.ewl_rsize_t.h.11.b283831bb803e76ceb1756da2df9a1b5
+                           .group:00000000 wm4.string_api.h.9.a9265430fd330d238bc93998aef29e99
+
+NO UNDEFINED SYMBOLS

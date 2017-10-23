@@ -1,0 +1,610 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.eabi_attribute 27, 1
+   4              		.eabi_attribute 28, 1
+   5              		.fpu fpv4-sp-d16
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.thumb
+  16              		.file	"LPUART.c"
+  17              		.text
+  18              	.Ltext0:
+  19              		.cfi_sections	.debug_frame
+  20              		.section	.text.LPUART_init,"ax",%progbits
+  21              		.align	2
+  22              		.global	LPUART_init
+  23              		.thumb
+  24              		.thumb_func
+  26              	LPUART_init:
+  27              	.LFB0:
+  28              		.file 1 "../bl/LPUART.c"
+   1:../bl/LPUART.c **** /*
+   2:../bl/LPUART.c ****  * LPUART.c              Copyright NXP 2016
+   3:../bl/LPUART.c ****  * Description: LPUART functions
+   4:../bl/LPUART.c ****  * 2015 Sept 28 Kushal Shaw - original version AN5213;
+   5:../bl/LPUART.c ****  * 2016 Mar 17  O Romero - ported to S32K144;
+   6:../bl/LPUART.c ****  *
+   7:../bl/LPUART.c ****  */
+   8:../bl/LPUART.c **** 
+   9:../bl/LPUART.c **** #include "S32K144.h" /* include peripheral declarations S32K144 */
+  10:../bl/LPUART.c **** #include "LPUART.h"
+  11:../bl/LPUART.c **** 
+  12:../bl/LPUART.c **** void LPUART_init(LPUART_Type *LPUART, uint32_t bps)  /* Init. summary: 9600 baud, 1 stop bit, 8 bit
+  13:../bl/LPUART.c **** {
+  29              		.loc 1 13 0
+  30              		.cfi_startproc
+  31              		@ args = 0, pretend = 0, frame = 8
+  32              		@ frame_needed = 1, uses_anonymous_args = 0
+  33              		@ link register save eliminated.
+  34 0000 80B4     		push	{r7}
+  35              		.cfi_def_cfa_offset 4
+  36              		.cfi_offset 7, -4
+  37 0002 83B0     		sub	sp, sp, #12
+  38              		.cfi_def_cfa_offset 16
+  39 0004 00AF     		add	r7, sp, #0
+  40              		.cfi_def_cfa_register 7
+  41 0006 7860     		str	r0, [r7, #4]
+  42 0008 3960     		str	r1, [r7]
+  14:../bl/LPUART.c **** 	if(LPUART==LPUART0){
+  43              		.loc 1 14 0
+  44 000a 7B68     		ldr	r3, [r7, #4]
+  45 000c 434A     		ldr	r2, .L11
+  46 000e 9342     		cmp	r3, r2
+  47 0010 10D1     		bne	.L2
+  15:../bl/LPUART.c **** 	  PCC->PCCn[PCC_LPUART0_INDEX] &= ~PCC_PCCn_CGC_MASK;    /* Ensure clk disabled for config */
+  48              		.loc 1 15 0
+  49 0012 434A     		ldr	r2, .L11+4
+  50 0014 424B     		ldr	r3, .L11+4
+  51 0016 D3F8A831 		ldr	r3, [r3, #424]
+  52 001a 23F08043 		bic	r3, r3, #1073741824
+  53 001e C2F8A831 		str	r3, [r2, #424]
+  16:../bl/LPUART.c **** 	  PCC->PCCn[PCC_LPUART0_INDEX] |= PCC_PCCn_PCS(0b001)    /* Clock Src= 1 (SOSCDIV2_CLK) */
+  54              		.loc 1 16 0
+  55 0022 3F4A     		ldr	r2, .L11+4
+  56 0024 3E4B     		ldr	r3, .L11+4
+  57 0026 D3F8A831 		ldr	r3, [r3, #424]
+  58 002a 43F08243 		orr	r3, r3, #1090519040
+  59 002e C2F8A831 		str	r3, [r2, #424]
+  60 0032 28E0     		b	.L3
+  61              	.L2:
+  17:../bl/LPUART.c **** 								   |  PCC_PCCn_CGC_MASK;     /* Enable clock for LPUART regs */
+  18:../bl/LPUART.c **** 	}else if(LPUART==LPUART1){
+  62              		.loc 1 18 0
+  63 0034 7B68     		ldr	r3, [r7, #4]
+  64 0036 3B4A     		ldr	r2, .L11+8
+  65 0038 9342     		cmp	r3, r2
+  66 003a 10D1     		bne	.L4
+  19:../bl/LPUART.c **** 	  PCC->PCCn[PCC_LPUART1_INDEX] &= ~PCC_PCCn_CGC_MASK;    /* Ensure clk disabled for config */
+  67              		.loc 1 19 0
+  68 003c 384A     		ldr	r2, .L11+4
+  69 003e 384B     		ldr	r3, .L11+4
+  70 0040 D3F8AC31 		ldr	r3, [r3, #428]
+  71 0044 23F08043 		bic	r3, r3, #1073741824
+  72 0048 C2F8AC31 		str	r3, [r2, #428]
+  20:../bl/LPUART.c **** 	  PCC->PCCn[PCC_LPUART1_INDEX] |= PCC_PCCn_PCS(0b001)    /* Clock Src= 1 (SOSCDIV2_CLK) */
+  73              		.loc 1 20 0
+  74 004c 344A     		ldr	r2, .L11+4
+  75 004e 344B     		ldr	r3, .L11+4
+  76 0050 D3F8AC31 		ldr	r3, [r3, #428]
+  77 0054 43F08243 		orr	r3, r3, #1090519040
+  78 0058 C2F8AC31 		str	r3, [r2, #428]
+  79 005c 13E0     		b	.L3
+  80              	.L4:
+  21:../bl/LPUART.c **** 								   |  PCC_PCCn_CGC_MASK;     /* Enable clock for LPUART regs */
+  22:../bl/LPUART.c **** 	}else if(LPUART==LPUART2){
+  81              		.loc 1 22 0
+  82 005e 7B68     		ldr	r3, [r7, #4]
+  83 0060 314A     		ldr	r2, .L11+12
+  84 0062 9342     		cmp	r3, r2
+  85 0064 0FD1     		bne	.L3
+  23:../bl/LPUART.c **** 	  PCC->PCCn[PCC_LPUART2_INDEX] &= ~PCC_PCCn_CGC_MASK;    /* Ensure clk disabled for config */
+  86              		.loc 1 23 0
+  87 0066 2E4A     		ldr	r2, .L11+4
+  88 0068 2D4B     		ldr	r3, .L11+4
+  89 006a D3F8B031 		ldr	r3, [r3, #432]
+  90 006e 23F08043 		bic	r3, r3, #1073741824
+  91 0072 C2F8B031 		str	r3, [r2, #432]
+  24:../bl/LPUART.c **** 	  PCC->PCCn[PCC_LPUART2_INDEX] |= PCC_PCCn_PCS(0b001)    /* Clock Src= 1 (SOSCDIV2_CLK) */
+  92              		.loc 1 24 0
+  93 0076 2A4A     		ldr	r2, .L11+4
+  94 0078 294B     		ldr	r3, .L11+4
+  95 007a D3F8B031 		ldr	r3, [r3, #432]
+  96 007e 43F08243 		orr	r3, r3, #1090519040
+  97 0082 C2F8B031 		str	r3, [r2, #432]
+  98              	.L3:
+  25:../bl/LPUART.c **** 								   |  PCC_PCCn_CGC_MASK;     /* Enable clock for LPUART regs */
+  26:../bl/LPUART.c **** 	}
+  27:../bl/LPUART.c **** 	/*
+  28:../bl/LPUART.c **** 	 * fuck sysclk
+  29:../bl/LPUART.c **** 	 */
+  30:../bl/LPUART.c **** 	if(bps==9600)
+  99              		.loc 1 30 0
+ 100 0086 3B68     		ldr	r3, [r7]
+ 101 0088 B3F5165F 		cmp	r3, #9600
+ 102 008c 03D1     		bne	.L5
+  31:../bl/LPUART.c **** 		LPUART->BAUD = 0x0F000000+(8000000/16/9600);
+ 103              		.loc 1 31 0
+ 104 008e 7B68     		ldr	r3, [r7, #4]
+ 105 0090 264A     		ldr	r2, .L11+16
+ 106 0092 1A61     		str	r2, [r3, #16]
+ 107 0094 27E0     		b	.L6
+ 108              	.L5:
+  32:../bl/LPUART.c **** 	else if(bps==19200)
+ 109              		.loc 1 32 0
+ 110 0096 3B68     		ldr	r3, [r7]
+ 111 0098 B3F5964F 		cmp	r3, #19200
+ 112 009c 03D1     		bne	.L7
+  33:../bl/LPUART.c **** 		LPUART->BAUD = 0x0F000000+(8000000/16/19200);
+ 113              		.loc 1 33 0
+ 114 009e 7B68     		ldr	r3, [r7, #4]
+ 115 00a0 234A     		ldr	r2, .L11+20
+ 116 00a2 1A61     		str	r2, [r3, #16]
+ 117 00a4 1FE0     		b	.L6
+ 118              	.L7:
+  34:../bl/LPUART.c **** 	else if(bps==38400)
+ 119              		.loc 1 34 0
+ 120 00a6 3B68     		ldr	r3, [r7]
+ 121 00a8 B3F5164F 		cmp	r3, #38400
+ 122 00ac 03D1     		bne	.L8
+  35:../bl/LPUART.c **** 		LPUART->BAUD = 0x0F000000+(8000000/16/38400);
+ 123              		.loc 1 35 0
+ 124 00ae 7B68     		ldr	r3, [r7, #4]
+ 125 00b0 204A     		ldr	r2, .L11+24
+ 126 00b2 1A61     		str	r2, [r3, #16]
+ 127 00b4 17E0     		b	.L6
+ 128              	.L8:
+  36:../bl/LPUART.c **** 	else if(bps==57600)
+ 129              		.loc 1 36 0
+ 130 00b6 3B68     		ldr	r3, [r7]
+ 131 00b8 B3F5614F 		cmp	r3, #57600
+ 132 00bc 03D1     		bne	.L9
+  37:../bl/LPUART.c **** 		LPUART->BAUD = 0x10000000+(8000000/17/57600);
+ 133              		.loc 1 37 0
+ 134 00be 7B68     		ldr	r3, [r7, #4]
+ 135 00c0 1D4A     		ldr	r2, .L11+28
+ 136 00c2 1A61     		str	r2, [r3, #16]
+ 137 00c4 0FE0     		b	.L6
+ 138              	.L9:
+  38:../bl/LPUART.c **** 	else if(bps==115200)
+ 139              		.loc 1 38 0
+ 140 00c6 3B68     		ldr	r3, [r7]
+ 141 00c8 B3F5E13F 		cmp	r3, #115200
+ 142 00cc 03D1     		bne	.L10
+  39:../bl/LPUART.c **** 		LPUART->BAUD = 0x10000000+(8000000/17/115200);
+ 143              		.loc 1 39 0
+ 144 00ce 7B68     		ldr	r3, [r7, #4]
+ 145 00d0 1A4A     		ldr	r2, .L11+32
+ 146 00d2 1A61     		str	r2, [r3, #16]
+ 147 00d4 07E0     		b	.L6
+ 148              	.L10:
+  40:../bl/LPUART.c **** 	else{
+  41:../bl/LPUART.c **** 		LPUART->BAUD = 0x03000000+(8000000/4/bps);
+ 149              		.loc 1 41 0
+ 150 00d6 1A4A     		ldr	r2, .L11+36
+ 151 00d8 3B68     		ldr	r3, [r7]
+ 152 00da B2FBF3F3 		udiv	r3, r2, r3
+ 153 00de 03F14072 		add	r2, r3, #50331648
+ 154 00e2 7B68     		ldr	r3, [r7, #4]
+ 155 00e4 1A61     		str	r2, [r3, #16]
+ 156              	.L6:
+  42:../bl/LPUART.c **** 	}
+  43:../bl/LPUART.c **** 
+  44:../bl/LPUART.c **** //  LPUART->BAUD = 0x0F000034;  /* Initialize for 9600 baud, 1 stop: */
+  45:../bl/LPUART.c **** //                               /* SBR=52 (0x34): baud divisor = 8M/9600/16 = ~52 */
+  46:../bl/LPUART.c **** //                               /* OSR=15: Over sampling ratio = 15+1=16 */
+  47:../bl/LPUART.c **** //                               /* SBNS=0: One stop bit */
+  48:../bl/LPUART.c **** //                               /* BOTHEDGE=0: receiver samples only on rising edge */
+  49:../bl/LPUART.c **** //                               /* M10=0: Rx and Tx use 7 to 9 bit data characters */
+  50:../bl/LPUART.c **** //                               /* RESYNCDIS=0: Resync during rec'd data word supported */
+  51:../bl/LPUART.c **** //                               /* LBKDIE, RXEDGIE=0: interrupts disable */
+  52:../bl/LPUART.c **** //                               /* TDMAE, RDMAE, TDMAE=0: DMA requests disabled */
+  53:../bl/LPUART.c **** //                               /* MAEN1, MAEN2,  MATCFG=0: Match disabled */
+  54:../bl/LPUART.c **** 	LPUART->STAT = 0xC01FC000;
+ 157              		.loc 1 54 0
+ 158 00e6 7B68     		ldr	r3, [r7, #4]
+ 159 00e8 164A     		ldr	r2, .L11+40
+ 160 00ea 5A61     		str	r2, [r3, #20]
+  55:../bl/LPUART.c **** 	LPUART->MATCH = 0x0;
+ 161              		.loc 1 55 0
+ 162 00ec 7B68     		ldr	r3, [r7, #4]
+ 163 00ee 0022     		movs	r2, #0
+ 164 00f0 1A62     		str	r2, [r3, #32]
+  56:../bl/LPUART.c **** 	LPUART->CTRL = 0x0;
+ 165              		.loc 1 56 0
+ 166 00f2 7B68     		ldr	r3, [r7, #4]
+ 167 00f4 0022     		movs	r2, #0
+ 168 00f6 9A61     		str	r2, [r3, #24]
+  57:../bl/LPUART.c **** 	LPUART->CTRL &= ~(LPUART_CTRL_R9T8_MASK | LPUART_BAUD_M10_MASK);
+ 169              		.loc 1 57 0
+ 170 00f8 7B68     		ldr	r3, [r7, #4]
+ 171 00fa 9B69     		ldr	r3, [r3, #24]
+ 172 00fc 23F0C042 		bic	r2, r3, #1610612736
+ 173 0100 7B68     		ldr	r3, [r7, #4]
+ 174 0102 9A61     		str	r2, [r3, #24]
+  58:../bl/LPUART.c **** 	LPUART->CTRL |= LPUART_CTRL_TE_MASK | LPUART_CTRL_RE_MASK | LPUART_CTRL_RIE_MASK;
+ 175              		.loc 1 58 0
+ 176 0104 7B68     		ldr	r3, [r7, #4]
+ 177 0106 9B69     		ldr	r3, [r3, #24]
+ 178 0108 43F43012 		orr	r2, r3, #2883584
+ 179 010c 7B68     		ldr	r3, [r7, #4]
+ 180 010e 9A61     		str	r2, [r3, #24]
+  59:../bl/LPUART.c **** 
+  60:../bl/LPUART.c **** 	 //LPUART->CTRL=0x002C0000;    /* Enable transmitter & receiver, no parity, 8 bit char: */
+  61:../bl/LPUART.c ****                                /* RE=1: Receiver enabled */
+  62:../bl/LPUART.c ****                                /* TE=1: Transmitter enabled */
+  63:../bl/LPUART.c ****                                /* PE,PT=0: No hw parity generation or checking */
+  64:../bl/LPUART.c ****                                /* M7,M,R8T9,R9T8=0: 8-bit data characters*/
+  65:../bl/LPUART.c ****                                /* DOZEEN=0: LPUART enabled in Doze mode */
+  66:../bl/LPUART.c ****                                /* ORIE,NEIE,FEIE,PEIE,TIE,TCIE,RIE,ILIE,MA1IE,MA2IE=0: no IRQ*/
+  67:../bl/LPUART.c ****                                /* TxDIR=0: TxD pin is input if in single-wire mode */
+  68:../bl/LPUART.c ****                                /* TXINV=0: TRansmit data not inverted */
+  69:../bl/LPUART.c ****                                /* RWU,WAKE=0: normal operation; rcvr not in statndby */
+  70:../bl/LPUART.c ****                                /* IDLCFG=0: one idle character */
+  71:../bl/LPUART.c ****                                /* ILT=0: Idle char bit count starts after start bit */
+  72:../bl/LPUART.c ****                                /* SBK=0: Normal transmitter operation - no break char */
+  73:../bl/LPUART.c ****                                /* LOOPS,RSRC=0: no loop back */
+  74:../bl/LPUART.c **** 	//LPUART1->GLOBAL |= 1<<1;
+  75:../bl/LPUART.c **** }
+ 181              		.loc 1 75 0
+ 182 0110 0C37     		adds	r7, r7, #12
+ 183              		.cfi_def_cfa_offset 4
+ 184 0112 BD46     		mov	sp, r7
+ 185              		.cfi_def_cfa_register 13
+ 186              		@ sp needed
+ 187 0114 5DF8047B 		ldr	r7, [sp], #4
+ 188              		.cfi_restore 7
+ 189              		.cfi_def_cfa_offset 0
+ 190 0118 7047     		bx	lr
+ 191              	.L12:
+ 192 011a 00BF     		.align	2
+ 193              	.L11:
+ 194 011c 00A00640 		.word	1074176000
+ 195 0120 00500640 		.word	1074155520
+ 196 0124 00B00640 		.word	1074180096
+ 197 0128 00C00640 		.word	1074184192
+ 198 012c 3400000F 		.word	251658292
+ 199 0130 1A00000F 		.word	251658266
+ 200 0134 0D00000F 		.word	251658253
+ 201 0138 08000010 		.word	268435464
+ 202 013c 04000010 		.word	268435460
+ 203 0140 80841E00 		.word	2000000
+ 204 0144 00C01FC0 		.word	-1071661056
+ 205              		.cfi_endproc
+ 206              	.LFE0:
+ 208              		.section	.text.LPUART_transmit_char,"ax",%progbits
+ 209              		.align	2
+ 210              		.global	LPUART_transmit_char
+ 211              		.thumb
+ 212              		.thumb_func
+ 214              	LPUART_transmit_char:
+ 215              	.LFB1:
+  76:../bl/LPUART.c **** 
+  77:../bl/LPUART.c **** void LPUART_transmit_char(LPUART_Type *LPUART,char send) {    /* Function to Transmit single Char *
+ 216              		.loc 1 77 0
+ 217              		.cfi_startproc
+ 218              		@ args = 0, pretend = 0, frame = 8
+ 219              		@ frame_needed = 1, uses_anonymous_args = 0
+ 220              		@ link register save eliminated.
+ 221 0000 80B4     		push	{r7}
+ 222              		.cfi_def_cfa_offset 4
+ 223              		.cfi_offset 7, -4
+ 224 0002 83B0     		sub	sp, sp, #12
+ 225              		.cfi_def_cfa_offset 16
+ 226 0004 00AF     		add	r7, sp, #0
+ 227              		.cfi_def_cfa_register 7
+ 228 0006 7860     		str	r0, [r7, #4]
+ 229 0008 0B46     		mov	r3, r1
+ 230 000a FB70     		strb	r3, [r7, #3]
+  78:../bl/LPUART.c ****   //while((LPUART->STAT & LPUART_STAT_TDRE_MASK)>>LPUART_STAT_TDRE_SHIFT==0);
+  79:../bl/LPUART.c ****                                    /* Wait for transmit buffer to be empty */
+  80:../bl/LPUART.c ****   LPUART->DATA=send;              /* Send data */
+ 231              		.loc 1 80 0
+ 232 000c FA78     		ldrb	r2, [r7, #3]	@ zero_extendqisi2
+ 233 000e 7B68     		ldr	r3, [r7, #4]
+ 234 0010 DA61     		str	r2, [r3, #28]
+  81:../bl/LPUART.c ****   while((LPUART->STAT & LPUART_STAT_TC_MASK)==0);
+ 235              		.loc 1 81 0
+ 236 0012 00BF     		nop
+ 237              	.L14:
+ 238              		.loc 1 81 0 is_stmt 0 discriminator 1
+ 239 0014 7B68     		ldr	r3, [r7, #4]
+ 240 0016 5B69     		ldr	r3, [r3, #20]
+ 241 0018 03F48003 		and	r3, r3, #4194304
+ 242 001c 002B     		cmp	r3, #0
+ 243 001e F9D0     		beq	.L14
+  82:../bl/LPUART.c **** }
+ 244              		.loc 1 82 0 is_stmt 1
+ 245 0020 0C37     		adds	r7, r7, #12
+ 246              		.cfi_def_cfa_offset 4
+ 247 0022 BD46     		mov	sp, r7
+ 248              		.cfi_def_cfa_register 13
+ 249              		@ sp needed
+ 250 0024 5DF8047B 		ldr	r7, [sp], #4
+ 251              		.cfi_restore 7
+ 252              		.cfi_def_cfa_offset 0
+ 253 0028 7047     		bx	lr
+ 254              		.cfi_endproc
+ 255              	.LFE1:
+ 257 002a 00BF     		.section	.text.LPUART_receive_char,"ax",%progbits
+ 258              		.align	2
+ 259              		.global	LPUART_receive_char
+ 260              		.thumb
+ 261              		.thumb_func
+ 263              	LPUART_receive_char:
+ 264              	.LFB2:
+  83:../bl/LPUART.c **** 
+  84:../bl/LPUART.c **** int LPUART_receive_char(LPUART_Type *LPUART) {    /* Function to Receive single Char */
+ 265              		.loc 1 84 0
+ 266              		.cfi_startproc
+ 267              		@ args = 0, pretend = 0, frame = 16
+ 268              		@ frame_needed = 1, uses_anonymous_args = 0
+ 269              		@ link register save eliminated.
+ 270 0000 80B4     		push	{r7}
+ 271              		.cfi_def_cfa_offset 4
+ 272              		.cfi_offset 7, -4
+ 273 0002 85B0     		sub	sp, sp, #20
+ 274              		.cfi_def_cfa_offset 24
+ 275 0004 00AF     		add	r7, sp, #0
+ 276              		.cfi_def_cfa_register 7
+ 277 0006 7860     		str	r0, [r7, #4]
+  85:../bl/LPUART.c ****   char recieve;
+  86:../bl/LPUART.c ****   if((LPUART->STAT & LPUART_STAT_RDRF_MASK)>>LPUART_STAT_RDRF_SHIFT==0)
+ 278              		.loc 1 86 0
+ 279 0008 7B68     		ldr	r3, [r7, #4]
+ 280 000a 5B69     		ldr	r3, [r3, #20]
+ 281 000c 03F40013 		and	r3, r3, #2097152
+ 282 0010 5B0D     		lsrs	r3, r3, #21
+ 283 0012 002B     		cmp	r3, #0
+ 284 0014 02D1     		bne	.L16
+  87:../bl/LPUART.c **** 	  return -1;
+ 285              		.loc 1 87 0
+ 286 0016 4FF0FF33 		mov	r3, #-1
+ 287 001a 03E0     		b	.L17
+ 288              	.L16:
+  88:../bl/LPUART.c ****                                      /* Wait for received buffer to be full */
+  89:../bl/LPUART.c ****   recieve= LPUART->DATA;            /* Read received data*/
+ 289              		.loc 1 89 0
+ 290 001c 7B68     		ldr	r3, [r7, #4]
+ 291 001e DB69     		ldr	r3, [r3, #28]
+ 292 0020 FB73     		strb	r3, [r7, #15]
+  90:../bl/LPUART.c **** 
+  91:../bl/LPUART.c ****   return recieve & 0xFFU;
+ 293              		.loc 1 91 0
+ 294 0022 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 295              	.L17:
+  92:../bl/LPUART.c **** }
+ 296              		.loc 1 92 0
+ 297 0024 1846     		mov	r0, r3
+ 298 0026 1437     		adds	r7, r7, #20
+ 299              		.cfi_def_cfa_offset 4
+ 300 0028 BD46     		mov	sp, r7
+ 301              		.cfi_def_cfa_register 13
+ 302              		@ sp needed
+ 303 002a 5DF8047B 		ldr	r7, [sp], #4
+ 304              		.cfi_restore 7
+ 305              		.cfi_def_cfa_offset 0
+ 306 002e 7047     		bx	lr
+ 307              		.cfi_endproc
+ 308              	.LFE2:
+ 310              		.section	.text.LPUART0_RxTx_IRQHandler,"ax",%progbits
+ 311              		.align	2
+ 312              		.global	LPUART0_RxTx_IRQHandler
+ 313              		.thumb
+ 314              		.thumb_func
+ 316              	LPUART0_RxTx_IRQHandler:
+ 317              	.LFB3:
+  93:../bl/LPUART.c **** extern void UartRxIRQHandler(int port,uint8_t rxbyte);
+  94:../bl/LPUART.c **** void LPUART0_RxTx_IRQHandler(void)
+  95:../bl/LPUART.c **** {
+ 318              		.loc 1 95 0
+ 319              		.cfi_startproc
+ 320              		@ args = 0, pretend = 0, frame = 8
+ 321              		@ frame_needed = 1, uses_anonymous_args = 0
+ 322 0000 80B5     		push	{r7, lr}
+ 323              		.cfi_def_cfa_offset 8
+ 324              		.cfi_offset 7, -8
+ 325              		.cfi_offset 14, -4
+ 326 0002 82B0     		sub	sp, sp, #8
+ 327              		.cfi_def_cfa_offset 16
+ 328 0004 00AF     		add	r7, sp, #0
+ 329              		.cfi_def_cfa_register 7
+  96:../bl/LPUART.c **** 	if((LPUART0->STAT&LPUART_STAT_RDRF_MASK)>>LPUART_STAT_RDRF_SHIFT){
+ 330              		.loc 1 96 0
+ 331 0006 094B     		ldr	r3, .L20
+ 332 0008 5B69     		ldr	r3, [r3, #20]
+ 333 000a 03F40013 		and	r3, r3, #2097152
+ 334 000e 5B0D     		lsrs	r3, r3, #21
+ 335 0010 002B     		cmp	r3, #0
+ 336 0012 07D0     		beq	.L18
+ 337              	.LBB2:
+  97:../bl/LPUART.c **** 		uint8_t rxbyte = LPUART0->DATA;
+ 338              		.loc 1 97 0
+ 339 0014 054B     		ldr	r3, .L20
+ 340 0016 DB69     		ldr	r3, [r3, #28]
+ 341 0018 FB71     		strb	r3, [r7, #7]
+  98:../bl/LPUART.c **** 		UartRxIRQHandler(0,rxbyte);
+ 342              		.loc 1 98 0
+ 343 001a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 344 001c 0020     		movs	r0, #0
+ 345 001e 1946     		mov	r1, r3
+ 346 0020 FFF7FEFF 		bl	UartRxIRQHandler
+ 347              	.L18:
+ 348              	.LBE2:
+  99:../bl/LPUART.c **** 	}
+ 100:../bl/LPUART.c **** }
+ 349              		.loc 1 100 0
+ 350 0024 0837     		adds	r7, r7, #8
+ 351              		.cfi_def_cfa_offset 8
+ 352 0026 BD46     		mov	sp, r7
+ 353              		.cfi_def_cfa_register 13
+ 354              		@ sp needed
+ 355 0028 80BD     		pop	{r7, pc}
+ 356              	.L21:
+ 357 002a 00BF     		.align	2
+ 358              	.L20:
+ 359 002c 00A00640 		.word	1074176000
+ 360              		.cfi_endproc
+ 361              	.LFE3:
+ 363              		.section	.text.LPUART1_RxTx_IRQHandler,"ax",%progbits
+ 364              		.align	2
+ 365              		.global	LPUART1_RxTx_IRQHandler
+ 366              		.thumb
+ 367              		.thumb_func
+ 369              	LPUART1_RxTx_IRQHandler:
+ 370              	.LFB4:
+ 101:../bl/LPUART.c **** void LPUART1_RxTx_IRQHandler(void)
+ 102:../bl/LPUART.c **** {
+ 371              		.loc 1 102 0
+ 372              		.cfi_startproc
+ 373              		@ args = 0, pretend = 0, frame = 8
+ 374              		@ frame_needed = 1, uses_anonymous_args = 0
+ 375 0000 80B5     		push	{r7, lr}
+ 376              		.cfi_def_cfa_offset 8
+ 377              		.cfi_offset 7, -8
+ 378              		.cfi_offset 14, -4
+ 379 0002 82B0     		sub	sp, sp, #8
+ 380              		.cfi_def_cfa_offset 16
+ 381 0004 00AF     		add	r7, sp, #0
+ 382              		.cfi_def_cfa_register 7
+ 103:../bl/LPUART.c **** 	if((LPUART1->STAT&LPUART_STAT_RDRF_MASK)>>LPUART_STAT_RDRF_SHIFT){
+ 383              		.loc 1 103 0
+ 384 0006 094B     		ldr	r3, .L24
+ 385 0008 5B69     		ldr	r3, [r3, #20]
+ 386 000a 03F40013 		and	r3, r3, #2097152
+ 387 000e 5B0D     		lsrs	r3, r3, #21
+ 388 0010 002B     		cmp	r3, #0
+ 389 0012 07D0     		beq	.L22
+ 390              	.LBB3:
+ 104:../bl/LPUART.c **** 		uint8_t rxbyte = LPUART1->DATA;
+ 391              		.loc 1 104 0
+ 392 0014 054B     		ldr	r3, .L24
+ 393 0016 DB69     		ldr	r3, [r3, #28]
+ 394 0018 FB71     		strb	r3, [r7, #7]
+ 105:../bl/LPUART.c **** 		UartRxIRQHandler(1,rxbyte);
+ 395              		.loc 1 105 0
+ 396 001a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 397 001c 0120     		movs	r0, #1
+ 398 001e 1946     		mov	r1, r3
+ 399 0020 FFF7FEFF 		bl	UartRxIRQHandler
+ 400              	.L22:
+ 401              	.LBE3:
+ 106:../bl/LPUART.c **** 	}
+ 107:../bl/LPUART.c **** }
+ 402              		.loc 1 107 0
+ 403 0024 0837     		adds	r7, r7, #8
+ 404              		.cfi_def_cfa_offset 8
+ 405 0026 BD46     		mov	sp, r7
+ 406              		.cfi_def_cfa_register 13
+ 407              		@ sp needed
+ 408 0028 80BD     		pop	{r7, pc}
+ 409              	.L25:
+ 410 002a 00BF     		.align	2
+ 411              	.L24:
+ 412 002c 00B00640 		.word	1074180096
+ 413              		.cfi_endproc
+ 414              	.LFE4:
+ 416              		.section	.text.LPUART2_RxTx_IRQHandler,"ax",%progbits
+ 417              		.align	2
+ 418              		.global	LPUART2_RxTx_IRQHandler
+ 419              		.thumb
+ 420              		.thumb_func
+ 422              	LPUART2_RxTx_IRQHandler:
+ 423              	.LFB5:
+ 108:../bl/LPUART.c **** void LPUART2_RxTx_IRQHandler(void)
+ 109:../bl/LPUART.c **** {
+ 424              		.loc 1 109 0
+ 425              		.cfi_startproc
+ 426              		@ args = 0, pretend = 0, frame = 8
+ 427              		@ frame_needed = 1, uses_anonymous_args = 0
+ 428 0000 80B5     		push	{r7, lr}
+ 429              		.cfi_def_cfa_offset 8
+ 430              		.cfi_offset 7, -8
+ 431              		.cfi_offset 14, -4
+ 432 0002 82B0     		sub	sp, sp, #8
+ 433              		.cfi_def_cfa_offset 16
+ 434 0004 00AF     		add	r7, sp, #0
+ 435              		.cfi_def_cfa_register 7
+ 110:../bl/LPUART.c **** 	if((LPUART2->STAT&LPUART_STAT_RDRF_MASK)>>LPUART_STAT_RDRF_SHIFT){
+ 436              		.loc 1 110 0
+ 437 0006 094B     		ldr	r3, .L28
+ 438 0008 5B69     		ldr	r3, [r3, #20]
+ 439 000a 03F40013 		and	r3, r3, #2097152
+ 440 000e 5B0D     		lsrs	r3, r3, #21
+ 441 0010 002B     		cmp	r3, #0
+ 442 0012 07D0     		beq	.L26
+ 443              	.LBB4:
+ 111:../bl/LPUART.c **** 		uint8_t rxbyte = LPUART2->DATA;
+ 444              		.loc 1 111 0
+ 445 0014 054B     		ldr	r3, .L28
+ 446 0016 DB69     		ldr	r3, [r3, #28]
+ 447 0018 FB71     		strb	r3, [r7, #7]
+ 112:../bl/LPUART.c **** 		UartRxIRQHandler(2,rxbyte);
+ 448              		.loc 1 112 0
+ 449 001a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 450 001c 0220     		movs	r0, #2
+ 451 001e 1946     		mov	r1, r3
+ 452 0020 FFF7FEFF 		bl	UartRxIRQHandler
+ 453              	.L26:
+ 454              	.LBE4:
+ 113:../bl/LPUART.c **** 	}
+ 114:../bl/LPUART.c **** }
+ 455              		.loc 1 114 0
+ 456 0024 0837     		adds	r7, r7, #8
+ 457              		.cfi_def_cfa_offset 8
+ 458 0026 BD46     		mov	sp, r7
+ 459              		.cfi_def_cfa_register 13
+ 460              		@ sp needed
+ 461 0028 80BD     		pop	{r7, pc}
+ 462              	.L29:
+ 463 002a 00BF     		.align	2
+ 464              	.L28:
+ 465 002c 00C00640 		.word	1074184192
+ 466              		.cfi_endproc
+ 467              	.LFE5:
+ 469              		.text
+ 470              	.Letext0:
+ 471              		.file 2 "/home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstdint"
+ 472              		.file 3 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/include/S32K144.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 LPUART.c
+     /tmp/ccaROo5e.s:21     .text.LPUART_init:00000000 $t
+     /tmp/ccaROo5e.s:26     .text.LPUART_init:00000000 LPUART_init
+     /tmp/ccaROo5e.s:194    .text.LPUART_init:0000011c $d
+     /tmp/ccaROo5e.s:209    .text.LPUART_transmit_char:00000000 $t
+     /tmp/ccaROo5e.s:214    .text.LPUART_transmit_char:00000000 LPUART_transmit_char
+     /tmp/ccaROo5e.s:258    .text.LPUART_receive_char:00000000 $t
+     /tmp/ccaROo5e.s:263    .text.LPUART_receive_char:00000000 LPUART_receive_char
+     /tmp/ccaROo5e.s:311    .text.LPUART0_RxTx_IRQHandler:00000000 $t
+     /tmp/ccaROo5e.s:316    .text.LPUART0_RxTx_IRQHandler:00000000 LPUART0_RxTx_IRQHandler
+     /tmp/ccaROo5e.s:359    .text.LPUART0_RxTx_IRQHandler:0000002c $d
+     /tmp/ccaROo5e.s:364    .text.LPUART1_RxTx_IRQHandler:00000000 $t
+     /tmp/ccaROo5e.s:369    .text.LPUART1_RxTx_IRQHandler:00000000 LPUART1_RxTx_IRQHandler
+     /tmp/ccaROo5e.s:412    .text.LPUART1_RxTx_IRQHandler:0000002c $d
+     /tmp/ccaROo5e.s:417    .text.LPUART2_RxTx_IRQHandler:00000000 $t
+     /tmp/ccaROo5e.s:422    .text.LPUART2_RxTx_IRQHandler:00000000 LPUART2_RxTx_IRQHandler
+     /tmp/ccaROo5e.s:465    .text.LPUART2_RxTx_IRQHandler:0000002c $d
+                     .debug_frame:00000010 $d
+                           .group:00000000 wm4.0.728a2e6911dc01ff85c2d70c52e8fae1
+                           .group:00000000 wm4.lib_c99.prefix.8.3580c292f50811c682d980dc4180498e
+                           .group:00000000 wm4.common.prefix.16.d7bf937cdf46fd76dde96b376e3b328a
+                           .group:00000000 wm4.ewl_c_version.h.9.0bcb57d6a3f89baae1f9b121de2772f5
+                           .group:00000000 wm4.S32K144.h.177.451251ac556d3b0b8a04170a135f92d4
+                           .group:00000000 wm4.os_enum.h.9.f9446d6af68b3fa72a37d4d924d3b347
+                           .group:00000000 wm4.ansi_prefix.ARM.h.13.4b23f4c654df3c3277534542f67d200c
+                           .group:00000000 wm4.ansi_parms.h.64.90aed58330fdde08746db908036e1f37
+                           .group:00000000 wm4.limits_api.h.9.bc6daa20b3abae2bba6c512044e73b43
+                           .group:00000000 wm4.ewl_lib_ext1.h.14.f9b057cc049671136093886db2a3473f
+                           .group:00000000 wm4.cstdint.134.0ece0ba0ee759ce9e45a8fa510ec0d93
+                           .group:00000000 wm4.wchar_t.h.9.94198016f5b5f455e54ea1f3f054b416
+                           .group:00000000 wm4.cstdint.246.0573fcc3ea2319479988f90b448d87e4
+                           .group:00000000 wm4.S32K144.h.190.037de4cd4cd4f94a273a3fe3e68d3ef7
+
+UNDEFINED SYMBOLS
+UartRxIRQHandler

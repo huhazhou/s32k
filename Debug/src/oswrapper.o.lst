@@ -1,0 +1,644 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.eabi_attribute 27, 1
+   4              		.eabi_attribute 28, 1
+   5              		.fpu fpv4-sp-d16
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.thumb
+  16              		.file	"oswrapper.c"
+  17              		.text
+  18              	.Ltext0:
+  19              		.cfi_sections	.debug_frame
+  20              		.section	.bss.trace_mutex,"aw",%nobits
+  21              		.align	2
+  24              	trace_mutex:
+  25 0000 00000000 		.space	4
+  26              		.section	.text.os_trace_init,"ax",%progbits
+  27              		.align	2
+  28              		.global	os_trace_init
+  29              		.thumb
+  30              		.thumb_func
+  32              	os_trace_init:
+  33              	.LFB4:
+  34              		.file 1 "../src/oswrapper.c"
+   1:../src/oswrapper.c **** /*
+   2:../src/oswrapper.c ****  * oswrapper.c
+   3:../src/oswrapper.c ****  *
+   4:../src/oswrapper.c ****  *  Created on: 2017年10月23日
+   5:../src/oswrapper.c ****  *      Author: houxd
+   6:../src/oswrapper.c ****  */
+   7:../src/oswrapper.c **** 
+   8:../src/oswrapper.c **** #include <oswrapper.h>
+   9:../src/oswrapper.c **** #include <stdio.h>
+  10:../src/oswrapper.c **** #include <string.h>
+  11:../src/oswrapper.c **** #include <stdarg.h>
+  12:../src/oswrapper.c **** 
+  13:../src/oswrapper.c **** #include "FreeRTOS.h"
+  14:../src/oswrapper.c **** #include "task.h"
+  15:../src/oswrapper.c **** #include "semphr.h"
+  16:../src/oswrapper.c **** 
+  17:../src/oswrapper.c **** #include "bl.h"
+  18:../src/oswrapper.c **** extern void uart_send_lf_crlf(int port,int len,const uint8_t* data);
+  19:../src/oswrapper.c **** extern char *uart_gets_echo_blocked(int port,char *buf, int bufsize);
+  20:../src/oswrapper.c **** 
+  21:../src/oswrapper.c **** static OS_Mutex trace_mutex;
+  22:../src/oswrapper.c **** void os_trace_init(void)
+  23:../src/oswrapper.c **** {
+  35              		.loc 1 23 0
+  36              		.cfi_startproc
+  37              		@ args = 0, pretend = 0, frame = 0
+  38              		@ frame_needed = 1, uses_anonymous_args = 0
+  39 0000 80B5     		push	{r7, lr}
+  40              		.cfi_def_cfa_offset 8
+  41              		.cfi_offset 7, -8
+  42              		.cfi_offset 14, -4
+  43 0002 00AF     		add	r7, sp, #0
+  44              		.cfi_def_cfa_register 7
+  24:../src/oswrapper.c **** 	os_mutex_create(&trace_mutex);
+  45              		.loc 1 24 0
+  46 0004 0148     		ldr	r0, .L2
+  47 0006 FFF7FEFF 		bl	os_mutex_create
+  25:../src/oswrapper.c **** }
+  48              		.loc 1 25 0
+  49 000a 80BD     		pop	{r7, pc}
+  50              	.L3:
+  51              		.align	2
+  52              	.L2:
+  53 000c 00000000 		.word	trace_mutex
+  54              		.cfi_endproc
+  55              	.LFE4:
+  57              		.section	.text.os_trace,"ax",%progbits
+  58              		.align	2
+  59              		.global	os_trace
+  60              		.thumb
+  61              		.thumb_func
+  63              	os_trace:
+  64              	.LFB5:
+  26:../src/oswrapper.c **** void os_trace(const char *fmt, ...)
+  27:../src/oswrapper.c **** {
+  65              		.loc 1 27 0
+  66              		.cfi_startproc
+  67              		@ args = 4, pretend = 16, frame = 136
+  68              		@ frame_needed = 1, uses_anonymous_args = 1
+  69 0000 0FB4     		push	{r0, r1, r2, r3}
+  70              		.cfi_def_cfa_offset 16
+  71              		.cfi_offset 0, -16
+  72              		.cfi_offset 1, -12
+  73              		.cfi_offset 2, -8
+  74              		.cfi_offset 3, -4
+  75 0002 80B5     		push	{r7, lr}
+  76              		.cfi_def_cfa_offset 24
+  77              		.cfi_offset 7, -24
+  78              		.cfi_offset 14, -20
+  79 0004 A2B0     		sub	sp, sp, #136
+  80              		.cfi_def_cfa_offset 160
+  81 0006 00AF     		add	r7, sp, #0
+  82              		.cfi_def_cfa_register 7
+  28:../src/oswrapper.c **** 	va_list va;
+  29:../src/oswrapper.c **** 	va_start(va,fmt);
+  83              		.loc 1 29 0
+  84 0008 07F19403 		add	r3, r7, #148
+  85 000c C7F88030 		str	r3, [r7, #128]
+  30:../src/oswrapper.c **** 	os_mutex_lock(&trace_mutex);
+  86              		.loc 1 30 0
+  87 0010 0E48     		ldr	r0, .L5
+  88 0012 FFF7FEFF 		bl	os_mutex_lock
+  31:../src/oswrapper.c **** 	//vprintf(fmt,va);
+  32:../src/oswrapper.c **** 	char buf[128];
+  33:../src/oswrapper.c **** 	int n = vsnprintf(buf,128,fmt,va);
+  89              		.loc 1 33 0
+  90 0016 3B46     		mov	r3, r7
+  91 0018 1846     		mov	r0, r3
+  92 001a 8021     		movs	r1, #128
+  93 001c D7F89020 		ldr	r2, [r7, #144]
+  94 0020 D7F88030 		ldr	r3, [r7, #128]
+  95 0024 FFF7FEFF 		bl	vsnprintf
+  96 0028 C7F88400 		str	r0, [r7, #132]
+  34:../src/oswrapper.c **** 	uart_send_lf_crlf(UART_RS485, n, (uint8_t*)buf);
+  97              		.loc 1 34 0
+  98 002c 3B46     		mov	r3, r7
+  99 002e 0020     		movs	r0, #0
+ 100 0030 D7F88410 		ldr	r1, [r7, #132]
+ 101 0034 1A46     		mov	r2, r3
+ 102 0036 FFF7FEFF 		bl	uart_send_lf_crlf
+  35:../src/oswrapper.c **** 	os_mutex_unlock(&trace_mutex);
+ 103              		.loc 1 35 0
+ 104 003a 0448     		ldr	r0, .L5
+ 105 003c FFF7FEFF 		bl	os_mutex_unlock
+  36:../src/oswrapper.c **** 	va_end(va);
+  37:../src/oswrapper.c **** }
+ 106              		.loc 1 37 0
+ 107 0040 8837     		adds	r7, r7, #136
+ 108              		.cfi_def_cfa_offset 24
+ 109 0042 BD46     		mov	sp, r7
+ 110              		.cfi_def_cfa_register 13
+ 111              		@ sp needed
+ 112 0044 BDE88040 		pop	{r7, lr}
+ 113              		.cfi_restore 14
+ 114              		.cfi_restore 7
+ 115              		.cfi_def_cfa_offset 16
+ 116 0048 04B0     		add	sp, sp, #16
+ 117              		.cfi_restore 3
+ 118              		.cfi_restore 2
+ 119              		.cfi_restore 1
+ 120              		.cfi_restore 0
+ 121              		.cfi_def_cfa_offset 0
+ 122 004a 7047     		bx	lr
+ 123              	.L6:
+ 124              		.align	2
+ 125              	.L5:
+ 126 004c 00000000 		.word	trace_mutex
+ 127              		.cfi_endproc
+ 128              	.LFE5:
+ 130              		.section	.text.os_console_gets,"ax",%progbits
+ 131              		.align	2
+ 132              		.global	os_console_gets
+ 133              		.thumb
+ 134              		.thumb_func
+ 136              	os_console_gets:
+ 137              	.LFB6:
+  38:../src/oswrapper.c **** char *os_console_gets(char *buf, int bufsize)
+  39:../src/oswrapper.c **** {
+ 138              		.loc 1 39 0
+ 139              		.cfi_startproc
+ 140              		@ args = 0, pretend = 0, frame = 8
+ 141              		@ frame_needed = 1, uses_anonymous_args = 0
+ 142 0000 80B5     		push	{r7, lr}
+ 143              		.cfi_def_cfa_offset 8
+ 144              		.cfi_offset 7, -8
+ 145              		.cfi_offset 14, -4
+ 146 0002 82B0     		sub	sp, sp, #8
+ 147              		.cfi_def_cfa_offset 16
+ 148 0004 00AF     		add	r7, sp, #0
+ 149              		.cfi_def_cfa_register 7
+ 150 0006 7860     		str	r0, [r7, #4]
+ 151 0008 3960     		str	r1, [r7]
+  40:../src/oswrapper.c **** 	return uart_gets_echo_blocked(UART_RS485,buf,bufsize);
+ 152              		.loc 1 40 0
+ 153 000a 0020     		movs	r0, #0
+ 154 000c 7968     		ldr	r1, [r7, #4]
+ 155 000e 3A68     		ldr	r2, [r7]
+ 156 0010 FFF7FEFF 		bl	uart_gets_echo_blocked
+ 157 0014 0346     		mov	r3, r0
+  41:../src/oswrapper.c **** }
+ 158              		.loc 1 41 0
+ 159 0016 1846     		mov	r0, r3
+ 160 0018 0837     		adds	r7, r7, #8
+ 161              		.cfi_def_cfa_offset 8
+ 162 001a BD46     		mov	sp, r7
+ 163              		.cfi_def_cfa_register 13
+ 164              		@ sp needed
+ 165 001c 80BD     		pop	{r7, pc}
+ 166              		.cfi_endproc
+ 167              	.LFE6:
+ 169 001e 00BF     		.section	.rodata
+ 170              		.align	2
+ 171              	.LC0:
+ 172 0000 6661756C 		.ascii	"fault in %s call: %s\012\000"
+ 172      7420696E 
+ 172      20257320 
+ 172      63616C6C 
+ 172      3A202573 
+ 173 0016 0000     		.align	2
+ 174              	.LC1:
+ 175 0018 704D7478 		.ascii	"pMtx!=NULL\000"
+ 175      213D4E55 
+ 175      4C4C00
+ 176              		.section	.text.os_mutex_create,"ax",%progbits
+ 177              		.align	2
+ 178              		.global	os_mutex_create
+ 179              		.thumb
+ 180              		.thumb_func
+ 182              	os_mutex_create:
+ 183              	.LFB7:
+  42:../src/oswrapper.c **** 
+  43:../src/oswrapper.c **** void os_mutex_create(OS_Mutex *pMtx)
+  44:../src/oswrapper.c **** {
+ 184              		.loc 1 44 0
+ 185              		.cfi_startproc
+ 186              		@ args = 0, pretend = 0, frame = 8
+ 187              		@ frame_needed = 1, uses_anonymous_args = 0
+ 188 0000 80B5     		push	{r7, lr}
+ 189              		.cfi_def_cfa_offset 8
+ 190              		.cfi_offset 7, -8
+ 191              		.cfi_offset 14, -4
+ 192 0002 82B0     		sub	sp, sp, #8
+ 193              		.cfi_def_cfa_offset 16
+ 194 0004 00AF     		add	r7, sp, #0
+ 195              		.cfi_def_cfa_register 7
+ 196 0006 7860     		str	r0, [r7, #4]
+  45:../src/oswrapper.c **** 	OS_ASSERT(pMtx!=NULL);
+ 197              		.loc 1 45 0
+ 198 0008 7B68     		ldr	r3, [r7, #4]
+ 199 000a 002B     		cmp	r3, #0
+ 200 000c 05D1     		bne	.L10
+ 201              		.loc 1 45 0 is_stmt 0 discriminator 1
+ 202 000e 0B48     		ldr	r0, .L12
+ 203 0010 0B49     		ldr	r1, .L12+4
+ 204 0012 0C4A     		ldr	r2, .L12+8
+ 205 0014 FFF7FEFF 		bl	os_trace
+ 206              	.L11:
+ 207 0018 FEE7     		b	.L11
+ 208              	.L10:
+  46:../src/oswrapper.c **** 	*pMtx = xSemaphoreCreateMutex();
+ 209              		.loc 1 46 0 is_stmt 1
+ 210 001a 0120     		movs	r0, #1
+ 211 001c FFF7FEFF 		bl	xQueueCreateMutex
+ 212 0020 0246     		mov	r2, r0
+ 213 0022 7B68     		ldr	r3, [r7, #4]
+ 214 0024 1A60     		str	r2, [r3]
+  47:../src/oswrapper.c **** 	xSemaphoreGive(*pMtx);
+ 215              		.loc 1 47 0
+ 216 0026 7B68     		ldr	r3, [r7, #4]
+ 217 0028 1B68     		ldr	r3, [r3]
+ 218 002a 1846     		mov	r0, r3
+ 219 002c 0021     		movs	r1, #0
+ 220 002e 0022     		movs	r2, #0
+ 221 0030 0023     		movs	r3, #0
+ 222 0032 FFF7FEFF 		bl	xQueueGenericSend
+  48:../src/oswrapper.c **** }
+ 223              		.loc 1 48 0
+ 224 0036 0837     		adds	r7, r7, #8
+ 225              		.cfi_def_cfa_offset 8
+ 226 0038 BD46     		mov	sp, r7
+ 227              		.cfi_def_cfa_register 13
+ 228              		@ sp needed
+ 229 003a 80BD     		pop	{r7, pc}
+ 230              	.L13:
+ 231              		.align	2
+ 232              	.L12:
+ 233 003c 00000000 		.word	.LC0
+ 234 0040 00000000 		.word	__FUNCTION__.5864
+ 235 0044 18000000 		.word	.LC1
+ 236              		.cfi_endproc
+ 237              	.LFE7:
+ 239              		.section	.text.os_mutex_lock,"ax",%progbits
+ 240              		.align	2
+ 241              		.global	os_mutex_lock
+ 242              		.thumb
+ 243              		.thumb_func
+ 245              	os_mutex_lock:
+ 246              	.LFB8:
+  49:../src/oswrapper.c **** void os_mutex_lock(OS_Mutex *pMtx)
+  50:../src/oswrapper.c **** {
+ 247              		.loc 1 50 0
+ 248              		.cfi_startproc
+ 249              		@ args = 0, pretend = 0, frame = 8
+ 250              		@ frame_needed = 1, uses_anonymous_args = 0
+ 251 0000 80B5     		push	{r7, lr}
+ 252              		.cfi_def_cfa_offset 8
+ 253              		.cfi_offset 7, -8
+ 254              		.cfi_offset 14, -4
+ 255 0002 82B0     		sub	sp, sp, #8
+ 256              		.cfi_def_cfa_offset 16
+ 257 0004 00AF     		add	r7, sp, #0
+ 258              		.cfi_def_cfa_register 7
+ 259 0006 7860     		str	r0, [r7, #4]
+  51:../src/oswrapper.c **** 	OS_ASSERT(pMtx!=NULL);
+ 260              		.loc 1 51 0
+ 261 0008 7B68     		ldr	r3, [r7, #4]
+ 262 000a 002B     		cmp	r3, #0
+ 263 000c 05D1     		bne	.L15
+ 264              		.loc 1 51 0 is_stmt 0 discriminator 1
+ 265 000e 0948     		ldr	r0, .L17
+ 266 0010 0949     		ldr	r1, .L17+4
+ 267 0012 0A4A     		ldr	r2, .L17+8
+ 268 0014 FFF7FEFF 		bl	os_trace
+ 269              	.L16:
+ 270 0018 FEE7     		b	.L16
+ 271              	.L15:
+  52:../src/oswrapper.c **** 	xSemaphoreTake(*pMtx,portMAX_DELAY);
+ 272              		.loc 1 52 0 is_stmt 1
+ 273 001a 7B68     		ldr	r3, [r7, #4]
+ 274 001c 1B68     		ldr	r3, [r3]
+ 275 001e 1846     		mov	r0, r3
+ 276 0020 0021     		movs	r1, #0
+ 277 0022 4FF0FF32 		mov	r2, #-1
+ 278 0026 0023     		movs	r3, #0
+ 279 0028 FFF7FEFF 		bl	xQueueGenericReceive
+  53:../src/oswrapper.c **** }
+ 280              		.loc 1 53 0
+ 281 002c 0837     		adds	r7, r7, #8
+ 282              		.cfi_def_cfa_offset 8
+ 283 002e BD46     		mov	sp, r7
+ 284              		.cfi_def_cfa_register 13
+ 285              		@ sp needed
+ 286 0030 80BD     		pop	{r7, pc}
+ 287              	.L18:
+ 288 0032 00BF     		.align	2
+ 289              	.L17:
+ 290 0034 00000000 		.word	.LC0
+ 291 0038 00000000 		.word	__FUNCTION__.5869
+ 292 003c 18000000 		.word	.LC1
+ 293              		.cfi_endproc
+ 294              	.LFE8:
+ 296              		.section	.text.os_mutex_unlock,"ax",%progbits
+ 297              		.align	2
+ 298              		.global	os_mutex_unlock
+ 299              		.thumb
+ 300              		.thumb_func
+ 302              	os_mutex_unlock:
+ 303              	.LFB9:
+  54:../src/oswrapper.c **** void os_mutex_unlock(OS_Mutex *pMtx)
+  55:../src/oswrapper.c **** {
+ 304              		.loc 1 55 0
+ 305              		.cfi_startproc
+ 306              		@ args = 0, pretend = 0, frame = 8
+ 307              		@ frame_needed = 1, uses_anonymous_args = 0
+ 308 0000 80B5     		push	{r7, lr}
+ 309              		.cfi_def_cfa_offset 8
+ 310              		.cfi_offset 7, -8
+ 311              		.cfi_offset 14, -4
+ 312 0002 82B0     		sub	sp, sp, #8
+ 313              		.cfi_def_cfa_offset 16
+ 314 0004 00AF     		add	r7, sp, #0
+ 315              		.cfi_def_cfa_register 7
+ 316 0006 7860     		str	r0, [r7, #4]
+  56:../src/oswrapper.c **** 	OS_ASSERT(pMtx!=NULL);
+ 317              		.loc 1 56 0
+ 318 0008 7B68     		ldr	r3, [r7, #4]
+ 319 000a 002B     		cmp	r3, #0
+ 320 000c 05D1     		bne	.L20
+ 321              		.loc 1 56 0 is_stmt 0 discriminator 1
+ 322 000e 0848     		ldr	r0, .L22
+ 323 0010 0849     		ldr	r1, .L22+4
+ 324 0012 094A     		ldr	r2, .L22+8
+ 325 0014 FFF7FEFF 		bl	os_trace
+ 326              	.L21:
+ 327 0018 FEE7     		b	.L21
+ 328              	.L20:
+  57:../src/oswrapper.c **** 	xSemaphoreGive(*pMtx);
+ 329              		.loc 1 57 0 is_stmt 1
+ 330 001a 7B68     		ldr	r3, [r7, #4]
+ 331 001c 1B68     		ldr	r3, [r3]
+ 332 001e 1846     		mov	r0, r3
+ 333 0020 0021     		movs	r1, #0
+ 334 0022 0022     		movs	r2, #0
+ 335 0024 0023     		movs	r3, #0
+ 336 0026 FFF7FEFF 		bl	xQueueGenericSend
+  58:../src/oswrapper.c **** }
+ 337              		.loc 1 58 0
+ 338 002a 0837     		adds	r7, r7, #8
+ 339              		.cfi_def_cfa_offset 8
+ 340 002c BD46     		mov	sp, r7
+ 341              		.cfi_def_cfa_register 13
+ 342              		@ sp needed
+ 343 002e 80BD     		pop	{r7, pc}
+ 344              	.L23:
+ 345              		.align	2
+ 346              	.L22:
+ 347 0030 00000000 		.word	.LC0
+ 348 0034 00000000 		.word	__FUNCTION__.5874
+ 349 0038 18000000 		.word	.LC1
+ 350              		.cfi_endproc
+ 351              	.LFE9:
+ 353              		.section	.text.os_mutex_release,"ax",%progbits
+ 354              		.align	2
+ 355              		.global	os_mutex_release
+ 356              		.thumb
+ 357              		.thumb_func
+ 359              	os_mutex_release:
+ 360              	.LFB10:
+  59:../src/oswrapper.c **** void os_mutex_release(OS_Mutex *pMtx)
+  60:../src/oswrapper.c **** {
+ 361              		.loc 1 60 0
+ 362              		.cfi_startproc
+ 363              		@ args = 0, pretend = 0, frame = 8
+ 364              		@ frame_needed = 1, uses_anonymous_args = 0
+ 365 0000 80B5     		push	{r7, lr}
+ 366              		.cfi_def_cfa_offset 8
+ 367              		.cfi_offset 7, -8
+ 368              		.cfi_offset 14, -4
+ 369 0002 82B0     		sub	sp, sp, #8
+ 370              		.cfi_def_cfa_offset 16
+ 371 0004 00AF     		add	r7, sp, #0
+ 372              		.cfi_def_cfa_register 7
+ 373 0006 7860     		str	r0, [r7, #4]
+  61:../src/oswrapper.c **** 	OS_ASSERT(pMtx!=NULL);
+ 374              		.loc 1 61 0
+ 375 0008 7B68     		ldr	r3, [r7, #4]
+ 376 000a 002B     		cmp	r3, #0
+ 377 000c 05D1     		bne	.L25
+ 378              		.loc 1 61 0 is_stmt 0 discriminator 1
+ 379 000e 0748     		ldr	r0, .L27
+ 380 0010 0749     		ldr	r1, .L27+4
+ 381 0012 084A     		ldr	r2, .L27+8
+ 382 0014 FFF7FEFF 		bl	os_trace
+ 383              	.L26:
+ 384 0018 FEE7     		b	.L26
+ 385              	.L25:
+  62:../src/oswrapper.c **** 	vSemaphoreDelete(*pMtx);
+ 386              		.loc 1 62 0 is_stmt 1
+ 387 001a 7B68     		ldr	r3, [r7, #4]
+ 388 001c 1B68     		ldr	r3, [r3]
+ 389 001e 1846     		mov	r0, r3
+ 390 0020 FFF7FEFF 		bl	vQueueDelete
+  63:../src/oswrapper.c **** }
+ 391              		.loc 1 63 0
+ 392 0024 0837     		adds	r7, r7, #8
+ 393              		.cfi_def_cfa_offset 8
+ 394 0026 BD46     		mov	sp, r7
+ 395              		.cfi_def_cfa_register 13
+ 396              		@ sp needed
+ 397 0028 80BD     		pop	{r7, pc}
+ 398              	.L28:
+ 399 002a 00BF     		.align	2
+ 400              	.L27:
+ 401 002c 00000000 		.word	.LC0
+ 402 0030 00000000 		.word	__FUNCTION__.5879
+ 403 0034 18000000 		.word	.LC1
+ 404              		.cfi_endproc
+ 405              	.LFE10:
+ 407              		.section	.text.os_sleep_ms,"ax",%progbits
+ 408              		.align	2
+ 409              		.global	os_sleep_ms
+ 410              		.thumb
+ 411              		.thumb_func
+ 413              	os_sleep_ms:
+ 414              	.LFB11:
+  64:../src/oswrapper.c **** 
+  65:../src/oswrapper.c **** void os_sleep_ms(int ms)
+  66:../src/oswrapper.c **** {
+ 415              		.loc 1 66 0
+ 416              		.cfi_startproc
+ 417              		@ args = 0, pretend = 0, frame = 8
+ 418              		@ frame_needed = 1, uses_anonymous_args = 0
+ 419 0000 80B5     		push	{r7, lr}
+ 420              		.cfi_def_cfa_offset 8
+ 421              		.cfi_offset 7, -8
+ 422              		.cfi_offset 14, -4
+ 423 0002 82B0     		sub	sp, sp, #8
+ 424              		.cfi_def_cfa_offset 16
+ 425 0004 00AF     		add	r7, sp, #0
+ 426              		.cfi_def_cfa_register 7
+ 427 0006 7860     		str	r0, [r7, #4]
+  67:../src/oswrapper.c **** 	vTaskDelay(ms);
+ 428              		.loc 1 67 0
+ 429 0008 7B68     		ldr	r3, [r7, #4]
+ 430 000a 1846     		mov	r0, r3
+ 431 000c FFF7FEFF 		bl	vTaskDelay
+  68:../src/oswrapper.c **** }
+ 432              		.loc 1 68 0
+ 433 0010 0837     		adds	r7, r7, #8
+ 434              		.cfi_def_cfa_offset 8
+ 435 0012 BD46     		mov	sp, r7
+ 436              		.cfi_def_cfa_register 13
+ 437              		@ sp needed
+ 438 0014 80BD     		pop	{r7, pc}
+ 439              		.cfi_endproc
+ 440              	.LFE11:
+ 442 0016 00BF     		.section	.text.os_suspend,"ax",%progbits
+ 443              		.align	2
+ 444              		.global	os_suspend
+ 445              		.thumb
+ 446              		.thumb_func
+ 448              	os_suspend:
+ 449              	.LFB12:
+  69:../src/oswrapper.c **** void os_suspend(void)
+  70:../src/oswrapper.c **** {
+ 450              		.loc 1 70 0
+ 451              		.cfi_startproc
+ 452              		@ args = 0, pretend = 0, frame = 0
+ 453              		@ frame_needed = 1, uses_anonymous_args = 0
+ 454 0000 80B5     		push	{r7, lr}
+ 455              		.cfi_def_cfa_offset 8
+ 456              		.cfi_offset 7, -8
+ 457              		.cfi_offset 14, -4
+ 458 0002 00AF     		add	r7, sp, #0
+ 459              		.cfi_def_cfa_register 7
+  71:../src/oswrapper.c **** 	vTaskDelay(portMAX_DELAY);
+ 460              		.loc 1 71 0
+ 461 0004 4FF0FF30 		mov	r0, #-1
+ 462 0008 FFF7FEFF 		bl	vTaskDelay
+  72:../src/oswrapper.c **** }
+ 463              		.loc 1 72 0
+ 464 000c 80BD     		pop	{r7, pc}
+ 465              		.cfi_endproc
+ 466              	.LFE12:
+ 468 000e 00BF     		.section	.rodata.__FUNCTION__.5864,"a",%progbits
+ 469              		.align	2
+ 472              	__FUNCTION__.5864:
+ 473 0000 6F735F6D 		.ascii	"os_mutex_create\000"
+ 473      75746578 
+ 473      5F637265 
+ 473      61746500 
+ 474              		.section	.rodata.__FUNCTION__.5869,"a",%progbits
+ 475              		.align	2
+ 478              	__FUNCTION__.5869:
+ 479 0000 6F735F6D 		.ascii	"os_mutex_lock\000"
+ 479      75746578 
+ 479      5F6C6F63 
+ 479      6B00
+ 480              		.section	.rodata.__FUNCTION__.5874,"a",%progbits
+ 481              		.align	2
+ 484              	__FUNCTION__.5874:
+ 485 0000 6F735F6D 		.ascii	"os_mutex_unlock\000"
+ 485      75746578 
+ 485      5F756E6C 
+ 485      6F636B00 
+ 486              		.section	.rodata.__FUNCTION__.5879,"a",%progbits
+ 487              		.align	2
+ 490              	__FUNCTION__.5879:
+ 491 0000 6F735F6D 		.ascii	"os_mutex_release\000"
+ 491      75746578 
+ 491      5F72656C 
+ 491      65617365 
+ 491      00
+ 492              		.text
+ 493              	.Letext0:
+ 494              		.file 2 "/home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstdint"
+ 495              		.file 3 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../F
+ 496              		.file 4 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/queue.h
+ 497              		.file 5 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/semphr.h"
+ 498              		.file 6 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/src/oswrapper.h"
+ 499              		.file 7 "/home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/va_list.h"
+ 500              		.file 8 "<built-in>"
+DEFINED SYMBOLS
+                            *ABS*:00000000 oswrapper.c
+     /tmp/ccMPt44o.s:21     .bss.trace_mutex:00000000 $d
+     /tmp/ccMPt44o.s:24     .bss.trace_mutex:00000000 trace_mutex
+     /tmp/ccMPt44o.s:27     .text.os_trace_init:00000000 $t
+     /tmp/ccMPt44o.s:32     .text.os_trace_init:00000000 os_trace_init
+     /tmp/ccMPt44o.s:182    .text.os_mutex_create:00000000 os_mutex_create
+     /tmp/ccMPt44o.s:53     .text.os_trace_init:0000000c $d
+     /tmp/ccMPt44o.s:58     .text.os_trace:00000000 $t
+     /tmp/ccMPt44o.s:63     .text.os_trace:00000000 os_trace
+     /tmp/ccMPt44o.s:245    .text.os_mutex_lock:00000000 os_mutex_lock
+     /tmp/ccMPt44o.s:302    .text.os_mutex_unlock:00000000 os_mutex_unlock
+     /tmp/ccMPt44o.s:126    .text.os_trace:0000004c $d
+     /tmp/ccMPt44o.s:131    .text.os_console_gets:00000000 $t
+     /tmp/ccMPt44o.s:136    .text.os_console_gets:00000000 os_console_gets
+     /tmp/ccMPt44o.s:170    .rodata:00000000 $d
+     /tmp/ccMPt44o.s:177    .text.os_mutex_create:00000000 $t
+     /tmp/ccMPt44o.s:233    .text.os_mutex_create:0000003c $d
+     /tmp/ccMPt44o.s:472    .rodata.__FUNCTION__.5864:00000000 __FUNCTION__.5864
+     /tmp/ccMPt44o.s:240    .text.os_mutex_lock:00000000 $t
+     /tmp/ccMPt44o.s:290    .text.os_mutex_lock:00000034 $d
+     /tmp/ccMPt44o.s:478    .rodata.__FUNCTION__.5869:00000000 __FUNCTION__.5869
+     /tmp/ccMPt44o.s:297    .text.os_mutex_unlock:00000000 $t
+     /tmp/ccMPt44o.s:347    .text.os_mutex_unlock:00000030 $d
+     /tmp/ccMPt44o.s:484    .rodata.__FUNCTION__.5874:00000000 __FUNCTION__.5874
+     /tmp/ccMPt44o.s:354    .text.os_mutex_release:00000000 $t
+     /tmp/ccMPt44o.s:359    .text.os_mutex_release:00000000 os_mutex_release
+     /tmp/ccMPt44o.s:401    .text.os_mutex_release:0000002c $d
+     /tmp/ccMPt44o.s:490    .rodata.__FUNCTION__.5879:00000000 __FUNCTION__.5879
+     /tmp/ccMPt44o.s:408    .text.os_sleep_ms:00000000 $t
+     /tmp/ccMPt44o.s:413    .text.os_sleep_ms:00000000 os_sleep_ms
+     /tmp/ccMPt44o.s:443    .text.os_suspend:00000000 $t
+     /tmp/ccMPt44o.s:448    .text.os_suspend:00000000 os_suspend
+     /tmp/ccMPt44o.s:469    .rodata.__FUNCTION__.5864:00000000 $d
+     /tmp/ccMPt44o.s:475    .rodata.__FUNCTION__.5869:00000000 $d
+     /tmp/ccMPt44o.s:481    .rodata.__FUNCTION__.5874:00000000 $d
+     /tmp/ccMPt44o.s:487    .rodata.__FUNCTION__.5879:00000000 $d
+                     .debug_frame:00000010 $d
+                           .group:00000000 wm4.0.728a2e6911dc01ff85c2d70c52e8fae1
+                           .group:00000000 wm4.lib_c99.prefix.8.3580c292f50811c682d980dc4180498e
+                           .group:00000000 wm4.common.prefix.16.d7bf937cdf46fd76dde96b376e3b328a
+                           .group:00000000 wm4.ewl_c_version.h.9.0bcb57d6a3f89baae1f9b121de2772f5
+                           .group:00000000 wm4.os_enum.h.9.f9446d6af68b3fa72a37d4d924d3b347
+                           .group:00000000 wm4.ansi_prefix.ARM.h.13.4b23f4c654df3c3277534542f67d200c
+                           .group:00000000 wm4.ansi_parms.h.64.90aed58330fdde08746db908036e1f37
+                           .group:00000000 wm4.size_t.h.9.f983491a73b5c81f421ee8223b1ac5c0
+                           .group:00000000 wm4.wchar_t.h.9.94198016f5b5f455e54ea1f3f054b416
+                           .group:00000000 wm4.ewl_lib_ext1.h.14.f9b057cc049671136093886db2a3473f
+                           .group:00000000 wm4.ewl_rsize_t.h.11.b283831bb803e76ceb1756da2df9a1b5
+                           .group:00000000 wm4.cstddef.32.067e2ea187472b6198f9ace951e27a51
+                           .group:00000000 wm4.limits_api.h.9.bc6daa20b3abae2bba6c512044e73b43
+                           .group:00000000 wm4.cstdint.134.883feaa2838fb8c945f155045ce06256
+                           .group:00000000 wm4.FreeRTOSConfig.h.72.75cb346dabad37f1d1a80e0a337065ed
+                           .group:00000000 wm4.projdefs.h.71.b3c50e668908413922aad758934ec914
+                           .group:00000000 wm4.portmacro.h.72.f619b572c99e5bd3ac77abd33efb542d
+                           .group:00000000 wm4.portable.h.106.61ffdda1afafb5a5e1f7197ade95b43a
+                           .group:00000000 wm4.mpu_wrappers.h.71.dd245fe44d82bd40288b5a47f895c82c
+                           .group:00000000 wm4.FreeRTOS.h.179.860507a4e765cb3b74f37181fc3c9df6
+                           .group:00000000 wm4.list.h.103.6a12b7b9a7a136c3cca0ee53675c5498
+                           .group:00000000 wm4.task.h.88.249f28f82749d6a86cb49478ec501d6f
+                           .group:00000000 wm4.queue.h.72.b79111e1f2901fd0fc4ec217c5b93342
+                           .group:00000000 wm4.semphr.h.81.476996112f7cf2dd045dbdd37a9136bc
+                           .group:00000000 wm4.va_list.h.9.b0bb078841c0305c2667a31da10a9070
+                           .group:00000000 wm4.file_struc.h.13.96d07f4b7392ecdee9ce60307cac6248
+                           .group:00000000 wm4.stdarg.ARM.h.9.32516e68edcca81ab31f48f233894821
+                           .group:00000000 wm4.stdio_api.h.64.7d83b1caa7fdc34505042751a1c33692
+                           .group:00000000 wm4.cstdio.1187.51197b0e8ec7388017461af9f7851efe
+                           .group:00000000 wm4.string_api.h.9.a9265430fd330d238bc93998aef29e99
+                           .group:00000000 wm4.bl.h.9.aca5daeefae41b2ae63ddfaa535b88ff
+                           .group:00000000 wm4.S32K144.h.177.db9d6057c342cdeacc7fa44375c761e5
+                           .group:00000000 wm4.SPI_MSD0_Driver.h.10.751670d7185e24a2b9b7290d36663748
+
+UNDEFINED SYMBOLS
+vsnprintf
+uart_send_lf_crlf
+uart_gets_echo_blocked
+xQueueCreateMutex
+xQueueGenericSend
+xQueueGenericReceive
+vQueueDelete
+vTaskDelay

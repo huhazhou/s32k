@@ -1,0 +1,1151 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.eabi_attribute 27, 1
+   4              		.eabi_attribute 28, 1
+   5              		.fpu fpv4-sp-d16
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.thumb
+  16              		.file	"timelib.c"
+  17              		.text
+  18              	.Ltext0:
+  19              		.cfi_sections	.debug_frame
+  20              		.global	__timelib_tick_count
+  21              		.section	.bss.__timelib_tick_count,"aw",%nobits
+  22              		.align	3
+  25              	__timelib_tick_count:
+  26 0000 00000000 		.space	8
+  26      00000000 
+  27              		.section	.bss.time_tick_diff,"aw",%nobits
+  28              		.align	3
+  31              	time_tick_diff:
+  32 0000 00000000 		.space	8
+  32      00000000 
+  33              		.global	__aeabi_uldivmod
+  34              		.section	.text.time,"ax",%progbits
+  35              		.align	2
+  36              		.global	time
+  37              		.thumb
+  38              		.thumb_func
+  40              	time:
+  41              	.LFB0:
+  42              		.file 1 "../src/timelib.c"
+   1:../src/timelib.c **** /*
+   2:../src/timelib.c ****  * timelib.c
+   3:../src/timelib.c ****  *
+   4:../src/timelib.c ****  *  Created on: 2017年10月19日
+   5:../src/timelib.c ****  *      Author: houxd
+   6:../src/timelib.c ****  */
+   7:../src/timelib.c **** #include <timelib.h>
+   8:../src/timelib.c **** #include <stdio.h>
+   9:../src/timelib.c **** volatile uint64_t __timelib_tick_count = 0;
+  10:../src/timelib.c **** static volatile int64_t time_tick_diff = 0;
+  11:../src/timelib.c **** time_t time(const time_t* t)
+  12:../src/timelib.c **** {
+  43              		.loc 1 12 0
+  44              		.cfi_startproc
+  45              		@ args = 0, pretend = 0, frame = 8
+  46              		@ frame_needed = 1, uses_anonymous_args = 0
+  47 0000 B0B5     		push	{r4, r5, r7, lr}
+  48              		.cfi_def_cfa_offset 16
+  49              		.cfi_offset 4, -16
+  50              		.cfi_offset 5, -12
+  51              		.cfi_offset 7, -8
+  52              		.cfi_offset 14, -4
+  53 0002 82B0     		sub	sp, sp, #8
+  54              		.cfi_def_cfa_offset 24
+  55 0004 00AF     		add	r7, sp, #0
+  56              		.cfi_def_cfa_register 7
+  57 0006 7860     		str	r0, [r7, #4]
+  13:../src/timelib.c **** 	if(t){
+  58              		.loc 1 13 0
+  59 0008 7B68     		ldr	r3, [r7, #4]
+  60 000a 002B     		cmp	r3, #0
+  61 000c 17D0     		beq	.L2
+  14:../src/timelib.c **** 		time_tick_diff = (uint64_t)(*t) - (__timelib_tick_count/_TIMELIB_TICK_HZ);
+  62              		.loc 1 14 0
+  63 000e 7B68     		ldr	r3, [r7, #4]
+  64 0010 1B68     		ldr	r3, [r3]
+  65 0012 1C46     		mov	r4, r3
+  66 0014 4FF00005 		mov	r5, #0
+  67 0018 144B     		ldr	r3, .L4
+  68 001a D3E90023 		ldrd	r2, [r3]
+  69 001e 1046     		mov	r0, r2
+  70 0020 1946     		mov	r1, r3
+  71 0022 4FF47A72 		mov	r2, #1000
+  72 0026 4FF00003 		mov	r3, #0
+  73 002a FFF7FEFF 		bl	__aeabi_uldivmod
+  74 002e 0246     		mov	r2, r0
+  75 0030 0B46     		mov	r3, r1
+  76 0032 A21A     		subs	r2, r4, r2
+  77 0034 65EB0303 		sbc	r3, r5, r3
+  78 0038 0D49     		ldr	r1, .L4+4
+  79 003a C1E90023 		strd	r2, [r1]
+  80              	.L2:
+  15:../src/timelib.c **** 	}
+  16:../src/timelib.c **** 	return time_tick_diff + (__timelib_tick_count/_TIMELIB_TICK_HZ);
+  81              		.loc 1 16 0
+  82 003e 0B4B     		ldr	r3, .L4
+  83 0040 D3E90023 		ldrd	r2, [r3]
+  84 0044 1046     		mov	r0, r2
+  85 0046 1946     		mov	r1, r3
+  86 0048 4FF47A72 		mov	r2, #1000
+  87 004c 4FF00003 		mov	r3, #0
+  88 0050 FFF7FEFF 		bl	__aeabi_uldivmod
+  89 0054 0246     		mov	r2, r0
+  90 0056 0B46     		mov	r3, r1
+  91 0058 1146     		mov	r1, r2
+  92 005a 054B     		ldr	r3, .L4+4
+  93 005c D3E90023 		ldrd	r2, [r3]
+  94 0060 1346     		mov	r3, r2
+  95 0062 0B44     		add	r3, r3, r1
+  17:../src/timelib.c **** }
+  96              		.loc 1 17 0
+  97 0064 1846     		mov	r0, r3
+  98 0066 0837     		adds	r7, r7, #8
+  99              		.cfi_def_cfa_offset 16
+ 100 0068 BD46     		mov	sp, r7
+ 101              		.cfi_def_cfa_register 13
+ 102              		@ sp needed
+ 103 006a B0BD     		pop	{r4, r5, r7, pc}
+ 104              	.L5:
+ 105              		.align	2
+ 106              	.L4:
+ 107 006c 00000000 		.word	__timelib_tick_count
+ 108 0070 00000000 		.word	time_tick_diff
+ 109              		.cfi_endproc
+ 110              	.LFE0:
+ 112              		.section	.text.mktime_z,"ax",%progbits
+ 113              		.align	2
+ 114              		.global	mktime_z
+ 115              		.thumb
+ 116              		.thumb_func
+ 118              	mktime_z:
+ 119              	.LFB1:
+  18:../src/timelib.c **** time_t mktime_z(struct tm * pt, long timezone)
+  19:../src/timelib.c **** {
+ 120              		.loc 1 19 0
+ 121              		.cfi_startproc
+ 122              		@ args = 0, pretend = 0, frame = 40
+ 123              		@ frame_needed = 1, uses_anonymous_args = 0
+ 124              		@ link register save eliminated.
+ 125 0000 80B4     		push	{r7}
+ 126              		.cfi_def_cfa_offset 4
+ 127              		.cfi_offset 7, -4
+ 128 0002 8BB0     		sub	sp, sp, #44
+ 129              		.cfi_def_cfa_offset 48
+ 130 0004 00AF     		add	r7, sp, #0
+ 131              		.cfi_def_cfa_register 7
+ 132 0006 7860     		str	r0, [r7, #4]
+ 133 0008 3960     		str	r1, [r7]
+  20:../src/timelib.c **** 	unsigned int year = pt->tm_year + 1900;
+ 134              		.loc 1 20 0
+ 135 000a 7B68     		ldr	r3, [r7, #4]
+ 136 000c 5B69     		ldr	r3, [r3, #20]
+ 137 000e 03F26C73 		addw	r3, r3, #1900
+ 138 0012 7B62     		str	r3, [r7, #36]
+  21:../src/timelib.c **** 	unsigned int mon = pt->tm_mon+1;
+ 139              		.loc 1 21 0
+ 140 0014 7B68     		ldr	r3, [r7, #4]
+ 141 0016 1B69     		ldr	r3, [r3, #16]
+ 142 0018 0133     		adds	r3, r3, #1
+ 143 001a 3B62     		str	r3, [r7, #32]
+  22:../src/timelib.c **** 	unsigned int day = pt->tm_mday;
+ 144              		.loc 1 22 0
+ 145 001c 7B68     		ldr	r3, [r7, #4]
+ 146 001e DB68     		ldr	r3, [r3, #12]
+ 147 0020 FB61     		str	r3, [r7, #28]
+  23:../src/timelib.c **** 	unsigned int hour = pt->tm_hour;
+ 148              		.loc 1 23 0
+ 149 0022 7B68     		ldr	r3, [r7, #4]
+ 150 0024 9B68     		ldr	r3, [r3, #8]
+ 151 0026 BB61     		str	r3, [r7, #24]
+  24:../src/timelib.c **** 	unsigned int min = pt->tm_min;
+ 152              		.loc 1 24 0
+ 153 0028 7B68     		ldr	r3, [r7, #4]
+ 154 002a 5B68     		ldr	r3, [r3, #4]
+ 155 002c 7B61     		str	r3, [r7, #20]
+  25:../src/timelib.c **** 	unsigned int sec = pt->tm_sec;
+ 156              		.loc 1 25 0
+ 157 002e 7B68     		ldr	r3, [r7, #4]
+ 158 0030 1B68     		ldr	r3, [r3]
+ 159 0032 3B61     		str	r3, [r7, #16]
+  26:../src/timelib.c **** 	if (0 >= (int) (mon -= 2)) { /* 1..12 -> 11,12,1..10 */
+ 160              		.loc 1 26 0
+ 161 0034 3B6A     		ldr	r3, [r7, #32]
+ 162 0036 023B     		subs	r3, r3, #2
+ 163 0038 3B62     		str	r3, [r7, #32]
+ 164 003a 3B6A     		ldr	r3, [r7, #32]
+ 165 003c 002B     		cmp	r3, #0
+ 166 003e 05DC     		bgt	.L7
+  27:../src/timelib.c **** 		mon += 12; /* Puts Feb last since it has leap day */
+ 167              		.loc 1 27 0
+ 168 0040 3B6A     		ldr	r3, [r7, #32]
+ 169 0042 0C33     		adds	r3, r3, #12
+ 170 0044 3B62     		str	r3, [r7, #32]
+  28:../src/timelib.c **** 		year -= 1;
+ 171              		.loc 1 28 0
+ 172 0046 7B6A     		ldr	r3, [r7, #36]
+ 173 0048 013B     		subs	r3, r3, #1
+ 174 004a 7B62     		str	r3, [r7, #36]
+ 175              	.L7:
+  29:../src/timelib.c **** 	}
+  30:../src/timelib.c **** 	time_t res = ((((unsigned long) (year / 4 - year / 100 + year / 400
+ 176              		.loc 1 30 0
+ 177 004c 7B6A     		ldr	r3, [r7, #36]
+ 178 004e 9A08     		lsrs	r2, r3, #2
+ 179 0050 7B6A     		ldr	r3, [r7, #36]
+ 180 0052 1F49     		ldr	r1, .L9
+ 181 0054 A1FB0313 		umull	r1, r3, r1, r3
+ 182 0058 5B09     		lsrs	r3, r3, #5
+ 183 005a D21A     		subs	r2, r2, r3
+ 184 005c 7B6A     		ldr	r3, [r7, #36]
+ 185 005e 1C49     		ldr	r1, .L9
+ 186 0060 A1FB0313 		umull	r1, r3, r1, r3
+ 187 0064 DB09     		lsrs	r3, r3, #7
+ 188 0066 1A44     		add	r2, r2, r3
+  31:../src/timelib.c **** 			+ 367 * mon / 12 + day) + year * 365 - 719499) * 24 + hour /* now have hours */
+ 189              		.loc 1 31 0
+ 190 0068 3B6A     		ldr	r3, [r7, #32]
+ 191 006a 40F26F11 		movw	r1, #367
+ 192 006e 01FB03F3 		mul	r3, r1, r3
+ 193 0072 1849     		ldr	r1, .L9+4
+ 194 0074 A1FB0313 		umull	r1, r3, r1, r3
+ 195 0078 DB08     		lsrs	r3, r3, #3
+ 196 007a 1A44     		add	r2, r2, r3
+ 197 007c FB69     		ldr	r3, [r7, #28]
+ 198 007e 1A44     		add	r2, r2, r3
+ 199 0080 7B6A     		ldr	r3, [r7, #36]
+ 200 0082 40F26D11 		movw	r1, #365
+ 201 0086 01FB03F3 		mul	r3, r1, r3
+ 202 008a 1A44     		add	r2, r2, r3
+ 203 008c 1346     		mov	r3, r2
+ 204 008e 5B00     		lsls	r3, r3, #1
+ 205 0090 1344     		add	r3, r3, r2
+ 206 0092 DB00     		lsls	r3, r3, #3
+ 207 0094 1A46     		mov	r2, r3
+ 208 0096 BB69     		ldr	r3, [r7, #24]
+ 209 0098 1A44     		add	r2, r2, r3
+  32:../src/timelib.c **** 	) * 60 + min /* now have minutes */
+ 210              		.loc 1 32 0
+ 211 009a 1346     		mov	r3, r2
+ 212 009c 1B01     		lsls	r3, r3, #4
+ 213 009e 9B1A     		subs	r3, r3, r2
+ 214 00a0 9B00     		lsls	r3, r3, #2
+ 215 00a2 1A46     		mov	r2, r3
+ 216 00a4 7B69     		ldr	r3, [r7, #20]
+ 217 00a6 1A44     		add	r2, r2, r3
+  33:../src/timelib.c **** 	) * 60 + sec; /* finally seconds */
+ 218              		.loc 1 33 0
+ 219 00a8 1346     		mov	r3, r2
+ 220 00aa 1B01     		lsls	r3, r3, #4
+ 221 00ac 9B1A     		subs	r3, r3, r2
+ 222 00ae 9B00     		lsls	r3, r3, #2
+ 223 00b0 1A46     		mov	r2, r3
+ 224 00b2 3B69     		ldr	r3, [r7, #16]
+ 225 00b4 1A44     		add	r2, r2, r3
+  30:../src/timelib.c **** 			+ 367 * mon / 12 + day) + year * 365 - 719499) * 24 + hour /* now have hours */
+ 226              		.loc 1 30 0
+ 227 00b6 084B     		ldr	r3, .L9+8
+ 228 00b8 1344     		add	r3, r3, r2
+ 229 00ba FB60     		str	r3, [r7, #12]
+  34:../src/timelib.c **** 
+  35:../src/timelib.c **** 	return res - timezone;
+ 230              		.loc 1 35 0
+ 231 00bc 3B68     		ldr	r3, [r7]
+ 232 00be FA68     		ldr	r2, [r7, #12]
+ 233 00c0 D31A     		subs	r3, r2, r3
+  36:../src/timelib.c **** }
+ 234              		.loc 1 36 0
+ 235 00c2 1846     		mov	r0, r3
+ 236 00c4 2C37     		adds	r7, r7, #44
+ 237              		.cfi_def_cfa_offset 4
+ 238 00c6 BD46     		mov	sp, r7
+ 239              		.cfi_def_cfa_register 13
+ 240              		@ sp needed
+ 241 00c8 5DF8047B 		ldr	r7, [sp], #4
+ 242              		.cfi_restore 7
+ 243              		.cfi_def_cfa_offset 0
+ 244 00cc 7047     		bx	lr
+ 245              	.L10:
+ 246 00ce 00BF     		.align	2
+ 247              	.L9:
+ 248 00d0 1F85EB51 		.word	1374389535
+ 249 00d4 ABAAAAAA 		.word	-1431655765
+ 250 00d8 80BFB186 		.word	-2035171456
+ 251              		.cfi_endproc
+ 252              	.LFE1:
+ 254              		.section	.text.mktime,"ax",%progbits
+ 255              		.align	2
+ 256              		.global	mktime
+ 257              		.thumb
+ 258              		.thumb_func
+ 260              	mktime:
+ 261              	.LFB2:
+  37:../src/timelib.c **** time_t mktime(struct tm * pt)
+  38:../src/timelib.c **** {
+ 262              		.loc 1 38 0
+ 263              		.cfi_startproc
+ 264              		@ args = 0, pretend = 0, frame = 8
+ 265              		@ frame_needed = 1, uses_anonymous_args = 0
+ 266 0000 80B5     		push	{r7, lr}
+ 267              		.cfi_def_cfa_offset 8
+ 268              		.cfi_offset 7, -8
+ 269              		.cfi_offset 14, -4
+ 270 0002 82B0     		sub	sp, sp, #8
+ 271              		.cfi_def_cfa_offset 16
+ 272 0004 00AF     		add	r7, sp, #0
+ 273              		.cfi_def_cfa_register 7
+ 274 0006 7860     		str	r0, [r7, #4]
+  39:../src/timelib.c **** 	return mktime_z(pt,__timezone(NULL));
+ 275              		.loc 1 39 0
+ 276 0008 0020     		movs	r0, #0
+ 277 000a FFF7FEFF 		bl	__timezone
+ 278 000e 0346     		mov	r3, r0
+ 279 0010 7868     		ldr	r0, [r7, #4]
+ 280 0012 1946     		mov	r1, r3
+ 281 0014 FFF7FEFF 		bl	mktime_z
+ 282 0018 0346     		mov	r3, r0
+  40:../src/timelib.c **** }
+ 283              		.loc 1 40 0
+ 284 001a 1846     		mov	r0, r3
+ 285 001c 0837     		adds	r7, r7, #8
+ 286              		.cfi_def_cfa_offset 8
+ 287 001e BD46     		mov	sp, r7
+ 288              		.cfi_def_cfa_register 13
+ 289              		@ sp needed
+ 290 0020 80BD     		pop	{r7, pc}
+ 291              		.cfi_endproc
+ 292              	.LFE2:
+ 294 0022 00BF     		.section	.rodata.days_tbl,"a",%progbits
+ 295              		.align	2
+ 298              	days_tbl:
+ 299 0000 1F       		.byte	31
+ 300 0001 1C       		.byte	28
+ 301 0002 1F       		.byte	31
+ 302 0003 1E       		.byte	30
+ 303 0004 1F       		.byte	31
+ 304 0005 1E       		.byte	30
+ 305 0006 1F       		.byte	31
+ 306 0007 1F       		.byte	31
+ 307 0008 1E       		.byte	30
+ 308 0009 1F       		.byte	31
+ 309 000a 1E       		.byte	30
+ 310 000b 1F       		.byte	31
+ 311              		.section	.text.localtime_z,"ax",%progbits
+ 312              		.align	2
+ 313              		.global	localtime_z
+ 314              		.thumb
+ 315              		.thumb_func
+ 317              	localtime_z:
+ 318              	.LFB3:
+  41:../src/timelib.c **** 
+  42:../src/timelib.c **** static const char days_tbl[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+  43:../src/timelib.c **** void localtime_z(const time_t *ptime, long timezone, struct tm *tm_time) {
+ 319              		.loc 1 43 0
+ 320              		.cfi_startproc
+ 321              		@ args = 0, pretend = 0, frame = 32
+ 322              		@ frame_needed = 1, uses_anonymous_args = 0
+ 323              		@ link register save eliminated.
+ 324 0000 80B4     		push	{r7}
+ 325              		.cfi_def_cfa_offset 4
+ 326              		.cfi_offset 7, -4
+ 327 0002 89B0     		sub	sp, sp, #36
+ 328              		.cfi_def_cfa_offset 40
+ 329 0004 00AF     		add	r7, sp, #0
+ 330              		.cfi_def_cfa_register 7
+ 331 0006 F860     		str	r0, [r7, #12]
+ 332 0008 B960     		str	r1, [r7, #8]
+ 333 000a 7A60     		str	r2, [r7, #4]
+  44:../src/timelib.c **** 	uint32_t pass_4year;
+  45:../src/timelib.c **** 	uint32_t hpery;
+  46:../src/timelib.c **** 	time_t raw_time = *ptime;
+ 334              		.loc 1 46 0
+ 335 000c FB68     		ldr	r3, [r7, #12]
+ 336 000e 1B68     		ldr	r3, [r3]
+ 337 0010 BB61     		str	r3, [r7, #24]
+  47:../src/timelib.c **** 	raw_time = raw_time + timezone;
+ 338              		.loc 1 47 0
+ 339 0012 BB68     		ldr	r3, [r7, #8]
+ 340 0014 BA69     		ldr	r2, [r7, #24]
+ 341 0016 1344     		add	r3, r3, r2
+ 342 0018 BB61     		str	r3, [r7, #24]
+  48:../src/timelib.c **** 	if (raw_time < 0) {
+  49:../src/timelib.c **** 		raw_time = 0;
+  50:../src/timelib.c **** 	}
+  51:../src/timelib.c **** 	tm_time->tm_sec = (int) (raw_time % 60);
+ 343              		.loc 1 51 0
+ 344 001a B969     		ldr	r1, [r7, #24]
+ 345 001c 5B4B     		ldr	r3, .L24
+ 346 001e A3FB0123 		umull	r2, r3, r3, r1
+ 347 0022 5A09     		lsrs	r2, r3, #5
+ 348 0024 1346     		mov	r3, r2
+ 349 0026 1B01     		lsls	r3, r3, #4
+ 350 0028 9B1A     		subs	r3, r3, r2
+ 351 002a 9B00     		lsls	r3, r3, #2
+ 352 002c CA1A     		subs	r2, r1, r3
+ 353 002e 7B68     		ldr	r3, [r7, #4]
+ 354 0030 1A60     		str	r2, [r3]
+  52:../src/timelib.c **** 	raw_time /= 60;
+ 355              		.loc 1 52 0
+ 356 0032 BB69     		ldr	r3, [r7, #24]
+ 357 0034 554A     		ldr	r2, .L24
+ 358 0036 A2FB0323 		umull	r2, r3, r2, r3
+ 359 003a 5B09     		lsrs	r3, r3, #5
+ 360 003c BB61     		str	r3, [r7, #24]
+  53:../src/timelib.c **** 	tm_time->tm_min = (int) (raw_time % 60);
+ 361              		.loc 1 53 0
+ 362 003e B969     		ldr	r1, [r7, #24]
+ 363 0040 524B     		ldr	r3, .L24
+ 364 0042 A3FB0123 		umull	r2, r3, r3, r1
+ 365 0046 5A09     		lsrs	r2, r3, #5
+ 366 0048 1346     		mov	r3, r2
+ 367 004a 1B01     		lsls	r3, r3, #4
+ 368 004c 9B1A     		subs	r3, r3, r2
+ 369 004e 9B00     		lsls	r3, r3, #2
+ 370 0050 CA1A     		subs	r2, r1, r3
+ 371 0052 7B68     		ldr	r3, [r7, #4]
+ 372 0054 5A60     		str	r2, [r3, #4]
+  54:../src/timelib.c **** 	raw_time /= 60;
+ 373              		.loc 1 54 0
+ 374 0056 BB69     		ldr	r3, [r7, #24]
+ 375 0058 4C4A     		ldr	r2, .L24
+ 376 005a A2FB0323 		umull	r2, r3, r2, r3
+ 377 005e 5B09     		lsrs	r3, r3, #5
+ 378 0060 BB61     		str	r3, [r7, #24]
+  55:../src/timelib.c **** 	tm_time->tm_wday = ((raw_time/24)+4)%7;
+ 379              		.loc 1 55 0
+ 380 0062 BB69     		ldr	r3, [r7, #24]
+ 381 0064 4A4A     		ldr	r2, .L24+4
+ 382 0066 A2FB0323 		umull	r2, r3, r2, r3
+ 383 006a 1B09     		lsrs	r3, r3, #4
+ 384 006c 1A1D     		adds	r2, r3, #4
+ 385 006e 494B     		ldr	r3, .L24+8
+ 386 0070 A2FB0301 		umull	r0, r1, r2, r3
+ 387 0074 531A     		subs	r3, r2, r1
+ 388 0076 5B08     		lsrs	r3, r3, #1
+ 389 0078 0B44     		add	r3, r3, r1
+ 390 007a 9908     		lsrs	r1, r3, #2
+ 391 007c 0B46     		mov	r3, r1
+ 392 007e DB00     		lsls	r3, r3, #3
+ 393 0080 5B1A     		subs	r3, r3, r1
+ 394 0082 D11A     		subs	r1, r2, r3
+ 395 0084 0A46     		mov	r2, r1
+ 396 0086 7B68     		ldr	r3, [r7, #4]
+ 397 0088 9A61     		str	r2, [r3, #24]
+  56:../src/timelib.c **** 	pass_4year = ((unsigned int) raw_time / (1461L * 24L));
+ 398              		.loc 1 56 0
+ 399 008a BB69     		ldr	r3, [r7, #24]
+ 400 008c 424A     		ldr	r2, .L24+12
+ 401 008e A2FB0323 		umull	r2, r3, r2, r3
+ 402 0092 DB0B     		lsrs	r3, r3, #15
+ 403 0094 7B61     		str	r3, [r7, #20]
+  57:../src/timelib.c **** 	tm_time->tm_year = (pass_4year << 2) + 70;
+ 404              		.loc 1 57 0
+ 405 0096 7B69     		ldr	r3, [r7, #20]
+ 406 0098 9B00     		lsls	r3, r3, #2
+ 407 009a 4633     		adds	r3, r3, #70
+ 408 009c 1A46     		mov	r2, r3
+ 409 009e 7B68     		ldr	r3, [r7, #4]
+ 410 00a0 5A61     		str	r2, [r3, #20]
+  58:../src/timelib.c **** 	raw_time %= 1461L * 24L;
+ 411              		.loc 1 58 0
+ 412 00a2 BB69     		ldr	r3, [r7, #24]
+ 413 00a4 3C4A     		ldr	r2, .L24+12
+ 414 00a6 A2FB0312 		umull	r1, r2, r2, r3
+ 415 00aa D20B     		lsrs	r2, r2, #15
+ 416 00ac 48F6F801 		movw	r1, #35064
+ 417 00b0 01FB02F2 		mul	r2, r1, r2
+ 418 00b4 9B1A     		subs	r3, r3, r2
+ 419 00b6 BB61     		str	r3, [r7, #24]
+ 420              	.L17:
+  59:../src/timelib.c **** 	for (;;) {
+  60:../src/timelib.c **** 		hpery = 365 * 24;
+ 421              		.loc 1 60 0
+ 422 00b8 42F23823 		movw	r3, #8760
+ 423 00bc FB61     		str	r3, [r7, #28]
+  61:../src/timelib.c **** 		if ((tm_time->tm_year & 3) == 0) {
+ 424              		.loc 1 61 0
+ 425 00be 7B68     		ldr	r3, [r7, #4]
+ 426 00c0 5B69     		ldr	r3, [r3, #20]
+ 427 00c2 03F00303 		and	r3, r3, #3
+ 428 00c6 002B     		cmp	r3, #0
+ 429 00c8 02D1     		bne	.L14
+  62:../src/timelib.c **** 			hpery += 24;
+ 430              		.loc 1 62 0
+ 431 00ca FB69     		ldr	r3, [r7, #28]
+ 432 00cc 1833     		adds	r3, r3, #24
+ 433 00ce FB61     		str	r3, [r7, #28]
+ 434              	.L14:
+  63:../src/timelib.c **** 		}
+  64:../src/timelib.c **** 		if (raw_time < hpery) {
+ 435              		.loc 1 64 0
+ 436 00d0 BA69     		ldr	r2, [r7, #24]
+ 437 00d2 FB69     		ldr	r3, [r7, #28]
+ 438 00d4 9A42     		cmp	r2, r3
+ 439 00d6 1CD2     		bcs	.L15
+  65:../src/timelib.c **** 			break;
+ 440              		.loc 1 65 0
+ 441 00d8 00BF     		nop
+  66:../src/timelib.c **** 		}
+  67:../src/timelib.c **** 		tm_time->tm_year++;
+  68:../src/timelib.c **** 		raw_time -= hpery;
+  69:../src/timelib.c **** 	}
+  70:../src/timelib.c **** 	tm_time->tm_hour = (int) (raw_time % 24);
+ 442              		.loc 1 70 0
+ 443 00da B969     		ldr	r1, [r7, #24]
+ 444 00dc 2C4B     		ldr	r3, .L24+4
+ 445 00de A3FB0123 		umull	r2, r3, r3, r1
+ 446 00e2 1A09     		lsrs	r2, r3, #4
+ 447 00e4 1346     		mov	r3, r2
+ 448 00e6 5B00     		lsls	r3, r3, #1
+ 449 00e8 1344     		add	r3, r3, r2
+ 450 00ea DB00     		lsls	r3, r3, #3
+ 451 00ec CA1A     		subs	r2, r1, r3
+ 452 00ee 7B68     		ldr	r3, [r7, #4]
+ 453 00f0 9A60     		str	r2, [r3, #8]
+  71:../src/timelib.c **** 	raw_time /= 24;
+ 454              		.loc 1 71 0
+ 455 00f2 BB69     		ldr	r3, [r7, #24]
+ 456 00f4 264A     		ldr	r2, .L24+4
+ 457 00f6 A2FB0323 		umull	r2, r3, r2, r3
+ 458 00fa 1B09     		lsrs	r3, r3, #4
+ 459 00fc BB61     		str	r3, [r7, #24]
+  72:../src/timelib.c **** 	raw_time++;
+ 460              		.loc 1 72 0
+ 461 00fe BB69     		ldr	r3, [r7, #24]
+ 462 0100 0133     		adds	r3, r3, #1
+ 463 0102 BB61     		str	r3, [r7, #24]
+  73:../src/timelib.c **** 	if ((tm_time->tm_year & 3) == 0) {
+ 464              		.loc 1 73 0
+ 465 0104 7B68     		ldr	r3, [r7, #4]
+ 466 0106 5B69     		ldr	r3, [r3, #20]
+ 467 0108 03F00303 		and	r3, r3, #3
+ 468 010c 002B     		cmp	r3, #0
+ 469 010e 1BD1     		bne	.L18
+ 470 0110 09E0     		b	.L23
+ 471              	.L15:
+  67:../src/timelib.c **** 		raw_time -= hpery;
+ 472              		.loc 1 67 0
+ 473 0112 7B68     		ldr	r3, [r7, #4]
+ 474 0114 5B69     		ldr	r3, [r3, #20]
+ 475 0116 5A1C     		adds	r2, r3, #1
+ 476 0118 7B68     		ldr	r3, [r7, #4]
+ 477 011a 5A61     		str	r2, [r3, #20]
+  68:../src/timelib.c **** 	}
+ 478              		.loc 1 68 0
+ 479 011c BA69     		ldr	r2, [r7, #24]
+ 480 011e FB69     		ldr	r3, [r7, #28]
+ 481 0120 D31A     		subs	r3, r2, r3
+ 482 0122 BB61     		str	r3, [r7, #24]
+  69:../src/timelib.c **** 	tm_time->tm_hour = (int) (raw_time % 24);
+ 483              		.loc 1 69 0
+ 484 0124 C8E7     		b	.L17
+ 485              	.L23:
+  74:../src/timelib.c **** 		if (raw_time > 60) {
+ 486              		.loc 1 74 0
+ 487 0126 BB69     		ldr	r3, [r7, #24]
+ 488 0128 3C2B     		cmp	r3, #60
+ 489 012a 03D9     		bls	.L19
+  75:../src/timelib.c **** 			raw_time--;
+ 490              		.loc 1 75 0
+ 491 012c BB69     		ldr	r3, [r7, #24]
+ 492 012e 013B     		subs	r3, r3, #1
+ 493 0130 BB61     		str	r3, [r7, #24]
+ 494 0132 09E0     		b	.L18
+ 495              	.L19:
+  76:../src/timelib.c **** 		} else {
+  77:../src/timelib.c **** 			if (raw_time == 60) {
+ 496              		.loc 1 77 0
+ 497 0134 BB69     		ldr	r3, [r7, #24]
+ 498 0136 3C2B     		cmp	r3, #60
+ 499 0138 06D1     		bne	.L18
+  78:../src/timelib.c **** 				tm_time->tm_mon = 1;
+ 500              		.loc 1 78 0
+ 501 013a 7B68     		ldr	r3, [r7, #4]
+ 502 013c 0122     		movs	r2, #1
+ 503 013e 1A61     		str	r2, [r3, #16]
+  79:../src/timelib.c **** 				tm_time->tm_mday = 29;
+ 504              		.loc 1 79 0
+ 505 0140 7B68     		ldr	r3, [r7, #4]
+ 506 0142 1D22     		movs	r2, #29
+ 507 0144 DA60     		str	r2, [r3, #12]
+  80:../src/timelib.c **** 				return;
+ 508              		.loc 1 80 0
+ 509 0146 1CE0     		b	.L13
+ 510              	.L18:
+  81:../src/timelib.c **** 			}
+  82:../src/timelib.c **** 		}
+  83:../src/timelib.c **** 	}
+  84:../src/timelib.c **** 	for (tm_time->tm_mon = 0; days_tbl[tm_time->tm_mon] < raw_time; tm_time->tm_mon++) {
+ 511              		.loc 1 84 0
+ 512 0148 7B68     		ldr	r3, [r7, #4]
+ 513 014a 0022     		movs	r2, #0
+ 514 014c 1A61     		str	r2, [r3, #16]
+ 515 014e 0CE0     		b	.L21
+ 516              	.L22:
+  85:../src/timelib.c **** 		raw_time -= days_tbl[tm_time->tm_mon];
+ 517              		.loc 1 85 0 discriminator 3
+ 518 0150 7B68     		ldr	r3, [r7, #4]
+ 519 0152 1B69     		ldr	r3, [r3, #16]
+ 520 0154 114A     		ldr	r2, .L24+16
+ 521 0156 D35C     		ldrb	r3, [r2, r3]	@ zero_extendqisi2
+ 522 0158 1A46     		mov	r2, r3
+ 523 015a BB69     		ldr	r3, [r7, #24]
+ 524 015c 9B1A     		subs	r3, r3, r2
+ 525 015e BB61     		str	r3, [r7, #24]
+  84:../src/timelib.c **** 		raw_time -= days_tbl[tm_time->tm_mon];
+ 526              		.loc 1 84 0 discriminator 3
+ 527 0160 7B68     		ldr	r3, [r7, #4]
+ 528 0162 1B69     		ldr	r3, [r3, #16]
+ 529 0164 5A1C     		adds	r2, r3, #1
+ 530 0166 7B68     		ldr	r3, [r7, #4]
+ 531 0168 1A61     		str	r2, [r3, #16]
+ 532              	.L21:
+  84:../src/timelib.c **** 		raw_time -= days_tbl[tm_time->tm_mon];
+ 533              		.loc 1 84 0 is_stmt 0 discriminator 1
+ 534 016a 7B68     		ldr	r3, [r7, #4]
+ 535 016c 1B69     		ldr	r3, [r3, #16]
+ 536 016e 0B4A     		ldr	r2, .L24+16
+ 537 0170 D35C     		ldrb	r3, [r2, r3]	@ zero_extendqisi2
+ 538 0172 1A46     		mov	r2, r3
+ 539 0174 BB69     		ldr	r3, [r7, #24]
+ 540 0176 9A42     		cmp	r2, r3
+ 541 0178 EAD3     		bcc	.L22
+  86:../src/timelib.c **** 	}
+  87:../src/timelib.c **** 	tm_time->tm_mday = (int) (raw_time);
+ 542              		.loc 1 87 0 is_stmt 1
+ 543 017a BA69     		ldr	r2, [r7, #24]
+ 544 017c 7B68     		ldr	r3, [r7, #4]
+ 545 017e DA60     		str	r2, [r3, #12]
+  88:../src/timelib.c **** 	return;
+ 546              		.loc 1 88 0
+ 547 0180 00BF     		nop
+ 548              	.L13:
+  89:../src/timelib.c **** }
+ 549              		.loc 1 89 0
+ 550 0182 2437     		adds	r7, r7, #36
+ 551              		.cfi_def_cfa_offset 4
+ 552 0184 BD46     		mov	sp, r7
+ 553              		.cfi_def_cfa_register 13
+ 554              		@ sp needed
+ 555 0186 5DF8047B 		ldr	r7, [sp], #4
+ 556              		.cfi_restore 7
+ 557              		.cfi_def_cfa_offset 0
+ 558 018a 7047     		bx	lr
+ 559              	.L25:
+ 560              		.align	2
+ 561              	.L24:
+ 562 018c 89888888 		.word	-2004318071
+ 563 0190 ABAAAAAA 		.word	-1431655765
+ 564 0194 25499224 		.word	613566757
+ 565 0198 75AF3CEF 		.word	-281235595
+ 566 019c 00000000 		.word	days_tbl
+ 567              		.cfi_endproc
+ 568              	.LFE3:
+ 570              		.section	.text.__timezone,"ax",%progbits
+ 571              		.align	2
+ 572              		.global	__timezone
+ 573              		.thumb
+ 574              		.thumb_func
+ 576              	__timezone:
+ 577              	.LFB4:
+  90:../src/timelib.c **** long __timezone(long *ptz)
+  91:../src/timelib.c **** {
+ 578              		.loc 1 91 0
+ 579              		.cfi_startproc
+ 580              		@ args = 0, pretend = 0, frame = 8
+ 581              		@ frame_needed = 1, uses_anonymous_args = 0
+ 582              		@ link register save eliminated.
+ 583 0000 80B4     		push	{r7}
+ 584              		.cfi_def_cfa_offset 4
+ 585              		.cfi_offset 7, -4
+ 586 0002 83B0     		sub	sp, sp, #12
+ 587              		.cfi_def_cfa_offset 16
+ 588 0004 00AF     		add	r7, sp, #0
+ 589              		.cfi_def_cfa_register 7
+ 590 0006 7860     		str	r0, [r7, #4]
+  92:../src/timelib.c **** 	static long tz = _TIMELIB_TZ_DEF;
+  93:../src/timelib.c **** 	if(ptz)
+ 591              		.loc 1 93 0
+ 592 0008 7B68     		ldr	r3, [r7, #4]
+ 593 000a 002B     		cmp	r3, #0
+ 594 000c 03D0     		beq	.L27
+  94:../src/timelib.c **** 		tz = *ptz;
+ 595              		.loc 1 94 0
+ 596 000e 7B68     		ldr	r3, [r7, #4]
+ 597 0010 1B68     		ldr	r3, [r3]
+ 598 0012 054A     		ldr	r2, .L29
+ 599 0014 1360     		str	r3, [r2]
+ 600              	.L27:
+  95:../src/timelib.c **** 	return tz;
+ 601              		.loc 1 95 0
+ 602 0016 044B     		ldr	r3, .L29
+ 603 0018 1B68     		ldr	r3, [r3]
+  96:../src/timelib.c **** }
+ 604              		.loc 1 96 0
+ 605 001a 1846     		mov	r0, r3
+ 606 001c 0C37     		adds	r7, r7, #12
+ 607              		.cfi_def_cfa_offset 4
+ 608 001e BD46     		mov	sp, r7
+ 609              		.cfi_def_cfa_register 13
+ 610              		@ sp needed
+ 611 0020 5DF8047B 		ldr	r7, [sp], #4
+ 612              		.cfi_restore 7
+ 613              		.cfi_def_cfa_offset 0
+ 614 0024 7047     		bx	lr
+ 615              	.L30:
+ 616 0026 00BF     		.align	2
+ 617              	.L29:
+ 618 0028 00000000 		.word	tz.4427
+ 619              		.cfi_endproc
+ 620              	.LFE4:
+ 622              		.section	.text.localtime_s,"ax",%progbits
+ 623              		.align	2
+ 624              		.global	localtime_s
+ 625              		.thumb
+ 626              		.thumb_func
+ 628              	localtime_s:
+ 629              	.LFB5:
+  97:../src/timelib.c **** struct tm *localtime_s(const time_t * pt, struct tm*ltm)
+  98:../src/timelib.c **** {
+ 630              		.loc 1 98 0
+ 631              		.cfi_startproc
+ 632              		@ args = 0, pretend = 0, frame = 16
+ 633              		@ frame_needed = 1, uses_anonymous_args = 0
+ 634 0000 80B5     		push	{r7, lr}
+ 635              		.cfi_def_cfa_offset 8
+ 636              		.cfi_offset 7, -8
+ 637              		.cfi_offset 14, -4
+ 638 0002 84B0     		sub	sp, sp, #16
+ 639              		.cfi_def_cfa_offset 24
+ 640 0004 00AF     		add	r7, sp, #0
+ 641              		.cfi_def_cfa_register 7
+ 642 0006 7860     		str	r0, [r7, #4]
+ 643 0008 3960     		str	r1, [r7]
+  99:../src/timelib.c **** 	time_t t = pt?*pt:time(NULL);
+ 644              		.loc 1 99 0
+ 645 000a 7B68     		ldr	r3, [r7, #4]
+ 646 000c 002B     		cmp	r3, #0
+ 647 000e 02D0     		beq	.L32
+ 648              		.loc 1 99 0 is_stmt 0 discriminator 1
+ 649 0010 7B68     		ldr	r3, [r7, #4]
+ 650 0012 1B68     		ldr	r3, [r3]
+ 651 0014 03E0     		b	.L33
+ 652              	.L32:
+ 653              		.loc 1 99 0 discriminator 2
+ 654 0016 0020     		movs	r0, #0
+ 655 0018 FFF7FEFF 		bl	time
+ 656 001c 0346     		mov	r3, r0
+ 657              	.L33:
+ 658              		.loc 1 99 0 discriminator 4
+ 659 001e FB60     		str	r3, [r7, #12]
+ 100:../src/timelib.c **** 	localtime_z(&t,__timezone(NULL),ltm);
+ 660              		.loc 1 100 0 is_stmt 1 discriminator 4
+ 661 0020 0020     		movs	r0, #0
+ 662 0022 FFF7FEFF 		bl	__timezone
+ 663 0026 0246     		mov	r2, r0
+ 664 0028 07F10C03 		add	r3, r7, #12
+ 665 002c 1846     		mov	r0, r3
+ 666 002e 1146     		mov	r1, r2
+ 667 0030 3A68     		ldr	r2, [r7]
+ 668 0032 FFF7FEFF 		bl	localtime_z
+ 101:../src/timelib.c **** 	return ltm;
+ 669              		.loc 1 101 0 discriminator 4
+ 670 0036 3B68     		ldr	r3, [r7]
+ 102:../src/timelib.c **** }
+ 671              		.loc 1 102 0 discriminator 4
+ 672 0038 1846     		mov	r0, r3
+ 673 003a 1037     		adds	r7, r7, #16
+ 674              		.cfi_def_cfa_offset 8
+ 675 003c BD46     		mov	sp, r7
+ 676              		.cfi_def_cfa_register 13
+ 677              		@ sp needed
+ 678 003e 80BD     		pop	{r7, pc}
+ 679              		.cfi_endproc
+ 680              	.LFE5:
+ 682              		.section	.text.localtime,"ax",%progbits
+ 683              		.align	2
+ 684              		.global	localtime
+ 685              		.thumb
+ 686              		.thumb_func
+ 688              	localtime:
+ 689              	.LFB6:
+ 103:../src/timelib.c **** struct tm *localtime(const time_t * pt)
+ 104:../src/timelib.c **** {
+ 690              		.loc 1 104 0
+ 691              		.cfi_startproc
+ 692              		@ args = 0, pretend = 0, frame = 8
+ 693              		@ frame_needed = 1, uses_anonymous_args = 0
+ 694 0000 80B5     		push	{r7, lr}
+ 695              		.cfi_def_cfa_offset 8
+ 696              		.cfi_offset 7, -8
+ 697              		.cfi_offset 14, -4
+ 698 0002 82B0     		sub	sp, sp, #8
+ 699              		.cfi_def_cfa_offset 16
+ 700 0004 00AF     		add	r7, sp, #0
+ 701              		.cfi_def_cfa_register 7
+ 702 0006 7860     		str	r0, [r7, #4]
+ 105:../src/timelib.c **** 	static struct tm ltm;
+ 106:../src/timelib.c **** 	return localtime_s(pt,&ltm);
+ 703              		.loc 1 106 0
+ 704 0008 7868     		ldr	r0, [r7, #4]
+ 705 000a 0449     		ldr	r1, .L37
+ 706 000c FFF7FEFF 		bl	localtime_s
+ 707 0010 0346     		mov	r3, r0
+ 107:../src/timelib.c **** }
+ 708              		.loc 1 107 0
+ 709 0012 1846     		mov	r0, r3
+ 710 0014 0837     		adds	r7, r7, #8
+ 711              		.cfi_def_cfa_offset 8
+ 712 0016 BD46     		mov	sp, r7
+ 713              		.cfi_def_cfa_register 13
+ 714              		@ sp needed
+ 715 0018 80BD     		pop	{r7, pc}
+ 716              	.L38:
+ 717 001a 00BF     		.align	2
+ 718              	.L37:
+ 719 001c 00000000 		.word	ltm.4436
+ 720              		.cfi_endproc
+ 721              	.LFE6:
+ 723              		.section	.rodata.format,"a",%progbits
+ 724              		.align	2
+ 727              	format:
+ 728 0000 25642F25 		.ascii	"%d/%d/%d %.2d:%.2d:%.2d Week%s\012\000"
+ 728      642F2564 
+ 728      20252E32 
+ 728      643A252E 
+ 728      32643A25 
+ 729              		.section	.rodata
+ 730              		.align	2
+ 731              	.LC0:
+ 732 0000 3000     		.ascii	"0\000"
+ 733 0002 0000     		.align	2
+ 734              	.LC1:
+ 735 0004 3100     		.ascii	"1\000"
+ 736 0006 0000     		.align	2
+ 737              	.LC2:
+ 738 0008 3200     		.ascii	"2\000"
+ 739 000a 0000     		.align	2
+ 740              	.LC3:
+ 741 000c 3300     		.ascii	"3\000"
+ 742 000e 0000     		.align	2
+ 743              	.LC4:
+ 744 0010 3400     		.ascii	"4\000"
+ 745 0012 0000     		.align	2
+ 746              	.LC5:
+ 747 0014 3500     		.ascii	"5\000"
+ 748 0016 0000     		.align	2
+ 749              	.LC6:
+ 750 0018 3600     		.ascii	"6\000"
+ 751              		.section	.rodata.cn_name,"a",%progbits
+ 752              		.align	2
+ 755              	cn_name:
+ 756 0000 00000000 		.word	.LC0
+ 757 0004 04000000 		.word	.LC1
+ 758 0008 08000000 		.word	.LC2
+ 759 000c 0C000000 		.word	.LC3
+ 760 0010 10000000 		.word	.LC4
+ 761 0014 14000000 		.word	.LC5
+ 762 0018 18000000 		.word	.LC6
+ 763              		.section	.rodata
+ 764 001a 0000     		.align	2
+ 765              	.LC7:
+ 766 001c 3F00     		.ascii	"?\000"
+ 767              		.section	.text.asctime_s,"ax",%progbits
+ 768              		.align	2
+ 769              		.global	asctime_s
+ 770              		.thumb
+ 771              		.thumb_func
+ 773              	asctime_s:
+ 774              	.LFB7:
+ 108:../src/timelib.c **** 
+ 109:../src/timelib.c **** #if _TIMELIB_ASC_USE_CN == 0
+ 110:../src/timelib.c **** static const char format[] = "%.3s %.3s%3d %.2d:%.2d:%.2d %d\n";
+ 111:../src/timelib.c **** static const char *const wday_name[] = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
+ 112:../src/timelib.c **** static const char *const month_name[] = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct
+ 113:../src/timelib.c **** char *asctime_s(const struct tm * tp, char *buf, int buflen)
+ 114:../src/timelib.c **** {
+ 115:../src/timelib.c **** 	int n = snprintf(buf, buflen, format,
+ 116:../src/timelib.c **** 			(tp->tm_wday < 0 || tp->tm_wday >= 7 ?
+ 117:../src/timelib.c **** 					"???" : wday_name[tp->tm_wday]),
+ 118:../src/timelib.c **** 			(tp->tm_mon < 0 || tp->tm_mon >= 12 ?
+ 119:../src/timelib.c **** 					"???" : month_name[tp->tm_mon]), tp->tm_mday,
+ 120:../src/timelib.c **** 			tp->tm_hour, tp->tm_min, tp->tm_sec, 1900 + tp->tm_year);
+ 121:../src/timelib.c **** 	if (n < 0)
+ 122:../src/timelib.c **** 		return NULL;
+ 123:../src/timelib.c **** 	return buf;
+ 124:../src/timelib.c **** }
+ 125:../src/timelib.c **** #else
+ 126:../src/timelib.c **** #if __SUPPORT_CH_DISPLAY
+ 127:../src/timelib.c **** static const char format[] = "%d年%d月%d日 %.2d:%.2d:%.2d 星期%s\n";
+ 128:../src/timelib.c **** static const char *const cn_name[] = {"日","一","二","三","四","五","六"};
+ 129:../src/timelib.c **** #else
+ 130:../src/timelib.c **** static const char format[] = "%d/%d/%d %.2d:%.2d:%.2d Week%s\n";
+ 131:../src/timelib.c **** static const char *const cn_name[] = {"0","1","2","3","4","5","6"};
+ 132:../src/timelib.c **** #endif
+ 133:../src/timelib.c **** char *asctime_s(const struct tm * tp, char *buf, int buflen)
+ 134:../src/timelib.c **** {
+ 775              		.loc 1 134 0
+ 776              		.cfi_startproc
+ 777              		@ args = 0, pretend = 0, frame = 24
+ 778              		@ frame_needed = 1, uses_anonymous_args = 0
+ 779 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 780              		.cfi_def_cfa_offset 20
+ 781              		.cfi_offset 4, -20
+ 782              		.cfi_offset 5, -16
+ 783              		.cfi_offset 6, -12
+ 784              		.cfi_offset 7, -8
+ 785              		.cfi_offset 14, -4
+ 786 0002 8DB0     		sub	sp, sp, #52
+ 787              		.cfi_def_cfa_offset 72
+ 788 0004 06AF     		add	r7, sp, #24
+ 789              		.cfi_def_cfa 7, 48
+ 790 0006 F860     		str	r0, [r7, #12]
+ 791 0008 B960     		str	r1, [r7, #8]
+ 792 000a 7A60     		str	r2, [r7, #4]
+ 135:../src/timelib.c **** 	int n = snprintf(buf, buflen, format,
+ 793              		.loc 1 135 0
+ 794 000c D7F804C0 		ldr	ip, [r7, #4]
+ 136:../src/timelib.c **** 			1900 + tp->tm_year,tp->tm_mon+1,tp->tm_mday,
+ 795              		.loc 1 136 0
+ 796 0010 FB68     		ldr	r3, [r7, #12]
+ 797 0012 5B69     		ldr	r3, [r3, #20]
+ 135:../src/timelib.c **** 	int n = snprintf(buf, buflen, format,
+ 798              		.loc 1 135 0
+ 799 0014 03F26C7E 		addw	lr, r3, #1900
+ 800              		.loc 1 136 0
+ 801 0018 FB68     		ldr	r3, [r7, #12]
+ 802 001a 1B69     		ldr	r3, [r3, #16]
+ 135:../src/timelib.c **** 	int n = snprintf(buf, buflen, format,
+ 803              		.loc 1 135 0
+ 804 001c 5D1C     		adds	r5, r3, #1
+ 805 001e FB68     		ldr	r3, [r7, #12]
+ 806 0020 DC68     		ldr	r4, [r3, #12]
+ 807 0022 FB68     		ldr	r3, [r7, #12]
+ 808 0024 9868     		ldr	r0, [r3, #8]
+ 809 0026 FB68     		ldr	r3, [r7, #12]
+ 810 0028 5968     		ldr	r1, [r3, #4]
+ 811 002a FB68     		ldr	r3, [r7, #12]
+ 812 002c 1A68     		ldr	r2, [r3]
+ 137:../src/timelib.c **** 			tp->tm_hour, tp->tm_min, tp->tm_sec,
+ 138:../src/timelib.c **** 			(tp->tm_wday < 0 || tp->tm_wday >= 7 ?
+ 813              		.loc 1 138 0
+ 814 002e FB68     		ldr	r3, [r7, #12]
+ 815 0030 9B69     		ldr	r3, [r3, #24]
+ 135:../src/timelib.c **** 			1900 + tp->tm_year,tp->tm_mon+1,tp->tm_mday,
+ 816              		.loc 1 135 0
+ 817 0032 002B     		cmp	r3, #0
+ 818 0034 09DB     		blt	.L40
+ 819              		.loc 1 138 0
+ 820 0036 FB68     		ldr	r3, [r7, #12]
+ 821 0038 9B69     		ldr	r3, [r3, #24]
+ 822 003a 062B     		cmp	r3, #6
+ 823 003c 05DC     		bgt	.L40
+ 139:../src/timelib.c **** 					"?" : cn_name[tp->tm_wday])
+ 824              		.loc 1 139 0
+ 825 003e FB68     		ldr	r3, [r7, #12]
+ 826 0040 9B69     		ldr	r3, [r3, #24]
+ 135:../src/timelib.c **** 			1900 + tp->tm_year,tp->tm_mon+1,tp->tm_mday,
+ 827              		.loc 1 135 0
+ 828 0042 0E4E     		ldr	r6, .L44
+ 829 0044 56F82330 		ldr	r3, [r6, r3, lsl #2]
+ 830 0048 00E0     		b	.L41
+ 831              	.L40:
+ 135:../src/timelib.c **** 			1900 + tp->tm_year,tp->tm_mon+1,tp->tm_mday,
+ 832              		.loc 1 135 0 is_stmt 0 discriminator 1
+ 833 004a 0D4B     		ldr	r3, .L44+4
+ 834              	.L41:
+ 135:../src/timelib.c **** 			1900 + tp->tm_year,tp->tm_mon+1,tp->tm_mday,
+ 835              		.loc 1 135 0 discriminator 3
+ 836 004c 0095     		str	r5, [sp]
+ 837 004e 0194     		str	r4, [sp, #4]
+ 838 0050 0290     		str	r0, [sp, #8]
+ 839 0052 0391     		str	r1, [sp, #12]
+ 840 0054 0492     		str	r2, [sp, #16]
+ 841 0056 0593     		str	r3, [sp, #20]
+ 842 0058 B868     		ldr	r0, [r7, #8]
+ 843 005a 6146     		mov	r1, ip
+ 844 005c 094A     		ldr	r2, .L44+8
+ 845 005e 7346     		mov	r3, lr
+ 846 0060 FFF7FEFF 		bl	snprintf
+ 847 0064 7861     		str	r0, [r7, #20]
+ 140:../src/timelib.c **** 			);
+ 141:../src/timelib.c **** 	if (n < 0)
+ 848              		.loc 1 141 0 is_stmt 1 discriminator 3
+ 849 0066 7B69     		ldr	r3, [r7, #20]
+ 850 0068 002B     		cmp	r3, #0
+ 851 006a 01DA     		bge	.L42
+ 142:../src/timelib.c **** 		return NULL;
+ 852              		.loc 1 142 0
+ 853 006c 0023     		movs	r3, #0
+ 854 006e 00E0     		b	.L43
+ 855              	.L42:
+ 143:../src/timelib.c **** 	return buf;
+ 856              		.loc 1 143 0
+ 857 0070 BB68     		ldr	r3, [r7, #8]
+ 858              	.L43:
+ 144:../src/timelib.c **** }
+ 859              		.loc 1 144 0
+ 860 0072 1846     		mov	r0, r3
+ 861 0074 1C37     		adds	r7, r7, #28
+ 862              		.cfi_def_cfa_offset 20
+ 863 0076 BD46     		mov	sp, r7
+ 864              		.cfi_def_cfa_register 13
+ 865              		@ sp needed
+ 866 0078 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 867              	.L45:
+ 868 007a 00BF     		.align	2
+ 869              	.L44:
+ 870 007c 00000000 		.word	cn_name
+ 871 0080 1C000000 		.word	.LC7
+ 872 0084 00000000 		.word	format
+ 873              		.cfi_endproc
+ 874              	.LFE7:
+ 876              		.section	.text.asctime,"ax",%progbits
+ 877              		.align	2
+ 878              		.global	asctime
+ 879              		.thumb
+ 880              		.thumb_func
+ 882              	asctime:
+ 883              	.LFB8:
+ 145:../src/timelib.c **** #endif
+ 146:../src/timelib.c **** char *asctime(const struct tm * tp)
+ 147:../src/timelib.c **** {
+ 884              		.loc 1 147 0
+ 885              		.cfi_startproc
+ 886              		@ args = 0, pretend = 0, frame = 8
+ 887              		@ frame_needed = 1, uses_anonymous_args = 0
+ 888 0000 80B5     		push	{r7, lr}
+ 889              		.cfi_def_cfa_offset 8
+ 890              		.cfi_offset 7, -8
+ 891              		.cfi_offset 14, -4
+ 892 0002 82B0     		sub	sp, sp, #8
+ 893              		.cfi_def_cfa_offset 16
+ 894 0004 00AF     		add	r7, sp, #0
+ 895              		.cfi_def_cfa_register 7
+ 896 0006 7860     		str	r0, [r7, #4]
+ 148:../src/timelib.c **** 	static char buf[64];
+ 149:../src/timelib.c **** 	return asctime_s(tp,buf,64);
+ 897              		.loc 1 149 0
+ 898 0008 7868     		ldr	r0, [r7, #4]
+ 899 000a 0449     		ldr	r1, .L48
+ 900 000c 4022     		movs	r2, #64
+ 901 000e FFF7FEFF 		bl	asctime_s
+ 902 0012 0346     		mov	r3, r0
+ 150:../src/timelib.c **** }
+ 903              		.loc 1 150 0
+ 904 0014 1846     		mov	r0, r3
+ 905 0016 0837     		adds	r7, r7, #8
+ 906              		.cfi_def_cfa_offset 8
+ 907 0018 BD46     		mov	sp, r7
+ 908              		.cfi_def_cfa_register 13
+ 909              		@ sp needed
+ 910 001a 80BD     		pop	{r7, pc}
+ 911              	.L49:
+ 912              		.align	2
+ 913              	.L48:
+ 914 001c 00000000 		.word	buf.4448
+ 915              		.cfi_endproc
+ 916              	.LFE8:
+ 918              		.section	.data.tz.4427,"aw",%progbits
+ 919              		.align	2
+ 922              	tz.4427:
+ 923 0000 80700000 		.word	28800
+ 924              		.section	.bss.ltm.4436,"aw",%nobits
+ 925              		.align	2
+ 928              	ltm.4436:
+ 929 0000 00000000 		.space	28
+ 929      00000000 
+ 929      00000000 
+ 929      00000000 
+ 929      00000000 
+ 930              		.section	.bss.buf.4448,"aw",%nobits
+ 931              		.align	2
+ 934              	buf.4448:
+ 935 0000 00000000 		.space	64
+ 935      00000000 
+ 935      00000000 
+ 935      00000000 
+ 935      00000000 
+ 936              		.text
+ 937              	.Letext0:
+ 938              		.file 2 "/home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstdint"
+ 939              		.file 3 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/src/timelib.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 timelib.c
+     /tmp/ccp3oAxz.s:25     .bss.__timelib_tick_count:00000000 __timelib_tick_count
+     /tmp/ccp3oAxz.s:22     .bss.__timelib_tick_count:00000000 $d
+     /tmp/ccp3oAxz.s:28     .bss.time_tick_diff:00000000 $d
+     /tmp/ccp3oAxz.s:31     .bss.time_tick_diff:00000000 time_tick_diff
+     /tmp/ccp3oAxz.s:35     .text.time:00000000 $t
+     /tmp/ccp3oAxz.s:40     .text.time:00000000 time
+     /tmp/ccp3oAxz.s:107    .text.time:0000006c $d
+     /tmp/ccp3oAxz.s:113    .text.mktime_z:00000000 $t
+     /tmp/ccp3oAxz.s:118    .text.mktime_z:00000000 mktime_z
+     /tmp/ccp3oAxz.s:248    .text.mktime_z:000000d0 $d
+     /tmp/ccp3oAxz.s:255    .text.mktime:00000000 $t
+     /tmp/ccp3oAxz.s:260    .text.mktime:00000000 mktime
+     /tmp/ccp3oAxz.s:576    .text.__timezone:00000000 __timezone
+     /tmp/ccp3oAxz.s:295    .rodata.days_tbl:00000000 $d
+     /tmp/ccp3oAxz.s:298    .rodata.days_tbl:00000000 days_tbl
+     /tmp/ccp3oAxz.s:312    .text.localtime_z:00000000 $t
+     /tmp/ccp3oAxz.s:317    .text.localtime_z:00000000 localtime_z
+     /tmp/ccp3oAxz.s:562    .text.localtime_z:0000018c $d
+     /tmp/ccp3oAxz.s:571    .text.__timezone:00000000 $t
+     /tmp/ccp3oAxz.s:618    .text.__timezone:00000028 $d
+     /tmp/ccp3oAxz.s:922    .data.tz.4427:00000000 tz.4427
+     /tmp/ccp3oAxz.s:623    .text.localtime_s:00000000 $t
+     /tmp/ccp3oAxz.s:628    .text.localtime_s:00000000 localtime_s
+     /tmp/ccp3oAxz.s:683    .text.localtime:00000000 $t
+     /tmp/ccp3oAxz.s:688    .text.localtime:00000000 localtime
+     /tmp/ccp3oAxz.s:719    .text.localtime:0000001c $d
+     /tmp/ccp3oAxz.s:928    .bss.ltm.4436:00000000 ltm.4436
+     /tmp/ccp3oAxz.s:724    .rodata.format:00000000 $d
+     /tmp/ccp3oAxz.s:727    .rodata.format:00000000 format
+     /tmp/ccp3oAxz.s:730    .rodata:00000000 $d
+     /tmp/ccp3oAxz.s:752    .rodata.cn_name:00000000 $d
+     /tmp/ccp3oAxz.s:755    .rodata.cn_name:00000000 cn_name
+     /tmp/ccp3oAxz.s:768    .text.asctime_s:00000000 $t
+     /tmp/ccp3oAxz.s:773    .text.asctime_s:00000000 asctime_s
+     /tmp/ccp3oAxz.s:870    .text.asctime_s:0000007c $d
+     /tmp/ccp3oAxz.s:877    .text.asctime:00000000 $t
+     /tmp/ccp3oAxz.s:882    .text.asctime:00000000 asctime
+     /tmp/ccp3oAxz.s:914    .text.asctime:0000001c $d
+     /tmp/ccp3oAxz.s:934    .bss.buf.4448:00000000 buf.4448
+     /tmp/ccp3oAxz.s:919    .data.tz.4427:00000000 $d
+     /tmp/ccp3oAxz.s:925    .bss.ltm.4436:00000000 $d
+     /tmp/ccp3oAxz.s:931    .bss.buf.4448:00000000 $d
+                     .debug_frame:00000010 $d
+                           .group:00000000 wm4.0.728a2e6911dc01ff85c2d70c52e8fae1
+                           .group:00000000 wm4.lib_c99.prefix.8.3580c292f50811c682d980dc4180498e
+                           .group:00000000 wm4.common.prefix.16.d7bf937cdf46fd76dde96b376e3b328a
+                           .group:00000000 wm4.ewl_c_version.h.9.0bcb57d6a3f89baae1f9b121de2772f5
+                           .group:00000000 wm4.os_enum.h.9.f9446d6af68b3fa72a37d4d924d3b347
+                           .group:00000000 wm4.ansi_prefix.ARM.h.13.4b23f4c654df3c3277534542f67d200c
+                           .group:00000000 wm4.ansi_parms.h.64.90aed58330fdde08746db908036e1f37
+                           .group:00000000 wm4.limits_api.h.9.bc6daa20b3abae2bba6c512044e73b43
+                           .group:00000000 wm4.ewl_lib_ext1.h.14.f9b057cc049671136093886db2a3473f
+                           .group:00000000 wm4.cstdint.134.0ece0ba0ee759ce9e45a8fa510ec0d93
+                           .group:00000000 wm4.wchar_t.h.9.94198016f5b5f455e54ea1f3f054b416
+                           .group:00000000 wm4.cstdint.246.0573fcc3ea2319479988f90b448d87e4
+                           .group:00000000 wm4.timelib.h.11.c2b06b3ffdbefc7224a0c893514f3d0a
+                           .group:00000000 wm4.size_t.h.9.f983491a73b5c81f421ee8223b1ac5c0
+                           .group:00000000 wm4.ewl_rsize_t.h.11.b283831bb803e76ceb1756da2df9a1b5
+                           .group:00000000 wm4.cstddef.32.067e2ea187472b6198f9ace951e27a51
+                           .group:00000000 wm4.va_list.h.9.b0bb078841c0305c2667a31da10a9070
+                           .group:00000000 wm4.file_struc.h.13.96d07f4b7392ecdee9ce60307cac6248
+                           .group:00000000 wm4.stdarg.ARM.h.9.32516e68edcca81ab31f48f233894821
+                           .group:00000000 wm4.stdio_api.h.64.7d83b1caa7fdc34505042751a1c33692
+                           .group:00000000 wm4.cstdio.1187.51197b0e8ec7388017461af9f7851efe
+
+UNDEFINED SYMBOLS
+__aeabi_uldivmod
+snprintf

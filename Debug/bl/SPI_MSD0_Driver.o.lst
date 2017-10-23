@@ -1,0 +1,3526 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.eabi_attribute 27, 1
+   4              		.eabi_attribute 28, 1
+   5              		.fpu fpv4-sp-d16
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.thumb
+  16              		.file	"SPI_MSD0_Driver.c"
+  17              		.text
+  18              	.Ltext0:
+  19              		.cfi_sections	.debug_frame
+  20              		.comm	SD0_CardInfo,88,4
+  21              		.section	.text.MSD0_spi_read_write,"ax",%progbits
+  22              		.align	2
+  23              		.global	MSD0_spi_read_write
+  24              		.thumb
+  25              		.thumb_func
+  27              	MSD0_spi_read_write:
+  28              	.LFB0:
+  29              		.file 1 "../bl/SPI_MSD0_Driver.c"
+   1:../bl/SPI_MSD0_Driver.c **** /* LPSPI.c              (c) 2016 NXP 
+   2:../bl/SPI_MSD0_Driver.c ****  * Descriptions: S32K144 FlexCAN example functions.
+   3:../bl/SPI_MSD0_Driver.c ****  * May 31 2016 S. Mihalik: Initial version.
+   4:../bl/SPI_MSD0_Driver.c ****  * Oct 31 2016 SM - adjust PRESCALE for 40 MHz SPLLDIV2_CLK
+   5:../bl/SPI_MSD0_Driver.c ****  * Nov 02 2016 SM - cleared flags in transmit, receive functions
+   6:../bl/SPI_MSD0_Driver.c ****  */
+   7:../bl/SPI_MSD0_Driver.c **** #include "S32K144.h"           /* include peripheral declarations S32K144 */
+   8:../bl/SPI_MSD0_Driver.c **** #include <stdio.h>
+   9:../bl/SPI_MSD0_Driver.c **** #include "SPI_MSD0_Driver.h"
+  10:../bl/SPI_MSD0_Driver.c **** 
+  11:../bl/SPI_MSD0_Driver.c **** #define printf(...)
+  12:../bl/SPI_MSD0_Driver.c **** 
+  13:../bl/SPI_MSD0_Driver.c **** /* Private define ------------------------------------------------------------*/
+  14:../bl/SPI_MSD0_Driver.c **** //#define PRINT_INFO  1	
+  15:../bl/SPI_MSD0_Driver.c **** /* Private variables ---------------------------------------------------------*/
+  16:../bl/SPI_MSD0_Driver.c **** MSD_CARDINFO SD0_CardInfo;
+  17:../bl/SPI_MSD0_Driver.c **** 
+  18:../bl/SPI_MSD0_Driver.c **** /*******************************************************************************
+  19:../bl/SPI_MSD0_Driver.c ****  * Function Name  : MSD0_spi_read_write
+  20:../bl/SPI_MSD0_Driver.c ****  * Description    : None
+  21:../bl/SPI_MSD0_Driver.c ****  * Input          : - data:
+  22:../bl/SPI_MSD0_Driver.c ****  * Output         : None
+  23:../bl/SPI_MSD0_Driver.c ****  * Return         : None
+  24:../bl/SPI_MSD0_Driver.c ****  * Attention		 : None
+  25:../bl/SPI_MSD0_Driver.c ****  *******************************************************************************/
+  26:../bl/SPI_MSD0_Driver.c **** int MSD0_spi_read_write(unsigned char data) {
+  30              		.loc 1 26 0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 16
+  33              		@ frame_needed = 1, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  35 0000 80B4     		push	{r7}
+  36              		.cfi_def_cfa_offset 4
+  37              		.cfi_offset 7, -4
+  38 0002 85B0     		sub	sp, sp, #20
+  39              		.cfi_def_cfa_offset 24
+  40 0004 00AF     		add	r7, sp, #0
+  41              		.cfi_def_cfa_register 7
+  42 0006 0346     		mov	r3, r0
+  43 0008 FB71     		strb	r3, [r7, #7]
+  27:../bl/SPI_MSD0_Driver.c **** 	unsigned char recieve = 0;
+  44              		.loc 1 27 0
+  45 000a 0023     		movs	r3, #0
+  46 000c FB73     		strb	r3, [r7, #15]
+  28:../bl/SPI_MSD0_Driver.c **** 
+  29:../bl/SPI_MSD0_Driver.c **** 	while ((LPSPI0->SR & LPSPI_SR_TDF_MASK) >> LPSPI_SR_TDF_SHIFT == 0)
+  47              		.loc 1 29 0
+  48 000e 00BF     		nop
+  49              	.L2:
+  50              		.loc 1 29 0 is_stmt 0 discriminator 1
+  51 0010 134B     		ldr	r3, .L5
+  52 0012 5B69     		ldr	r3, [r3, #20]
+  53 0014 03F00103 		and	r3, r3, #1
+  54 0018 002B     		cmp	r3, #0
+  55 001a F9D0     		beq	.L2
+  30:../bl/SPI_MSD0_Driver.c **** 		; /* Wait for Tx FIFO available */
+  31:../bl/SPI_MSD0_Driver.c **** 	LPSPI0->TDR = data; /* Transmit data */
+  56              		.loc 1 31 0 is_stmt 1
+  57 001c 104A     		ldr	r2, .L5
+  58 001e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+  59 0020 5366     		str	r3, [r2, #100]
+  32:../bl/SPI_MSD0_Driver.c **** 	LPSPI0->SR |= LPSPI_SR_TDF_MASK; /* Clear TDF flag */
+  60              		.loc 1 32 0
+  61 0022 0F4A     		ldr	r2, .L5
+  62 0024 0E4B     		ldr	r3, .L5
+  63 0026 5B69     		ldr	r3, [r3, #20]
+  64 0028 43F00103 		orr	r3, r3, #1
+  65 002c 5361     		str	r3, [r2, #20]
+  33:../bl/SPI_MSD0_Driver.c **** 
+  34:../bl/SPI_MSD0_Driver.c **** 	while ((LPSPI0->SR & LPSPI_SR_RDF_MASK) >> LPSPI_SR_RDF_SHIFT == 0)
+  66              		.loc 1 34 0
+  67 002e 00BF     		nop
+  68              	.L3:
+  69              		.loc 1 34 0 is_stmt 0 discriminator 1
+  70 0030 0B4B     		ldr	r3, .L5
+  71 0032 5B69     		ldr	r3, [r3, #20]
+  72 0034 03F00203 		and	r3, r3, #2
+  73 0038 5B08     		lsrs	r3, r3, #1
+  74 003a 002B     		cmp	r3, #0
+  75 003c F8D0     		beq	.L3
+  35:../bl/SPI_MSD0_Driver.c **** 		; /* Wait at least one RxFIFO entry */
+  36:../bl/SPI_MSD0_Driver.c **** 	recieve = LPSPI0->RDR; /* Read received data */
+  76              		.loc 1 36 0 is_stmt 1
+  77 003e 084B     		ldr	r3, .L5
+  78 0040 5B6F     		ldr	r3, [r3, #116]
+  79 0042 FB73     		strb	r3, [r7, #15]
+  37:../bl/SPI_MSD0_Driver.c **** 	LPSPI0->SR |= LPSPI_SR_RDF_MASK; /* Clear RDF flag */
+  80              		.loc 1 37 0
+  81 0044 064A     		ldr	r2, .L5
+  82 0046 064B     		ldr	r3, .L5
+  83 0048 5B69     		ldr	r3, [r3, #20]
+  84 004a 43F00203 		orr	r3, r3, #2
+  85 004e 5361     		str	r3, [r2, #20]
+  38:../bl/SPI_MSD0_Driver.c **** 	return recieve;
+  86              		.loc 1 38 0
+  87 0050 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+  39:../bl/SPI_MSD0_Driver.c **** 
+  40:../bl/SPI_MSD0_Driver.c **** }
+  88              		.loc 1 40 0
+  89 0052 1846     		mov	r0, r3
+  90 0054 1437     		adds	r7, r7, #20
+  91              		.cfi_def_cfa_offset 4
+  92 0056 BD46     		mov	sp, r7
+  93              		.cfi_def_cfa_register 13
+  94              		@ sp needed
+  95 0058 5DF8047B 		ldr	r7, [sp], #4
+  96              		.cfi_restore 7
+  97              		.cfi_def_cfa_offset 0
+  98 005c 7047     		bx	lr
+  99              	.L6:
+ 100 005e 00BF     		.align	2
+ 101              	.L5:
+ 102 0060 00C00240 		.word	1073922048
+ 103              		.cfi_endproc
+ 104              	.LFE0:
+ 106              		.section	.text.writeclock,"ax",%progbits
+ 107              		.align	2
+ 108              		.global	writeclock
+ 109              		.thumb
+ 110              		.thumb_func
+ 112              	writeclock:
+ 113              	.LFB1:
+  41:../bl/SPI_MSD0_Driver.c **** void writeclock(uint8_t cnt)
+  42:../bl/SPI_MSD0_Driver.c **** {
+ 114              		.loc 1 42 0
+ 115              		.cfi_startproc
+ 116              		@ args = 0, pretend = 0, frame = 16
+ 117              		@ frame_needed = 1, uses_anonymous_args = 0
+ 118 0000 80B5     		push	{r7, lr}
+ 119              		.cfi_def_cfa_offset 8
+ 120              		.cfi_offset 7, -8
+ 121              		.cfi_offset 14, -4
+ 122 0002 84B0     		sub	sp, sp, #16
+ 123              		.cfi_def_cfa_offset 24
+ 124 0004 00AF     		add	r7, sp, #0
+ 125              		.cfi_def_cfa_register 7
+ 126 0006 0346     		mov	r3, r0
+ 127 0008 FB71     		strb	r3, [r7, #7]
+  43:../bl/SPI_MSD0_Driver.c **** 	uint8_t i;
+  44:../bl/SPI_MSD0_Driver.c **** 	//CS_HIGH;
+  45:../bl/SPI_MSD0_Driver.c **** 	for(i=0;i<cnt;i++)
+ 128              		.loc 1 45 0
+ 129 000a 0023     		movs	r3, #0
+ 130 000c FB73     		strb	r3, [r7, #15]
+ 131 000e 05E0     		b	.L8
+ 132              	.L9:
+  46:../bl/SPI_MSD0_Driver.c **** 		MSD0_spi_read_write(0xff);
+ 133              		.loc 1 46 0 discriminator 3
+ 134 0010 FF20     		movs	r0, #255
+ 135 0012 FFF7FEFF 		bl	MSD0_spi_read_write
+  45:../bl/SPI_MSD0_Driver.c **** 		MSD0_spi_read_write(0xff);
+ 136              		.loc 1 45 0 discriminator 3
+ 137 0016 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 138 0018 0133     		adds	r3, r3, #1
+ 139 001a FB73     		strb	r3, [r7, #15]
+ 140              	.L8:
+  45:../bl/SPI_MSD0_Driver.c **** 		MSD0_spi_read_write(0xff);
+ 141              		.loc 1 45 0 is_stmt 0 discriminator 1
+ 142 001c FA7B     		ldrb	r2, [r7, #15]	@ zero_extendqisi2
+ 143 001e FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 144 0020 9A42     		cmp	r2, r3
+ 145 0022 F5D3     		bcc	.L9
+  47:../bl/SPI_MSD0_Driver.c **** 	//CS_HIGH;
+  48:../bl/SPI_MSD0_Driver.c **** }
+ 146              		.loc 1 48 0 is_stmt 1
+ 147 0024 1037     		adds	r7, r7, #16
+ 148              		.cfi_def_cfa_offset 8
+ 149 0026 BD46     		mov	sp, r7
+ 150              		.cfi_def_cfa_register 13
+ 151              		@ sp needed
+ 152 0028 80BD     		pop	{r7, pc}
+ 153              		.cfi_endproc
+ 154              	.LFE1:
+ 156 002a 00BF     		.section	.text.MSD0_SPIHighSpeed,"ax",%progbits
+ 157              		.align	2
+ 158              		.global	MSD0_SPIHighSpeed
+ 159              		.thumb
+ 160              		.thumb_func
+ 162              	MSD0_SPIHighSpeed:
+ 163              	.LFB2:
+  49:../bl/SPI_MSD0_Driver.c **** /*******************************************************************************
+  50:../bl/SPI_MSD0_Driver.c ****  * Function Name  : MSD0_SPI_Configuration
+  51:../bl/SPI_MSD0_Driver.c ****  * Description    : SD Card SPI Configuration
+  52:../bl/SPI_MSD0_Driver.c ****  * Input          : None
+  53:../bl/SPI_MSD0_Driver.c ****  * Output         : None
+  54:../bl/SPI_MSD0_Driver.c ****  * Return         : None
+  55:../bl/SPI_MSD0_Driver.c ****  * Attention		 : None
+  56:../bl/SPI_MSD0_Driver.c ****  *******************************************************************************/
+  57:../bl/SPI_MSD0_Driver.c **** //void MSD0_SPI_Configuration(void) {
+  58:../bl/SPI_MSD0_Driver.c **** //
+  59:../bl/SPI_MSD0_Driver.c **** //	//�ر�Ƭѡ
+  60:../bl/SPI_MSD0_Driver.c **** //	MSD0_card_disable();
+  61:../bl/SPI_MSD0_Driver.c **** //
+  62:../bl/SPI_MSD0_Driver.c **** //	//����SPI�ӿ�
+  63:../bl/SPI_MSD0_Driver.c **** //	LPSPI1_init_master();
+  64:../bl/SPI_MSD0_Driver.c **** //
+  65:../bl/SPI_MSD0_Driver.c **** //}
+  66:../bl/SPI_MSD0_Driver.c **** 
+  67:../bl/SPI_MSD0_Driver.c **** /*******************************************************************************
+  68:../bl/SPI_MSD0_Driver.c ****  * Function Name  : MSD0_SPIHighSpeed
+  69:../bl/SPI_MSD0_Driver.c ****  * Description    : SD Card Speed Set
+  70:../bl/SPI_MSD0_Driver.c ****  * Input          : - b_high: 1 = 18MHz, 0 = 281.25Hz
+  71:../bl/SPI_MSD0_Driver.c ****  * Output         : None
+  72:../bl/SPI_MSD0_Driver.c ****  * Return         : None
+  73:../bl/SPI_MSD0_Driver.c ****  * Attention		 : None
+  74:../bl/SPI_MSD0_Driver.c ****  *******************************************************************************/
+  75:../bl/SPI_MSD0_Driver.c **** void MSD0_SPIHighSpeed(unsigned char b_high) {
+ 164              		.loc 1 75 0
+ 165              		.cfi_startproc
+ 166              		@ args = 0, pretend = 0, frame = 8
+ 167              		@ frame_needed = 1, uses_anonymous_args = 0
+ 168 0000 80B5     		push	{r7, lr}
+ 169              		.cfi_def_cfa_offset 8
+ 170              		.cfi_offset 7, -8
+ 171              		.cfi_offset 14, -4
+ 172 0002 82B0     		sub	sp, sp, #8
+ 173              		.cfi_def_cfa_offset 16
+ 174 0004 00AF     		add	r7, sp, #0
+ 175              		.cfi_def_cfa_register 7
+ 176 0006 0346     		mov	r3, r0
+ 177 0008 FB71     		strb	r3, [r7, #7]
+  76:../bl/SPI_MSD0_Driver.c **** 
+  77:../bl/SPI_MSD0_Driver.c **** 	/* Speed select */
+  78:../bl/SPI_MSD0_Driver.c **** 	if (b_high == 0) {
+ 178              		.loc 1 78 0
+ 179 000a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 180 000c 002B     		cmp	r3, #0
+ 181 000e 0CD1     		bne	.L11
+  79:../bl/SPI_MSD0_Driver.c **** 		printf("\r\nspi�л�������");
+  80:../bl/SPI_MSD0_Driver.c **** 		LPSPI0->TCR &= 0xc7ffffff;
+ 182              		.loc 1 80 0
+ 183 0010 084A     		ldr	r2, .L13
+ 184 0012 084B     		ldr	r3, .L13
+ 185 0014 1B6E     		ldr	r3, [r3, #96]
+ 186 0016 23F06053 		bic	r3, r3, #939524096
+ 187 001a 1366     		str	r3, [r2, #96]
+  81:../bl/SPI_MSD0_Driver.c **** 		LPSPI0->TCR |= 0x38000000;
+ 188              		.loc 1 81 0
+ 189 001c 054A     		ldr	r2, .L13
+ 190 001e 054B     		ldr	r3, .L13
+ 191 0020 1B6E     		ldr	r3, [r3, #96]
+ 192 0022 43F06053 		orr	r3, r3, #939524096
+ 193 0026 1366     		str	r3, [r2, #96]
+ 194 0028 01E0     		b	.L10
+ 195              	.L11:
+  82:../bl/SPI_MSD0_Driver.c **** 	} else {
+  83:../bl/SPI_MSD0_Driver.c **** 		printf("\r\nspi�л�������");
+  84:../bl/SPI_MSD0_Driver.c **** 		LPSPI0_init_master();
+ 196              		.loc 1 84 0
+ 197 002a FFF7FEFF 		bl	LPSPI0_init_master
+ 198              	.L10:
+  85:../bl/SPI_MSD0_Driver.c **** 
+  86:../bl/SPI_MSD0_Driver.c **** 	}
+  87:../bl/SPI_MSD0_Driver.c **** 
+  88:../bl/SPI_MSD0_Driver.c **** }
+ 199              		.loc 1 88 0
+ 200 002e 0837     		adds	r7, r7, #8
+ 201              		.cfi_def_cfa_offset 8
+ 202 0030 BD46     		mov	sp, r7
+ 203              		.cfi_def_cfa_register 13
+ 204              		@ sp needed
+ 205 0032 80BD     		pop	{r7, pc}
+ 206              	.L14:
+ 207              		.align	2
+ 208              	.L13:
+ 209 0034 00C00240 		.word	1073922048
+ 210              		.cfi_endproc
+ 211              	.LFE2:
+ 213              		.section	.rodata
+ 214              		.align	2
+ 215              	.LC0:
+ 216 0000 257800   		.ascii	"%x\000"
+ 217              		.section	.text.MSD0_Init,"ax",%progbits
+ 218              		.align	2
+ 219              		.global	MSD0_Init
+ 220              		.thumb
+ 221              		.thumb_func
+ 223              	MSD0_Init:
+ 224              	.LFB3:
+  89:../bl/SPI_MSD0_Driver.c **** 
+  90:../bl/SPI_MSD0_Driver.c **** /*******************************************************************************
+  91:../bl/SPI_MSD0_Driver.c ****  * Function Name  : MSD0_Init
+  92:../bl/SPI_MSD0_Driver.c ****  * Description    : SD Card initializtion
+  93:../bl/SPI_MSD0_Driver.c ****  * Input          : None
+  94:../bl/SPI_MSD0_Driver.c ****  * Output         : None
+  95:../bl/SPI_MSD0_Driver.c ****  * Return         : None
+  96:../bl/SPI_MSD0_Driver.c ****  * Attention		 : None
+  97:../bl/SPI_MSD0_Driver.c ****  *******************************************************************************/
+  98:../bl/SPI_MSD0_Driver.c **** int MSD0_Init(void) {
+ 225              		.loc 1 98 0
+ 226              		.cfi_startproc
+ 227              		@ args = 0, pretend = 0, frame = 40
+ 228              		@ frame_needed = 1, uses_anonymous_args = 0
+ 229 0000 80B5     		push	{r7, lr}
+ 230              		.cfi_def_cfa_offset 8
+ 231              		.cfi_offset 7, -8
+ 232              		.cfi_offset 14, -4
+ 233 0002 8AB0     		sub	sp, sp, #40
+ 234              		.cfi_def_cfa_offset 48
+ 235 0004 00AF     		add	r7, sp, #0
+ 236              		.cfi_def_cfa_register 7
+  99:../bl/SPI_MSD0_Driver.c **** 	unsigned char r1;
+ 100:../bl/SPI_MSD0_Driver.c **** 	unsigned char buff[6] = { 0 };
+ 237              		.loc 1 100 0
+ 238 0006 0023     		movs	r3, #0
+ 239 0008 FB61     		str	r3, [r7, #28]
+ 240 000a 0023     		movs	r3, #0
+ 241 000c 3B84     		strh	r3, [r7, #32]	@ movhi
+ 101:../bl/SPI_MSD0_Driver.c **** 	unsigned short retry;
+ 102:../bl/SPI_MSD0_Driver.c **** 
+ 103:../bl/SPI_MSD0_Driver.c **** 	/* Check , if no card insert */
+ 104:../bl/SPI_MSD0_Driver.c **** 	/*
+ 105:../bl/SPI_MSD0_Driver.c **** 	 if( MSD0_card_insert() )
+ 106:../bl/SPI_MSD0_Driver.c **** 	 {
+ 107:../bl/SPI_MSD0_Driver.c **** 	 #ifdef PRINT_INFO
+ 108:../bl/SPI_MSD0_Driver.c **** 	 printf("There is no card detected! \r\n");
+ 109:../bl/SPI_MSD0_Driver.c **** 	 #endif
+ 110:../bl/SPI_MSD0_Driver.c **** 	 / * FATFS error flag * /
+ 111:../bl/SPI_MSD0_Driver.c **** 	 return -1;
+ 112:../bl/SPI_MSD0_Driver.c **** 	 }
+ 113:../bl/SPI_MSD0_Driver.c **** 	 */
+ 114:../bl/SPI_MSD0_Driver.c **** 	/* Power on and delay some times */
+ 115:../bl/SPI_MSD0_Driver.c **** 	/*
+ 116:../bl/SPI_MSD0_Driver.c **** 	 for(retry=0; retry<0x100; retry++)
+ 117:../bl/SPI_MSD0_Driver.c **** 	 {
+ 118:../bl/SPI_MSD0_Driver.c **** 	 MSD0_card_power_on();
+ 119:../bl/SPI_MSD0_Driver.c **** 	 }
+ 120:../bl/SPI_MSD0_Driver.c **** 	 */
+ 121:../bl/SPI_MSD0_Driver.c **** 	//fa shi zhong gei sd ka ,jixing chu shi hua
+ 122:../bl/SPI_MSD0_Driver.c **** 	/* Satrt send 74 clocks at least */
+ 123:../bl/SPI_MSD0_Driver.c **** 	for (retry = 0; retry < 80; retry++) {
+ 242              		.loc 1 123 0
+ 243 000e 0023     		movs	r3, #0
+ 244 0010 FB84     		strh	r3, [r7, #38]	@ movhi
+ 245 0012 05E0     		b	.L16
+ 246              	.L17:
+ 124:../bl/SPI_MSD0_Driver.c **** 		MSD0_spi_read_write(DUMMY_BYTE);
+ 247              		.loc 1 124 0 discriminator 3
+ 248 0014 FF20     		movs	r0, #255
+ 249 0016 FFF7FEFF 		bl	MSD0_spi_read_write
+ 123:../bl/SPI_MSD0_Driver.c **** 		MSD0_spi_read_write(DUMMY_BYTE);
+ 250              		.loc 1 123 0 discriminator 3
+ 251 001a FB8C     		ldrh	r3, [r7, #38]
+ 252 001c 0133     		adds	r3, r3, #1
+ 253 001e FB84     		strh	r3, [r7, #38]	@ movhi
+ 254              	.L16:
+ 123:../bl/SPI_MSD0_Driver.c **** 		MSD0_spi_read_write(DUMMY_BYTE);
+ 255              		.loc 1 123 0 is_stmt 0 discriminator 1
+ 256 0020 FB8C     		ldrh	r3, [r7, #38]
+ 257 0022 4F2B     		cmp	r3, #79
+ 258 0024 F6D9     		bls	.L17
+ 125:../bl/SPI_MSD0_Driver.c **** 	}
+ 126:../bl/SPI_MSD0_Driver.c **** 	//writeclock(10);
+ 127:../bl/SPI_MSD0_Driver.c **** 	MSD0_card_disable();
+ 128:../bl/SPI_MSD0_Driver.c **** 	/* Start send CMD0 till return 0x01 means in IDLE state */
+ 129:../bl/SPI_MSD0_Driver.c **** 	for (retry = 0; retry < 0xFFF; retry++) {
+ 259              		.loc 1 129 0 is_stmt 1
+ 260 0026 0023     		movs	r3, #0
+ 261 0028 FB84     		strh	r3, [r7, #38]	@ movhi
+ 262 002a 11E0     		b	.L18
+ 263              	.L21:
+ 130:../bl/SPI_MSD0_Driver.c **** 		r1 = MSD0_send_command(CMD0, 0, 0x95);//r1 hui fu shi 0x80bushi 0x01
+ 264              		.loc 1 130 0
+ 265 002c 0020     		movs	r0, #0
+ 266 002e 0021     		movs	r1, #0
+ 267 0030 9522     		movs	r2, #149
+ 268 0032 FFF7FEFF 		bl	MSD0_send_command
+ 269 0036 0346     		mov	r3, r0
+ 270 0038 87F82530 		strb	r3, [r7, #37]
+ 131:../bl/SPI_MSD0_Driver.c **** 		//MSD0_spi_read_write(r1);
+ 132:../bl/SPI_MSD0_Driver.c **** 		if (r1 == 0x01) {
+ 271              		.loc 1 132 0
+ 272 003c 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 273 0040 012B     		cmp	r3, #1
+ 274 0042 02D1     		bne	.L19
+ 133:../bl/SPI_MSD0_Driver.c **** 			retry = 0;
+ 275              		.loc 1 133 0
+ 276 0044 0023     		movs	r3, #0
+ 277 0046 FB84     		strh	r3, [r7, #38]	@ movhi
+ 134:../bl/SPI_MSD0_Driver.c **** 			printf("\r\nCMD0 FAN HUI ZHENG QUE");
+ 135:../bl/SPI_MSD0_Driver.c **** 			break;
+ 278              		.loc 1 135 0
+ 279 0048 07E0     		b	.L20
+ 280              	.L19:
+ 129:../bl/SPI_MSD0_Driver.c **** 		r1 = MSD0_send_command(CMD0, 0, 0x95);//r1 hui fu shi 0x80bushi 0x01
+ 281              		.loc 1 129 0 discriminator 2
+ 282 004a FB8C     		ldrh	r3, [r7, #38]
+ 283 004c 0133     		adds	r3, r3, #1
+ 284 004e FB84     		strh	r3, [r7, #38]	@ movhi
+ 285              	.L18:
+ 129:../bl/SPI_MSD0_Driver.c **** 		r1 = MSD0_send_command(CMD0, 0, 0x95);//r1 hui fu shi 0x80bushi 0x01
+ 286              		.loc 1 129 0 is_stmt 0 discriminator 1
+ 287 0050 FB8C     		ldrh	r3, [r7, #38]
+ 288 0052 40F6FE72 		movw	r2, #4094
+ 289 0056 9342     		cmp	r3, r2
+ 290 0058 E8D9     		bls	.L21
+ 291              	.L20:
+ 136:../bl/SPI_MSD0_Driver.c **** 		}
+ 137:../bl/SPI_MSD0_Driver.c **** 	}
+ 138:../bl/SPI_MSD0_Driver.c **** 	printf("BIAO JI 1");
+ 139:../bl/SPI_MSD0_Driver.c **** 	/* Timeout return */
+ 140:../bl/SPI_MSD0_Driver.c **** 	if (retry == 0xFFF) {
+ 292              		.loc 1 140 0 is_stmt 1
+ 293 005a FB8C     		ldrh	r3, [r7, #38]
+ 294 005c 40F6FF72 		movw	r2, #4095
+ 295 0060 9342     		cmp	r3, r2
+ 296 0062 01D1     		bne	.L22
+ 141:../bl/SPI_MSD0_Driver.c **** 		printf("\r\nReset card into IDLE state failed!\r\n");
+ 142:../bl/SPI_MSD0_Driver.c **** 		return 1;
+ 297              		.loc 1 142 0
+ 298 0064 0123     		movs	r3, #1
+ 299 0066 61E1     		b	.L47
+ 300              	.L22:
+ 143:../bl/SPI_MSD0_Driver.c **** 	}
+ 144:../bl/SPI_MSD0_Driver.c **** 	printf("BIAO JI 2");
+ 145:../bl/SPI_MSD0_Driver.c **** 	/* Get the card type, version */
+ 146:../bl/SPI_MSD0_Driver.c **** 	r1 = MSD0_send_command_hold(CMD8, 0x1AA, 0x87);
+ 301              		.loc 1 146 0
+ 302 0068 0820     		movs	r0, #8
+ 303 006a 4FF4D571 		mov	r1, #426
+ 304 006e 8722     		movs	r2, #135
+ 305 0070 FFF7FEFF 		bl	MSD0_send_command_hold
+ 306 0074 0346     		mov	r3, r0
+ 307 0076 87F82530 		strb	r3, [r7, #37]
+ 308              	.LBB2:
+ 147:../bl/SPI_MSD0_Driver.c **** 	printf("\r\n����CMD8����");
+ 148:../bl/SPI_MSD0_Driver.c **** 	{
+ 149:../bl/SPI_MSD0_Driver.c **** 		char s[3];
+ 150:../bl/SPI_MSD0_Driver.c **** 		sprintf(s,"%x",r1);
+ 309              		.loc 1 150 0
+ 310 007a 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 311 007e 07F11802 		add	r2, r7, #24
+ 312 0082 1046     		mov	r0, r2
+ 313 0084 AB49     		ldr	r1, .L48
+ 314 0086 1A46     		mov	r2, r3
+ 315 0088 FFF7FEFF 		bl	sprintf
+ 316              	.LBE2:
+ 151:../bl/SPI_MSD0_Driver.c **** 		printf(s);
+ 152:../bl/SPI_MSD0_Driver.c **** 	}
+ 153:../bl/SPI_MSD0_Driver.c **** 	/* r1=0x05 -> V1.0 */
+ 154:../bl/SPI_MSD0_Driver.c **** 	if (r1 == 0x05) {
+ 317              		.loc 1 154 0
+ 318 008c 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 319 0090 052B     		cmp	r3, #5
+ 320 0092 40F08380 		bne	.L24
+ 155:../bl/SPI_MSD0_Driver.c **** 		SD0_CardInfo.CardType = CARDTYPE_SDV1;
+ 321              		.loc 1 155 0
+ 322 0096 A84B     		ldr	r3, .L48+4
+ 323 0098 0122     		movs	r2, #1
+ 324 009a 83F84E20 		strb	r2, [r3, #78]
+ 156:../bl/SPI_MSD0_Driver.c **** 		printf("CMD8 FAN HUI ZHENG QUE");
+ 157:../bl/SPI_MSD0_Driver.c **** 		/* End of CMD8, chip disable and dummy byte */
+ 158:../bl/SPI_MSD0_Driver.c **** 		MSD0_card_disable();
+ 159:../bl/SPI_MSD0_Driver.c **** 		MSD0_spi_read_write(DUMMY_BYTE);
+ 325              		.loc 1 159 0
+ 326 009e FF20     		movs	r0, #255
+ 327 00a0 FFF7FEFF 		bl	MSD0_spi_read_write
+ 160:../bl/SPI_MSD0_Driver.c **** 
+ 161:../bl/SPI_MSD0_Driver.c **** 		/* SD1.0/MMC start initialize */
+ 162:../bl/SPI_MSD0_Driver.c **** 		/* Send CMD55+ACMD41, No-response is a MMC card, otherwise is a SD1.0 card */
+ 163:../bl/SPI_MSD0_Driver.c **** 		printf("ZHUN BEI FA SONG CMD55");
+ 164:../bl/SPI_MSD0_Driver.c **** 		for (retry = 0; retry < 0xFFF; retry++) {
+ 328              		.loc 1 164 0
+ 329 00a4 0023     		movs	r3, #0
+ 330 00a6 FB84     		strh	r3, [r7, #38]	@ movhi
+ 331 00a8 26E0     		b	.L25
+ 332              	.L29:
+ 165:../bl/SPI_MSD0_Driver.c **** 			r1 = MSD0_send_command(CMD55, 0, 0); /* should be return 0x01 */
+ 333              		.loc 1 165 0
+ 334 00aa 3720     		movs	r0, #55
+ 335 00ac 0021     		movs	r1, #0
+ 336 00ae 0022     		movs	r2, #0
+ 337 00b0 FFF7FEFF 		bl	MSD0_send_command
+ 338 00b4 0346     		mov	r3, r0
+ 339 00b6 87F82530 		strb	r3, [r7, #37]
+ 166:../bl/SPI_MSD0_Driver.c **** 			if (r1 != 0x01) {
+ 340              		.loc 1 166 0
+ 341 00ba 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 342 00be 012B     		cmp	r3, #1
+ 343 00c0 05D0     		beq	.L26
+ 167:../bl/SPI_MSD0_Driver.c **** #ifdef PRINT_INFO
+ 168:../bl/SPI_MSD0_Driver.c **** 				printf("Send CMD55 should return 0x01, response=0x%02x\r\n", r1);
+ 169:../bl/SPI_MSD0_Driver.c **** #endif
+ 170:../bl/SPI_MSD0_Driver.c **** 				MSD0_spi_read_write(0xa7);
+ 344              		.loc 1 170 0
+ 345 00c2 A720     		movs	r0, #167
+ 346 00c4 FFF7FEFF 		bl	MSD0_spi_read_write
+ 171:../bl/SPI_MSD0_Driver.c **** 				return r1;
+ 347              		.loc 1 171 0
+ 348 00c8 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 349 00cc 2EE1     		b	.L47
+ 350              	.L26:
+ 172:../bl/SPI_MSD0_Driver.c **** 			}
+ 173:../bl/SPI_MSD0_Driver.c **** 			r1 = MSD0_send_command(ACMD41, 0, 0); /* should be return 0x00 */
+ 351              		.loc 1 173 0
+ 352 00ce 2920     		movs	r0, #41
+ 353 00d0 0021     		movs	r1, #0
+ 354 00d2 0022     		movs	r2, #0
+ 355 00d4 FFF7FEFF 		bl	MSD0_send_command
+ 356 00d8 0346     		mov	r3, r0
+ 357 00da 87F82530 		strb	r3, [r7, #37]
+ 174:../bl/SPI_MSD0_Driver.c **** 			if (r1 == 0x00) {
+ 358              		.loc 1 174 0
+ 359 00de 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 360 00e2 002B     		cmp	r3, #0
+ 361 00e4 02D1     		bne	.L27
+ 175:../bl/SPI_MSD0_Driver.c **** 				retry = 0;
+ 362              		.loc 1 175 0
+ 363 00e6 0023     		movs	r3, #0
+ 364 00e8 FB84     		strh	r3, [r7, #38]	@ movhi
+ 176:../bl/SPI_MSD0_Driver.c **** 				printf("jinruACMD41 QIE FAN HUI 0");
+ 177:../bl/SPI_MSD0_Driver.c **** 				break;
+ 365              		.loc 1 177 0
+ 366 00ea 0AE0     		b	.L28
+ 367              	.L27:
+ 178:../bl/SPI_MSD0_Driver.c **** 			}
+ 179:../bl/SPI_MSD0_Driver.c **** 			MSD0_spi_read_write(0x5a);
+ 368              		.loc 1 179 0 discriminator 2
+ 369 00ec 5A20     		movs	r0, #90
+ 370 00ee FFF7FEFF 		bl	MSD0_spi_read_write
+ 164:../bl/SPI_MSD0_Driver.c **** 			r1 = MSD0_send_command(CMD55, 0, 0); /* should be return 0x01 */
+ 371              		.loc 1 164 0 discriminator 2
+ 372 00f2 FB8C     		ldrh	r3, [r7, #38]
+ 373 00f4 0133     		adds	r3, r3, #1
+ 374 00f6 FB84     		strh	r3, [r7, #38]	@ movhi
+ 375              	.L25:
+ 164:../bl/SPI_MSD0_Driver.c **** 			r1 = MSD0_send_command(CMD55, 0, 0); /* should be return 0x01 */
+ 376              		.loc 1 164 0 is_stmt 0 discriminator 1
+ 377 00f8 FB8C     		ldrh	r3, [r7, #38]
+ 378 00fa 40F6FE72 		movw	r2, #4094
+ 379 00fe 9342     		cmp	r3, r2
+ 380 0100 D3D9     		bls	.L29
+ 381              	.L28:
+ 180:../bl/SPI_MSD0_Driver.c **** 		}
+ 181:../bl/SPI_MSD0_Driver.c **** 
+ 182:../bl/SPI_MSD0_Driver.c **** 		/* MMC card initialize start */
+ 183:../bl/SPI_MSD0_Driver.c **** 		if (retry == 0xFFF) {
+ 382              		.loc 1 183 0 is_stmt 1
+ 383 0102 FB8C     		ldrh	r3, [r7, #38]
+ 384 0104 40F6FF72 		movw	r2, #4095
+ 385 0108 9342     		cmp	r3, r2
+ 386 010a 24D1     		bne	.L30
+ 184:../bl/SPI_MSD0_Driver.c **** 			for (retry = 0; retry < 0xFFF; retry++) {
+ 387              		.loc 1 184 0
+ 388 010c 0023     		movs	r3, #0
+ 389 010e FB84     		strh	r3, [r7, #38]	@ movhi
+ 390 0110 11E0     		b	.L31
+ 391              	.L34:
+ 185:../bl/SPI_MSD0_Driver.c **** 				r1 = MSD0_send_command(CMD1, 0, 0); /* should be return 0x00 */
+ 392              		.loc 1 185 0
+ 393 0112 0120     		movs	r0, #1
+ 394 0114 0021     		movs	r1, #0
+ 395 0116 0022     		movs	r2, #0
+ 396 0118 FFF7FEFF 		bl	MSD0_send_command
+ 397 011c 0346     		mov	r3, r0
+ 398 011e 87F82530 		strb	r3, [r7, #37]
+ 186:../bl/SPI_MSD0_Driver.c **** 				if (r1 == 0x00) {
+ 399              		.loc 1 186 0
+ 400 0122 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 401 0126 002B     		cmp	r3, #0
+ 402 0128 02D1     		bne	.L32
+ 187:../bl/SPI_MSD0_Driver.c **** 					retry = 0;
+ 403              		.loc 1 187 0
+ 404 012a 0023     		movs	r3, #0
+ 405 012c FB84     		strh	r3, [r7, #38]	@ movhi
+ 188:../bl/SPI_MSD0_Driver.c **** 					break;
+ 406              		.loc 1 188 0
+ 407 012e 07E0     		b	.L33
+ 408              	.L32:
+ 184:../bl/SPI_MSD0_Driver.c **** 				r1 = MSD0_send_command(CMD1, 0, 0); /* should be return 0x00 */
+ 409              		.loc 1 184 0 discriminator 2
+ 410 0130 FB8C     		ldrh	r3, [r7, #38]
+ 411 0132 0133     		adds	r3, r3, #1
+ 412 0134 FB84     		strh	r3, [r7, #38]	@ movhi
+ 413              	.L31:
+ 184:../bl/SPI_MSD0_Driver.c **** 				r1 = MSD0_send_command(CMD1, 0, 0); /* should be return 0x00 */
+ 414              		.loc 1 184 0 is_stmt 0 discriminator 1
+ 415 0136 FB8C     		ldrh	r3, [r7, #38]
+ 416 0138 40F6FE72 		movw	r2, #4094
+ 417 013c 9342     		cmp	r3, r2
+ 418 013e E8D9     		bls	.L34
+ 419              	.L33:
+ 189:../bl/SPI_MSD0_Driver.c **** 				}
+ 190:../bl/SPI_MSD0_Driver.c **** 			}
+ 191:../bl/SPI_MSD0_Driver.c **** 
+ 192:../bl/SPI_MSD0_Driver.c **** 			/* Timeout return */
+ 193:../bl/SPI_MSD0_Driver.c **** 			if (retry == 0xFFF) {
+ 420              		.loc 1 193 0 is_stmt 1
+ 421 0140 FB8C     		ldrh	r3, [r7, #38]
+ 422 0142 40F6FF72 		movw	r2, #4095
+ 423 0146 9342     		cmp	r3, r2
+ 424 0148 01D1     		bne	.L35
+ 194:../bl/SPI_MSD0_Driver.c **** #ifdef PRINT_INFO
+ 195:../bl/SPI_MSD0_Driver.c **** 				printf("Send CMD1 should return 0x00, response=0x%02x\r\n", r1);
+ 196:../bl/SPI_MSD0_Driver.c **** #endif
+ 197:../bl/SPI_MSD0_Driver.c **** 				return 2;
+ 425              		.loc 1 197 0
+ 426 014a 0223     		movs	r3, #2
+ 427 014c EEE0     		b	.L47
+ 428              	.L35:
+ 198:../bl/SPI_MSD0_Driver.c **** 			}
+ 199:../bl/SPI_MSD0_Driver.c **** 
+ 200:../bl/SPI_MSD0_Driver.c **** 			SD0_CardInfo.CardType = CARDTYPE_MMC;
+ 429              		.loc 1 200 0
+ 430 014e 7A4B     		ldr	r3, .L48+4
+ 431 0150 0022     		movs	r2, #0
+ 432 0152 83F84E20 		strb	r2, [r3, #78]
+ 433              	.L30:
+ 201:../bl/SPI_MSD0_Driver.c **** #ifdef PRINT_INFO
+ 202:../bl/SPI_MSD0_Driver.c **** 			printf("Card Type                     : MMC\r\n");
+ 203:../bl/SPI_MSD0_Driver.c **** #endif
+ 204:../bl/SPI_MSD0_Driver.c **** 		}
+ 205:../bl/SPI_MSD0_Driver.c **** 		/* SD1.0 card detected, print information */
+ 206:../bl/SPI_MSD0_Driver.c **** #ifdef PRINT_INFO
+ 207:../bl/SPI_MSD0_Driver.c **** 		else
+ 208:../bl/SPI_MSD0_Driver.c **** 		{
+ 209:../bl/SPI_MSD0_Driver.c **** 			printf("Card Type                     : SD V1\r\n");
+ 210:../bl/SPI_MSD0_Driver.c **** 		}
+ 211:../bl/SPI_MSD0_Driver.c **** #endif
+ 212:../bl/SPI_MSD0_Driver.c **** 
+ 213:../bl/SPI_MSD0_Driver.c **** 		/* Set spi speed high */
+ 214:../bl/SPI_MSD0_Driver.c **** 		MSD0_SPIHighSpeed(1);
+ 434              		.loc 1 214 0
+ 435 0156 0120     		movs	r0, #1
+ 436 0158 FFF7FEFF 		bl	MSD0_SPIHighSpeed
+ 215:../bl/SPI_MSD0_Driver.c **** 
+ 216:../bl/SPI_MSD0_Driver.c **** 		/* CRC disable */
+ 217:../bl/SPI_MSD0_Driver.c **** 		r1 = MSD0_send_command(CMD59, 0, 0x01);
+ 437              		.loc 1 217 0
+ 438 015c 3B20     		movs	r0, #59
+ 439 015e 0021     		movs	r1, #0
+ 440 0160 0122     		movs	r2, #1
+ 441 0162 FFF7FEFF 		bl	MSD0_send_command
+ 442 0166 0346     		mov	r3, r0
+ 443 0168 87F82530 		strb	r3, [r7, #37]
+ 218:../bl/SPI_MSD0_Driver.c **** 		if (r1 != 0x00) {
+ 444              		.loc 1 218 0
+ 445 016c 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 446 0170 002B     		cmp	r3, #0
+ 447 0172 02D0     		beq	.L36
+ 219:../bl/SPI_MSD0_Driver.c **** #ifdef PRINT_INFO
+ 220:../bl/SPI_MSD0_Driver.c **** 			printf("Send CMD59 should return 0x00, response=0x%02x\r\n", r1);
+ 221:../bl/SPI_MSD0_Driver.c **** #endif
+ 222:../bl/SPI_MSD0_Driver.c **** 			return r1; /* response error, return r1 */
+ 448              		.loc 1 222 0
+ 449 0174 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 450 0178 D8E0     		b	.L47
+ 451              	.L36:
+ 223:../bl/SPI_MSD0_Driver.c **** 		}
+ 224:../bl/SPI_MSD0_Driver.c **** 
+ 225:../bl/SPI_MSD0_Driver.c **** 		/* Set the block size */
+ 226:../bl/SPI_MSD0_Driver.c **** 		r1 = MSD0_send_command(CMD16, MSD_BLOCKSIZE, 0xFF);
+ 452              		.loc 1 226 0
+ 453 017a 1020     		movs	r0, #16
+ 454 017c 4FF40071 		mov	r1, #512
+ 455 0180 FF22     		movs	r2, #255
+ 456 0182 FFF7FEFF 		bl	MSD0_send_command
+ 457 0186 0346     		mov	r3, r0
+ 458 0188 87F82530 		strb	r3, [r7, #37]
+ 227:../bl/SPI_MSD0_Driver.c **** 		if (r1 != 0x00) {
+ 459              		.loc 1 227 0
+ 460 018c 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 461 0190 002B     		cmp	r3, #0
+ 462 0192 00F0CA80 		beq	.L37
+ 228:../bl/SPI_MSD0_Driver.c **** #ifdef PRINT_INFO
+ 229:../bl/SPI_MSD0_Driver.c **** 			printf("Send CMD16 should return 0x00, response=0x%02x\r\n", r1);
+ 230:../bl/SPI_MSD0_Driver.c **** #endif
+ 231:../bl/SPI_MSD0_Driver.c **** 			return r1; /* response error, return r1 */
+ 463              		.loc 1 231 0
+ 464 0196 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 465 019a C7E0     		b	.L47
+ 466              	.L24:
+ 232:../bl/SPI_MSD0_Driver.c **** 		}
+ 233:../bl/SPI_MSD0_Driver.c **** 	}
+ 234:../bl/SPI_MSD0_Driver.c **** 
+ 235:../bl/SPI_MSD0_Driver.c **** 	/* r1=0x01 -> V2.x, read OCR register, check version */
+ 236:../bl/SPI_MSD0_Driver.c **** 	else if (r1 == 0x01) {
+ 467              		.loc 1 236 0
+ 468 019c 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 469 01a0 012B     		cmp	r3, #1
+ 470 01a2 40F0C280 		bne	.L37
+ 237:../bl/SPI_MSD0_Driver.c **** 		printf("\r\n����CMD8���ؽ��1");
+ 238:../bl/SPI_MSD0_Driver.c **** 		/* 4Bytes returned after CMD8 sent	*/
+ 239:../bl/SPI_MSD0_Driver.c **** 		buff[0] = MSD0_spi_read_write(DUMMY_BYTE); /* should be 0x00 */
+ 471              		.loc 1 239 0
+ 472 01a6 FF20     		movs	r0, #255
+ 473 01a8 FFF7FEFF 		bl	MSD0_spi_read_write
+ 474 01ac 0346     		mov	r3, r0
+ 475 01ae DBB2     		uxtb	r3, r3
+ 476 01b0 3B77     		strb	r3, [r7, #28]
+ 240:../bl/SPI_MSD0_Driver.c **** 		buff[1] = MSD0_spi_read_write(DUMMY_BYTE); /* should be 0x00 */
+ 477              		.loc 1 240 0
+ 478 01b2 FF20     		movs	r0, #255
+ 479 01b4 FFF7FEFF 		bl	MSD0_spi_read_write
+ 480 01b8 0346     		mov	r3, r0
+ 481 01ba DBB2     		uxtb	r3, r3
+ 482 01bc 7B77     		strb	r3, [r7, #29]
+ 241:../bl/SPI_MSD0_Driver.c **** 		buff[2] = MSD0_spi_read_write(DUMMY_BYTE); /* should be 0x01 */
+ 483              		.loc 1 241 0
+ 484 01be FF20     		movs	r0, #255
+ 485 01c0 FFF7FEFF 		bl	MSD0_spi_read_write
+ 486 01c4 0346     		mov	r3, r0
+ 487 01c6 DBB2     		uxtb	r3, r3
+ 488 01c8 BB77     		strb	r3, [r7, #30]
+ 242:../bl/SPI_MSD0_Driver.c **** 		buff[3] = MSD0_spi_read_write(DUMMY_BYTE); /* should be 0xAA */
+ 489              		.loc 1 242 0
+ 490 01ca FF20     		movs	r0, #255
+ 491 01cc FFF7FEFF 		bl	MSD0_spi_read_write
+ 492 01d0 0346     		mov	r3, r0
+ 493 01d2 DBB2     		uxtb	r3, r3
+ 494 01d4 FB77     		strb	r3, [r7, #31]
+ 243:../bl/SPI_MSD0_Driver.c **** 
+ 244:../bl/SPI_MSD0_Driver.c **** 		/* End of CMD8, chip disable and dummy byte */
+ 245:../bl/SPI_MSD0_Driver.c **** 		MSD0_card_disable();
+ 246:../bl/SPI_MSD0_Driver.c **** 		MSD0_spi_read_write(DUMMY_BYTE);
+ 495              		.loc 1 246 0
+ 496 01d6 FF20     		movs	r0, #255
+ 497 01d8 FFF7FEFF 		bl	MSD0_spi_read_write
+ 498              	.LBB3:
+ 247:../bl/SPI_MSD0_Driver.c **** 		{
+ 248:../bl/SPI_MSD0_Driver.c **** 				char s[3];
+ 249:../bl/SPI_MSD0_Driver.c **** 				printf("\r\n �ж��ǵĽ������ѹ\r\n");
+ 250:../bl/SPI_MSD0_Driver.c **** 				sprintf(s,"%x",buff[2]);
+ 499              		.loc 1 250 0
+ 500 01dc BB7F     		ldrb	r3, [r7, #30]	@ zero_extendqisi2
+ 501 01de 1A46     		mov	r2, r3
+ 502 01e0 07F11403 		add	r3, r7, #20
+ 503 01e4 1846     		mov	r0, r3
+ 504 01e6 5349     		ldr	r1, .L48
+ 505 01e8 FFF7FEFF 		bl	sprintf
+ 251:../bl/SPI_MSD0_Driver.c **** 				printf(s);
+ 252:../bl/SPI_MSD0_Driver.c **** 				sprintf(s,"%x",buff[3]);
+ 506              		.loc 1 252 0
+ 507 01ec FB7F     		ldrb	r3, [r7, #31]	@ zero_extendqisi2
+ 508 01ee 1A46     		mov	r2, r3
+ 509 01f0 07F11403 		add	r3, r7, #20
+ 510 01f4 1846     		mov	r0, r3
+ 511 01f6 4F49     		ldr	r1, .L48
+ 512 01f8 FFF7FEFF 		bl	sprintf
+ 513              	.LBE3:
+ 253:../bl/SPI_MSD0_Driver.c **** 				printf(s);
+ 254:../bl/SPI_MSD0_Driver.c **** 
+ 255:../bl/SPI_MSD0_Driver.c **** 		}
+ 256:../bl/SPI_MSD0_Driver.c **** 		/* Check voltage range be 2.7-3.6V	*/
+ 257:../bl/SPI_MSD0_Driver.c **** 		if (buff[2] == 0x01 && buff[3] == 0xAA) {
+ 514              		.loc 1 257 0
+ 515 01fc BB7F     		ldrb	r3, [r7, #30]	@ zero_extendqisi2
+ 516 01fe 012B     		cmp	r3, #1
+ 517 0200 40F09380 		bne	.L37
+ 518              		.loc 1 257 0 is_stmt 0 discriminator 1
+ 519 0204 FB7F     		ldrb	r3, [r7, #31]	@ zero_extendqisi2
+ 520 0206 AA2B     		cmp	r3, #170
+ 521 0208 40F08F80 		bne	.L37
+ 258:../bl/SPI_MSD0_Driver.c **** 			for (retry = 0; retry < 0xFFF; retry++) {
+ 522              		.loc 1 258 0 is_stmt 1
+ 523 020c 0023     		movs	r3, #0
+ 524 020e FB84     		strh	r3, [r7, #38]	@ movhi
+ 525 0210 44E0     		b	.L38
+ 526              	.L42:
+ 259:../bl/SPI_MSD0_Driver.c **** 				r1 = MSD0_send_command(CMD55, 0, 0); /* should be return 0x01 */
+ 527              		.loc 1 259 0
+ 528 0212 3720     		movs	r0, #55
+ 529 0214 0021     		movs	r1, #0
+ 530 0216 0022     		movs	r2, #0
+ 531 0218 FFF7FEFF 		bl	MSD0_send_command
+ 532 021c 0346     		mov	r3, r0
+ 533 021e 87F82530 		strb	r3, [r7, #37]
+ 534              	.LBB4:
+ 260:../bl/SPI_MSD0_Driver.c **** 				printf("\r\nSend CMD55 should return 0x01, ");
+ 261:../bl/SPI_MSD0_Driver.c **** 				{
+ 262:../bl/SPI_MSD0_Driver.c **** 					char s[3];
+ 263:../bl/SPI_MSD0_Driver.c **** 					sprintf(s,"%x",r1);
+ 535              		.loc 1 263 0
+ 536 0222 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 537 0226 07F11002 		add	r2, r7, #16
+ 538 022a 1046     		mov	r0, r2
+ 539 022c 4149     		ldr	r1, .L48
+ 540 022e 1A46     		mov	r2, r3
+ 541 0230 FFF7FEFF 		bl	sprintf
+ 542              	.LBE4:
+ 264:../bl/SPI_MSD0_Driver.c **** 					printf(s);
+ 265:../bl/SPI_MSD0_Driver.c **** 				}
+ 266:../bl/SPI_MSD0_Driver.c **** 				if (r1 != 0x01) {
+ 543              		.loc 1 266 0
+ 544 0234 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 545 0238 012B     		cmp	r3, #1
+ 546 023a 0BD0     		beq	.L39
+ 547              	.LBB5:
+ 267:../bl/SPI_MSD0_Driver.c **** 
+ 268:../bl/SPI_MSD0_Driver.c **** 
+ 269:../bl/SPI_MSD0_Driver.c **** 					printf("\r\nSend CMD55 should return 0x01, ");
+ 270:../bl/SPI_MSD0_Driver.c **** 					{
+ 271:../bl/SPI_MSD0_Driver.c **** 						char s[3];
+ 272:../bl/SPI_MSD0_Driver.c **** 						sprintf(s,"%x",r1);
+ 548              		.loc 1 272 0
+ 549 023c 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 550 0240 07F10C02 		add	r2, r7, #12
+ 551 0244 1046     		mov	r0, r2
+ 552 0246 3B49     		ldr	r1, .L48
+ 553 0248 1A46     		mov	r2, r3
+ 554 024a FFF7FEFF 		bl	sprintf
+ 555              	.LBE5:
+ 273:../bl/SPI_MSD0_Driver.c **** 						printf(s);
+ 274:../bl/SPI_MSD0_Driver.c **** 					}
+ 275:../bl/SPI_MSD0_Driver.c **** 
+ 276:../bl/SPI_MSD0_Driver.c **** 					return r1;
+ 556              		.loc 1 276 0
+ 557 024e 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 558 0252 6BE0     		b	.L47
+ 559              	.L39:
+ 277:../bl/SPI_MSD0_Driver.c **** 				}
+ 278:../bl/SPI_MSD0_Driver.c **** 
+ 279:../bl/SPI_MSD0_Driver.c **** 				r1 = MSD0_send_command(ACMD41, 0x40000000, 0); /* should be return 0x00 */
+ 560              		.loc 1 279 0
+ 561 0254 2920     		movs	r0, #41
+ 562 0256 4FF08041 		mov	r1, #1073741824
+ 563 025a 0022     		movs	r2, #0
+ 564 025c FFF7FEFF 		bl	MSD0_send_command
+ 565 0260 0346     		mov	r3, r0
+ 566 0262 87F82530 		strb	r3, [r7, #37]
+ 567              	.LBB6:
+ 280:../bl/SPI_MSD0_Driver.c **** 				printf("\r\nACMD41�����");
+ 281:../bl/SPI_MSD0_Driver.c **** 				{
+ 282:../bl/SPI_MSD0_Driver.c **** 					char s[3];
+ 283:../bl/SPI_MSD0_Driver.c **** 					sprintf(s,"%x",r1);
+ 568              		.loc 1 283 0
+ 569 0266 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 570 026a 07F10802 		add	r2, r7, #8
+ 571 026e 1046     		mov	r0, r2
+ 572 0270 3049     		ldr	r1, .L48
+ 573 0272 1A46     		mov	r2, r3
+ 574 0274 FFF7FEFF 		bl	sprintf
+ 575              	.LBE6:
+ 284:../bl/SPI_MSD0_Driver.c **** 					printf(s);
+ 285:../bl/SPI_MSD0_Driver.c **** 				}
+ 286:../bl/SPI_MSD0_Driver.c **** 				if (r1 == 0x00) {
+ 576              		.loc 1 286 0
+ 577 0278 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 578 027c 002B     		cmp	r3, #0
+ 579 027e 0AD1     		bne	.L40
+ 580              	.LBB7:
+ 287:../bl/SPI_MSD0_Driver.c **** 					printf("\r\nACMD41�������ȷ");
+ 288:../bl/SPI_MSD0_Driver.c **** 					{
+ 289:../bl/SPI_MSD0_Driver.c **** 						char s[3];
+ 290:../bl/SPI_MSD0_Driver.c **** 						sprintf(s,"%x",r1);
+ 581              		.loc 1 290 0
+ 582 0280 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 583 0284 3A1D     		adds	r2, r7, #4
+ 584 0286 1046     		mov	r0, r2
+ 585 0288 2A49     		ldr	r1, .L48
+ 586 028a 1A46     		mov	r2, r3
+ 587 028c FFF7FEFF 		bl	sprintf
+ 588              	.LBE7:
+ 291:../bl/SPI_MSD0_Driver.c **** 						printf(s);
+ 292:../bl/SPI_MSD0_Driver.c **** 					}
+ 293:../bl/SPI_MSD0_Driver.c **** 					retry = 0;
+ 589              		.loc 1 293 0
+ 590 0290 0023     		movs	r3, #0
+ 591 0292 FB84     		strh	r3, [r7, #38]	@ movhi
+ 294:../bl/SPI_MSD0_Driver.c **** 					break;
+ 592              		.loc 1 294 0
+ 593 0294 07E0     		b	.L41
+ 594              	.L40:
+ 258:../bl/SPI_MSD0_Driver.c **** 				r1 = MSD0_send_command(CMD55, 0, 0); /* should be return 0x01 */
+ 595              		.loc 1 258 0 discriminator 2
+ 596 0296 FB8C     		ldrh	r3, [r7, #38]
+ 597 0298 0133     		adds	r3, r3, #1
+ 598 029a FB84     		strh	r3, [r7, #38]	@ movhi
+ 599              	.L38:
+ 258:../bl/SPI_MSD0_Driver.c **** 				r1 = MSD0_send_command(CMD55, 0, 0); /* should be return 0x01 */
+ 600              		.loc 1 258 0 is_stmt 0 discriminator 1
+ 601 029c FB8C     		ldrh	r3, [r7, #38]
+ 602 029e 40F6FE72 		movw	r2, #4094
+ 603 02a2 9342     		cmp	r3, r2
+ 604 02a4 B5D9     		bls	.L42
+ 605              	.L41:
+ 295:../bl/SPI_MSD0_Driver.c **** 				}
+ 296:../bl/SPI_MSD0_Driver.c **** 			}
+ 297:../bl/SPI_MSD0_Driver.c **** 
+ 298:../bl/SPI_MSD0_Driver.c **** 			/* Timeout return */
+ 299:../bl/SPI_MSD0_Driver.c **** 			if (retry == 0xFFF) {
+ 606              		.loc 1 299 0 is_stmt 1
+ 607 02a6 FB8C     		ldrh	r3, [r7, #38]
+ 608 02a8 40F6FF72 		movw	r2, #4095
+ 609 02ac 9342     		cmp	r3, r2
+ 610 02ae 01D1     		bne	.L43
+ 300:../bl/SPI_MSD0_Driver.c **** #ifdef PRINT_INFO
+ 301:../bl/SPI_MSD0_Driver.c **** 				printf("Send ACMD41 should return 0x00, response=0x%02x\r\n", r1);
+ 302:../bl/SPI_MSD0_Driver.c **** #endif
+ 303:../bl/SPI_MSD0_Driver.c **** 				return 3;
+ 611              		.loc 1 303 0
+ 612 02b0 0323     		movs	r3, #3
+ 613 02b2 3BE0     		b	.L47
+ 614              	.L43:
+ 304:../bl/SPI_MSD0_Driver.c **** 			}
+ 305:../bl/SPI_MSD0_Driver.c **** 
+ 306:../bl/SPI_MSD0_Driver.c **** 			/* Read OCR by CMD58 */
+ 307:../bl/SPI_MSD0_Driver.c **** 			r1 = MSD0_send_command_hold(CMD58, 0, 0);
+ 615              		.loc 1 307 0
+ 616 02b4 3A20     		movs	r0, #58
+ 617 02b6 0021     		movs	r1, #0
+ 618 02b8 0022     		movs	r2, #0
+ 619 02ba FFF7FEFF 		bl	MSD0_send_command_hold
+ 620 02be 0346     		mov	r3, r0
+ 621 02c0 87F82530 		strb	r3, [r7, #37]
+ 308:../bl/SPI_MSD0_Driver.c **** 			printf("\r\n����CMD58");
+ 309:../bl/SPI_MSD0_Driver.c **** 			if (r1 != 0x00) {
+ 622              		.loc 1 309 0
+ 623 02c4 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 624 02c8 002B     		cmp	r3, #0
+ 625 02ca 02D0     		beq	.L44
+ 310:../bl/SPI_MSD0_Driver.c **** #ifdef PRINT_INFO
+ 311:../bl/SPI_MSD0_Driver.c **** 				printf("Send CMD58 should return 0x00, response=0x%02x\r\n", r1);
+ 312:../bl/SPI_MSD0_Driver.c **** #endif
+ 313:../bl/SPI_MSD0_Driver.c **** 				return r1; /* response error, return r1 */
+ 626              		.loc 1 313 0
+ 627 02cc 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 628 02d0 2CE0     		b	.L47
+ 629              	.L44:
+ 314:../bl/SPI_MSD0_Driver.c **** 			}
+ 315:../bl/SPI_MSD0_Driver.c **** 
+ 316:../bl/SPI_MSD0_Driver.c **** 			buff[0] = MSD0_spi_read_write(DUMMY_BYTE);
+ 630              		.loc 1 316 0
+ 631 02d2 FF20     		movs	r0, #255
+ 632 02d4 FFF7FEFF 		bl	MSD0_spi_read_write
+ 633 02d8 0346     		mov	r3, r0
+ 634 02da DBB2     		uxtb	r3, r3
+ 635 02dc 3B77     		strb	r3, [r7, #28]
+ 317:../bl/SPI_MSD0_Driver.c **** 			buff[1] = MSD0_spi_read_write(DUMMY_BYTE);
+ 636              		.loc 1 317 0
+ 637 02de FF20     		movs	r0, #255
+ 638 02e0 FFF7FEFF 		bl	MSD0_spi_read_write
+ 639 02e4 0346     		mov	r3, r0
+ 640 02e6 DBB2     		uxtb	r3, r3
+ 641 02e8 7B77     		strb	r3, [r7, #29]
+ 318:../bl/SPI_MSD0_Driver.c **** 			buff[2] = MSD0_spi_read_write(DUMMY_BYTE);
+ 642              		.loc 1 318 0
+ 643 02ea FF20     		movs	r0, #255
+ 644 02ec FFF7FEFF 		bl	MSD0_spi_read_write
+ 645 02f0 0346     		mov	r3, r0
+ 646 02f2 DBB2     		uxtb	r3, r3
+ 647 02f4 BB77     		strb	r3, [r7, #30]
+ 319:../bl/SPI_MSD0_Driver.c **** 			buff[3] = MSD0_spi_read_write(DUMMY_BYTE);
+ 648              		.loc 1 319 0
+ 649 02f6 FF20     		movs	r0, #255
+ 650 02f8 FFF7FEFF 		bl	MSD0_spi_read_write
+ 651 02fc 0346     		mov	r3, r0
+ 652 02fe DBB2     		uxtb	r3, r3
+ 653 0300 FB77     		strb	r3, [r7, #31]
+ 320:../bl/SPI_MSD0_Driver.c **** 
+ 321:../bl/SPI_MSD0_Driver.c **** 			/* End of CMD58, chip disable and dummy byte */
+ 322:../bl/SPI_MSD0_Driver.c **** 			MSD0_card_disable();
+ 323:../bl/SPI_MSD0_Driver.c **** 			MSD0_spi_read_write(DUMMY_BYTE);
+ 654              		.loc 1 323 0
+ 655 0302 FF20     		movs	r0, #255
+ 656 0304 FFF7FEFF 		bl	MSD0_spi_read_write
+ 324:../bl/SPI_MSD0_Driver.c **** 
+ 325:../bl/SPI_MSD0_Driver.c **** 			/* OCR -> CCS(bit30)  1: SDV2HC	 0: SDV2 */
+ 326:../bl/SPI_MSD0_Driver.c **** 			if (buff[0] & 0x40) {
+ 657              		.loc 1 326 0
+ 658 0308 3B7F     		ldrb	r3, [r7, #28]	@ zero_extendqisi2
+ 659 030a 03F04003 		and	r3, r3, #64
+ 660 030e 002B     		cmp	r3, #0
+ 661 0310 04D0     		beq	.L45
+ 327:../bl/SPI_MSD0_Driver.c **** 				SD0_CardInfo.CardType = CARDTYPE_SDV2HC;
+ 662              		.loc 1 327 0
+ 663 0312 094B     		ldr	r3, .L48+4
+ 664 0314 0422     		movs	r2, #4
+ 665 0316 83F84E20 		strb	r2, [r3, #78]
+ 666 031a 03E0     		b	.L46
+ 667              	.L45:
+ 328:../bl/SPI_MSD0_Driver.c **** 
+ 329:../bl/SPI_MSD0_Driver.c **** 				printf("\r\nCard Type                     : SD V2HC\r\n");
+ 330:../bl/SPI_MSD0_Driver.c **** 
+ 331:../bl/SPI_MSD0_Driver.c **** 			} else {
+ 332:../bl/SPI_MSD0_Driver.c **** 				SD0_CardInfo.CardType = CARDTYPE_SDV2;
+ 668              		.loc 1 332 0
+ 669 031c 064B     		ldr	r3, .L48+4
+ 670 031e 0222     		movs	r2, #2
+ 671 0320 83F84E20 		strb	r2, [r3, #78]
+ 672              	.L46:
+ 333:../bl/SPI_MSD0_Driver.c **** 
+ 334:../bl/SPI_MSD0_Driver.c **** 				printf("Card Type                     : SD V2\r\n");
+ 335:../bl/SPI_MSD0_Driver.c **** 
+ 336:../bl/SPI_MSD0_Driver.c **** 			}
+ 337:../bl/SPI_MSD0_Driver.c **** 
+ 338:../bl/SPI_MSD0_Driver.c **** 			/* Set spi speed high */
+ 339:../bl/SPI_MSD0_Driver.c **** 			MSD0_SPIHighSpeed(1);
+ 673              		.loc 1 339 0
+ 674 0324 0120     		movs	r0, #1
+ 675 0326 FFF7FEFF 		bl	MSD0_SPIHighSpeed
+ 676              	.L37:
+ 340:../bl/SPI_MSD0_Driver.c **** 		}
+ 341:../bl/SPI_MSD0_Driver.c **** 	}
+ 342:../bl/SPI_MSD0_Driver.c **** 	printf("\n\nSD����ʼ�����");
+ 343:../bl/SPI_MSD0_Driver.c **** 	return 0;
+ 677              		.loc 1 343 0
+ 678 032a 0023     		movs	r3, #0
+ 679              	.L47:
+ 344:../bl/SPI_MSD0_Driver.c **** }
+ 680              		.loc 1 344 0 discriminator 1
+ 681 032c 1846     		mov	r0, r3
+ 682 032e 2837     		adds	r7, r7, #40
+ 683              		.cfi_def_cfa_offset 8
+ 684 0330 BD46     		mov	sp, r7
+ 685              		.cfi_def_cfa_register 13
+ 686              		@ sp needed
+ 687 0332 80BD     		pop	{r7, pc}
+ 688              	.L49:
+ 689              		.align	2
+ 690              	.L48:
+ 691 0334 00000000 		.word	.LC0
+ 692 0338 00000000 		.word	SD0_CardInfo
+ 693              		.cfi_endproc
+ 694              	.LFE3:
+ 696              		.section	.text.MSD0_GetCardInfo,"ax",%progbits
+ 697              		.align	2
+ 698              		.global	MSD0_GetCardInfo
+ 699              		.thumb
+ 700              		.thumb_func
+ 702              	MSD0_GetCardInfo:
+ 703              	.LFB4:
+ 345:../bl/SPI_MSD0_Driver.c **** 
+ 346:../bl/SPI_MSD0_Driver.c **** /*******************************************************************************
+ 347:../bl/SPI_MSD0_Driver.c ****  * Function Name  : MSD0_GetCardInfo
+ 348:../bl/SPI_MSD0_Driver.c ****  * Description    : Get SD Card Information
+ 349:../bl/SPI_MSD0_Driver.c ****  * Input          : None
+ 350:../bl/SPI_MSD0_Driver.c ****  * Output         : None
+ 351:../bl/SPI_MSD0_Driver.c ****  * Return         : 0��NO_ERR; TRUE: Error
+ 352:../bl/SPI_MSD0_Driver.c ****  * Attention		 : None
+ 353:../bl/SPI_MSD0_Driver.c ****  *******************************************************************************/
+ 354:../bl/SPI_MSD0_Driver.c **** int MSD0_GetCardInfo(PMSD_CARDINFO SD0_CardInfo)
+ 355:../bl/SPI_MSD0_Driver.c **** {
+ 704              		.loc 1 355 0
+ 705              		.cfi_startproc
+ 706              		@ args = 0, pretend = 0, frame = 48
+ 707              		@ frame_needed = 1, uses_anonymous_args = 0
+ 708 0000 80B5     		push	{r7, lr}
+ 709              		.cfi_def_cfa_offset 8
+ 710              		.cfi_offset 7, -8
+ 711              		.cfi_offset 14, -4
+ 712 0002 8CB0     		sub	sp, sp, #48
+ 713              		.cfi_def_cfa_offset 56
+ 714 0004 00AF     		add	r7, sp, #0
+ 715              		.cfi_def_cfa_register 7
+ 716 0006 7860     		str	r0, [r7, #4]
+ 356:../bl/SPI_MSD0_Driver.c ****   unsigned char r1;
+ 357:../bl/SPI_MSD0_Driver.c ****   unsigned char CSD_Tab[16];
+ 358:../bl/SPI_MSD0_Driver.c ****   unsigned char CID_Tab[16];
+ 359:../bl/SPI_MSD0_Driver.c **** 
+ 360:../bl/SPI_MSD0_Driver.c ****   /* Send CMD9, Read CSD */
+ 361:../bl/SPI_MSD0_Driver.c ****   r1 = MSD0_send_command(CMD9, 0, 0xFF);
+ 717              		.loc 1 361 0
+ 718 0008 0920     		movs	r0, #9
+ 719 000a 0021     		movs	r1, #0
+ 720 000c FF22     		movs	r2, #255
+ 721 000e FFF7FEFF 		bl	MSD0_send_command
+ 722 0012 0346     		mov	r3, r0
+ 723 0014 87F82F30 		strb	r3, [r7, #47]
+ 362:../bl/SPI_MSD0_Driver.c ****   if(r1 != 0x00)
+ 724              		.loc 1 362 0
+ 725 0018 97F82F30 		ldrb	r3, [r7, #47]	@ zero_extendqisi2
+ 726 001c 002B     		cmp	r3, #0
+ 727 001e 02D0     		beq	.L51
+ 363:../bl/SPI_MSD0_Driver.c ****   {
+ 364:../bl/SPI_MSD0_Driver.c ****     return r1;
+ 728              		.loc 1 364 0
+ 729 0020 97F82F30 		ldrb	r3, [r7, #47]	@ zero_extendqisi2
+ 730 0024 F7E1     		b	.L57
+ 731              	.L51:
+ 365:../bl/SPI_MSD0_Driver.c ****   }
+ 366:../bl/SPI_MSD0_Driver.c **** 
+ 367:../bl/SPI_MSD0_Driver.c ****   if(MSD0_read_buffer(CSD_Tab, 16, RELEASE))
+ 732              		.loc 1 367 0
+ 733 0026 07F11C03 		add	r3, r7, #28
+ 734 002a 1846     		mov	r0, r3
+ 735 002c 1021     		movs	r1, #16
+ 736 002e 0122     		movs	r2, #1
+ 737 0030 FFF7FEFF 		bl	MSD0_read_buffer
+ 738 0034 0346     		mov	r3, r0
+ 739 0036 002B     		cmp	r3, #0
+ 740 0038 01D0     		beq	.L53
+ 368:../bl/SPI_MSD0_Driver.c ****   {
+ 369:../bl/SPI_MSD0_Driver.c **** 	return 1;
+ 741              		.loc 1 369 0
+ 742 003a 0123     		movs	r3, #1
+ 743 003c EBE1     		b	.L57
+ 744              	.L53:
+ 370:../bl/SPI_MSD0_Driver.c ****   }
+ 371:../bl/SPI_MSD0_Driver.c **** 
+ 372:../bl/SPI_MSD0_Driver.c ****   /* Send CMD10, Read CID */
+ 373:../bl/SPI_MSD0_Driver.c ****   r1 = MSD0_send_command(CMD10, 0, 0xFF);
+ 745              		.loc 1 373 0
+ 746 003e 0A20     		movs	r0, #10
+ 747 0040 0021     		movs	r1, #0
+ 748 0042 FF22     		movs	r2, #255
+ 749 0044 FFF7FEFF 		bl	MSD0_send_command
+ 750 0048 0346     		mov	r3, r0
+ 751 004a 87F82F30 		strb	r3, [r7, #47]
+ 374:../bl/SPI_MSD0_Driver.c ****   if(r1 != 0x00)
+ 752              		.loc 1 374 0
+ 753 004e 97F82F30 		ldrb	r3, [r7, #47]	@ zero_extendqisi2
+ 754 0052 002B     		cmp	r3, #0
+ 755 0054 02D0     		beq	.L54
+ 375:../bl/SPI_MSD0_Driver.c ****   {
+ 376:../bl/SPI_MSD0_Driver.c ****     return r1;
+ 756              		.loc 1 376 0
+ 757 0056 97F82F30 		ldrb	r3, [r7, #47]	@ zero_extendqisi2
+ 758 005a DCE1     		b	.L57
+ 759              	.L54:
+ 377:../bl/SPI_MSD0_Driver.c ****   }
+ 378:../bl/SPI_MSD0_Driver.c **** 
+ 379:../bl/SPI_MSD0_Driver.c ****   if(MSD0_read_buffer(CID_Tab, 16, RELEASE))
+ 760              		.loc 1 379 0
+ 761 005c 07F10C03 		add	r3, r7, #12
+ 762 0060 1846     		mov	r0, r3
+ 763 0062 1021     		movs	r1, #16
+ 764 0064 0122     		movs	r2, #1
+ 765 0066 FFF7FEFF 		bl	MSD0_read_buffer
+ 766 006a 0346     		mov	r3, r0
+ 767 006c 002B     		cmp	r3, #0
+ 768 006e 01D0     		beq	.L55
+ 380:../bl/SPI_MSD0_Driver.c ****   {
+ 381:../bl/SPI_MSD0_Driver.c **** 	return 2;
+ 769              		.loc 1 381 0
+ 770 0070 0223     		movs	r3, #2
+ 771 0072 D0E1     		b	.L57
+ 772              	.L55:
+ 382:../bl/SPI_MSD0_Driver.c ****   }
+ 383:../bl/SPI_MSD0_Driver.c **** 
+ 384:../bl/SPI_MSD0_Driver.c ****   /* Byte 0 */
+ 385:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.CSDStruct = (CSD_Tab[0] & 0xC0) >> 6;
+ 773              		.loc 1 385 0
+ 774 0074 3B7F     		ldrb	r3, [r7, #28]	@ zero_extendqisi2
+ 775 0076 9B09     		lsrs	r3, r3, #6
+ 776 0078 DAB2     		uxtb	r2, r3
+ 777 007a 7B68     		ldr	r3, [r7, #4]
+ 778 007c 1A70     		strb	r2, [r3]
+ 386:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.SysSpecVersion = (CSD_Tab[0] & 0x3C) >> 2;
+ 779              		.loc 1 386 0
+ 780 007e 3B7F     		ldrb	r3, [r7, #28]	@ zero_extendqisi2
+ 781 0080 03F03C03 		and	r3, r3, #60
+ 782 0084 9B10     		asrs	r3, r3, #2
+ 783 0086 DAB2     		uxtb	r2, r3
+ 784 0088 7B68     		ldr	r3, [r7, #4]
+ 785 008a 5A70     		strb	r2, [r3, #1]
+ 387:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.Reserved1 = CSD_Tab[0] & 0x03;
+ 786              		.loc 1 387 0
+ 787 008c 3B7F     		ldrb	r3, [r7, #28]	@ zero_extendqisi2
+ 788 008e 03F00303 		and	r3, r3, #3
+ 789 0092 DAB2     		uxtb	r2, r3
+ 790 0094 7B68     		ldr	r3, [r7, #4]
+ 791 0096 9A70     		strb	r2, [r3, #2]
+ 388:../bl/SPI_MSD0_Driver.c ****   /* Byte 1 */
+ 389:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.TAAC = CSD_Tab[1] ;
+ 792              		.loc 1 389 0
+ 793 0098 7A7F     		ldrb	r2, [r7, #29]	@ zero_extendqisi2
+ 794 009a 7B68     		ldr	r3, [r7, #4]
+ 795 009c DA70     		strb	r2, [r3, #3]
+ 390:../bl/SPI_MSD0_Driver.c ****   /* Byte 2 */
+ 391:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.NSAC = CSD_Tab[2];
+ 796              		.loc 1 391 0
+ 797 009e BA7F     		ldrb	r2, [r7, #30]	@ zero_extendqisi2
+ 798 00a0 7B68     		ldr	r3, [r7, #4]
+ 799 00a2 1A71     		strb	r2, [r3, #4]
+ 392:../bl/SPI_MSD0_Driver.c ****   /* Byte 3 */
+ 393:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.MaxBusClkFrec = CSD_Tab[3];
+ 800              		.loc 1 393 0
+ 801 00a4 FA7F     		ldrb	r2, [r7, #31]	@ zero_extendqisi2
+ 802 00a6 7B68     		ldr	r3, [r7, #4]
+ 803 00a8 5A71     		strb	r2, [r3, #5]
+ 394:../bl/SPI_MSD0_Driver.c ****   /* Byte 4 */
+ 395:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.CardComdClasses = CSD_Tab[4] << 4;
+ 804              		.loc 1 395 0
+ 805 00aa 97F82030 		ldrb	r3, [r7, #32]	@ zero_extendqisi2
+ 806 00ae 9BB2     		uxth	r3, r3
+ 807 00b0 1B01     		lsls	r3, r3, #4
+ 808 00b2 9AB2     		uxth	r2, r3
+ 809 00b4 7B68     		ldr	r3, [r7, #4]
+ 810 00b6 DA80     		strh	r2, [r3, #6]	@ movhi
+ 396:../bl/SPI_MSD0_Driver.c ****   /* Byte 5 */
+ 397:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.CardComdClasses |= (CSD_Tab[5] & 0xF0) >> 4;
+ 811              		.loc 1 397 0
+ 812 00b8 7B68     		ldr	r3, [r7, #4]
+ 813 00ba DB88     		ldrh	r3, [r3, #6]	@ movhi
+ 814 00bc 9AB2     		uxth	r2, r3
+ 815 00be 97F82130 		ldrb	r3, [r7, #33]	@ zero_extendqisi2
+ 816 00c2 1B09     		lsrs	r3, r3, #4
+ 817 00c4 DBB2     		uxtb	r3, r3
+ 818 00c6 9BB2     		uxth	r3, r3
+ 819 00c8 1343     		orrs	r3, r3, r2
+ 820 00ca 9AB2     		uxth	r2, r3
+ 821 00cc 7B68     		ldr	r3, [r7, #4]
+ 822 00ce DA80     		strh	r2, [r3, #6]	@ movhi
+ 398:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.RdBlockLen = CSD_Tab[5] & 0x0F;
+ 823              		.loc 1 398 0
+ 824 00d0 97F82130 		ldrb	r3, [r7, #33]	@ zero_extendqisi2
+ 825 00d4 03F00F03 		and	r3, r3, #15
+ 826 00d8 DAB2     		uxtb	r2, r3
+ 827 00da 7B68     		ldr	r3, [r7, #4]
+ 828 00dc 1A72     		strb	r2, [r3, #8]
+ 399:../bl/SPI_MSD0_Driver.c ****   /* Byte 6 */
+ 400:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.PartBlockRead = (CSD_Tab[6] & 0x80) >> 7;
+ 829              		.loc 1 400 0
+ 830 00de 97F82230 		ldrb	r3, [r7, #34]	@ zero_extendqisi2
+ 831 00e2 DB09     		lsrs	r3, r3, #7
+ 832 00e4 DAB2     		uxtb	r2, r3
+ 833 00e6 7B68     		ldr	r3, [r7, #4]
+ 834 00e8 5A72     		strb	r2, [r3, #9]
+ 401:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.WrBlockMisalign = (CSD_Tab[6] & 0x40) >> 6;
+ 835              		.loc 1 401 0
+ 836 00ea 97F82230 		ldrb	r3, [r7, #34]	@ zero_extendqisi2
+ 837 00ee 03F04003 		and	r3, r3, #64
+ 838 00f2 9B11     		asrs	r3, r3, #6
+ 839 00f4 DAB2     		uxtb	r2, r3
+ 840 00f6 7B68     		ldr	r3, [r7, #4]
+ 841 00f8 9A72     		strb	r2, [r3, #10]
+ 402:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.RdBlockMisalign = (CSD_Tab[6] & 0x20) >> 5;
+ 842              		.loc 1 402 0
+ 843 00fa 97F82230 		ldrb	r3, [r7, #34]	@ zero_extendqisi2
+ 844 00fe 03F02003 		and	r3, r3, #32
+ 845 0102 5B11     		asrs	r3, r3, #5
+ 846 0104 DAB2     		uxtb	r2, r3
+ 847 0106 7B68     		ldr	r3, [r7, #4]
+ 848 0108 DA72     		strb	r2, [r3, #11]
+ 403:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.DSRImpl = (CSD_Tab[6] & 0x10) >> 4;
+ 849              		.loc 1 403 0
+ 850 010a 97F82230 		ldrb	r3, [r7, #34]	@ zero_extendqisi2
+ 851 010e 03F01003 		and	r3, r3, #16
+ 852 0112 1B11     		asrs	r3, r3, #4
+ 853 0114 DAB2     		uxtb	r2, r3
+ 854 0116 7B68     		ldr	r3, [r7, #4]
+ 855 0118 1A73     		strb	r2, [r3, #12]
+ 404:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.Reserved2 = 0; /* Reserved */
+ 856              		.loc 1 404 0
+ 857 011a 7B68     		ldr	r3, [r7, #4]
+ 858 011c 0022     		movs	r2, #0
+ 859 011e 5A73     		strb	r2, [r3, #13]
+ 405:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.DeviceSize = (CSD_Tab[6] & 0x03) << 10;
+ 860              		.loc 1 405 0
+ 861 0120 97F82230 		ldrb	r3, [r7, #34]	@ zero_extendqisi2
+ 862 0124 03F00303 		and	r3, r3, #3
+ 863 0128 9B02     		lsls	r3, r3, #10
+ 864 012a 1A46     		mov	r2, r3
+ 865 012c 7B68     		ldr	r3, [r7, #4]
+ 866 012e 1A61     		str	r2, [r3, #16]
+ 406:../bl/SPI_MSD0_Driver.c ****   /* Byte 7 */
+ 407:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.DeviceSize |= (CSD_Tab[7]) << 2;
+ 867              		.loc 1 407 0
+ 868 0130 7B68     		ldr	r3, [r7, #4]
+ 869 0132 1B69     		ldr	r3, [r3, #16]
+ 870 0134 97F82320 		ldrb	r2, [r7, #35]	@ zero_extendqisi2
+ 871 0138 9200     		lsls	r2, r2, #2
+ 872 013a 1A43     		orrs	r2, r2, r3
+ 873 013c 7B68     		ldr	r3, [r7, #4]
+ 874 013e 1A61     		str	r2, [r3, #16]
+ 408:../bl/SPI_MSD0_Driver.c ****   /* Byte 8 */
+ 409:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.DeviceSize |= (CSD_Tab[8] & 0xC0) >> 6;
+ 875              		.loc 1 409 0
+ 876 0140 7B68     		ldr	r3, [r7, #4]
+ 877 0142 1B69     		ldr	r3, [r3, #16]
+ 878 0144 97F82420 		ldrb	r2, [r7, #36]	@ zero_extendqisi2
+ 879 0148 9209     		lsrs	r2, r2, #6
+ 880 014a D2B2     		uxtb	r2, r2
+ 881 014c 1A43     		orrs	r2, r2, r3
+ 882 014e 7B68     		ldr	r3, [r7, #4]
+ 883 0150 1A61     		str	r2, [r3, #16]
+ 410:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.MaxRdCurrentVDDMin = (CSD_Tab[8] & 0x38) >> 3;
+ 884              		.loc 1 410 0
+ 885 0152 97F82430 		ldrb	r3, [r7, #36]	@ zero_extendqisi2
+ 886 0156 03F03803 		and	r3, r3, #56
+ 887 015a DB10     		asrs	r3, r3, #3
+ 888 015c DAB2     		uxtb	r2, r3
+ 889 015e 7B68     		ldr	r3, [r7, #4]
+ 890 0160 1A75     		strb	r2, [r3, #20]
+ 411:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.MaxRdCurrentVDDMax = (CSD_Tab[8] & 0x07);
+ 891              		.loc 1 411 0
+ 892 0162 97F82430 		ldrb	r3, [r7, #36]	@ zero_extendqisi2
+ 893 0166 03F00703 		and	r3, r3, #7
+ 894 016a DAB2     		uxtb	r2, r3
+ 895 016c 7B68     		ldr	r3, [r7, #4]
+ 896 016e 5A75     		strb	r2, [r3, #21]
+ 412:../bl/SPI_MSD0_Driver.c ****   /* Byte 9 */
+ 413:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.MaxWrCurrentVDDMin = (CSD_Tab[9] & 0xE0) >> 5;
+ 897              		.loc 1 413 0
+ 898 0170 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 899 0174 5B09     		lsrs	r3, r3, #5
+ 900 0176 DAB2     		uxtb	r2, r3
+ 901 0178 7B68     		ldr	r3, [r7, #4]
+ 902 017a 9A75     		strb	r2, [r3, #22]
+ 414:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.MaxWrCurrentVDDMax = (CSD_Tab[9] & 0x1C) >> 2;
+ 903              		.loc 1 414 0
+ 904 017c 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 905 0180 03F01C03 		and	r3, r3, #28
+ 906 0184 9B10     		asrs	r3, r3, #2
+ 907 0186 DAB2     		uxtb	r2, r3
+ 908 0188 7B68     		ldr	r3, [r7, #4]
+ 909 018a DA75     		strb	r2, [r3, #23]
+ 415:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.DeviceSizeMul = (CSD_Tab[9] & 0x03) << 1;
+ 910              		.loc 1 415 0
+ 911 018c 97F82530 		ldrb	r3, [r7, #37]	@ zero_extendqisi2
+ 912 0190 03F00303 		and	r3, r3, #3
+ 913 0194 DBB2     		uxtb	r3, r3
+ 914 0196 5B00     		lsls	r3, r3, #1
+ 915 0198 DAB2     		uxtb	r2, r3
+ 916 019a 7B68     		ldr	r3, [r7, #4]
+ 917 019c 1A76     		strb	r2, [r3, #24]
+ 416:../bl/SPI_MSD0_Driver.c ****   /* Byte 10 */
+ 417:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.DeviceSizeMul |= (CSD_Tab[10] & 0x80) >> 7;
+ 918              		.loc 1 417 0
+ 919 019e 7B68     		ldr	r3, [r7, #4]
+ 920 01a0 1B7E     		ldrb	r3, [r3, #24]
+ 921 01a2 DAB2     		uxtb	r2, r3
+ 922 01a4 97F82630 		ldrb	r3, [r7, #38]	@ zero_extendqisi2
+ 923 01a8 DB09     		lsrs	r3, r3, #7
+ 924 01aa DBB2     		uxtb	r3, r3
+ 925 01ac 1343     		orrs	r3, r3, r2
+ 926 01ae DAB2     		uxtb	r2, r3
+ 927 01b0 7B68     		ldr	r3, [r7, #4]
+ 928 01b2 1A76     		strb	r2, [r3, #24]
+ 418:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.EraseGrSize = (CSD_Tab[10] & 0x7C) >> 2;
+ 929              		.loc 1 418 0
+ 930 01b4 97F82630 		ldrb	r3, [r7, #38]	@ zero_extendqisi2
+ 931 01b8 03F07C03 		and	r3, r3, #124
+ 932 01bc 9B10     		asrs	r3, r3, #2
+ 933 01be DAB2     		uxtb	r2, r3
+ 934 01c0 7B68     		ldr	r3, [r7, #4]
+ 935 01c2 5A76     		strb	r2, [r3, #25]
+ 419:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.EraseGrMul = (CSD_Tab[10] & 0x03) << 3;
+ 936              		.loc 1 419 0
+ 937 01c4 97F82630 		ldrb	r3, [r7, #38]	@ zero_extendqisi2
+ 938 01c8 03F00303 		and	r3, r3, #3
+ 939 01cc DBB2     		uxtb	r3, r3
+ 940 01ce DB00     		lsls	r3, r3, #3
+ 941 01d0 DAB2     		uxtb	r2, r3
+ 942 01d2 7B68     		ldr	r3, [r7, #4]
+ 943 01d4 9A76     		strb	r2, [r3, #26]
+ 420:../bl/SPI_MSD0_Driver.c ****   /* Byte 11 */
+ 421:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.EraseGrMul |= (CSD_Tab[11] & 0xE0) >> 5;
+ 944              		.loc 1 421 0
+ 945 01d6 7B68     		ldr	r3, [r7, #4]
+ 946 01d8 9B7E     		ldrb	r3, [r3, #26]
+ 947 01da DAB2     		uxtb	r2, r3
+ 948 01dc 97F82730 		ldrb	r3, [r7, #39]	@ zero_extendqisi2
+ 949 01e0 5B09     		lsrs	r3, r3, #5
+ 950 01e2 DBB2     		uxtb	r3, r3
+ 951 01e4 1343     		orrs	r3, r3, r2
+ 952 01e6 DAB2     		uxtb	r2, r3
+ 953 01e8 7B68     		ldr	r3, [r7, #4]
+ 954 01ea 9A76     		strb	r2, [r3, #26]
+ 422:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.WrProtectGrSize = (CSD_Tab[11] & 0x1F);
+ 955              		.loc 1 422 0
+ 956 01ec 97F82730 		ldrb	r3, [r7, #39]	@ zero_extendqisi2
+ 957 01f0 03F01F03 		and	r3, r3, #31
+ 958 01f4 DAB2     		uxtb	r2, r3
+ 959 01f6 7B68     		ldr	r3, [r7, #4]
+ 960 01f8 DA76     		strb	r2, [r3, #27]
+ 423:../bl/SPI_MSD0_Driver.c ****   /* Byte 12 */
+ 424:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.WrProtectGrEnable = (CSD_Tab[12] & 0x80) >> 7;
+ 961              		.loc 1 424 0
+ 962 01fa 97F82830 		ldrb	r3, [r7, #40]	@ zero_extendqisi2
+ 963 01fe DB09     		lsrs	r3, r3, #7
+ 964 0200 DAB2     		uxtb	r2, r3
+ 965 0202 7B68     		ldr	r3, [r7, #4]
+ 966 0204 1A77     		strb	r2, [r3, #28]
+ 425:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.ManDeflECC = (CSD_Tab[12] & 0x60) >> 5;
+ 967              		.loc 1 425 0
+ 968 0206 97F82830 		ldrb	r3, [r7, #40]	@ zero_extendqisi2
+ 969 020a 03F06003 		and	r3, r3, #96
+ 970 020e 5B11     		asrs	r3, r3, #5
+ 971 0210 DAB2     		uxtb	r2, r3
+ 972 0212 7B68     		ldr	r3, [r7, #4]
+ 973 0214 5A77     		strb	r2, [r3, #29]
+ 426:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.WrSpeedFact = (CSD_Tab[12] & 0x1C) >> 2;
+ 974              		.loc 1 426 0
+ 975 0216 97F82830 		ldrb	r3, [r7, #40]	@ zero_extendqisi2
+ 976 021a 03F01C03 		and	r3, r3, #28
+ 977 021e 9B10     		asrs	r3, r3, #2
+ 978 0220 DAB2     		uxtb	r2, r3
+ 979 0222 7B68     		ldr	r3, [r7, #4]
+ 980 0224 9A77     		strb	r2, [r3, #30]
+ 427:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.MaxWrBlockLen = (CSD_Tab[12] & 0x03) << 2;
+ 981              		.loc 1 427 0
+ 982 0226 97F82830 		ldrb	r3, [r7, #40]	@ zero_extendqisi2
+ 983 022a 03F00303 		and	r3, r3, #3
+ 984 022e DBB2     		uxtb	r3, r3
+ 985 0230 9B00     		lsls	r3, r3, #2
+ 986 0232 DAB2     		uxtb	r2, r3
+ 987 0234 7B68     		ldr	r3, [r7, #4]
+ 988 0236 DA77     		strb	r2, [r3, #31]
+ 428:../bl/SPI_MSD0_Driver.c ****   /* Byte 13 */
+ 429:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.MaxWrBlockLen |= (CSD_Tab[13] & 0xc0) >> 6;
+ 989              		.loc 1 429 0
+ 990 0238 7B68     		ldr	r3, [r7, #4]
+ 991 023a DB7F     		ldrb	r3, [r3, #31]
+ 992 023c DAB2     		uxtb	r2, r3
+ 993 023e 97F82930 		ldrb	r3, [r7, #41]	@ zero_extendqisi2
+ 994 0242 9B09     		lsrs	r3, r3, #6
+ 995 0244 DBB2     		uxtb	r3, r3
+ 996 0246 1343     		orrs	r3, r3, r2
+ 997 0248 DAB2     		uxtb	r2, r3
+ 998 024a 7B68     		ldr	r3, [r7, #4]
+ 999 024c DA77     		strb	r2, [r3, #31]
+ 430:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.WriteBlockPaPartial = (CSD_Tab[13] & 0x20) >> 5;
+ 1000              		.loc 1 430 0
+ 1001 024e 97F82930 		ldrb	r3, [r7, #41]	@ zero_extendqisi2
+ 1002 0252 03F02003 		and	r3, r3, #32
+ 1003 0256 5B11     		asrs	r3, r3, #5
+ 1004 0258 DAB2     		uxtb	r2, r3
+ 1005 025a 7B68     		ldr	r3, [r7, #4]
+ 1006 025c 83F82020 		strb	r2, [r3, #32]
+ 431:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.Reserved3 = 0;
+ 1007              		.loc 1 431 0
+ 1008 0260 7B68     		ldr	r3, [r7, #4]
+ 1009 0262 0022     		movs	r2, #0
+ 1010 0264 83F82120 		strb	r2, [r3, #33]
+ 432:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.ContentProtectAppli = (CSD_Tab[13] & 0x01);
+ 1011              		.loc 1 432 0
+ 1012 0268 97F82930 		ldrb	r3, [r7, #41]	@ zero_extendqisi2
+ 1013 026c 03F00103 		and	r3, r3, #1
+ 1014 0270 DAB2     		uxtb	r2, r3
+ 1015 0272 7B68     		ldr	r3, [r7, #4]
+ 1016 0274 83F82220 		strb	r2, [r3, #34]
+ 433:../bl/SPI_MSD0_Driver.c ****   /* Byte 14 */
+ 434:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.FileFormatGrouop = (CSD_Tab[14] & 0x80) >> 7;
+ 1017              		.loc 1 434 0
+ 1018 0278 97F82A30 		ldrb	r3, [r7, #42]	@ zero_extendqisi2
+ 1019 027c DB09     		lsrs	r3, r3, #7
+ 1020 027e DAB2     		uxtb	r2, r3
+ 1021 0280 7B68     		ldr	r3, [r7, #4]
+ 1022 0282 83F82320 		strb	r2, [r3, #35]
+ 435:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.CopyFlag = (CSD_Tab[14] & 0x40) >> 6;
+ 1023              		.loc 1 435 0
+ 1024 0286 97F82A30 		ldrb	r3, [r7, #42]	@ zero_extendqisi2
+ 1025 028a 03F04003 		and	r3, r3, #64
+ 1026 028e 9B11     		asrs	r3, r3, #6
+ 1027 0290 DAB2     		uxtb	r2, r3
+ 1028 0292 7B68     		ldr	r3, [r7, #4]
+ 1029 0294 83F82420 		strb	r2, [r3, #36]
+ 436:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.PermWrProtect = (CSD_Tab[14] & 0x20) >> 5;
+ 1030              		.loc 1 436 0
+ 1031 0298 97F82A30 		ldrb	r3, [r7, #42]	@ zero_extendqisi2
+ 1032 029c 03F02003 		and	r3, r3, #32
+ 1033 02a0 5B11     		asrs	r3, r3, #5
+ 1034 02a2 DAB2     		uxtb	r2, r3
+ 1035 02a4 7B68     		ldr	r3, [r7, #4]
+ 1036 02a6 83F82520 		strb	r2, [r3, #37]
+ 437:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.TempWrProtect = (CSD_Tab[14] & 0x10) >> 4;
+ 1037              		.loc 1 437 0
+ 1038 02aa 97F82A30 		ldrb	r3, [r7, #42]	@ zero_extendqisi2
+ 1039 02ae 03F01003 		and	r3, r3, #16
+ 1040 02b2 1B11     		asrs	r3, r3, #4
+ 1041 02b4 DAB2     		uxtb	r2, r3
+ 1042 02b6 7B68     		ldr	r3, [r7, #4]
+ 1043 02b8 83F82620 		strb	r2, [r3, #38]
+ 438:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.FileFormat = (CSD_Tab[14] & 0x0C) >> 2;
+ 1044              		.loc 1 438 0
+ 1045 02bc 97F82A30 		ldrb	r3, [r7, #42]	@ zero_extendqisi2
+ 1046 02c0 03F00C03 		and	r3, r3, #12
+ 1047 02c4 9B10     		asrs	r3, r3, #2
+ 1048 02c6 DAB2     		uxtb	r2, r3
+ 1049 02c8 7B68     		ldr	r3, [r7, #4]
+ 1050 02ca 83F82720 		strb	r2, [r3, #39]
+ 439:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.ECC = (CSD_Tab[14] & 0x03);
+ 1051              		.loc 1 439 0
+ 1052 02ce 97F82A30 		ldrb	r3, [r7, #42]	@ zero_extendqisi2
+ 1053 02d2 03F00303 		and	r3, r3, #3
+ 1054 02d6 DAB2     		uxtb	r2, r3
+ 1055 02d8 7B68     		ldr	r3, [r7, #4]
+ 1056 02da 83F82820 		strb	r2, [r3, #40]
+ 440:../bl/SPI_MSD0_Driver.c ****   /* Byte 15 */
+ 441:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.CSD_CRC = (CSD_Tab[15] & 0xFE) >> 1;
+ 1057              		.loc 1 441 0
+ 1058 02de 97F82B30 		ldrb	r3, [r7, #43]	@ zero_extendqisi2
+ 1059 02e2 5B08     		lsrs	r3, r3, #1
+ 1060 02e4 DAB2     		uxtb	r2, r3
+ 1061 02e6 7B68     		ldr	r3, [r7, #4]
+ 1062 02e8 83F82920 		strb	r2, [r3, #41]
+ 442:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CSD.Reserved4 = 1;
+ 1063              		.loc 1 442 0
+ 1064 02ec 7B68     		ldr	r3, [r7, #4]
+ 1065 02ee 0122     		movs	r2, #1
+ 1066 02f0 83F82A20 		strb	r2, [r3, #42]
+ 443:../bl/SPI_MSD0_Driver.c **** 
+ 444:../bl/SPI_MSD0_Driver.c ****   if(SD0_CardInfo->CardType == CARDTYPE_SDV2HC)
+ 1067              		.loc 1 444 0
+ 1068 02f4 7B68     		ldr	r3, [r7, #4]
+ 1069 02f6 93F84E30 		ldrb	r3, [r3, #78]	@ zero_extendqisi2
+ 1070 02fa 042B     		cmp	r3, #4
+ 1071 02fc 0CD1     		bne	.L56
+ 445:../bl/SPI_MSD0_Driver.c ****   {
+ 446:../bl/SPI_MSD0_Driver.c **** 	 /* Byte 7 */
+ 447:../bl/SPI_MSD0_Driver.c **** 	 SD0_CardInfo->CSD.DeviceSize = (unsigned short)(CSD_Tab[8]) *256;
+ 1072              		.loc 1 447 0
+ 1073 02fe 97F82430 		ldrb	r3, [r7, #36]	@ zero_extendqisi2
+ 1074 0302 1B02     		lsls	r3, r3, #8
+ 1075 0304 1A46     		mov	r2, r3
+ 1076 0306 7B68     		ldr	r3, [r7, #4]
+ 1077 0308 1A61     		str	r2, [r3, #16]
+ 448:../bl/SPI_MSD0_Driver.c **** 	 /* Byte 8 */
+ 449:../bl/SPI_MSD0_Driver.c **** 	 SD0_CardInfo->CSD.DeviceSize += CSD_Tab[9] ;
+ 1078              		.loc 1 449 0
+ 1079 030a 7B68     		ldr	r3, [r7, #4]
+ 1080 030c 1B69     		ldr	r3, [r3, #16]
+ 1081 030e 97F82520 		ldrb	r2, [r7, #37]	@ zero_extendqisi2
+ 1082 0312 1A44     		add	r2, r2, r3
+ 1083 0314 7B68     		ldr	r3, [r7, #4]
+ 1084 0316 1A61     		str	r2, [r3, #16]
+ 1085              	.L56:
+ 450:../bl/SPI_MSD0_Driver.c ****   }
+ 451:../bl/SPI_MSD0_Driver.c **** 
+ 452:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->Capacity = SD0_CardInfo->CSD.DeviceSize * MSD_BLOCKSIZE * 1024;
+ 1086              		.loc 1 452 0
+ 1087 0318 7B68     		ldr	r3, [r7, #4]
+ 1088 031a 1B69     		ldr	r3, [r3, #16]
+ 1089 031c DA04     		lsls	r2, r3, #19
+ 1090 031e 7B68     		ldr	r3, [r7, #4]
+ 1091 0320 5A64     		str	r2, [r3, #68]
+ 453:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->BlockSize = MSD_BLOCKSIZE;
+ 1092              		.loc 1 453 0
+ 1093 0322 7B68     		ldr	r3, [r7, #4]
+ 1094 0324 4FF40072 		mov	r2, #512
+ 1095 0328 9A64     		str	r2, [r3, #72]
+ 454:../bl/SPI_MSD0_Driver.c **** 
+ 455:../bl/SPI_MSD0_Driver.c ****   /* Byte 0 */
+ 456:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CID.ManufacturerID = CID_Tab[0];
+ 1096              		.loc 1 456 0
+ 1097 032a 3A7B     		ldrb	r2, [r7, #12]	@ zero_extendqisi2
+ 1098 032c 7B68     		ldr	r3, [r7, #4]
+ 1099 032e 83F82C20 		strb	r2, [r3, #44]
+ 457:../bl/SPI_MSD0_Driver.c ****   /* Byte 1 */
+ 458:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CID.OEM_AppliID = CID_Tab[1] << 8;
+ 1100              		.loc 1 458 0
+ 1101 0332 7B7B     		ldrb	r3, [r7, #13]	@ zero_extendqisi2
+ 1102 0334 9BB2     		uxth	r3, r3
+ 1103 0336 1B02     		lsls	r3, r3, #8
+ 1104 0338 9AB2     		uxth	r2, r3
+ 1105 033a 7B68     		ldr	r3, [r7, #4]
+ 1106 033c DA85     		strh	r2, [r3, #46]	@ movhi
+ 459:../bl/SPI_MSD0_Driver.c ****   /* Byte 2 */
+ 460:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CID.OEM_AppliID |= CID_Tab[2];
+ 1107              		.loc 1 460 0
+ 1108 033e 7B68     		ldr	r3, [r7, #4]
+ 1109 0340 DB8D     		ldrh	r3, [r3, #46]	@ movhi
+ 1110 0342 9AB2     		uxth	r2, r3
+ 1111 0344 BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 1112 0346 9BB2     		uxth	r3, r3
+ 1113 0348 1343     		orrs	r3, r3, r2
+ 1114 034a 9AB2     		uxth	r2, r3
+ 1115 034c 7B68     		ldr	r3, [r7, #4]
+ 1116 034e DA85     		strh	r2, [r3, #46]	@ movhi
+ 461:../bl/SPI_MSD0_Driver.c ****   /* Byte 3 */
+ 462:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CID.ProdName1 = CID_Tab[3] << 24;
+ 1117              		.loc 1 462 0
+ 1118 0350 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 1119 0352 1B06     		lsls	r3, r3, #24
+ 1120 0354 1A46     		mov	r2, r3
+ 1121 0356 7B68     		ldr	r3, [r7, #4]
+ 1122 0358 1A63     		str	r2, [r3, #48]
+ 463:../bl/SPI_MSD0_Driver.c ****   /* Byte 4 */
+ 464:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CID.ProdName1 |= CID_Tab[4] << 16;
+ 1123              		.loc 1 464 0
+ 1124 035a 7B68     		ldr	r3, [r7, #4]
+ 1125 035c 1B6B     		ldr	r3, [r3, #48]
+ 1126 035e 3A7C     		ldrb	r2, [r7, #16]	@ zero_extendqisi2
+ 1127 0360 1204     		lsls	r2, r2, #16
+ 1128 0362 1A43     		orrs	r2, r2, r3
+ 1129 0364 7B68     		ldr	r3, [r7, #4]
+ 1130 0366 1A63     		str	r2, [r3, #48]
+ 465:../bl/SPI_MSD0_Driver.c ****   /* Byte 5 */
+ 466:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CID.ProdName1 |= CID_Tab[5] << 8;
+ 1131              		.loc 1 466 0
+ 1132 0368 7B68     		ldr	r3, [r7, #4]
+ 1133 036a 1B6B     		ldr	r3, [r3, #48]
+ 1134 036c 7A7C     		ldrb	r2, [r7, #17]	@ zero_extendqisi2
+ 1135 036e 1202     		lsls	r2, r2, #8
+ 1136 0370 1A43     		orrs	r2, r2, r3
+ 1137 0372 7B68     		ldr	r3, [r7, #4]
+ 1138 0374 1A63     		str	r2, [r3, #48]
+ 467:../bl/SPI_MSD0_Driver.c ****   /* Byte 6 */
+ 468:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CID.ProdName1 |= CID_Tab[6];
+ 1139              		.loc 1 468 0
+ 1140 0376 7B68     		ldr	r3, [r7, #4]
+ 1141 0378 1B6B     		ldr	r3, [r3, #48]
+ 1142 037a BA7C     		ldrb	r2, [r7, #18]	@ zero_extendqisi2
+ 1143 037c 1A43     		orrs	r2, r2, r3
+ 1144 037e 7B68     		ldr	r3, [r7, #4]
+ 1145 0380 1A63     		str	r2, [r3, #48]
+ 469:../bl/SPI_MSD0_Driver.c ****   /* Byte 7 */
+ 470:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CID.ProdName2 = CID_Tab[7];
+ 1146              		.loc 1 470 0
+ 1147 0382 FA7C     		ldrb	r2, [r7, #19]	@ zero_extendqisi2
+ 1148 0384 7B68     		ldr	r3, [r7, #4]
+ 1149 0386 83F83420 		strb	r2, [r3, #52]
+ 471:../bl/SPI_MSD0_Driver.c ****   /* Byte 8 */
+ 472:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CID.ProdRev = CID_Tab[8];
+ 1150              		.loc 1 472 0
+ 1151 038a 3A7D     		ldrb	r2, [r7, #20]	@ zero_extendqisi2
+ 1152 038c 7B68     		ldr	r3, [r7, #4]
+ 1153 038e 83F83520 		strb	r2, [r3, #53]
+ 473:../bl/SPI_MSD0_Driver.c ****   /* Byte 9 */
+ 474:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CID.ProdSN = CID_Tab[9] << 24;
+ 1154              		.loc 1 474 0
+ 1155 0392 7B7D     		ldrb	r3, [r7, #21]	@ zero_extendqisi2
+ 1156 0394 1B06     		lsls	r3, r3, #24
+ 1157 0396 1A46     		mov	r2, r3
+ 1158 0398 7B68     		ldr	r3, [r7, #4]
+ 1159 039a 9A63     		str	r2, [r3, #56]
+ 475:../bl/SPI_MSD0_Driver.c ****   /* Byte 10 */
+ 476:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CID.ProdSN |= CID_Tab[10] << 16;
+ 1160              		.loc 1 476 0
+ 1161 039c 7B68     		ldr	r3, [r7, #4]
+ 1162 039e 9B6B     		ldr	r3, [r3, #56]
+ 1163 03a0 BA7D     		ldrb	r2, [r7, #22]	@ zero_extendqisi2
+ 1164 03a2 1204     		lsls	r2, r2, #16
+ 1165 03a4 1A43     		orrs	r2, r2, r3
+ 1166 03a6 7B68     		ldr	r3, [r7, #4]
+ 1167 03a8 9A63     		str	r2, [r3, #56]
+ 477:../bl/SPI_MSD0_Driver.c ****   /* Byte 11 */
+ 478:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CID.ProdSN |= CID_Tab[11] << 8;
+ 1168              		.loc 1 478 0
+ 1169 03aa 7B68     		ldr	r3, [r7, #4]
+ 1170 03ac 9B6B     		ldr	r3, [r3, #56]
+ 1171 03ae FA7D     		ldrb	r2, [r7, #23]	@ zero_extendqisi2
+ 1172 03b0 1202     		lsls	r2, r2, #8
+ 1173 03b2 1A43     		orrs	r2, r2, r3
+ 1174 03b4 7B68     		ldr	r3, [r7, #4]
+ 1175 03b6 9A63     		str	r2, [r3, #56]
+ 479:../bl/SPI_MSD0_Driver.c ****   /* Byte 12 */
+ 480:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CID.ProdSN |= CID_Tab[12];
+ 1176              		.loc 1 480 0
+ 1177 03b8 7B68     		ldr	r3, [r7, #4]
+ 1178 03ba 9B6B     		ldr	r3, [r3, #56]
+ 1179 03bc 3A7E     		ldrb	r2, [r7, #24]	@ zero_extendqisi2
+ 1180 03be 1A43     		orrs	r2, r2, r3
+ 1181 03c0 7B68     		ldr	r3, [r7, #4]
+ 1182 03c2 9A63     		str	r2, [r3, #56]
+ 481:../bl/SPI_MSD0_Driver.c ****   /* Byte 13 */
+ 482:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CID.Reserved1 |= (CID_Tab[13] & 0xF0) >> 4;
+ 1183              		.loc 1 482 0
+ 1184 03c4 7B68     		ldr	r3, [r7, #4]
+ 1185 03c6 93F83C30 		ldrb	r3, [r3, #60]
+ 1186 03ca DAB2     		uxtb	r2, r3
+ 1187 03cc 7B7E     		ldrb	r3, [r7, #25]	@ zero_extendqisi2
+ 1188 03ce 1B09     		lsrs	r3, r3, #4
+ 1189 03d0 DBB2     		uxtb	r3, r3
+ 1190 03d2 1343     		orrs	r3, r3, r2
+ 1191 03d4 DAB2     		uxtb	r2, r3
+ 1192 03d6 7B68     		ldr	r3, [r7, #4]
+ 1193 03d8 83F83C20 		strb	r2, [r3, #60]
+ 483:../bl/SPI_MSD0_Driver.c ****   /* Byte 14 */
+ 484:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CID.ManufactDate = (CID_Tab[13] & 0x0F) << 8;
+ 1194              		.loc 1 484 0
+ 1195 03dc 7B7E     		ldrb	r3, [r7, #25]	@ zero_extendqisi2
+ 1196 03de 9BB2     		uxth	r3, r3
+ 1197 03e0 03F00F03 		and	r3, r3, #15
+ 1198 03e4 9BB2     		uxth	r3, r3
+ 1199 03e6 1B02     		lsls	r3, r3, #8
+ 1200 03e8 9AB2     		uxth	r2, r3
+ 1201 03ea 7B68     		ldr	r3, [r7, #4]
+ 1202 03ec DA87     		strh	r2, [r3, #62]	@ movhi
+ 485:../bl/SPI_MSD0_Driver.c ****   /* Byte 15 */
+ 486:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CID.ManufactDate |= CID_Tab[14];
+ 1203              		.loc 1 486 0
+ 1204 03ee 7B68     		ldr	r3, [r7, #4]
+ 1205 03f0 DB8F     		ldrh	r3, [r3, #62]	@ movhi
+ 1206 03f2 9AB2     		uxth	r2, r3
+ 1207 03f4 BB7E     		ldrb	r3, [r7, #26]	@ zero_extendqisi2
+ 1208 03f6 9BB2     		uxth	r3, r3
+ 1209 03f8 1343     		orrs	r3, r3, r2
+ 1210 03fa 9AB2     		uxth	r2, r3
+ 1211 03fc 7B68     		ldr	r3, [r7, #4]
+ 1212 03fe DA87     		strh	r2, [r3, #62]	@ movhi
+ 487:../bl/SPI_MSD0_Driver.c ****   /* Byte 16 */
+ 488:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CID.CID_CRC = (CID_Tab[15] & 0xFE) >> 1;
+ 1213              		.loc 1 488 0
+ 1214 0400 FB7E     		ldrb	r3, [r7, #27]	@ zero_extendqisi2
+ 1215 0402 5B08     		lsrs	r3, r3, #1
+ 1216 0404 DAB2     		uxtb	r2, r3
+ 1217 0406 7B68     		ldr	r3, [r7, #4]
+ 1218 0408 83F84020 		strb	r2, [r3, #64]
+ 489:../bl/SPI_MSD0_Driver.c ****   SD0_CardInfo->CID.Reserved2 = 1;
+ 1219              		.loc 1 489 0
+ 1220 040c 7B68     		ldr	r3, [r7, #4]
+ 1221 040e 0122     		movs	r2, #1
+ 1222 0410 83F84120 		strb	r2, [r3, #65]
+ 490:../bl/SPI_MSD0_Driver.c **** 
+ 491:../bl/SPI_MSD0_Driver.c ****   return 0;
+ 1223              		.loc 1 491 0
+ 1224 0414 0023     		movs	r3, #0
+ 1225              	.L57:
+ 492:../bl/SPI_MSD0_Driver.c **** }
+ 1226              		.loc 1 492 0 discriminator 1
+ 1227 0416 1846     		mov	r0, r3
+ 1228 0418 3037     		adds	r7, r7, #48
+ 1229              		.cfi_def_cfa_offset 8
+ 1230 041a BD46     		mov	sp, r7
+ 1231              		.cfi_def_cfa_register 13
+ 1232              		@ sp needed
+ 1233 041c 80BD     		pop	{r7, pc}
+ 1234              		.cfi_endproc
+ 1235              	.LFE4:
+ 1237 041e 00BF     		.section	.text.MSD0_read_buffer,"ax",%progbits
+ 1238              		.align	2
+ 1239              		.global	MSD0_read_buffer
+ 1240              		.thumb
+ 1241              		.thumb_func
+ 1243              	MSD0_read_buffer:
+ 1244              	.LFB5:
+ 493:../bl/SPI_MSD0_Driver.c **** 
+ 494:../bl/SPI_MSD0_Driver.c **** /*******************************************************************************
+ 495:../bl/SPI_MSD0_Driver.c ****  * Function Name  : MSD0_read_buffer
+ 496:../bl/SPI_MSD0_Driver.c ****  * Description    : None
+ 497:../bl/SPI_MSD0_Driver.c ****  * Input          : - *buff:
+ 498:../bl/SPI_MSD0_Driver.c ****  *				   - len:
+ 499:../bl/SPI_MSD0_Driver.c ****  *				   - release:
+ 500:../bl/SPI_MSD0_Driver.c ****  * Output         : None
+ 501:../bl/SPI_MSD0_Driver.c ****  * Return         : 0��NO_ERR; TRUE: Error
+ 502:../bl/SPI_MSD0_Driver.c ****  * Attention		 : None
+ 503:../bl/SPI_MSD0_Driver.c ****  *******************************************************************************/
+ 504:../bl/SPI_MSD0_Driver.c **** int MSD0_read_buffer(unsigned char *buff, unsigned short len, unsigned char release)
+ 505:../bl/SPI_MSD0_Driver.c **** {
+ 1245              		.loc 1 505 0
+ 1246              		.cfi_startproc
+ 1247              		@ args = 0, pretend = 0, frame = 16
+ 1248              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1249 0000 B0B5     		push	{r4, r5, r7, lr}
+ 1250              		.cfi_def_cfa_offset 16
+ 1251              		.cfi_offset 4, -16
+ 1252              		.cfi_offset 5, -12
+ 1253              		.cfi_offset 7, -8
+ 1254              		.cfi_offset 14, -4
+ 1255 0002 84B0     		sub	sp, sp, #16
+ 1256              		.cfi_def_cfa_offset 32
+ 1257 0004 00AF     		add	r7, sp, #0
+ 1258              		.cfi_def_cfa_register 7
+ 1259 0006 7860     		str	r0, [r7, #4]
+ 1260 0008 0B46     		mov	r3, r1
+ 1261 000a 7B80     		strh	r3, [r7, #2]	@ movhi
+ 1262 000c 1346     		mov	r3, r2
+ 1263 000e 7B70     		strb	r3, [r7, #1]
+ 506:../bl/SPI_MSD0_Driver.c ****   unsigned char r1;
+ 507:../bl/SPI_MSD0_Driver.c ****   register unsigned short retry;
+ 508:../bl/SPI_MSD0_Driver.c **** 
+ 509:../bl/SPI_MSD0_Driver.c ****   /* Card enable, Prepare to read	*/
+ 510:../bl/SPI_MSD0_Driver.c ****   MSD0_card_enable();
+ 511:../bl/SPI_MSD0_Driver.c **** 
+ 512:../bl/SPI_MSD0_Driver.c ****   /* Wait start-token 0xFE */
+ 513:../bl/SPI_MSD0_Driver.c ****   for(retry=0; retry<2000; retry++)
+ 1264              		.loc 1 513 0
+ 1265 0010 0024     		movs	r4, #0
+ 1266 0012 0CE0     		b	.L59
+ 1267              	.L62:
+ 514:../bl/SPI_MSD0_Driver.c ****   {
+ 515:../bl/SPI_MSD0_Driver.c **** 	 r1 = MSD0_spi_read_write(DUMMY_BYTE);
+ 1268              		.loc 1 515 0
+ 1269 0014 FF20     		movs	r0, #255
+ 1270 0016 FFF7FEFF 		bl	MSD0_spi_read_write
+ 1271 001a 0346     		mov	r3, r0
+ 1272 001c FB73     		strb	r3, [r7, #15]
+ 516:../bl/SPI_MSD0_Driver.c **** 	 if(r1 == 0xFE)
+ 1273              		.loc 1 516 0
+ 1274 001e FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 1275 0020 FE2B     		cmp	r3, #254
+ 1276 0022 01D1     		bne	.L60
+ 517:../bl/SPI_MSD0_Driver.c **** 	 {
+ 518:../bl/SPI_MSD0_Driver.c **** 		 retry = 0;
+ 1277              		.loc 1 518 0
+ 1278 0024 0024     		movs	r4, #0
+ 519:../bl/SPI_MSD0_Driver.c **** 		 break;
+ 1279              		.loc 1 519 0
+ 1280 0026 05E0     		b	.L61
+ 1281              	.L60:
+ 513:../bl/SPI_MSD0_Driver.c ****   {
+ 1282              		.loc 1 513 0 discriminator 2
+ 1283 0028 2346     		mov	r3, r4
+ 1284 002a 0133     		adds	r3, r3, #1
+ 1285 002c 9CB2     		uxth	r4, r3
+ 1286              	.L59:
+ 513:../bl/SPI_MSD0_Driver.c ****   {
+ 1287              		.loc 1 513 0 is_stmt 0 discriminator 1
+ 1288 002e B4F5FA6F 		cmp	r4, #2000
+ 1289 0032 EFD3     		bcc	.L62
+ 1290              	.L61:
+ 520:../bl/SPI_MSD0_Driver.c **** 	 }
+ 521:../bl/SPI_MSD0_Driver.c ****   }
+ 522:../bl/SPI_MSD0_Driver.c **** 
+ 523:../bl/SPI_MSD0_Driver.c ****   /* Timeout return	*/
+ 524:../bl/SPI_MSD0_Driver.c ****   if(retry == 2000)
+ 1291              		.loc 1 524 0 is_stmt 1
+ 1292 0034 B4F5FA6F 		cmp	r4, #2000
+ 1293 0038 01D1     		bne	.L63
+ 525:../bl/SPI_MSD0_Driver.c ****   {
+ 526:../bl/SPI_MSD0_Driver.c **** 	 MSD0_card_disable();
+ 527:../bl/SPI_MSD0_Driver.c **** 	 return 1;
+ 1294              		.loc 1 527 0
+ 1295 003a 0123     		movs	r3, #1
+ 1296 003c 1DE0     		b	.L64
+ 1297              	.L63:
+ 528:../bl/SPI_MSD0_Driver.c ****   }
+ 529:../bl/SPI_MSD0_Driver.c **** 
+ 530:../bl/SPI_MSD0_Driver.c ****   /* Start reading */
+ 531:../bl/SPI_MSD0_Driver.c ****   for(retry=0; retry<len; retry++)
+ 1298              		.loc 1 531 0
+ 1299 003e 0024     		movs	r4, #0
+ 1300 0040 0BE0     		b	.L65
+ 1301              	.L66:
+ 532:../bl/SPI_MSD0_Driver.c ****   {
+ 533:../bl/SPI_MSD0_Driver.c ****      *(buff+retry) = MSD0_spi_read_write(DUMMY_BYTE);
+ 1302              		.loc 1 533 0 discriminator 3
+ 1303 0042 2246     		mov	r2, r4
+ 1304 0044 7B68     		ldr	r3, [r7, #4]
+ 1305 0046 9D18     		adds	r5, r3, r2
+ 1306 0048 FF20     		movs	r0, #255
+ 1307 004a FFF7FEFF 		bl	MSD0_spi_read_write
+ 1308 004e 0346     		mov	r3, r0
+ 1309 0050 DBB2     		uxtb	r3, r3
+ 1310 0052 2B70     		strb	r3, [r5]
+ 531:../bl/SPI_MSD0_Driver.c ****   {
+ 1311              		.loc 1 531 0 discriminator 3
+ 1312 0054 2346     		mov	r3, r4
+ 1313 0056 0133     		adds	r3, r3, #1
+ 1314 0058 9CB2     		uxth	r4, r3
+ 1315              	.L65:
+ 531:../bl/SPI_MSD0_Driver.c ****   {
+ 1316              		.loc 1 531 0 is_stmt 0 discriminator 1
+ 1317 005a 7B88     		ldrh	r3, [r7, #2]
+ 1318 005c A342     		cmp	r3, r4
+ 1319 005e F0D8     		bhi	.L66
+ 534:../bl/SPI_MSD0_Driver.c ****   }
+ 535:../bl/SPI_MSD0_Driver.c **** 
+ 536:../bl/SPI_MSD0_Driver.c ****   /* 2bytes dummy CRC */
+ 537:../bl/SPI_MSD0_Driver.c ****   MSD0_spi_read_write(DUMMY_BYTE);
+ 1320              		.loc 1 537 0 is_stmt 1
+ 1321 0060 FF20     		movs	r0, #255
+ 1322 0062 FFF7FEFF 		bl	MSD0_spi_read_write
+ 538:../bl/SPI_MSD0_Driver.c ****   MSD0_spi_read_write(DUMMY_BYTE);
+ 1323              		.loc 1 538 0
+ 1324 0066 FF20     		movs	r0, #255
+ 1325 0068 FFF7FEFF 		bl	MSD0_spi_read_write
+ 539:../bl/SPI_MSD0_Driver.c **** 
+ 540:../bl/SPI_MSD0_Driver.c ****   /* chip disable and dummy byte */
+ 541:../bl/SPI_MSD0_Driver.c ****   if(release)
+ 1326              		.loc 1 541 0
+ 1327 006c 7B78     		ldrb	r3, [r7, #1]	@ zero_extendqisi2
+ 1328 006e 002B     		cmp	r3, #0
+ 1329 0070 02D0     		beq	.L67
+ 542:../bl/SPI_MSD0_Driver.c ****   {
+ 543:../bl/SPI_MSD0_Driver.c **** 	 MSD0_card_disable();
+ 544:../bl/SPI_MSD0_Driver.c **** 	 MSD0_spi_read_write(DUMMY_BYTE);
+ 1330              		.loc 1 544 0
+ 1331 0072 FF20     		movs	r0, #255
+ 1332 0074 FFF7FEFF 		bl	MSD0_spi_read_write
+ 1333              	.L67:
+ 545:../bl/SPI_MSD0_Driver.c ****   }
+ 546:../bl/SPI_MSD0_Driver.c **** 
+ 547:../bl/SPI_MSD0_Driver.c ****   return 0;
+ 1334              		.loc 1 547 0
+ 1335 0078 0023     		movs	r3, #0
+ 1336              	.L64:
+ 548:../bl/SPI_MSD0_Driver.c **** }
+ 1337              		.loc 1 548 0
+ 1338 007a 1846     		mov	r0, r3
+ 1339 007c 1037     		adds	r7, r7, #16
+ 1340              		.cfi_def_cfa_offset 16
+ 1341 007e BD46     		mov	sp, r7
+ 1342              		.cfi_def_cfa_register 13
+ 1343              		@ sp needed
+ 1344 0080 B0BD     		pop	{r4, r5, r7, pc}
+ 1345              		.cfi_endproc
+ 1346              	.LFE5:
+ 1348 0082 00BF     		.section	.text.MSD0_ReadSingleBlock,"ax",%progbits
+ 1349              		.align	2
+ 1350              		.global	MSD0_ReadSingleBlock
+ 1351              		.thumb
+ 1352              		.thumb_func
+ 1354              	MSD0_ReadSingleBlock:
+ 1355              	.LFB6:
+ 549:../bl/SPI_MSD0_Driver.c **** /*******************************************************************************
+ 550:../bl/SPI_MSD0_Driver.c ****  * Function Name  : MSD0_ReadSingleBlock
+ 551:../bl/SPI_MSD0_Driver.c ****  * Description    : None
+ 552:../bl/SPI_MSD0_Driver.c ****  * Input          : - sector:
+ 553:../bl/SPI_MSD0_Driver.c ****  *				   - buffer:
+ 554:../bl/SPI_MSD0_Driver.c ****  * Output         : None
+ 555:../bl/SPI_MSD0_Driver.c ****  * Return         : None
+ 556:../bl/SPI_MSD0_Driver.c ****  * Attention		 : None
+ 557:../bl/SPI_MSD0_Driver.c ****  *******************************************************************************/
+ 558:../bl/SPI_MSD0_Driver.c **** int MSD0_ReadSingleBlock(unsigned int sector, unsigned char *buffer)
+ 559:../bl/SPI_MSD0_Driver.c **** {
+ 1356              		.loc 1 559 0
+ 1357              		.cfi_startproc
+ 1358              		@ args = 0, pretend = 0, frame = 16
+ 1359              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1360 0000 80B5     		push	{r7, lr}
+ 1361              		.cfi_def_cfa_offset 8
+ 1362              		.cfi_offset 7, -8
+ 1363              		.cfi_offset 14, -4
+ 1364 0002 84B0     		sub	sp, sp, #16
+ 1365              		.cfi_def_cfa_offset 24
+ 1366 0004 00AF     		add	r7, sp, #0
+ 1367              		.cfi_def_cfa_register 7
+ 1368 0006 7860     		str	r0, [r7, #4]
+ 1369 0008 3960     		str	r1, [r7]
+ 560:../bl/SPI_MSD0_Driver.c ****   unsigned char r1;
+ 561:../bl/SPI_MSD0_Driver.c **** 
+ 562:../bl/SPI_MSD0_Driver.c ****   /* if ver = SD2.0 HC, sector need <<9 */
+ 563:../bl/SPI_MSD0_Driver.c ****   if(SD0_CardInfo.CardType != CARDTYPE_SDV2HC)
+ 1370              		.loc 1 563 0
+ 1371 000a 134B     		ldr	r3, .L72
+ 1372 000c 93F84E30 		ldrb	r3, [r3, #78]	@ zero_extendqisi2
+ 1373 0010 042B     		cmp	r3, #4
+ 1374 0012 02D0     		beq	.L69
+ 564:../bl/SPI_MSD0_Driver.c ****   {
+ 565:../bl/SPI_MSD0_Driver.c **** 	 sector = sector<<9;
+ 1375              		.loc 1 565 0
+ 1376 0014 7B68     		ldr	r3, [r7, #4]
+ 1377 0016 5B02     		lsls	r3, r3, #9
+ 1378 0018 7B60     		str	r3, [r7, #4]
+ 1379              	.L69:
+ 566:../bl/SPI_MSD0_Driver.c ****   }
+ 567:../bl/SPI_MSD0_Driver.c **** 
+ 568:../bl/SPI_MSD0_Driver.c ****   /* Send CMD17 : Read single block command */
+ 569:../bl/SPI_MSD0_Driver.c ****   r1 = MSD0_send_command(CMD17, sector, 0);
+ 1380              		.loc 1 569 0
+ 1381 001a 1120     		movs	r0, #17
+ 1382 001c 7968     		ldr	r1, [r7, #4]
+ 1383 001e 0022     		movs	r2, #0
+ 1384 0020 FFF7FEFF 		bl	MSD0_send_command
+ 1385 0024 0346     		mov	r3, r0
+ 1386 0026 FB73     		strb	r3, [r7, #15]
+ 570:../bl/SPI_MSD0_Driver.c **** 
+ 571:../bl/SPI_MSD0_Driver.c ****   if(r1 != 0x00)
+ 1387              		.loc 1 571 0
+ 1388 0028 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 1389 002a 002B     		cmp	r3, #0
+ 1390 002c 01D0     		beq	.L70
+ 572:../bl/SPI_MSD0_Driver.c ****   {
+ 573:../bl/SPI_MSD0_Driver.c **** 	 return 1;
+ 1391              		.loc 1 573 0
+ 1392 002e 0123     		movs	r3, #1
+ 1393 0030 0DE0     		b	.L71
+ 1394              	.L70:
+ 574:../bl/SPI_MSD0_Driver.c ****   }
+ 575:../bl/SPI_MSD0_Driver.c **** 
+ 576:../bl/SPI_MSD0_Driver.c ****   /* Start read and return the result */
+ 577:../bl/SPI_MSD0_Driver.c ****   r1 = MSD0_read_buffer(buffer, MSD_BLOCKSIZE, RELEASE);
+ 1395              		.loc 1 577 0
+ 1396 0032 3868     		ldr	r0, [r7]
+ 1397 0034 4FF40071 		mov	r1, #512
+ 1398 0038 0122     		movs	r2, #1
+ 1399 003a FFF7FEFF 		bl	MSD0_read_buffer
+ 1400 003e 0346     		mov	r3, r0
+ 1401 0040 FB73     		strb	r3, [r7, #15]
+ 578:../bl/SPI_MSD0_Driver.c **** 
+ 579:../bl/SPI_MSD0_Driver.c ****   /* Send stop data transmit command - CMD12 */
+ 580:../bl/SPI_MSD0_Driver.c ****   MSD0_send_command(CMD12, 0, 0);
+ 1402              		.loc 1 580 0
+ 1403 0042 0C20     		movs	r0, #12
+ 1404 0044 0021     		movs	r1, #0
+ 1405 0046 0022     		movs	r2, #0
+ 1406 0048 FFF7FEFF 		bl	MSD0_send_command
+ 581:../bl/SPI_MSD0_Driver.c **** 
+ 582:../bl/SPI_MSD0_Driver.c ****   return r1;
+ 1407              		.loc 1 582 0
+ 1408 004c FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 1409              	.L71:
+ 583:../bl/SPI_MSD0_Driver.c **** }
+ 1410              		.loc 1 583 0
+ 1411 004e 1846     		mov	r0, r3
+ 1412 0050 1037     		adds	r7, r7, #16
+ 1413              		.cfi_def_cfa_offset 8
+ 1414 0052 BD46     		mov	sp, r7
+ 1415              		.cfi_def_cfa_register 13
+ 1416              		@ sp needed
+ 1417 0054 80BD     		pop	{r7, pc}
+ 1418              	.L73:
+ 1419 0056 00BF     		.align	2
+ 1420              	.L72:
+ 1421 0058 00000000 		.word	SD0_CardInfo
+ 1422              		.cfi_endproc
+ 1423              	.LFE6:
+ 1425              		.section	.text.MSD0_ReadMultiBlock,"ax",%progbits
+ 1426              		.align	2
+ 1427              		.global	MSD0_ReadMultiBlock
+ 1428              		.thumb
+ 1429              		.thumb_func
+ 1431              	MSD0_ReadMultiBlock:
+ 1432              	.LFB7:
+ 584:../bl/SPI_MSD0_Driver.c **** 
+ 585:../bl/SPI_MSD0_Driver.c **** 
+ 586:../bl/SPI_MSD0_Driver.c **** /*******************************************************************************
+ 587:../bl/SPI_MSD0_Driver.c ****  * Function Name  : MSD0_ReadMultiBlock
+ 588:../bl/SPI_MSD0_Driver.c ****  * Description    : None
+ 589:../bl/SPI_MSD0_Driver.c ****  * Input          : - sector:
+ 590:../bl/SPI_MSD0_Driver.c ****  *				   - buffer:
+ 591:../bl/SPI_MSD0_Driver.c ****  *                  - NbrOfSector:
+ 592:../bl/SPI_MSD0_Driver.c ****  * Output         : None
+ 593:../bl/SPI_MSD0_Driver.c ****  * Return         : None
+ 594:../bl/SPI_MSD0_Driver.c ****  * Attention		 : None
+ 595:../bl/SPI_MSD0_Driver.c ****  *******************************************************************************/
+ 596:../bl/SPI_MSD0_Driver.c **** int MSD0_ReadMultiBlock(unsigned int sector, unsigned char *buffer, unsigned int NbrOfSector)
+ 597:../bl/SPI_MSD0_Driver.c **** {
+ 1433              		.loc 1 597 0
+ 1434              		.cfi_startproc
+ 1435              		@ args = 0, pretend = 0, frame = 24
+ 1436              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1437 0000 90B5     		push	{r4, r7, lr}
+ 1438              		.cfi_def_cfa_offset 12
+ 1439              		.cfi_offset 4, -12
+ 1440              		.cfi_offset 7, -8
+ 1441              		.cfi_offset 14, -4
+ 1442 0002 87B0     		sub	sp, sp, #28
+ 1443              		.cfi_def_cfa_offset 40
+ 1444 0004 00AF     		add	r7, sp, #0
+ 1445              		.cfi_def_cfa_register 7
+ 1446 0006 F860     		str	r0, [r7, #12]
+ 1447 0008 B960     		str	r1, [r7, #8]
+ 1448 000a 7A60     		str	r2, [r7, #4]
+ 598:../bl/SPI_MSD0_Driver.c ****   unsigned char r1;
+ 599:../bl/SPI_MSD0_Driver.c ****   register unsigned int i;
+ 600:../bl/SPI_MSD0_Driver.c **** 
+ 601:../bl/SPI_MSD0_Driver.c ****   /* if ver = SD2.0 HC, sector need <<9 */
+ 602:../bl/SPI_MSD0_Driver.c ****   if(SD0_CardInfo.CardType != CARDTYPE_SDV2HC)
+ 1449              		.loc 1 602 0
+ 1450 000c 1C4B     		ldr	r3, .L81
+ 1451 000e 93F84E30 		ldrb	r3, [r3, #78]	@ zero_extendqisi2
+ 1452 0012 042B     		cmp	r3, #4
+ 1453 0014 02D0     		beq	.L75
+ 603:../bl/SPI_MSD0_Driver.c ****   {
+ 604:../bl/SPI_MSD0_Driver.c **** 	 sector = sector<<9;
+ 1454              		.loc 1 604 0
+ 1455 0016 FB68     		ldr	r3, [r7, #12]
+ 1456 0018 5B02     		lsls	r3, r3, #9
+ 1457 001a FB60     		str	r3, [r7, #12]
+ 1458              	.L75:
+ 605:../bl/SPI_MSD0_Driver.c ****   }
+ 606:../bl/SPI_MSD0_Driver.c **** 
+ 607:../bl/SPI_MSD0_Driver.c ****   /* Send CMD18 : Read multi block command */
+ 608:../bl/SPI_MSD0_Driver.c ****   r1 = MSD0_send_command(CMD18, sector, 0);
+ 1459              		.loc 1 608 0
+ 1460 001c 1220     		movs	r0, #18
+ 1461 001e F968     		ldr	r1, [r7, #12]
+ 1462 0020 0022     		movs	r2, #0
+ 1463 0022 FFF7FEFF 		bl	MSD0_send_command
+ 1464 0026 0346     		mov	r3, r0
+ 1465 0028 FB75     		strb	r3, [r7, #23]
+ 609:../bl/SPI_MSD0_Driver.c ****   if(r1 != 0x00)
+ 1466              		.loc 1 609 0
+ 1467 002a FB7D     		ldrb	r3, [r7, #23]	@ zero_extendqisi2
+ 1468 002c 002B     		cmp	r3, #0
+ 1469 002e 01D0     		beq	.L76
+ 610:../bl/SPI_MSD0_Driver.c ****   {
+ 611:../bl/SPI_MSD0_Driver.c ****      return 1;
+ 1470              		.loc 1 611 0
+ 1471 0030 0123     		movs	r3, #1
+ 1472 0032 21E0     		b	.L77
+ 1473              	.L76:
+ 612:../bl/SPI_MSD0_Driver.c ****   }
+ 613:../bl/SPI_MSD0_Driver.c **** 
+ 614:../bl/SPI_MSD0_Driver.c ****   /* Start read	*/
+ 615:../bl/SPI_MSD0_Driver.c ****   for(i=0; i<NbrOfSector; i++)
+ 1474              		.loc 1 615 0
+ 1475 0034 0024     		movs	r4, #0
+ 1476 0036 13E0     		b	.L78
+ 1477              	.L80:
+ 616:../bl/SPI_MSD0_Driver.c ****   {
+ 617:../bl/SPI_MSD0_Driver.c ****      if(MSD0_read_buffer(buffer+i*MSD_BLOCKSIZE, MSD_BLOCKSIZE, HOLD))
+ 1478              		.loc 1 617 0
+ 1479 0038 6302     		lsls	r3, r4, #9
+ 1480 003a BA68     		ldr	r2, [r7, #8]
+ 1481 003c 1344     		add	r3, r3, r2
+ 1482 003e 1846     		mov	r0, r3
+ 1483 0040 4FF40071 		mov	r1, #512
+ 1484 0044 0022     		movs	r2, #0
+ 1485 0046 FFF7FEFF 		bl	MSD0_read_buffer
+ 1486 004a 0346     		mov	r3, r0
+ 1487 004c 002B     		cmp	r3, #0
+ 1488 004e 06D0     		beq	.L79
+ 618:../bl/SPI_MSD0_Driver.c ****      {
+ 619:../bl/SPI_MSD0_Driver.c **** 		 /* Send stop data transmit command - CMD12	*/
+ 620:../bl/SPI_MSD0_Driver.c **** 		 MSD0_send_command(CMD12, 0, 0);
+ 1489              		.loc 1 620 0
+ 1490 0050 0C20     		movs	r0, #12
+ 1491 0052 0021     		movs	r1, #0
+ 1492 0054 0022     		movs	r2, #0
+ 1493 0056 FFF7FEFF 		bl	MSD0_send_command
+ 621:../bl/SPI_MSD0_Driver.c **** 		 /* chip disable and dummy byte */
+ 622:../bl/SPI_MSD0_Driver.c **** 		 MSD0_card_disable();
+ 623:../bl/SPI_MSD0_Driver.c **** 		 return 2;
+ 1494              		.loc 1 623 0
+ 1495 005a 0223     		movs	r3, #2
+ 1496 005c 0CE0     		b	.L77
+ 1497              	.L79:
+ 615:../bl/SPI_MSD0_Driver.c ****   {
+ 1498              		.loc 1 615 0 discriminator 2
+ 1499 005e 0134     		adds	r4, r4, #1
+ 1500              	.L78:
+ 615:../bl/SPI_MSD0_Driver.c ****   {
+ 1501              		.loc 1 615 0 is_stmt 0 discriminator 1
+ 1502 0060 7B68     		ldr	r3, [r7, #4]
+ 1503 0062 9C42     		cmp	r4, r3
+ 1504 0064 E8D3     		bcc	.L80
+ 624:../bl/SPI_MSD0_Driver.c ****      }
+ 625:../bl/SPI_MSD0_Driver.c ****   }
+ 626:../bl/SPI_MSD0_Driver.c **** 
+ 627:../bl/SPI_MSD0_Driver.c ****   /* Send stop data transmit command - CMD12 */
+ 628:../bl/SPI_MSD0_Driver.c ****   MSD0_send_command(CMD12, 0, 0);
+ 1505              		.loc 1 628 0 is_stmt 1
+ 1506 0066 0C20     		movs	r0, #12
+ 1507 0068 0021     		movs	r1, #0
+ 1508 006a 0022     		movs	r2, #0
+ 1509 006c FFF7FEFF 		bl	MSD0_send_command
+ 629:../bl/SPI_MSD0_Driver.c **** 
+ 630:../bl/SPI_MSD0_Driver.c ****   /* chip disable and dummy byte */
+ 631:../bl/SPI_MSD0_Driver.c ****   MSD0_card_disable();
+ 632:../bl/SPI_MSD0_Driver.c ****   MSD0_spi_read_write(DUMMY_BYTE);
+ 1510              		.loc 1 632 0
+ 1511 0070 FF20     		movs	r0, #255
+ 1512 0072 FFF7FEFF 		bl	MSD0_spi_read_write
+ 633:../bl/SPI_MSD0_Driver.c **** 
+ 634:../bl/SPI_MSD0_Driver.c ****   return 0;
+ 1513              		.loc 1 634 0
+ 1514 0076 0023     		movs	r3, #0
+ 1515              	.L77:
+ 635:../bl/SPI_MSD0_Driver.c **** }
+ 1516              		.loc 1 635 0
+ 1517 0078 1846     		mov	r0, r3
+ 1518 007a 1C37     		adds	r7, r7, #28
+ 1519              		.cfi_def_cfa_offset 12
+ 1520 007c BD46     		mov	sp, r7
+ 1521              		.cfi_def_cfa_register 13
+ 1522              		@ sp needed
+ 1523 007e 90BD     		pop	{r4, r7, pc}
+ 1524              	.L82:
+ 1525              		.align	2
+ 1526              	.L81:
+ 1527 0080 00000000 		.word	SD0_CardInfo
+ 1528              		.cfi_endproc
+ 1529              	.LFE7:
+ 1531              		.section	.text.MSD0_WriteSingleBlock,"ax",%progbits
+ 1532              		.align	2
+ 1533              		.global	MSD0_WriteSingleBlock
+ 1534              		.thumb
+ 1535              		.thumb_func
+ 1537              	MSD0_WriteSingleBlock:
+ 1538              	.LFB8:
+ 636:../bl/SPI_MSD0_Driver.c **** 
+ 637:../bl/SPI_MSD0_Driver.c **** /*******************************************************************************
+ 638:../bl/SPI_MSD0_Driver.c ****  * Function Name  : MSD0_WriteSingleBlock
+ 639:../bl/SPI_MSD0_Driver.c ****  * Description    : None
+ 640:../bl/SPI_MSD0_Driver.c ****  * Input          : - sector:
+ 641:../bl/SPI_MSD0_Driver.c ****  *				   - buffer:
+ 642:../bl/SPI_MSD0_Driver.c ****  * Output         : None
+ 643:../bl/SPI_MSD0_Driver.c ****  * Return         : None
+ 644:../bl/SPI_MSD0_Driver.c ****  * Attention		 : None
+ 645:../bl/SPI_MSD0_Driver.c ****  *******************************************************************************/
+ 646:../bl/SPI_MSD0_Driver.c **** int MSD0_WriteSingleBlock(unsigned int sector, unsigned char *buffer)
+ 647:../bl/SPI_MSD0_Driver.c **** {
+ 1539              		.loc 1 647 0
+ 1540              		.cfi_startproc
+ 1541              		@ args = 0, pretend = 0, frame = 24
+ 1542              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1543 0000 90B5     		push	{r4, r7, lr}
+ 1544              		.cfi_def_cfa_offset 12
+ 1545              		.cfi_offset 4, -12
+ 1546              		.cfi_offset 7, -8
+ 1547              		.cfi_offset 14, -4
+ 1548 0002 87B0     		sub	sp, sp, #28
+ 1549              		.cfi_def_cfa_offset 40
+ 1550 0004 00AF     		add	r7, sp, #0
+ 1551              		.cfi_def_cfa_register 7
+ 1552 0006 7860     		str	r0, [r7, #4]
+ 1553 0008 3960     		str	r1, [r7]
+ 648:../bl/SPI_MSD0_Driver.c ****   unsigned char r1;
+ 649:../bl/SPI_MSD0_Driver.c ****   register unsigned short i;
+ 650:../bl/SPI_MSD0_Driver.c ****   unsigned int retry;
+ 651:../bl/SPI_MSD0_Driver.c **** 
+ 652:../bl/SPI_MSD0_Driver.c ****   /* if ver = SD2.0 HC, sector need <<9 */
+ 653:../bl/SPI_MSD0_Driver.c ****   if(SD0_CardInfo.CardType != CARDTYPE_SDV2HC)
+ 1554              		.loc 1 653 0
+ 1555 000a 364B     		ldr	r3, .L92
+ 1556 000c 93F84E30 		ldrb	r3, [r3, #78]	@ zero_extendqisi2
+ 1557 0010 042B     		cmp	r3, #4
+ 1558 0012 0CD0     		beq	.L84
+ 1559              	.LBB8:
+ 654:../bl/SPI_MSD0_Driver.c ****   {
+ 655:../bl/SPI_MSD0_Driver.c **** 	  {
+ 656:../bl/SPI_MSD0_Driver.c **** 		  char buf[3];
+ 657:../bl/SPI_MSD0_Driver.c **** 		  printf("\r\n SD");
+ 658:../bl/SPI_MSD0_Driver.c **** 		  sprintf(buf,"%x",SD0_CardInfo.CardType);
+ 1560              		.loc 1 658 0
+ 1561 0014 334B     		ldr	r3, .L92
+ 1562 0016 93F84E30 		ldrb	r3, [r3, #78]	@ zero_extendqisi2
+ 1563 001a 1A46     		mov	r2, r3
+ 1564 001c 07F11003 		add	r3, r7, #16
+ 1565 0020 1846     		mov	r0, r3
+ 1566 0022 3149     		ldr	r1, .L92+4
+ 1567 0024 FFF7FEFF 		bl	sprintf
+ 1568              	.LBE8:
+ 659:../bl/SPI_MSD0_Driver.c **** 		  printf(buf);
+ 660:../bl/SPI_MSD0_Driver.c **** 	  }
+ 661:../bl/SPI_MSD0_Driver.c **** 	  sector = sector<<9;
+ 1569              		.loc 1 661 0
+ 1570 0028 7B68     		ldr	r3, [r7, #4]
+ 1571 002a 5B02     		lsls	r3, r3, #9
+ 1572 002c 7B60     		str	r3, [r7, #4]
+ 1573              	.L84:
+ 662:../bl/SPI_MSD0_Driver.c ****   }
+ 663:../bl/SPI_MSD0_Driver.c **** 
+ 664:../bl/SPI_MSD0_Driver.c ****   /* Send CMD24 : Write single block command */
+ 665:../bl/SPI_MSD0_Driver.c ****   r1 = MSD0_send_command(CMD24, sector, 0);
+ 1574              		.loc 1 665 0
+ 1575 002e 1820     		movs	r0, #24
+ 1576 0030 7968     		ldr	r1, [r7, #4]
+ 1577 0032 0022     		movs	r2, #0
+ 1578 0034 FFF7FEFF 		bl	MSD0_send_command
+ 1579 0038 0346     		mov	r3, r0
+ 1580 003a FB74     		strb	r3, [r7, #19]
+ 1581              	.LBB9:
+ 666:../bl/SPI_MSD0_Driver.c ****   {
+ 667:../bl/SPI_MSD0_Driver.c **** 	  char buf[3];
+ 668:../bl/SPI_MSD0_Driver.c **** 	  printf("\r\n Send CMD24 : Write single block command");
+ 669:../bl/SPI_MSD0_Driver.c **** 	  sprintf(buf,"%x",r1);
+ 1582              		.loc 1 669 0
+ 1583 003c FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+ 1584 003e 07F10C02 		add	r2, r7, #12
+ 1585 0042 1046     		mov	r0, r2
+ 1586 0044 2849     		ldr	r1, .L92+4
+ 1587 0046 1A46     		mov	r2, r3
+ 1588 0048 FFF7FEFF 		bl	sprintf
+ 1589              	.LBE9:
+ 670:../bl/SPI_MSD0_Driver.c **** 	  printf(buf);
+ 671:../bl/SPI_MSD0_Driver.c ****   }
+ 672:../bl/SPI_MSD0_Driver.c ****   if(r1 != 0x00)
+ 1590              		.loc 1 672 0
+ 1591 004c FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+ 1592 004e 002B     		cmp	r3, #0
+ 1593 0050 01D0     		beq	.L85
+ 673:../bl/SPI_MSD0_Driver.c ****   {
+ 674:../bl/SPI_MSD0_Driver.c **** 	 return 1;
+ 1594              		.loc 1 674 0
+ 1595 0052 0123     		movs	r3, #1
+ 1596 0054 41E0     		b	.L86
+ 1597              	.L85:
+ 675:../bl/SPI_MSD0_Driver.c ****   }
+ 676:../bl/SPI_MSD0_Driver.c **** 
+ 677:../bl/SPI_MSD0_Driver.c ****   /* Card enable, Prepare to write */
+ 678:../bl/SPI_MSD0_Driver.c ****   MSD0_card_enable();
+ 679:../bl/SPI_MSD0_Driver.c ****   MSD0_spi_read_write(DUMMY_BYTE);
+ 1598              		.loc 1 679 0
+ 1599 0056 FF20     		movs	r0, #255
+ 1600 0058 FFF7FEFF 		bl	MSD0_spi_read_write
+ 680:../bl/SPI_MSD0_Driver.c ****   MSD0_spi_read_write(DUMMY_BYTE);
+ 1601              		.loc 1 680 0
+ 1602 005c FF20     		movs	r0, #255
+ 1603 005e FFF7FEFF 		bl	MSD0_spi_read_write
+ 681:../bl/SPI_MSD0_Driver.c ****   MSD0_spi_read_write(DUMMY_BYTE);
+ 1604              		.loc 1 681 0
+ 1605 0062 FF20     		movs	r0, #255
+ 1606 0064 FFF7FEFF 		bl	MSD0_spi_read_write
+ 682:../bl/SPI_MSD0_Driver.c ****   /* Start data write token: 0xFE */
+ 683:../bl/SPI_MSD0_Driver.c ****   MSD0_spi_read_write(0xFE);
+ 1607              		.loc 1 683 0
+ 1608 0068 FE20     		movs	r0, #254
+ 1609 006a FFF7FEFF 		bl	MSD0_spi_read_write
+ 684:../bl/SPI_MSD0_Driver.c **** 
+ 685:../bl/SPI_MSD0_Driver.c ****   /* Start single block write the data buffer */
+ 686:../bl/SPI_MSD0_Driver.c ****   for(i=0; i<MSD_BLOCKSIZE; i++)
+ 1610              		.loc 1 686 0
+ 1611 006e 0024     		movs	r4, #0
+ 1612 0070 09E0     		b	.L87
+ 1613              	.L88:
+ 687:../bl/SPI_MSD0_Driver.c ****   {
+ 688:../bl/SPI_MSD0_Driver.c ****     MSD0_spi_read_write(*buffer++);
+ 1614              		.loc 1 688 0 discriminator 3
+ 1615 0072 3B68     		ldr	r3, [r7]
+ 1616 0074 5A1C     		adds	r2, r3, #1
+ 1617 0076 3A60     		str	r2, [r7]
+ 1618 0078 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1619 007a 1846     		mov	r0, r3
+ 1620 007c FFF7FEFF 		bl	MSD0_spi_read_write
+ 686:../bl/SPI_MSD0_Driver.c ****   {
+ 1621              		.loc 1 686 0 discriminator 3
+ 1622 0080 2346     		mov	r3, r4
+ 1623 0082 0133     		adds	r3, r3, #1
+ 1624 0084 9CB2     		uxth	r4, r3
+ 1625              	.L87:
+ 686:../bl/SPI_MSD0_Driver.c ****   {
+ 1626              		.loc 1 686 0 is_stmt 0 discriminator 1
+ 1627 0086 B4F5007F 		cmp	r4, #512
+ 1628 008a F2D3     		bcc	.L88
+ 689:../bl/SPI_MSD0_Driver.c ****   }
+ 690:../bl/SPI_MSD0_Driver.c **** 
+ 691:../bl/SPI_MSD0_Driver.c ****   /* 2Bytes dummy CRC */
+ 692:../bl/SPI_MSD0_Driver.c ****   MSD0_spi_read_write(DUMMY_BYTE);
+ 1629              		.loc 1 692 0 is_stmt 1
+ 1630 008c FF20     		movs	r0, #255
+ 1631 008e FFF7FEFF 		bl	MSD0_spi_read_write
+ 693:../bl/SPI_MSD0_Driver.c ****   MSD0_spi_read_write(DUMMY_BYTE);
+ 1632              		.loc 1 693 0
+ 1633 0092 FF20     		movs	r0, #255
+ 1634 0094 FFF7FEFF 		bl	MSD0_spi_read_write
+ 694:../bl/SPI_MSD0_Driver.c **** 
+ 695:../bl/SPI_MSD0_Driver.c ****   /* MSD card accept the data */
+ 696:../bl/SPI_MSD0_Driver.c ****   r1 = MSD0_spi_read_write(DUMMY_BYTE);
+ 1635              		.loc 1 696 0
+ 1636 0098 FF20     		movs	r0, #255
+ 1637 009a FFF7FEFF 		bl	MSD0_spi_read_write
+ 1638 009e 0346     		mov	r3, r0
+ 1639 00a0 FB74     		strb	r3, [r7, #19]
+ 697:../bl/SPI_MSD0_Driver.c ****   if((r1&0x1F) != 0x05)
+ 1640              		.loc 1 697 0
+ 1641 00a2 FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+ 1642 00a4 03F01F03 		and	r3, r3, #31
+ 1643 00a8 052B     		cmp	r3, #5
+ 1644 00aa 01D0     		beq	.L89
+ 698:../bl/SPI_MSD0_Driver.c ****   {
+ 699:../bl/SPI_MSD0_Driver.c ****     MSD0_card_disable();
+ 700:../bl/SPI_MSD0_Driver.c ****     return 2;
+ 1645              		.loc 1 700 0
+ 1646 00ac 0223     		movs	r3, #2
+ 1647 00ae 14E0     		b	.L86
+ 1648              	.L89:
+ 701:../bl/SPI_MSD0_Driver.c ****   }
+ 702:../bl/SPI_MSD0_Driver.c **** 
+ 703:../bl/SPI_MSD0_Driver.c ****   /* Wait all the data programm finished */
+ 704:../bl/SPI_MSD0_Driver.c ****   retry = 0;
+ 1649              		.loc 1 704 0
+ 1650 00b0 0023     		movs	r3, #0
+ 1651 00b2 7B61     		str	r3, [r7, #20]
+ 705:../bl/SPI_MSD0_Driver.c ****   while(MSD0_spi_read_write(DUMMY_BYTE) == 0x00)
+ 1652              		.loc 1 705 0
+ 1653 00b4 07E0     		b	.L90
+ 1654              	.L91:
+ 706:../bl/SPI_MSD0_Driver.c ****   {
+ 707:../bl/SPI_MSD0_Driver.c **** 	 /* Timeout return */
+ 708:../bl/SPI_MSD0_Driver.c **** 	 if(retry++ == 0x40000)
+ 1655              		.loc 1 708 0
+ 1656 00b6 7B69     		ldr	r3, [r7, #20]
+ 1657 00b8 5A1C     		adds	r2, r3, #1
+ 1658 00ba 7A61     		str	r2, [r7, #20]
+ 1659 00bc B3F5802F 		cmp	r3, #262144
+ 1660 00c0 01D1     		bne	.L90
+ 709:../bl/SPI_MSD0_Driver.c **** 	 {
+ 710:../bl/SPI_MSD0_Driver.c **** 	    MSD0_card_disable();
+ 711:../bl/SPI_MSD0_Driver.c **** 	    return 3;
+ 1661              		.loc 1 711 0
+ 1662 00c2 0323     		movs	r3, #3
+ 1663 00c4 09E0     		b	.L86
+ 1664              	.L90:
+ 705:../bl/SPI_MSD0_Driver.c ****   {
+ 1665              		.loc 1 705 0
+ 1666 00c6 FF20     		movs	r0, #255
+ 1667 00c8 FFF7FEFF 		bl	MSD0_spi_read_write
+ 1668 00cc 0346     		mov	r3, r0
+ 1669 00ce 002B     		cmp	r3, #0
+ 1670 00d0 F1D0     		beq	.L91
+ 712:../bl/SPI_MSD0_Driver.c **** 	 }
+ 713:../bl/SPI_MSD0_Driver.c ****   }
+ 714:../bl/SPI_MSD0_Driver.c **** 
+ 715:../bl/SPI_MSD0_Driver.c ****   /* chip disable and dummy byte */
+ 716:../bl/SPI_MSD0_Driver.c ****   MSD0_card_disable();
+ 717:../bl/SPI_MSD0_Driver.c ****   MSD0_spi_read_write(DUMMY_BYTE);
+ 1671              		.loc 1 717 0
+ 1672 00d2 FF20     		movs	r0, #255
+ 1673 00d4 FFF7FEFF 		bl	MSD0_spi_read_write
+ 718:../bl/SPI_MSD0_Driver.c **** 
+ 719:../bl/SPI_MSD0_Driver.c ****   return 0;
+ 1674              		.loc 1 719 0
+ 1675 00d8 0023     		movs	r3, #0
+ 1676              	.L86:
+ 720:../bl/SPI_MSD0_Driver.c **** }
+ 1677              		.loc 1 720 0
+ 1678 00da 1846     		mov	r0, r3
+ 1679 00dc 1C37     		adds	r7, r7, #28
+ 1680              		.cfi_def_cfa_offset 12
+ 1681 00de BD46     		mov	sp, r7
+ 1682              		.cfi_def_cfa_register 13
+ 1683              		@ sp needed
+ 1684 00e0 90BD     		pop	{r4, r7, pc}
+ 1685              	.L93:
+ 1686 00e2 00BF     		.align	2
+ 1687              	.L92:
+ 1688 00e4 00000000 		.word	SD0_CardInfo
+ 1689 00e8 00000000 		.word	.LC0
+ 1690              		.cfi_endproc
+ 1691              	.LFE8:
+ 1693              		.section	.text.MSD0_WriteMultiBlock,"ax",%progbits
+ 1694              		.align	2
+ 1695              		.global	MSD0_WriteMultiBlock
+ 1696              		.thumb
+ 1697              		.thumb_func
+ 1699              	MSD0_WriteMultiBlock:
+ 1700              	.LFB9:
+ 721:../bl/SPI_MSD0_Driver.c **** 
+ 722:../bl/SPI_MSD0_Driver.c **** /*******************************************************************************
+ 723:../bl/SPI_MSD0_Driver.c ****  * Function Name  : MSD0_WriteMultiBlock
+ 724:../bl/SPI_MSD0_Driver.c ****  * Description    : None
+ 725:../bl/SPI_MSD0_Driver.c ****  * Input          : - sector:
+ 726:../bl/SPI_MSD0_Driver.c ****  *				   - buffer:
+ 727:../bl/SPI_MSD0_Driver.c ****  *                  - NbrOfSector:
+ 728:../bl/SPI_MSD0_Driver.c ****  * Output         : None
+ 729:../bl/SPI_MSD0_Driver.c ****  * Return         : None
+ 730:../bl/SPI_MSD0_Driver.c ****  * Attention		 : None
+ 731:../bl/SPI_MSD0_Driver.c ****  *******************************************************************************/
+ 732:../bl/SPI_MSD0_Driver.c **** int MSD0_WriteMultiBlock(unsigned int sector, unsigned char *buffer, unsigned int NbrOfSector)
+ 733:../bl/SPI_MSD0_Driver.c **** {
+ 1701              		.loc 1 733 0
+ 1702              		.cfi_startproc
+ 1703              		@ args = 0, pretend = 0, frame = 24
+ 1704              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1705 0000 B0B5     		push	{r4, r5, r7, lr}
+ 1706              		.cfi_def_cfa_offset 16
+ 1707              		.cfi_offset 4, -16
+ 1708              		.cfi_offset 5, -12
+ 1709              		.cfi_offset 7, -8
+ 1710              		.cfi_offset 14, -4
+ 1711 0002 86B0     		sub	sp, sp, #24
+ 1712              		.cfi_def_cfa_offset 40
+ 1713 0004 00AF     		add	r7, sp, #0
+ 1714              		.cfi_def_cfa_register 7
+ 1715 0006 F860     		str	r0, [r7, #12]
+ 1716 0008 B960     		str	r1, [r7, #8]
+ 1717 000a 7A60     		str	r2, [r7, #4]
+ 734:../bl/SPI_MSD0_Driver.c ****   unsigned char r1;
+ 735:../bl/SPI_MSD0_Driver.c ****   register unsigned short i;
+ 736:../bl/SPI_MSD0_Driver.c ****   register unsigned int n;
+ 737:../bl/SPI_MSD0_Driver.c ****   unsigned int retry;
+ 738:../bl/SPI_MSD0_Driver.c **** 
+ 739:../bl/SPI_MSD0_Driver.c ****   /* if ver = SD2.0 HC, sector need <<9 */
+ 740:../bl/SPI_MSD0_Driver.c ****   if(SD0_CardInfo.CardType != CARDTYPE_SDV2HC)
+ 1718              		.loc 1 740 0
+ 1719 000c 3F4B     		ldr	r3, .L109
+ 1720 000e 93F84E30 		ldrb	r3, [r3, #78]	@ zero_extendqisi2
+ 1721 0012 042B     		cmp	r3, #4
+ 1722 0014 02D0     		beq	.L95
+ 741:../bl/SPI_MSD0_Driver.c ****   {
+ 742:../bl/SPI_MSD0_Driver.c **** 	  sector = sector<<9;
+ 1723              		.loc 1 742 0
+ 1724 0016 FB68     		ldr	r3, [r7, #12]
+ 1725 0018 5B02     		lsls	r3, r3, #9
+ 1726 001a FB60     		str	r3, [r7, #12]
+ 1727              	.L95:
+ 743:../bl/SPI_MSD0_Driver.c ****   }
+ 744:../bl/SPI_MSD0_Driver.c **** 
+ 745:../bl/SPI_MSD0_Driver.c ****   /* Send command ACMD23 berfore multi write if is not a MMC card */
+ 746:../bl/SPI_MSD0_Driver.c ****   if(SD0_CardInfo.CardType != CARDTYPE_MMC)
+ 1728              		.loc 1 746 0
+ 1729 001c 3B4B     		ldr	r3, .L109
+ 1730 001e 93F84E30 		ldrb	r3, [r3, #78]	@ zero_extendqisi2
+ 1731 0022 002B     		cmp	r3, #0
+ 1732 0024 04D0     		beq	.L96
+ 747:../bl/SPI_MSD0_Driver.c ****   {
+ 748:../bl/SPI_MSD0_Driver.c **** 	  MSD0_send_command(ACMD23, NbrOfSector, 0x00);
+ 1733              		.loc 1 748 0
+ 1734 0026 1720     		movs	r0, #23
+ 1735 0028 7968     		ldr	r1, [r7, #4]
+ 1736 002a 0022     		movs	r2, #0
+ 1737 002c FFF7FEFF 		bl	MSD0_send_command
+ 1738              	.L96:
+ 749:../bl/SPI_MSD0_Driver.c ****   }
+ 750:../bl/SPI_MSD0_Driver.c **** 
+ 751:../bl/SPI_MSD0_Driver.c ****   /* Send CMD25 : Write nulti block command	*/
+ 752:../bl/SPI_MSD0_Driver.c ****   r1 = MSD0_send_command(CMD25, sector, 0);
+ 1739              		.loc 1 752 0
+ 1740 0030 1920     		movs	r0, #25
+ 1741 0032 F968     		ldr	r1, [r7, #12]
+ 1742 0034 0022     		movs	r2, #0
+ 1743 0036 FFF7FEFF 		bl	MSD0_send_command
+ 1744 003a 0346     		mov	r3, r0
+ 1745 003c FB74     		strb	r3, [r7, #19]
+ 753:../bl/SPI_MSD0_Driver.c **** 
+ 754:../bl/SPI_MSD0_Driver.c ****   if(r1 != 0x00)
+ 1746              		.loc 1 754 0
+ 1747 003e FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+ 1748 0040 002B     		cmp	r3, #0
+ 1749 0042 01D0     		beq	.L97
+ 755:../bl/SPI_MSD0_Driver.c ****   {
+ 756:../bl/SPI_MSD0_Driver.c **** 	  return 1;
+ 1750              		.loc 1 756 0
+ 1751 0044 0123     		movs	r3, #1
+ 1752 0046 5CE0     		b	.L98
+ 1753              	.L97:
+ 757:../bl/SPI_MSD0_Driver.c ****   }
+ 758:../bl/SPI_MSD0_Driver.c **** 
+ 759:../bl/SPI_MSD0_Driver.c ****   /* Card enable, Prepare to write */
+ 760:../bl/SPI_MSD0_Driver.c ****   MSD0_card_enable();
+ 761:../bl/SPI_MSD0_Driver.c ****   MSD0_spi_read_write(DUMMY_BYTE);
+ 1754              		.loc 1 761 0
+ 1755 0048 FF20     		movs	r0, #255
+ 1756 004a FFF7FEFF 		bl	MSD0_spi_read_write
+ 762:../bl/SPI_MSD0_Driver.c ****   //MSD0_spi_read_write(DUMMY_BYTE);
+ 763:../bl/SPI_MSD0_Driver.c ****   //MSD0_spi_read_write(DUMMY_BYTE);
+ 764:../bl/SPI_MSD0_Driver.c **** 
+ 765:../bl/SPI_MSD0_Driver.c ****   for(n=0; n<NbrOfSector; n++)
+ 1757              		.loc 1 765 0
+ 1758 004e 0024     		movs	r4, #0
+ 1759 0050 35E0     		b	.L99
+ 1760              	.L105:
+ 766:../bl/SPI_MSD0_Driver.c ****   {
+ 767:../bl/SPI_MSD0_Driver.c **** 	 /* Start multi block write token: 0xFC */
+ 768:../bl/SPI_MSD0_Driver.c **** 	 MSD0_spi_read_write(0xFC);
+ 1761              		.loc 1 768 0
+ 1762 0052 FC20     		movs	r0, #252
+ 1763 0054 FFF7FEFF 		bl	MSD0_spi_read_write
+ 769:../bl/SPI_MSD0_Driver.c **** 
+ 770:../bl/SPI_MSD0_Driver.c **** 	 for(i=0; i<MSD_BLOCKSIZE; i++)
+ 1764              		.loc 1 770 0
+ 1765 0058 0025     		movs	r5, #0
+ 1766 005a 09E0     		b	.L100
+ 1767              	.L101:
+ 771:../bl/SPI_MSD0_Driver.c **** 	 {
+ 772:../bl/SPI_MSD0_Driver.c **** 		MSD0_spi_read_write(*buffer++);
+ 1768              		.loc 1 772 0 discriminator 3
+ 1769 005c BB68     		ldr	r3, [r7, #8]
+ 1770 005e 5A1C     		adds	r2, r3, #1
+ 1771 0060 BA60     		str	r2, [r7, #8]
+ 1772 0062 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 1773 0064 1846     		mov	r0, r3
+ 1774 0066 FFF7FEFF 		bl	MSD0_spi_read_write
+ 770:../bl/SPI_MSD0_Driver.c **** 	 {
+ 1775              		.loc 1 770 0 discriminator 3
+ 1776 006a 2B46     		mov	r3, r5
+ 1777 006c 0133     		adds	r3, r3, #1
+ 1778 006e 9DB2     		uxth	r5, r3
+ 1779              	.L100:
+ 770:../bl/SPI_MSD0_Driver.c **** 	 {
+ 1780              		.loc 1 770 0 is_stmt 0 discriminator 1
+ 1781 0070 B5F5007F 		cmp	r5, #512
+ 1782 0074 F2D3     		bcc	.L101
+ 773:../bl/SPI_MSD0_Driver.c **** 	 }
+ 774:../bl/SPI_MSD0_Driver.c **** 
+ 775:../bl/SPI_MSD0_Driver.c **** 	 /* 2Bytes dummy CRC */
+ 776:../bl/SPI_MSD0_Driver.c **** 	 MSD0_spi_read_write(DUMMY_BYTE);
+ 1783              		.loc 1 776 0 is_stmt 1
+ 1784 0076 FF20     		movs	r0, #255
+ 1785 0078 FFF7FEFF 		bl	MSD0_spi_read_write
+ 777:../bl/SPI_MSD0_Driver.c **** 	 MSD0_spi_read_write(DUMMY_BYTE);
+ 1786              		.loc 1 777 0
+ 1787 007c FF20     		movs	r0, #255
+ 1788 007e FFF7FEFF 		bl	MSD0_spi_read_write
+ 778:../bl/SPI_MSD0_Driver.c **** 
+ 779:../bl/SPI_MSD0_Driver.c **** 	 /* MSD card accept the data */
+ 780:../bl/SPI_MSD0_Driver.c **** 	 r1 = MSD0_spi_read_write(DUMMY_BYTE);
+ 1789              		.loc 1 780 0
+ 1790 0082 FF20     		movs	r0, #255
+ 1791 0084 FFF7FEFF 		bl	MSD0_spi_read_write
+ 1792 0088 0346     		mov	r3, r0
+ 1793 008a FB74     		strb	r3, [r7, #19]
+ 781:../bl/SPI_MSD0_Driver.c **** 	 if((r1&0x1F) != 0x05)
+ 1794              		.loc 1 781 0
+ 1795 008c FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+ 1796 008e 03F01F03 		and	r3, r3, #31
+ 1797 0092 052B     		cmp	r3, #5
+ 1798 0094 01D0     		beq	.L102
+ 782:../bl/SPI_MSD0_Driver.c **** 	 {
+ 783:../bl/SPI_MSD0_Driver.c **** 	    MSD0_card_disable();
+ 784:../bl/SPI_MSD0_Driver.c **** 	    return 2;
+ 1799              		.loc 1 784 0
+ 1800 0096 0223     		movs	r3, #2
+ 1801 0098 33E0     		b	.L98
+ 1802              	.L102:
+ 785:../bl/SPI_MSD0_Driver.c **** 	 }
+ 786:../bl/SPI_MSD0_Driver.c **** 
+ 787:../bl/SPI_MSD0_Driver.c **** 	 /* Wait all the data programm finished	*/
+ 788:../bl/SPI_MSD0_Driver.c **** 	 retry = 0;
+ 1803              		.loc 1 788 0
+ 1804 009a 0023     		movs	r3, #0
+ 1805 009c 7B61     		str	r3, [r7, #20]
+ 789:../bl/SPI_MSD0_Driver.c **** 	 while(MSD0_spi_read_write(DUMMY_BYTE) != 0xFF)
+ 1806              		.loc 1 789 0
+ 1807 009e 07E0     		b	.L103
+ 1808              	.L104:
+ 790:../bl/SPI_MSD0_Driver.c **** 	 {
+ 791:../bl/SPI_MSD0_Driver.c **** 		/* Timeout return */
+ 792:../bl/SPI_MSD0_Driver.c **** 		if(retry++ == 0x40000)
+ 1809              		.loc 1 792 0
+ 1810 00a0 7B69     		ldr	r3, [r7, #20]
+ 1811 00a2 5A1C     		adds	r2, r3, #1
+ 1812 00a4 7A61     		str	r2, [r7, #20]
+ 1813 00a6 B3F5802F 		cmp	r3, #262144
+ 1814 00aa 01D1     		bne	.L103
+ 793:../bl/SPI_MSD0_Driver.c **** 		{
+ 794:../bl/SPI_MSD0_Driver.c **** 		   MSD0_card_disable();
+ 795:../bl/SPI_MSD0_Driver.c **** 		   return 3;
+ 1815              		.loc 1 795 0
+ 1816 00ac 0323     		movs	r3, #3
+ 1817 00ae 28E0     		b	.L98
+ 1818              	.L103:
+ 789:../bl/SPI_MSD0_Driver.c **** 	 {
+ 1819              		.loc 1 789 0
+ 1820 00b0 FF20     		movs	r0, #255
+ 1821 00b2 FFF7FEFF 		bl	MSD0_spi_read_write
+ 1822 00b6 0346     		mov	r3, r0
+ 1823 00b8 FF2B     		cmp	r3, #255
+ 1824 00ba F1D1     		bne	.L104
+ 765:../bl/SPI_MSD0_Driver.c ****   {
+ 1825              		.loc 1 765 0 discriminator 2
+ 1826 00bc 0134     		adds	r4, r4, #1
+ 1827              	.L99:
+ 765:../bl/SPI_MSD0_Driver.c ****   {
+ 1828              		.loc 1 765 0 is_stmt 0 discriminator 1
+ 1829 00be 7B68     		ldr	r3, [r7, #4]
+ 1830 00c0 9C42     		cmp	r4, r3
+ 1831 00c2 C6D3     		bcc	.L105
+ 796:../bl/SPI_MSD0_Driver.c **** 		}
+ 797:../bl/SPI_MSD0_Driver.c **** 	 }
+ 798:../bl/SPI_MSD0_Driver.c ****   }
+ 799:../bl/SPI_MSD0_Driver.c **** 
+ 800:../bl/SPI_MSD0_Driver.c ****   /* Send end of transmit token: 0xFD */
+ 801:../bl/SPI_MSD0_Driver.c ****   r1 = MSD0_spi_read_write(0xFD);
+ 1832              		.loc 1 801 0 is_stmt 1
+ 1833 00c4 FD20     		movs	r0, #253
+ 1834 00c6 FFF7FEFF 		bl	MSD0_spi_read_write
+ 1835 00ca 0346     		mov	r3, r0
+ 1836 00cc FB74     		strb	r3, [r7, #19]
+ 802:../bl/SPI_MSD0_Driver.c ****   if(r1 == 0x00)
+ 1837              		.loc 1 802 0
+ 1838 00ce FB7C     		ldrb	r3, [r7, #19]	@ zero_extendqisi2
+ 1839 00d0 002B     		cmp	r3, #0
+ 1840 00d2 01D1     		bne	.L106
+ 803:../bl/SPI_MSD0_Driver.c ****   {
+ 804:../bl/SPI_MSD0_Driver.c **** 	 return 4;
+ 1841              		.loc 1 804 0
+ 1842 00d4 0423     		movs	r3, #4
+ 1843 00d6 14E0     		b	.L98
+ 1844              	.L106:
+ 805:../bl/SPI_MSD0_Driver.c ****   }
+ 806:../bl/SPI_MSD0_Driver.c **** 
+ 807:../bl/SPI_MSD0_Driver.c ****   /* Wait all the data programm finished */
+ 808:../bl/SPI_MSD0_Driver.c ****   retry = 0;
+ 1845              		.loc 1 808 0
+ 1846 00d8 0023     		movs	r3, #0
+ 1847 00da 7B61     		str	r3, [r7, #20]
+ 809:../bl/SPI_MSD0_Driver.c ****   while(MSD0_spi_read_write(DUMMY_BYTE) != 0xFF)
+ 1848              		.loc 1 809 0
+ 1849 00dc 07E0     		b	.L107
+ 1850              	.L108:
+ 810:../bl/SPI_MSD0_Driver.c ****   {
+ 811:../bl/SPI_MSD0_Driver.c **** 	 /* Timeout return */
+ 812:../bl/SPI_MSD0_Driver.c **** 	 if(retry++ == 0x40000)
+ 1851              		.loc 1 812 0
+ 1852 00de 7B69     		ldr	r3, [r7, #20]
+ 1853 00e0 5A1C     		adds	r2, r3, #1
+ 1854 00e2 7A61     		str	r2, [r7, #20]
+ 1855 00e4 B3F5802F 		cmp	r3, #262144
+ 1856 00e8 01D1     		bne	.L107
+ 813:../bl/SPI_MSD0_Driver.c **** 	 {
+ 814:../bl/SPI_MSD0_Driver.c **** 	     MSD0_card_disable();
+ 815:../bl/SPI_MSD0_Driver.c **** 	     return 5;
+ 1857              		.loc 1 815 0
+ 1858 00ea 0523     		movs	r3, #5
+ 1859 00ec 09E0     		b	.L98
+ 1860              	.L107:
+ 809:../bl/SPI_MSD0_Driver.c ****   {
+ 1861              		.loc 1 809 0
+ 1862 00ee FF20     		movs	r0, #255
+ 1863 00f0 FFF7FEFF 		bl	MSD0_spi_read_write
+ 1864 00f4 0346     		mov	r3, r0
+ 1865 00f6 FF2B     		cmp	r3, #255
+ 1866 00f8 F1D1     		bne	.L108
+ 816:../bl/SPI_MSD0_Driver.c **** 	 }
+ 817:../bl/SPI_MSD0_Driver.c ****   }
+ 818:../bl/SPI_MSD0_Driver.c **** 
+ 819:../bl/SPI_MSD0_Driver.c ****   /* chip disable and dummy byte */
+ 820:../bl/SPI_MSD0_Driver.c ****   MSD0_card_disable();
+ 821:../bl/SPI_MSD0_Driver.c ****   MSD0_spi_read_write(DUMMY_BYTE);
+ 1867              		.loc 1 821 0
+ 1868 00fa FF20     		movs	r0, #255
+ 1869 00fc FFF7FEFF 		bl	MSD0_spi_read_write
+ 822:../bl/SPI_MSD0_Driver.c **** 
+ 823:../bl/SPI_MSD0_Driver.c ****   return 0;
+ 1870              		.loc 1 823 0
+ 1871 0100 0023     		movs	r3, #0
+ 1872              	.L98:
+ 824:../bl/SPI_MSD0_Driver.c **** }
+ 1873              		.loc 1 824 0
+ 1874 0102 1846     		mov	r0, r3
+ 1875 0104 1837     		adds	r7, r7, #24
+ 1876              		.cfi_def_cfa_offset 16
+ 1877 0106 BD46     		mov	sp, r7
+ 1878              		.cfi_def_cfa_register 13
+ 1879              		@ sp needed
+ 1880 0108 B0BD     		pop	{r4, r5, r7, pc}
+ 1881              	.L110:
+ 1882 010a 00BF     		.align	2
+ 1883              	.L109:
+ 1884 010c 00000000 		.word	SD0_CardInfo
+ 1885              		.cfi_endproc
+ 1886              	.LFE9:
+ 1888              		.section	.text.MSD0_send_command,"ax",%progbits
+ 1889              		.align	2
+ 1890              		.global	MSD0_send_command
+ 1891              		.thumb
+ 1892              		.thumb_func
+ 1894              	MSD0_send_command:
+ 1895              	.LFB10:
+ 825:../bl/SPI_MSD0_Driver.c **** 
+ 826:../bl/SPI_MSD0_Driver.c **** /*******************************************************************************
+ 827:../bl/SPI_MSD0_Driver.c ****  * Function Name  : MSD0_send_command
+ 828:../bl/SPI_MSD0_Driver.c ****  * Description    : None
+ 829:../bl/SPI_MSD0_Driver.c ****  * Input          : - cmd:
+ 830:../bl/SPI_MSD0_Driver.c ****  *				   - arg:
+ 831:../bl/SPI_MSD0_Driver.c ****  *                  - crc:
+ 832:../bl/SPI_MSD0_Driver.c ****  * Output         : None
+ 833:../bl/SPI_MSD0_Driver.c ****  * Return         : R1 value, response from card
+ 834:../bl/SPI_MSD0_Driver.c ****  * Attention		 : None
+ 835:../bl/SPI_MSD0_Driver.c ****  *******************************************************************************/
+ 836:../bl/SPI_MSD0_Driver.c **** int MSD0_send_command(unsigned char cmd, unsigned int arg, unsigned char crc) {
+ 1896              		.loc 1 836 0
+ 1897              		.cfi_startproc
+ 1898              		@ args = 0, pretend = 0, frame = 16
+ 1899              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1900 0000 80B5     		push	{r7, lr}
+ 1901              		.cfi_def_cfa_offset 8
+ 1902              		.cfi_offset 7, -8
+ 1903              		.cfi_offset 14, -4
+ 1904 0002 84B0     		sub	sp, sp, #16
+ 1905              		.cfi_def_cfa_offset 24
+ 1906 0004 00AF     		add	r7, sp, #0
+ 1907              		.cfi_def_cfa_register 7
+ 1908 0006 0346     		mov	r3, r0
+ 1909 0008 3960     		str	r1, [r7]
+ 1910 000a FB71     		strb	r3, [r7, #7]
+ 1911 000c 1346     		mov	r3, r2
+ 1912 000e BB71     		strb	r3, [r7, #6]
+ 837:../bl/SPI_MSD0_Driver.c **** 	unsigned char r1;
+ 838:../bl/SPI_MSD0_Driver.c **** 	unsigned char retry;
+ 839:../bl/SPI_MSD0_Driver.c **** 
+ 840:../bl/SPI_MSD0_Driver.c **** 	/* Dummy byte and chip enable */
+ 841:../bl/SPI_MSD0_Driver.c **** 	//CS_LOW;
+ 842:../bl/SPI_MSD0_Driver.c **** 	MSD0_spi_read_write(DUMMY_BYTE);
+ 1913              		.loc 1 842 0
+ 1914 0010 FF20     		movs	r0, #255
+ 1915 0012 FFF7FEFF 		bl	MSD0_spi_read_write
+ 843:../bl/SPI_MSD0_Driver.c **** 	//CS_HIGH;
+ 844:../bl/SPI_MSD0_Driver.c **** 	MSD0_card_enable();
+ 845:../bl/SPI_MSD0_Driver.c **** 
+ 846:../bl/SPI_MSD0_Driver.c **** 	/* Command, argument and crc */
+ 847:../bl/SPI_MSD0_Driver.c **** 	//CS_LOW;
+ 848:../bl/SPI_MSD0_Driver.c **** 	MSD0_spi_read_write(cmd | 0x40);
+ 1916              		.loc 1 848 0
+ 1917 0016 FB79     		ldrb	r3, [r7, #7]
+ 1918 0018 43F04003 		orr	r3, r3, #64
+ 1919 001c DBB2     		uxtb	r3, r3
+ 1920 001e 1846     		mov	r0, r3
+ 1921 0020 FFF7FEFF 		bl	MSD0_spi_read_write
+ 849:../bl/SPI_MSD0_Driver.c **** 	MSD0_spi_read_write(arg >> 24);
+ 1922              		.loc 1 849 0
+ 1923 0024 3B68     		ldr	r3, [r7]
+ 1924 0026 1B0E     		lsrs	r3, r3, #24
+ 1925 0028 DBB2     		uxtb	r3, r3
+ 1926 002a 1846     		mov	r0, r3
+ 1927 002c FFF7FEFF 		bl	MSD0_spi_read_write
+ 850:../bl/SPI_MSD0_Driver.c **** 	MSD0_spi_read_write(arg >> 16);
+ 1928              		.loc 1 850 0
+ 1929 0030 3B68     		ldr	r3, [r7]
+ 1930 0032 1B0C     		lsrs	r3, r3, #16
+ 1931 0034 DBB2     		uxtb	r3, r3
+ 1932 0036 1846     		mov	r0, r3
+ 1933 0038 FFF7FEFF 		bl	MSD0_spi_read_write
+ 851:../bl/SPI_MSD0_Driver.c **** 	MSD0_spi_read_write(arg >> 8);
+ 1934              		.loc 1 851 0
+ 1935 003c 3B68     		ldr	r3, [r7]
+ 1936 003e 1B0A     		lsrs	r3, r3, #8
+ 1937 0040 DBB2     		uxtb	r3, r3
+ 1938 0042 1846     		mov	r0, r3
+ 1939 0044 FFF7FEFF 		bl	MSD0_spi_read_write
+ 852:../bl/SPI_MSD0_Driver.c **** 	MSD0_spi_read_write(arg);
+ 1940              		.loc 1 852 0
+ 1941 0048 3B68     		ldr	r3, [r7]
+ 1942 004a DBB2     		uxtb	r3, r3
+ 1943 004c 1846     		mov	r0, r3
+ 1944 004e FFF7FEFF 		bl	MSD0_spi_read_write
+ 853:../bl/SPI_MSD0_Driver.c **** 	MSD0_spi_read_write(crc);
+ 1945              		.loc 1 853 0
+ 1946 0052 BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 1947 0054 1846     		mov	r0, r3
+ 1948 0056 FFF7FEFF 		bl	MSD0_spi_read_write
+ 854:../bl/SPI_MSD0_Driver.c **** 	//CS_HIGH;
+ 855:../bl/SPI_MSD0_Driver.c **** 	/* Wait response, quit till timeout */
+ 856:../bl/SPI_MSD0_Driver.c **** 	for (retry = 0; retry < 200; retry++) {
+ 1949              		.loc 1 856 0
+ 1950 005a 0023     		movs	r3, #0
+ 1951 005c BB73     		strb	r3, [r7, #14]
+ 1952 005e 0BE0     		b	.L112
+ 1953              	.L115:
+ 857:../bl/SPI_MSD0_Driver.c **** 		//CS_LOW;
+ 858:../bl/SPI_MSD0_Driver.c **** 		r1 = MSD0_spi_read_write(DUMMY_BYTE);
+ 1954              		.loc 1 858 0
+ 1955 0060 FF20     		movs	r0, #255
+ 1956 0062 FFF7FEFF 		bl	MSD0_spi_read_write
+ 1957 0066 0346     		mov	r3, r0
+ 1958 0068 FB73     		strb	r3, [r7, #15]
+ 859:../bl/SPI_MSD0_Driver.c **** 		//CS_HIGH;
+ 860:../bl/SPI_MSD0_Driver.c **** 		if (r1 != 0xFF) {
+ 1959              		.loc 1 860 0
+ 1960 006a FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 1961 006c FF2B     		cmp	r3, #255
+ 1962 006e 00D0     		beq	.L113
+ 861:../bl/SPI_MSD0_Driver.c **** 			//CS_LOW;
+ 862:../bl/SPI_MSD0_Driver.c **** 			//MSD0_spi_read_write(0xa5);
+ 863:../bl/SPI_MSD0_Driver.c **** 			//MSD0_spi_read_write(r1);
+ 864:../bl/SPI_MSD0_Driver.c **** 
+ 865:../bl/SPI_MSD0_Driver.c **** 			//CS_HIGH;
+ 866:../bl/SPI_MSD0_Driver.c **** 			break;
+ 1963              		.loc 1 866 0
+ 1964 0070 05E0     		b	.L114
+ 1965              	.L113:
+ 856:../bl/SPI_MSD0_Driver.c **** 		//CS_LOW;
+ 1966              		.loc 1 856 0 discriminator 2
+ 1967 0072 BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 1968 0074 0133     		adds	r3, r3, #1
+ 1969 0076 BB73     		strb	r3, [r7, #14]
+ 1970              	.L112:
+ 856:../bl/SPI_MSD0_Driver.c **** 		//CS_LOW;
+ 1971              		.loc 1 856 0 is_stmt 0 discriminator 1
+ 1972 0078 BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 1973 007a C72B     		cmp	r3, #199
+ 1974 007c F0D9     		bls	.L115
+ 1975              	.L114:
+ 867:../bl/SPI_MSD0_Driver.c **** 		}
+ 868:../bl/SPI_MSD0_Driver.c **** 	}
+ 869:../bl/SPI_MSD0_Driver.c **** 	//MSD0_spi_read_write(0xa6);
+ 870:../bl/SPI_MSD0_Driver.c **** 	/* Chip disable and dummy byte */
+ 871:../bl/SPI_MSD0_Driver.c **** 	MSD0_card_disable();
+ 872:../bl/SPI_MSD0_Driver.c **** 	MSD0_spi_read_write(DUMMY_BYTE);
+ 1976              		.loc 1 872 0 is_stmt 1
+ 1977 007e FF20     		movs	r0, #255
+ 1978 0080 FFF7FEFF 		bl	MSD0_spi_read_write
+ 873:../bl/SPI_MSD0_Driver.c **** 
+ 874:../bl/SPI_MSD0_Driver.c **** 	return r1;
+ 1979              		.loc 1 874 0
+ 1980 0084 FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 875:../bl/SPI_MSD0_Driver.c **** }
+ 1981              		.loc 1 875 0
+ 1982 0086 1846     		mov	r0, r3
+ 1983 0088 1037     		adds	r7, r7, #16
+ 1984              		.cfi_def_cfa_offset 8
+ 1985 008a BD46     		mov	sp, r7
+ 1986              		.cfi_def_cfa_register 13
+ 1987              		@ sp needed
+ 1988 008c 80BD     		pop	{r7, pc}
+ 1989              		.cfi_endproc
+ 1990              	.LFE10:
+ 1992 008e 00BF     		.section	.text.MSD0_send_command_hold,"ax",%progbits
+ 1993              		.align	2
+ 1994              		.global	MSD0_send_command_hold
+ 1995              		.thumb
+ 1996              		.thumb_func
+ 1998              	MSD0_send_command_hold:
+ 1999              	.LFB11:
+ 876:../bl/SPI_MSD0_Driver.c **** 
+ 877:../bl/SPI_MSD0_Driver.c **** /*******************************************************************************
+ 878:../bl/SPI_MSD0_Driver.c ****  * Function Name  : MSD0_send_command_hold
+ 879:../bl/SPI_MSD0_Driver.c ****  * Description    : None
+ 880:../bl/SPI_MSD0_Driver.c ****  * Input          : - cmd:
+ 881:../bl/SPI_MSD0_Driver.c ****  *				   - arg:
+ 882:../bl/SPI_MSD0_Driver.c ****  *                  - crc:
+ 883:../bl/SPI_MSD0_Driver.c ****  * Output         : None
+ 884:../bl/SPI_MSD0_Driver.c ****  * Return         : R1 value, response from card
+ 885:../bl/SPI_MSD0_Driver.c ****  * Attention		 : None
+ 886:../bl/SPI_MSD0_Driver.c ****  *******************************************************************************/
+ 887:../bl/SPI_MSD0_Driver.c **** int MSD0_send_command_hold(unsigned char cmd, unsigned int arg,
+ 888:../bl/SPI_MSD0_Driver.c **** 		unsigned char crc) {
+ 2000              		.loc 1 888 0
+ 2001              		.cfi_startproc
+ 2002              		@ args = 0, pretend = 0, frame = 16
+ 2003              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2004 0000 80B5     		push	{r7, lr}
+ 2005              		.cfi_def_cfa_offset 8
+ 2006              		.cfi_offset 7, -8
+ 2007              		.cfi_offset 14, -4
+ 2008 0002 84B0     		sub	sp, sp, #16
+ 2009              		.cfi_def_cfa_offset 24
+ 2010 0004 00AF     		add	r7, sp, #0
+ 2011              		.cfi_def_cfa_register 7
+ 2012 0006 0346     		mov	r3, r0
+ 2013 0008 3960     		str	r1, [r7]
+ 2014 000a FB71     		strb	r3, [r7, #7]
+ 2015 000c 1346     		mov	r3, r2
+ 2016 000e BB71     		strb	r3, [r7, #6]
+ 889:../bl/SPI_MSD0_Driver.c **** 	unsigned char r1;
+ 890:../bl/SPI_MSD0_Driver.c **** 	unsigned char retry;
+ 891:../bl/SPI_MSD0_Driver.c **** 
+ 892:../bl/SPI_MSD0_Driver.c **** 	/* Dummy byte and chip enable */
+ 893:../bl/SPI_MSD0_Driver.c **** 	MSD0_spi_read_write(DUMMY_BYTE);
+ 2017              		.loc 1 893 0
+ 2018 0010 FF20     		movs	r0, #255
+ 2019 0012 FFF7FEFF 		bl	MSD0_spi_read_write
+ 894:../bl/SPI_MSD0_Driver.c **** 	MSD0_card_enable();
+ 895:../bl/SPI_MSD0_Driver.c **** 
+ 896:../bl/SPI_MSD0_Driver.c **** 	/* Command, argument and crc */
+ 897:../bl/SPI_MSD0_Driver.c **** 	MSD0_spi_read_write(cmd | 0x40);
+ 2020              		.loc 1 897 0
+ 2021 0016 FB79     		ldrb	r3, [r7, #7]
+ 2022 0018 43F04003 		orr	r3, r3, #64
+ 2023 001c DBB2     		uxtb	r3, r3
+ 2024 001e 1846     		mov	r0, r3
+ 2025 0020 FFF7FEFF 		bl	MSD0_spi_read_write
+ 898:../bl/SPI_MSD0_Driver.c **** 	MSD0_spi_read_write(arg >> 24);
+ 2026              		.loc 1 898 0
+ 2027 0024 3B68     		ldr	r3, [r7]
+ 2028 0026 1B0E     		lsrs	r3, r3, #24
+ 2029 0028 DBB2     		uxtb	r3, r3
+ 2030 002a 1846     		mov	r0, r3
+ 2031 002c FFF7FEFF 		bl	MSD0_spi_read_write
+ 899:../bl/SPI_MSD0_Driver.c **** 	MSD0_spi_read_write(arg >> 16);
+ 2032              		.loc 1 899 0
+ 2033 0030 3B68     		ldr	r3, [r7]
+ 2034 0032 1B0C     		lsrs	r3, r3, #16
+ 2035 0034 DBB2     		uxtb	r3, r3
+ 2036 0036 1846     		mov	r0, r3
+ 2037 0038 FFF7FEFF 		bl	MSD0_spi_read_write
+ 900:../bl/SPI_MSD0_Driver.c **** 	MSD0_spi_read_write(arg >> 8);
+ 2038              		.loc 1 900 0
+ 2039 003c 3B68     		ldr	r3, [r7]
+ 2040 003e 1B0A     		lsrs	r3, r3, #8
+ 2041 0040 DBB2     		uxtb	r3, r3
+ 2042 0042 1846     		mov	r0, r3
+ 2043 0044 FFF7FEFF 		bl	MSD0_spi_read_write
+ 901:../bl/SPI_MSD0_Driver.c **** 	MSD0_spi_read_write(arg);
+ 2044              		.loc 1 901 0
+ 2045 0048 3B68     		ldr	r3, [r7]
+ 2046 004a DBB2     		uxtb	r3, r3
+ 2047 004c 1846     		mov	r0, r3
+ 2048 004e FFF7FEFF 		bl	MSD0_spi_read_write
+ 902:../bl/SPI_MSD0_Driver.c **** 	MSD0_spi_read_write(crc);
+ 2049              		.loc 1 902 0
+ 2050 0052 BB79     		ldrb	r3, [r7, #6]	@ zero_extendqisi2
+ 2051 0054 1846     		mov	r0, r3
+ 2052 0056 FFF7FEFF 		bl	MSD0_spi_read_write
+ 903:../bl/SPI_MSD0_Driver.c **** 
+ 904:../bl/SPI_MSD0_Driver.c **** 	/* Wait response, quit till timeout */
+ 905:../bl/SPI_MSD0_Driver.c **** 	for (retry = 0; retry < 200; retry++) {
+ 2053              		.loc 1 905 0
+ 2054 005a 0023     		movs	r3, #0
+ 2055 005c BB73     		strb	r3, [r7, #14]
+ 2056 005e 0BE0     		b	.L118
+ 2057              	.L121:
+ 906:../bl/SPI_MSD0_Driver.c **** 		r1 = MSD0_spi_read_write(DUMMY_BYTE);
+ 2058              		.loc 1 906 0
+ 2059 0060 FF20     		movs	r0, #255
+ 2060 0062 FFF7FEFF 		bl	MSD0_spi_read_write
+ 2061 0066 0346     		mov	r3, r0
+ 2062 0068 FB73     		strb	r3, [r7, #15]
+ 907:../bl/SPI_MSD0_Driver.c **** 		if (r1 != 0xFF) {
+ 2063              		.loc 1 907 0
+ 2064 006a FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 2065 006c FF2B     		cmp	r3, #255
+ 2066 006e 00D0     		beq	.L119
+ 908:../bl/SPI_MSD0_Driver.c **** 			break;
+ 2067              		.loc 1 908 0
+ 2068 0070 05E0     		b	.L120
+ 2069              	.L119:
+ 905:../bl/SPI_MSD0_Driver.c **** 		r1 = MSD0_spi_read_write(DUMMY_BYTE);
+ 2070              		.loc 1 905 0 discriminator 2
+ 2071 0072 BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 2072 0074 0133     		adds	r3, r3, #1
+ 2073 0076 BB73     		strb	r3, [r7, #14]
+ 2074              	.L118:
+ 905:../bl/SPI_MSD0_Driver.c **** 		r1 = MSD0_spi_read_write(DUMMY_BYTE);
+ 2075              		.loc 1 905 0 is_stmt 0 discriminator 1
+ 2076 0078 BB7B     		ldrb	r3, [r7, #14]	@ zero_extendqisi2
+ 2077 007a C72B     		cmp	r3, #199
+ 2078 007c F0D9     		bls	.L121
+ 2079              	.L120:
+ 909:../bl/SPI_MSD0_Driver.c **** 		}
+ 910:../bl/SPI_MSD0_Driver.c **** 	}
+ 911:../bl/SPI_MSD0_Driver.c **** 
+ 912:../bl/SPI_MSD0_Driver.c **** 	return r1;
+ 2080              		.loc 1 912 0 is_stmt 1
+ 2081 007e FB7B     		ldrb	r3, [r7, #15]	@ zero_extendqisi2
+ 913:../bl/SPI_MSD0_Driver.c **** }
+ 2082              		.loc 1 913 0
+ 2083 0080 1846     		mov	r0, r3
+ 2084 0082 1037     		adds	r7, r7, #16
+ 2085              		.cfi_def_cfa_offset 8
+ 2086 0084 BD46     		mov	sp, r7
+ 2087              		.cfi_def_cfa_register 13
+ 2088              		@ sp needed
+ 2089 0086 80BD     		pop	{r7, pc}
+ 2090              		.cfi_endproc
+ 2091              	.LFE11:
+ 2093              		.section	.text.LPSPI0_init_master,"ax",%progbits
+ 2094              		.align	2
+ 2095              		.global	LPSPI0_init_master
+ 2096              		.thumb
+ 2097              		.thumb_func
+ 2099              	LPSPI0_init_master:
+ 2100              	.LFB12:
+ 914:../bl/SPI_MSD0_Driver.c **** 
+ 915:../bl/SPI_MSD0_Driver.c **** void LPSPI0_init_master(void) {
+ 2101              		.loc 1 915 0
+ 2102              		.cfi_startproc
+ 2103              		@ args = 0, pretend = 0, frame = 0
+ 2104              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2105              		@ link register save eliminated.
+ 2106 0000 80B4     		push	{r7}
+ 2107              		.cfi_def_cfa_offset 4
+ 2108              		.cfi_offset 7, -4
+ 2109 0002 00AF     		add	r7, sp, #0
+ 2110              		.cfi_def_cfa_register 7
+ 916:../bl/SPI_MSD0_Driver.c **** 	PCC->PCCn[PCC_PORTE_INDEX] |= PCC_PCCn_CGC_MASK; /* Enable clock for PORTB */
+ 2111              		.loc 1 916 0
+ 2112 0004 234A     		ldr	r2, .L124
+ 2113 0006 234B     		ldr	r3, .L124
+ 2114 0008 D3F83431 		ldr	r3, [r3, #308]
+ 2115 000c 43F08043 		orr	r3, r3, #1073741824
+ 2116 0010 C2F83431 		str	r3, [r2, #308]
+ 917:../bl/SPI_MSD0_Driver.c **** 	PORTE->PCR[0] |= PORT_PCR_MUX(2); /* Port B14: MUX = ALT3, LPSPI1_SCK */
+ 2117              		.loc 1 917 0
+ 2118 0014 204A     		ldr	r2, .L124+4
+ 2119 0016 204B     		ldr	r3, .L124+4
+ 2120 0018 1B68     		ldr	r3, [r3]
+ 2121 001a 43F40073 		orr	r3, r3, #512
+ 2122 001e 1360     		str	r3, [r2]
+ 918:../bl/SPI_MSD0_Driver.c **** 	PORTE->PCR[1] |= PORT_PCR_MUX(2); /* Port B15: MUX = ALT3, LPSPI1_SIN */
+ 2123              		.loc 1 918 0
+ 2124 0020 1D4A     		ldr	r2, .L124+4
+ 2125 0022 1D4B     		ldr	r3, .L124+4
+ 2126 0024 5B68     		ldr	r3, [r3, #4]
+ 2127 0026 43F40073 		orr	r3, r3, #512
+ 2128 002a 5360     		str	r3, [r2, #4]
+ 919:../bl/SPI_MSD0_Driver.c **** 	PORTE->PCR[2] |= PORT_PCR_MUX(2); /* Port B16: MUX = ALT3, LPSPI1_SOUT */
+ 2129              		.loc 1 919 0
+ 2130 002c 1A4A     		ldr	r2, .L124+4
+ 2131 002e 1A4B     		ldr	r3, .L124+4
+ 2132 0030 9B68     		ldr	r3, [r3, #8]
+ 2133 0032 43F40073 		orr	r3, r3, #512
+ 2134 0036 9360     		str	r3, [r2, #8]
+ 920:../bl/SPI_MSD0_Driver.c **** 	PORTE->PCR[6] |= PORT_PCR_MUX(2); /* Port B17: MUX = ALT3, LPSPI1_PCS3 */
+ 2135              		.loc 1 920 0
+ 2136 0038 174A     		ldr	r2, .L124+4
+ 2137 003a 174B     		ldr	r3, .L124+4
+ 2138 003c 9B69     		ldr	r3, [r3, #24]
+ 2139 003e 43F40073 		orr	r3, r3, #512
+ 2140 0042 9361     		str	r3, [r2, #24]
+ 921:../bl/SPI_MSD0_Driver.c **** 
+ 922:../bl/SPI_MSD0_Driver.c **** 	//PTE->PDDR |= 1<<6; /* Port D0: Data Direction= output */
+ 923:../bl/SPI_MSD0_Driver.c **** 	//PORTE->PCR[6] = 0x00000100; /* Port D0: MUX = GPIO */
+ 924:../bl/SPI_MSD0_Driver.c **** 
+ 925:../bl/SPI_MSD0_Driver.c **** 	PCC->PCCn[PCC_LPSPI0_INDEX] = 0; /* Disable clocks to modify PCS ( default) */
+ 2141              		.loc 1 925 0
+ 2142 0044 134B     		ldr	r3, .L124
+ 2143 0046 0022     		movs	r2, #0
+ 2144 0048 C3F8B020 		str	r2, [r3, #176]
+ 926:../bl/SPI_MSD0_Driver.c **** 	PCC->PCCn[PCC_LPSPI0_INDEX] = 0xC6000000; /* Enable PCS=SPLL_DIV2 (40 MHz func'l clock) */
+ 2145              		.loc 1 926 0
+ 2146 004c 114B     		ldr	r3, .L124
+ 2147 004e 4FF04642 		mov	r2, #-973078528
+ 2148 0052 C3F8B020 		str	r2, [r3, #176]
+ 927:../bl/SPI_MSD0_Driver.c **** 	LPSPI0->CR = 0x00000000; /* Disable module for configuration */
+ 2149              		.loc 1 927 0
+ 2150 0056 114B     		ldr	r3, .L124+8
+ 2151 0058 0022     		movs	r2, #0
+ 2152 005a 1A61     		str	r2, [r3, #16]
+ 928:../bl/SPI_MSD0_Driver.c **** 	LPSPI0->IER = 0x00000000; /* Interrupts not used */
+ 2153              		.loc 1 928 0
+ 2154 005c 0F4B     		ldr	r3, .L124+8
+ 2155 005e 0022     		movs	r2, #0
+ 2156 0060 9A61     		str	r2, [r3, #24]
+ 929:../bl/SPI_MSD0_Driver.c **** 	LPSPI0->DER = 0x00000000; /* DMA not used */
+ 2157              		.loc 1 929 0
+ 2158 0062 0E4B     		ldr	r3, .L124+8
+ 2159 0064 0022     		movs	r2, #0
+ 2160 0066 DA61     		str	r2, [r3, #28]
+ 930:../bl/SPI_MSD0_Driver.c **** 	LPSPI0->CFGR0 = 0x00000000; /* Defaults: */
+ 2161              		.loc 1 930 0
+ 2162 0068 0C4B     		ldr	r3, .L124+8
+ 2163 006a 0022     		movs	r2, #0
+ 2164 006c 1A62     		str	r2, [r3, #32]
+ 931:../bl/SPI_MSD0_Driver.c **** 	/* RDM0=0: rec'd data to FIFO as normal */
+ 932:../bl/SPI_MSD0_Driver.c **** 	/* CIRFIFO=0; Circular FIFO is disabled */
+ 933:../bl/SPI_MSD0_Driver.c **** 	/* HRSEL, HRPOL, HREN=0: Host request disabled */
+ 934:../bl/SPI_MSD0_Driver.c **** 	LPSPI0->CFGR1 = 0x00000001; /* Configurations: master mode*/
+ 2165              		.loc 1 934 0
+ 2166 006e 0B4B     		ldr	r3, .L124+8
+ 2167 0070 0122     		movs	r2, #1
+ 2168 0072 5A62     		str	r2, [r3, #36]
+ 935:../bl/SPI_MSD0_Driver.c **** 	/* PCSCFG=0: PCS[3:2] are enabled */
+ 936:../bl/SPI_MSD0_Driver.c **** 	/* OUTCFG=0: Output data retains last value when CS negated */
+ 937:../bl/SPI_MSD0_Driver.c **** 	/* PINCFG=0: SIN is input, SOUT is output */
+ 938:../bl/SPI_MSD0_Driver.c **** 	/* MATCFG=0: Match disabled */
+ 939:../bl/SPI_MSD0_Driver.c **** 	/* PCSPOL=0: PCS is active low */
+ 940:../bl/SPI_MSD0_Driver.c **** 	/* NOSTALL=0: Stall if Tx FIFO empty or Rx FIFO full */
+ 941:../bl/SPI_MSD0_Driver.c **** 	/* AUTOPCS=0: does not apply for master mode */
+ 942:../bl/SPI_MSD0_Driver.c **** 	/* SAMPLE=0: input data sampled on SCK edge */
+ 943:../bl/SPI_MSD0_Driver.c **** 	/* MASTER=1: Master mode */
+ 944:../bl/SPI_MSD0_Driver.c **** 	LPSPI0->TCR = 0xd2000007; /*zi ji kong zhi cs*/
+ 2169              		.loc 1 944 0
+ 2170 0074 094B     		ldr	r3, .L124+8
+ 2171 0076 0A4A     		ldr	r2, .L124+12
+ 2172 0078 1A66     		str	r2, [r3, #96]
+ 945:../bl/SPI_MSD0_Driver.c **** 	/* Transmit cmd: PCS3, 16 bits, prescale func'l clk by 4, etc*/
+ 946:../bl/SPI_MSD0_Driver.c **** 	/* CPOL=0: SCK inactive state is low */
+ 947:../bl/SPI_MSD0_Driver.c **** 	/* CPHA=1: Change data on SCK lead'g, capture on trail'g edge*/
+ 948:../bl/SPI_MSD0_Driver.c **** 	/* PRESCALE=128: Functional clock divided by 128**2 = 256 */
+ 949:../bl/SPI_MSD0_Driver.c **** 	/* PCS=3: Transfer using PCS3 */
+ 950:../bl/SPI_MSD0_Driver.c **** 	/* LSBF=0: Data is transfered MSB first */
+ 951:../bl/SPI_MSD0_Driver.c **** 	/* BYSW=0: Byte swap disabled */
+ 952:../bl/SPI_MSD0_Driver.c **** 	/* CONT, CONTC=0: Continuous transfer disabled */
+ 953:../bl/SPI_MSD0_Driver.c **** 	/* RXMSK=0: Normal transfer: rx data stored in rx FIFO */
+ 954:../bl/SPI_MSD0_Driver.c **** 	/* TXMSK=0: Normal transfer: data loaded from tx FIFO */
+ 955:../bl/SPI_MSD0_Driver.c **** 	/* WIDTH=0: Single bit transfer */
+ 956:../bl/SPI_MSD0_Driver.c **** 	/* FRAMESZ=15: # bits in frame = 15+1=16 */
+ 957:../bl/SPI_MSD0_Driver.c **** 	LPSPI0->CCR = 0x04090808; /* Clock dividers based on prescaled func'l clk of 100 nsec */
+ 2173              		.loc 1 957 0
+ 2174 007a 084B     		ldr	r3, .L124+8
+ 2175 007c 094A     		ldr	r2, .L124+16
+ 2176 007e 1A64     		str	r2, [r3, #64]
+ 958:../bl/SPI_MSD0_Driver.c **** 	/* SCKPCS=4: SCK to PCS delay = 4+1 = 5 (500 nsec) */
+ 959:../bl/SPI_MSD0_Driver.c **** 	/* PCSSCK=4: PCS to SCK delay = 9+1 = 10 (1 usec) */
+ 960:../bl/SPI_MSD0_Driver.c **** 	/* DBT=8: Delay between Transfers = 8+2 = 10 (1 usec) */
+ 961:../bl/SPI_MSD0_Driver.c **** 	/* SCKDIV=8: SCK divider =8+2 = 10 (1 usec: 1 MHz baud rate) */
+ 962:../bl/SPI_MSD0_Driver.c **** 	LPSPI0->FCR = 0x00000003; /* RXWATER=0: Rx flags set when Rx FIFO >0 */
+ 2177              		.loc 1 962 0
+ 2178 0080 064B     		ldr	r3, .L124+8
+ 2179 0082 0322     		movs	r2, #3
+ 2180 0084 9A65     		str	r2, [r3, #88]
+ 963:../bl/SPI_MSD0_Driver.c **** 	/* TXWATER=3: Tx flags set when Tx FIFO <= 3 */
+ 964:../bl/SPI_MSD0_Driver.c **** 	LPSPI0->CR = 0x00000009; /* Enable module for operation */
+ 2181              		.loc 1 964 0
+ 2182 0086 054B     		ldr	r3, .L124+8
+ 2183 0088 0922     		movs	r2, #9
+ 2184 008a 1A61     		str	r2, [r3, #16]
+ 965:../bl/SPI_MSD0_Driver.c **** 	/* DBGEN=1: module enabled in debug mode */
+ 966:../bl/SPI_MSD0_Driver.c **** 	/* DOZEN=0: module enabled in Doze mode */
+ 967:../bl/SPI_MSD0_Driver.c **** 	/* RST=0: Master logic not reset */
+ 968:../bl/SPI_MSD0_Driver.c **** 	/* MEN=1: Module is enabled */
+ 969:../bl/SPI_MSD0_Driver.c **** }
+ 2185              		.loc 1 969 0
+ 2186 008c BD46     		mov	sp, r7
+ 2187              		.cfi_def_cfa_register 13
+ 2188              		@ sp needed
+ 2189 008e 5DF8047B 		ldr	r7, [sp], #4
+ 2190              		.cfi_restore 7
+ 2191              		.cfi_def_cfa_offset 0
+ 2192 0092 7047     		bx	lr
+ 2193              	.L125:
+ 2194              		.align	2
+ 2195              	.L124:
+ 2196 0094 00500640 		.word	1074155520
+ 2197 0098 00D00440 		.word	1074057216
+ 2198 009c 00C00240 		.word	1073922048
+ 2199 00a0 070000D2 		.word	-771751929
+ 2200 00a4 08080904 		.word	67700744
+ 2201              		.cfi_endproc
+ 2202              	.LFE12:
+ 2204              		.section	.text.LPSPI0_transmit_8bits,"ax",%progbits
+ 2205              		.align	2
+ 2206              		.global	LPSPI0_transmit_8bits
+ 2207              		.thumb
+ 2208              		.thumb_func
+ 2210              	LPSPI0_transmit_8bits:
+ 2211              	.LFB13:
+ 970:../bl/SPI_MSD0_Driver.c **** 
+ 971:../bl/SPI_MSD0_Driver.c **** void LPSPI0_transmit_8bits(uint8_t send) {
+ 2212              		.loc 1 971 0
+ 2213              		.cfi_startproc
+ 2214              		@ args = 0, pretend = 0, frame = 8
+ 2215              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2216              		@ link register save eliminated.
+ 2217 0000 80B4     		push	{r7}
+ 2218              		.cfi_def_cfa_offset 4
+ 2219              		.cfi_offset 7, -4
+ 2220 0002 83B0     		sub	sp, sp, #12
+ 2221              		.cfi_def_cfa_offset 16
+ 2222 0004 00AF     		add	r7, sp, #0
+ 2223              		.cfi_def_cfa_register 7
+ 2224 0006 0346     		mov	r3, r0
+ 2225 0008 FB71     		strb	r3, [r7, #7]
+ 972:../bl/SPI_MSD0_Driver.c **** 	while ((LPSPI0->SR & LPSPI_SR_TDF_MASK) >> LPSPI_SR_TDF_SHIFT == 0)
+ 2226              		.loc 1 972 0
+ 2227 000a 00BF     		nop
+ 2228              	.L127:
+ 2229              		.loc 1 972 0 is_stmt 0 discriminator 1
+ 2230 000c 094B     		ldr	r3, .L128
+ 2231 000e 5B69     		ldr	r3, [r3, #20]
+ 2232 0010 03F00103 		and	r3, r3, #1
+ 2233 0014 002B     		cmp	r3, #0
+ 2234 0016 F9D0     		beq	.L127
+ 973:../bl/SPI_MSD0_Driver.c **** 		;
+ 974:../bl/SPI_MSD0_Driver.c **** 	/* Wait for Tx FIFO available */
+ 975:../bl/SPI_MSD0_Driver.c **** 	LPSPI0->TDR = send; /* Transmit data */
+ 2235              		.loc 1 975 0 is_stmt 1
+ 2236 0018 064A     		ldr	r2, .L128
+ 2237 001a FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 2238 001c 5366     		str	r3, [r2, #100]
+ 976:../bl/SPI_MSD0_Driver.c **** 	LPSPI0->SR |= LPSPI_SR_TDF_MASK; /* Clear TDF flag */
+ 2239              		.loc 1 976 0
+ 2240 001e 054A     		ldr	r2, .L128
+ 2241 0020 044B     		ldr	r3, .L128
+ 2242 0022 5B69     		ldr	r3, [r3, #20]
+ 2243 0024 43F00103 		orr	r3, r3, #1
+ 2244 0028 5361     		str	r3, [r2, #20]
+ 977:../bl/SPI_MSD0_Driver.c **** }
+ 2245              		.loc 1 977 0
+ 2246 002a 0C37     		adds	r7, r7, #12
+ 2247              		.cfi_def_cfa_offset 4
+ 2248 002c BD46     		mov	sp, r7
+ 2249              		.cfi_def_cfa_register 13
+ 2250              		@ sp needed
+ 2251 002e 5DF8047B 		ldr	r7, [sp], #4
+ 2252              		.cfi_restore 7
+ 2253              		.cfi_def_cfa_offset 0
+ 2254 0032 7047     		bx	lr
+ 2255              	.L129:
+ 2256              		.align	2
+ 2257              	.L128:
+ 2258 0034 00C00240 		.word	1073922048
+ 2259              		.cfi_endproc
+ 2260              	.LFE13:
+ 2262              		.section	.text.LPSPI0_receive_8bits,"ax",%progbits
+ 2263              		.align	2
+ 2264              		.global	LPSPI0_receive_8bits
+ 2265              		.thumb
+ 2266              		.thumb_func
+ 2268              	LPSPI0_receive_8bits:
+ 2269              	.LFB14:
+ 978:../bl/SPI_MSD0_Driver.c **** uint8_t LPSPI0_receive_8bits(void) {
+ 2270              		.loc 1 978 0
+ 2271              		.cfi_startproc
+ 2272              		@ args = 0, pretend = 0, frame = 8
+ 2273              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2274              		@ link register save eliminated.
+ 2275 0000 80B4     		push	{r7}
+ 2276              		.cfi_def_cfa_offset 4
+ 2277              		.cfi_offset 7, -4
+ 2278 0002 83B0     		sub	sp, sp, #12
+ 2279              		.cfi_def_cfa_offset 16
+ 2280 0004 00AF     		add	r7, sp, #0
+ 2281              		.cfi_def_cfa_register 7
+ 979:../bl/SPI_MSD0_Driver.c **** 	uint8_t receive = 0;
+ 2282              		.loc 1 979 0
+ 2283 0006 0023     		movs	r3, #0
+ 2284 0008 FB71     		strb	r3, [r7, #7]
+ 980:../bl/SPI_MSD0_Driver.c **** 	while ((LPSPI0->SR & LPSPI_SR_RDF_MASK) >> LPSPI_SR_RDF_SHIFT == 0)
+ 2285              		.loc 1 980 0
+ 2286 000a 00BF     		nop
+ 2287              	.L131:
+ 2288              		.loc 1 980 0 is_stmt 0 discriminator 1
+ 2289 000c 0B4B     		ldr	r3, .L133
+ 2290 000e 5B69     		ldr	r3, [r3, #20]
+ 2291 0010 03F00203 		and	r3, r3, #2
+ 2292 0014 5B08     		lsrs	r3, r3, #1
+ 2293 0016 002B     		cmp	r3, #0
+ 2294 0018 F8D0     		beq	.L131
+ 981:../bl/SPI_MSD0_Driver.c **** 		;
+ 982:../bl/SPI_MSD0_Driver.c **** 	/* Wait at least one RxFIFO entry */
+ 983:../bl/SPI_MSD0_Driver.c **** 	receive = LPSPI0->RDR; /* Read received data */
+ 2295              		.loc 1 983 0 is_stmt 1
+ 2296 001a 084B     		ldr	r3, .L133
+ 2297 001c 5B6F     		ldr	r3, [r3, #116]
+ 2298 001e FB71     		strb	r3, [r7, #7]
+ 984:../bl/SPI_MSD0_Driver.c **** 	LPSPI0->SR |= LPSPI_SR_RDF_MASK; /* Clear RDF flag */
+ 2299              		.loc 1 984 0
+ 2300 0020 064A     		ldr	r2, .L133
+ 2301 0022 064B     		ldr	r3, .L133
+ 2302 0024 5B69     		ldr	r3, [r3, #20]
+ 2303 0026 43F00203 		orr	r3, r3, #2
+ 2304 002a 5361     		str	r3, [r2, #20]
+ 985:../bl/SPI_MSD0_Driver.c **** 	return receive; /* Return received data */
+ 2305              		.loc 1 985 0
+ 2306 002c FB79     		ldrb	r3, [r7, #7]	@ zero_extendqisi2
+ 986:../bl/SPI_MSD0_Driver.c **** }
+ 2307              		.loc 1 986 0
+ 2308 002e 1846     		mov	r0, r3
+ 2309 0030 0C37     		adds	r7, r7, #12
+ 2310              		.cfi_def_cfa_offset 4
+ 2311 0032 BD46     		mov	sp, r7
+ 2312              		.cfi_def_cfa_register 13
+ 2313              		@ sp needed
+ 2314 0034 5DF8047B 		ldr	r7, [sp], #4
+ 2315              		.cfi_restore 7
+ 2316              		.cfi_def_cfa_offset 0
+ 2317 0038 7047     		bx	lr
+ 2318              	.L134:
+ 2319 003a 00BF     		.align	2
+ 2320              	.L133:
+ 2321 003c 00C00240 		.word	1073922048
+ 2322              		.cfi_endproc
+ 2323              	.LFE14:
+ 2325              		.section	.text.LPSPI1_transmit_16bits,"ax",%progbits
+ 2326              		.align	2
+ 2327              		.global	LPSPI1_transmit_16bits
+ 2328              		.thumb
+ 2329              		.thumb_func
+ 2331              	LPSPI1_transmit_16bits:
+ 2332              	.LFB15:
+ 987:../bl/SPI_MSD0_Driver.c **** void LPSPI1_transmit_16bits(uint16_t send) {
+ 2333              		.loc 1 987 0
+ 2334              		.cfi_startproc
+ 2335              		@ args = 0, pretend = 0, frame = 8
+ 2336              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2337              		@ link register save eliminated.
+ 2338 0000 80B4     		push	{r7}
+ 2339              		.cfi_def_cfa_offset 4
+ 2340              		.cfi_offset 7, -4
+ 2341 0002 83B0     		sub	sp, sp, #12
+ 2342              		.cfi_def_cfa_offset 16
+ 2343 0004 00AF     		add	r7, sp, #0
+ 2344              		.cfi_def_cfa_register 7
+ 2345 0006 0346     		mov	r3, r0
+ 2346 0008 FB80     		strh	r3, [r7, #6]	@ movhi
+ 988:../bl/SPI_MSD0_Driver.c **** 	while ((LPSPI0->SR & LPSPI_SR_TDF_MASK) >> LPSPI_SR_TDF_SHIFT == 0)
+ 2347              		.loc 1 988 0
+ 2348 000a 00BF     		nop
+ 2349              	.L136:
+ 2350              		.loc 1 988 0 is_stmt 0 discriminator 1
+ 2351 000c 094B     		ldr	r3, .L137
+ 2352 000e 5B69     		ldr	r3, [r3, #20]
+ 2353 0010 03F00103 		and	r3, r3, #1
+ 2354 0014 002B     		cmp	r3, #0
+ 2355 0016 F9D0     		beq	.L136
+ 989:../bl/SPI_MSD0_Driver.c **** 		;
+ 990:../bl/SPI_MSD0_Driver.c **** 	/* Wait for Tx FIFO available */
+ 991:../bl/SPI_MSD0_Driver.c **** 	LPSPI0->TDR = send; /* Transmit data */
+ 2356              		.loc 1 991 0 is_stmt 1
+ 2357 0018 064A     		ldr	r2, .L137
+ 2358 001a FB88     		ldrh	r3, [r7, #6]
+ 2359 001c 5366     		str	r3, [r2, #100]
+ 992:../bl/SPI_MSD0_Driver.c **** 	LPSPI0->SR |= LPSPI_SR_TDF_MASK; /* Clear TDF flag */
+ 2360              		.loc 1 992 0
+ 2361 001e 054A     		ldr	r2, .L137
+ 2362 0020 044B     		ldr	r3, .L137
+ 2363 0022 5B69     		ldr	r3, [r3, #20]
+ 2364 0024 43F00103 		orr	r3, r3, #1
+ 2365 0028 5361     		str	r3, [r2, #20]
+ 993:../bl/SPI_MSD0_Driver.c **** }
+ 2366              		.loc 1 993 0
+ 2367 002a 0C37     		adds	r7, r7, #12
+ 2368              		.cfi_def_cfa_offset 4
+ 2369 002c BD46     		mov	sp, r7
+ 2370              		.cfi_def_cfa_register 13
+ 2371              		@ sp needed
+ 2372 002e 5DF8047B 		ldr	r7, [sp], #4
+ 2373              		.cfi_restore 7
+ 2374              		.cfi_def_cfa_offset 0
+ 2375 0032 7047     		bx	lr
+ 2376              	.L138:
+ 2377              		.align	2
+ 2378              	.L137:
+ 2379 0034 00C00240 		.word	1073922048
+ 2380              		.cfi_endproc
+ 2381              	.LFE15:
+ 2383              		.section	.text.LPSPI1_receive_16bits,"ax",%progbits
+ 2384              		.align	2
+ 2385              		.global	LPSPI1_receive_16bits
+ 2386              		.thumb
+ 2387              		.thumb_func
+ 2389              	LPSPI1_receive_16bits:
+ 2390              	.LFB16:
+ 994:../bl/SPI_MSD0_Driver.c **** uint16_t LPSPI1_receive_16bits(void) {
+ 2391              		.loc 1 994 0
+ 2392              		.cfi_startproc
+ 2393              		@ args = 0, pretend = 0, frame = 8
+ 2394              		@ frame_needed = 1, uses_anonymous_args = 0
+ 2395              		@ link register save eliminated.
+ 2396 0000 80B4     		push	{r7}
+ 2397              		.cfi_def_cfa_offset 4
+ 2398              		.cfi_offset 7, -4
+ 2399 0002 83B0     		sub	sp, sp, #12
+ 2400              		.cfi_def_cfa_offset 16
+ 2401 0004 00AF     		add	r7, sp, #0
+ 2402              		.cfi_def_cfa_register 7
+ 995:../bl/SPI_MSD0_Driver.c **** 	uint16_t receive = 0;
+ 2403              		.loc 1 995 0
+ 2404 0006 0023     		movs	r3, #0
+ 2405 0008 FB80     		strh	r3, [r7, #6]	@ movhi
+ 996:../bl/SPI_MSD0_Driver.c **** 	while ((LPSPI0->SR & LPSPI_SR_RDF_MASK) >> LPSPI_SR_RDF_SHIFT == 0)
+ 2406              		.loc 1 996 0
+ 2407 000a 00BF     		nop
+ 2408              	.L140:
+ 2409              		.loc 1 996 0 is_stmt 0 discriminator 1
+ 2410 000c 0B4B     		ldr	r3, .L142
+ 2411 000e 5B69     		ldr	r3, [r3, #20]
+ 2412 0010 03F00203 		and	r3, r3, #2
+ 2413 0014 5B08     		lsrs	r3, r3, #1
+ 2414 0016 002B     		cmp	r3, #0
+ 2415 0018 F8D0     		beq	.L140
+ 997:../bl/SPI_MSD0_Driver.c **** 		;
+ 998:../bl/SPI_MSD0_Driver.c **** 	/* Wait at least one RxFIFO entry */
+ 999:../bl/SPI_MSD0_Driver.c **** 	receive = LPSPI0->RDR; /* Read received data */
+ 2416              		.loc 1 999 0 is_stmt 1
+ 2417 001a 084B     		ldr	r3, .L142
+ 2418 001c 5B6F     		ldr	r3, [r3, #116]
+ 2419 001e FB80     		strh	r3, [r7, #6]	@ movhi
+1000:../bl/SPI_MSD0_Driver.c **** 	LPSPI0->SR |= LPSPI_SR_RDF_MASK; /* Clear RDF flag */
+ 2420              		.loc 1 1000 0
+ 2421 0020 064A     		ldr	r2, .L142
+ 2422 0022 064B     		ldr	r3, .L142
+ 2423 0024 5B69     		ldr	r3, [r3, #20]
+ 2424 0026 43F00203 		orr	r3, r3, #2
+ 2425 002a 5361     		str	r3, [r2, #20]
+1001:../bl/SPI_MSD0_Driver.c **** 	return receive; /* Return received data */
+ 2426              		.loc 1 1001 0
+ 2427 002c FB88     		ldrh	r3, [r7, #6]
+1002:../bl/SPI_MSD0_Driver.c **** }
+ 2428              		.loc 1 1002 0
+ 2429 002e 1846     		mov	r0, r3
+ 2430 0030 0C37     		adds	r7, r7, #12
+ 2431              		.cfi_def_cfa_offset 4
+ 2432 0032 BD46     		mov	sp, r7
+ 2433              		.cfi_def_cfa_register 13
+ 2434              		@ sp needed
+ 2435 0034 5DF8047B 		ldr	r7, [sp], #4
+ 2436              		.cfi_restore 7
+ 2437              		.cfi_def_cfa_offset 0
+ 2438 0038 7047     		bx	lr
+ 2439              	.L143:
+ 2440 003a 00BF     		.align	2
+ 2441              	.L142:
+ 2442 003c 00C00240 		.word	1073922048
+ 2443              		.cfi_endproc
+ 2444              	.LFE16:
+ 2446              		.text
+ 2447              	.Letext0:
+ 2448              		.file 2 "/home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstdint"
+ 2449              		.file 3 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/include/S32K144.h"
+ 2450              		.file 4 "../bl/SPI_MSD0_Driver.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 SPI_MSD0_Driver.c
+                            *COM*:00000058 SD0_CardInfo
+     /tmp/ccSBTVJc.s:22     .text.MSD0_spi_read_write:00000000 $t
+     /tmp/ccSBTVJc.s:27     .text.MSD0_spi_read_write:00000000 MSD0_spi_read_write
+     /tmp/ccSBTVJc.s:102    .text.MSD0_spi_read_write:00000060 $d
+     /tmp/ccSBTVJc.s:107    .text.writeclock:00000000 $t
+     /tmp/ccSBTVJc.s:112    .text.writeclock:00000000 writeclock
+     /tmp/ccSBTVJc.s:157    .text.MSD0_SPIHighSpeed:00000000 $t
+     /tmp/ccSBTVJc.s:162    .text.MSD0_SPIHighSpeed:00000000 MSD0_SPIHighSpeed
+     /tmp/ccSBTVJc.s:2099   .text.LPSPI0_init_master:00000000 LPSPI0_init_master
+     /tmp/ccSBTVJc.s:209    .text.MSD0_SPIHighSpeed:00000034 $d
+     /tmp/ccSBTVJc.s:214    .rodata:00000000 $d
+     /tmp/ccSBTVJc.s:218    .text.MSD0_Init:00000000 $t
+     /tmp/ccSBTVJc.s:223    .text.MSD0_Init:00000000 MSD0_Init
+     /tmp/ccSBTVJc.s:1894   .text.MSD0_send_command:00000000 MSD0_send_command
+     /tmp/ccSBTVJc.s:1998   .text.MSD0_send_command_hold:00000000 MSD0_send_command_hold
+     /tmp/ccSBTVJc.s:691    .text.MSD0_Init:00000334 $d
+     /tmp/ccSBTVJc.s:697    .text.MSD0_GetCardInfo:00000000 $t
+     /tmp/ccSBTVJc.s:702    .text.MSD0_GetCardInfo:00000000 MSD0_GetCardInfo
+     /tmp/ccSBTVJc.s:1243   .text.MSD0_read_buffer:00000000 MSD0_read_buffer
+     /tmp/ccSBTVJc.s:1238   .text.MSD0_read_buffer:00000000 $t
+     /tmp/ccSBTVJc.s:1349   .text.MSD0_ReadSingleBlock:00000000 $t
+     /tmp/ccSBTVJc.s:1354   .text.MSD0_ReadSingleBlock:00000000 MSD0_ReadSingleBlock
+     /tmp/ccSBTVJc.s:1421   .text.MSD0_ReadSingleBlock:00000058 $d
+     /tmp/ccSBTVJc.s:1426   .text.MSD0_ReadMultiBlock:00000000 $t
+     /tmp/ccSBTVJc.s:1431   .text.MSD0_ReadMultiBlock:00000000 MSD0_ReadMultiBlock
+     /tmp/ccSBTVJc.s:1527   .text.MSD0_ReadMultiBlock:00000080 $d
+     /tmp/ccSBTVJc.s:1532   .text.MSD0_WriteSingleBlock:00000000 $t
+     /tmp/ccSBTVJc.s:1537   .text.MSD0_WriteSingleBlock:00000000 MSD0_WriteSingleBlock
+     /tmp/ccSBTVJc.s:1688   .text.MSD0_WriteSingleBlock:000000e4 $d
+     /tmp/ccSBTVJc.s:1694   .text.MSD0_WriteMultiBlock:00000000 $t
+     /tmp/ccSBTVJc.s:1699   .text.MSD0_WriteMultiBlock:00000000 MSD0_WriteMultiBlock
+     /tmp/ccSBTVJc.s:1884   .text.MSD0_WriteMultiBlock:0000010c $d
+     /tmp/ccSBTVJc.s:1889   .text.MSD0_send_command:00000000 $t
+     /tmp/ccSBTVJc.s:1993   .text.MSD0_send_command_hold:00000000 $t
+     /tmp/ccSBTVJc.s:2094   .text.LPSPI0_init_master:00000000 $t
+     /tmp/ccSBTVJc.s:2196   .text.LPSPI0_init_master:00000094 $d
+     /tmp/ccSBTVJc.s:2205   .text.LPSPI0_transmit_8bits:00000000 $t
+     /tmp/ccSBTVJc.s:2210   .text.LPSPI0_transmit_8bits:00000000 LPSPI0_transmit_8bits
+     /tmp/ccSBTVJc.s:2258   .text.LPSPI0_transmit_8bits:00000034 $d
+     /tmp/ccSBTVJc.s:2263   .text.LPSPI0_receive_8bits:00000000 $t
+     /tmp/ccSBTVJc.s:2268   .text.LPSPI0_receive_8bits:00000000 LPSPI0_receive_8bits
+     /tmp/ccSBTVJc.s:2321   .text.LPSPI0_receive_8bits:0000003c $d
+     /tmp/ccSBTVJc.s:2326   .text.LPSPI1_transmit_16bits:00000000 $t
+     /tmp/ccSBTVJc.s:2331   .text.LPSPI1_transmit_16bits:00000000 LPSPI1_transmit_16bits
+     /tmp/ccSBTVJc.s:2379   .text.LPSPI1_transmit_16bits:00000034 $d
+     /tmp/ccSBTVJc.s:2384   .text.LPSPI1_receive_16bits:00000000 $t
+     /tmp/ccSBTVJc.s:2389   .text.LPSPI1_receive_16bits:00000000 LPSPI1_receive_16bits
+     /tmp/ccSBTVJc.s:2442   .text.LPSPI1_receive_16bits:0000003c $d
+                     .debug_frame:00000010 $d
+                           .group:00000000 wm4.0.728a2e6911dc01ff85c2d70c52e8fae1
+                           .group:00000000 wm4.lib_c99.prefix.8.3580c292f50811c682d980dc4180498e
+                           .group:00000000 wm4.common.prefix.16.d7bf937cdf46fd76dde96b376e3b328a
+                           .group:00000000 wm4.ewl_c_version.h.9.0bcb57d6a3f89baae1f9b121de2772f5
+                           .group:00000000 wm4.S32K144.h.177.451251ac556d3b0b8a04170a135f92d4
+                           .group:00000000 wm4.os_enum.h.9.f9446d6af68b3fa72a37d4d924d3b347
+                           .group:00000000 wm4.ansi_prefix.ARM.h.13.4b23f4c654df3c3277534542f67d200c
+                           .group:00000000 wm4.ansi_parms.h.64.90aed58330fdde08746db908036e1f37
+                           .group:00000000 wm4.limits_api.h.9.bc6daa20b3abae2bba6c512044e73b43
+                           .group:00000000 wm4.ewl_lib_ext1.h.14.f9b057cc049671136093886db2a3473f
+                           .group:00000000 wm4.cstdint.134.0ece0ba0ee759ce9e45a8fa510ec0d93
+                           .group:00000000 wm4.wchar_t.h.9.94198016f5b5f455e54ea1f3f054b416
+                           .group:00000000 wm4.cstdint.246.0573fcc3ea2319479988f90b448d87e4
+                           .group:00000000 wm4.S32K144.h.190.037de4cd4cd4f94a273a3fe3e68d3ef7
+                           .group:00000000 wm4.size_t.h.9.f983491a73b5c81f421ee8223b1ac5c0
+                           .group:00000000 wm4.ewl_rsize_t.h.11.b283831bb803e76ceb1756da2df9a1b5
+                           .group:00000000 wm4.cstddef.32.067e2ea187472b6198f9ace951e27a51
+                           .group:00000000 wm4.va_list.h.9.b0bb078841c0305c2667a31da10a9070
+                           .group:00000000 wm4.file_struc.h.13.96d07f4b7392ecdee9ce60307cac6248
+                           .group:00000000 wm4.stdarg.ARM.h.9.32516e68edcca81ab31f48f233894821
+                           .group:00000000 wm4.stdio_api.h.64.7d83b1caa7fdc34505042751a1c33692
+                           .group:00000000 wm4.cstdio.1187.51197b0e8ec7388017461af9f7851efe
+                           .group:00000000 wm4.SPI_MSD0_Driver.h.10.751670d7185e24a2b9b7290d36663748
+
+UNDEFINED SYMBOLS
+sprintf

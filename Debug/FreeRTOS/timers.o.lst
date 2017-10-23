@@ -1,0 +1,2873 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m4
+   3              		.eabi_attribute 27, 1
+   4              		.eabi_attribute 28, 1
+   5              		.fpu fpv4-sp-d16
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 6
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.thumb
+  16              		.file	"timers.c"
+  17              		.text
+  18              	.Ltext0:
+  19              		.cfi_sections	.debug_frame
+  20              		.section	.bss.xActiveTimerList1,"aw",%nobits
+  21              		.align	2
+  24              	xActiveTimerList1:
+  25 0000 00000000 		.space	20
+  25      00000000 
+  25      00000000 
+  25      00000000 
+  25      00000000 
+  26              		.section	.bss.xActiveTimerList2,"aw",%nobits
+  27              		.align	2
+  30              	xActiveTimerList2:
+  31 0000 00000000 		.space	20
+  31      00000000 
+  31      00000000 
+  31      00000000 
+  31      00000000 
+  32              		.section	.bss.pxCurrentTimerList,"aw",%nobits
+  33              		.align	2
+  36              	pxCurrentTimerList:
+  37 0000 00000000 		.space	4
+  38              		.section	.bss.pxOverflowTimerList,"aw",%nobits
+  39              		.align	2
+  42              	pxOverflowTimerList:
+  43 0000 00000000 		.space	4
+  44              		.section	.bss.xTimerQueue,"aw",%nobits
+  45              		.align	2
+  48              	xTimerQueue:
+  49 0000 00000000 		.space	4
+  50              		.section	.rodata
+  51              		.align	2
+  52              	.LC0:
+  53 0000 546D7220 		.ascii	"Tmr Svc\000"
+  53      53766300 
+  54              		.section	.text.xTimerCreateTimerTask,"ax",%progbits
+  55              		.align	2
+  56              		.global	xTimerCreateTimerTask
+  57              		.thumb
+  58              		.thumb_func
+  60              	xTimerCreateTimerTask:
+  61              	.LFB4:
+  62              		.file 1 "../FreeRTOS/timers.c"
+   1:../FreeRTOS/timers.c **** /*
+   2:../FreeRTOS/timers.c ****     FreeRTOS V8.2.1 - Copyright (C) 2015 Real Time Engineers Ltd.
+   3:../FreeRTOS/timers.c ****     All rights reserved
+   4:../FreeRTOS/timers.c **** 
+   5:../FreeRTOS/timers.c ****     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
+   6:../FreeRTOS/timers.c **** 
+   7:../FreeRTOS/timers.c ****     This file is part of the FreeRTOS distribution.
+   8:../FreeRTOS/timers.c **** 
+   9:../FreeRTOS/timers.c ****     FreeRTOS is free software; you can redistribute it and/or modify it under
+  10:../FreeRTOS/timers.c ****     the terms of the GNU General Public License (version 2) as published by the
+  11:../FreeRTOS/timers.c ****     Free Software Foundation >>!AND MODIFIED BY!<< the FreeRTOS exception.
+  12:../FreeRTOS/timers.c **** 
+  13:../FreeRTOS/timers.c ****     ***************************************************************************
+  14:../FreeRTOS/timers.c ****     >>!   NOTE: The modification to the GPL is included to allow you to     !<<
+  15:../FreeRTOS/timers.c ****     >>!   distribute a combined work that includes FreeRTOS without being   !<<
+  16:../FreeRTOS/timers.c ****     >>!   obliged to provide the source code for proprietary components     !<<
+  17:../FreeRTOS/timers.c ****     >>!   outside of the FreeRTOS kernel.                                   !<<
+  18:../FreeRTOS/timers.c ****     ***************************************************************************
+  19:../FreeRTOS/timers.c **** 
+  20:../FreeRTOS/timers.c ****     FreeRTOS is distributed in the hope that it will be useful, but WITHOUT ANY
+  21:../FreeRTOS/timers.c ****     WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+  22:../FreeRTOS/timers.c ****     FOR A PARTICULAR PURPOSE.  Full license text is available on the following
+  23:../FreeRTOS/timers.c ****     link: http://www.freertos.org/a00114.html
+  24:../FreeRTOS/timers.c **** 
+  25:../FreeRTOS/timers.c ****     ***************************************************************************
+  26:../FreeRTOS/timers.c ****      *                                                                       *
+  27:../FreeRTOS/timers.c ****      *    FreeRTOS provides completely free yet professionally developed,    *
+  28:../FreeRTOS/timers.c ****      *    robust, strictly quality controlled, supported, and cross          *
+  29:../FreeRTOS/timers.c ****      *    platform software that is more than just the market leader, it     *
+  30:../FreeRTOS/timers.c ****      *    is the industry's de facto standard.                               *
+  31:../FreeRTOS/timers.c ****      *                                                                       *
+  32:../FreeRTOS/timers.c ****      *    Help yourself get started quickly while simultaneously helping     *
+  33:../FreeRTOS/timers.c ****      *    to support the FreeRTOS project by purchasing a FreeRTOS           *
+  34:../FreeRTOS/timers.c ****      *    tutorial book, reference manual, or both:                          *
+  35:../FreeRTOS/timers.c ****      *    http://www.FreeRTOS.org/Documentation                              *
+  36:../FreeRTOS/timers.c ****      *                                                                       *
+  37:../FreeRTOS/timers.c ****     ***************************************************************************
+  38:../FreeRTOS/timers.c **** 
+  39:../FreeRTOS/timers.c ****     http://www.FreeRTOS.org/FAQHelp.html - Having a problem?  Start by reading
+  40:../FreeRTOS/timers.c ****     the FAQ page "My application does not run, what could be wrong?".  Have you
+  41:../FreeRTOS/timers.c ****     defined configASSERT()?
+  42:../FreeRTOS/timers.c **** 
+  43:../FreeRTOS/timers.c ****     http://www.FreeRTOS.org/support - In return for receiving this top quality
+  44:../FreeRTOS/timers.c ****     embedded software for free we request you assist our global community by
+  45:../FreeRTOS/timers.c ****     participating in the support forum.
+  46:../FreeRTOS/timers.c **** 
+  47:../FreeRTOS/timers.c ****     http://www.FreeRTOS.org/training - Investing in training allows your team to
+  48:../FreeRTOS/timers.c ****     be as productive as possible as early as possible.  Now you can receive
+  49:../FreeRTOS/timers.c ****     FreeRTOS training directly from Richard Barry, CEO of Real Time Engineers
+  50:../FreeRTOS/timers.c ****     Ltd, and the world's leading authority on the world's leading RTOS.
+  51:../FreeRTOS/timers.c **** 
+  52:../FreeRTOS/timers.c ****     http://www.FreeRTOS.org/plus - A selection of FreeRTOS ecosystem products,
+  53:../FreeRTOS/timers.c ****     including FreeRTOS+Trace - an indispensable productivity tool, a DOS
+  54:../FreeRTOS/timers.c ****     compatible FAT file system, and our tiny thread aware UDP/IP stack.
+  55:../FreeRTOS/timers.c **** 
+  56:../FreeRTOS/timers.c ****     http://www.FreeRTOS.org/labs - Where new FreeRTOS products go to incubate.
+  57:../FreeRTOS/timers.c ****     Come and try FreeRTOS+TCP, our new open source TCP/IP stack for FreeRTOS.
+  58:../FreeRTOS/timers.c **** 
+  59:../FreeRTOS/timers.c ****     http://www.OpenRTOS.com - Real Time Engineers ltd. license FreeRTOS to High
+  60:../FreeRTOS/timers.c ****     Integrity Systems ltd. to sell under the OpenRTOS brand.  Low cost OpenRTOS
+  61:../FreeRTOS/timers.c ****     licenses offer ticketed support, indemnification and commercial middleware.
+  62:../FreeRTOS/timers.c **** 
+  63:../FreeRTOS/timers.c ****     http://www.SafeRTOS.com - High Integrity Systems also provide a safety
+  64:../FreeRTOS/timers.c ****     engineered and independently SIL3 certified version for use in safety and
+  65:../FreeRTOS/timers.c ****     mission critical applications that require provable dependability.
+  66:../FreeRTOS/timers.c **** 
+  67:../FreeRTOS/timers.c ****     1 tab == 4 spaces!
+  68:../FreeRTOS/timers.c **** */
+  69:../FreeRTOS/timers.c **** 
+  70:../FreeRTOS/timers.c **** /* Standard includes. */
+  71:../FreeRTOS/timers.c **** #include <stdlib.h>
+  72:../FreeRTOS/timers.c **** 
+  73:../FreeRTOS/timers.c **** /* Defining MPU_WRAPPERS_INCLUDED_FROM_API_FILE prevents task.h from redefining
+  74:../FreeRTOS/timers.c **** all the API functions to use the MPU wrappers.  That should only be done when
+  75:../FreeRTOS/timers.c **** task.h is included from an application file. */
+  76:../FreeRTOS/timers.c **** #define MPU_WRAPPERS_INCLUDED_FROM_API_FILE
+  77:../FreeRTOS/timers.c **** 
+  78:../FreeRTOS/timers.c **** #include "FreeRTOS.h"
+  79:../FreeRTOS/timers.c **** #include "task.h"
+  80:../FreeRTOS/timers.c **** #include "queue.h"
+  81:../FreeRTOS/timers.c **** #include "timers.h"
+  82:../FreeRTOS/timers.c **** 
+  83:../FreeRTOS/timers.c **** #if ( INCLUDE_xTimerPendFunctionCall == 1 ) && ( configUSE_TIMERS == 0 )
+  84:../FreeRTOS/timers.c **** 	#error configUSE_TIMERS must be set to 1 to make the xTimerPendFunctionCall() function available.
+  85:../FreeRTOS/timers.c **** #endif
+  86:../FreeRTOS/timers.c **** 
+  87:../FreeRTOS/timers.c **** /* Lint e961 and e750 are suppressed as a MISRA exception justified because the
+  88:../FreeRTOS/timers.c **** MPU ports require MPU_WRAPPERS_INCLUDED_FROM_API_FILE to be defined for the
+  89:../FreeRTOS/timers.c **** header files above, but not in this file, in order to generate the correct
+  90:../FreeRTOS/timers.c **** privileged Vs unprivileged linkage and placement. */
+  91:../FreeRTOS/timers.c **** #undef MPU_WRAPPERS_INCLUDED_FROM_API_FILE /*lint !e961 !e750. */
+  92:../FreeRTOS/timers.c **** 
+  93:../FreeRTOS/timers.c **** 
+  94:../FreeRTOS/timers.c **** /* This entire source file will be skipped if the application is not configured
+  95:../FreeRTOS/timers.c **** to include software timer functionality.  This #if is closed at the very bottom
+  96:../FreeRTOS/timers.c **** of this file.  If you want to include software timer functionality then ensure
+  97:../FreeRTOS/timers.c **** configUSE_TIMERS is set to 1 in FreeRTOSConfig.h. */
+  98:../FreeRTOS/timers.c **** #if ( configUSE_TIMERS == 1 )
+  99:../FreeRTOS/timers.c **** 
+ 100:../FreeRTOS/timers.c **** /* Misc definitions. */
+ 101:../FreeRTOS/timers.c **** #define tmrNO_DELAY		( TickType_t ) 0U
+ 102:../FreeRTOS/timers.c **** 
+ 103:../FreeRTOS/timers.c **** /* The definition of the timers themselves. */
+ 104:../FreeRTOS/timers.c **** typedef struct tmrTimerControl
+ 105:../FreeRTOS/timers.c **** {
+ 106:../FreeRTOS/timers.c **** 	const char				*pcTimerName;		/*<< Text name.  This is not used by the kernel, it is included simpl
+ 107:../FreeRTOS/timers.c **** 	ListItem_t				xTimerListItem;		/*<< Standard linked list item as used by all kernel features for e
+ 108:../FreeRTOS/timers.c **** 	TickType_t				xTimerPeriodInTicks;/*<< How quickly and often the timer expires. */
+ 109:../FreeRTOS/timers.c **** 	UBaseType_t				uxAutoReload;		/*<< Set to pdTRUE if the timer should be automatically restarted on
+ 110:../FreeRTOS/timers.c **** 	void 					*pvTimerID;			/*<< An ID to identify the timer.  This allows the timer to be identified 
+ 111:../FreeRTOS/timers.c **** 	TimerCallbackFunction_t	pxCallbackFunction;	/*<< The function that will be called when the timer e
+ 112:../FreeRTOS/timers.c **** 	#if( configUSE_TRACE_FACILITY == 1 )
+ 113:../FreeRTOS/timers.c **** 		UBaseType_t			uxTimerNumber;		/*<< An ID assigned by trace tools such as FreeRTOS+Trace */
+ 114:../FreeRTOS/timers.c **** 	#endif
+ 115:../FreeRTOS/timers.c **** } xTIMER;
+ 116:../FreeRTOS/timers.c **** 
+ 117:../FreeRTOS/timers.c **** /* The old xTIMER name is maintained above then typedefed to the new Timer_t
+ 118:../FreeRTOS/timers.c **** name below to enable the use of older kernel aware debuggers. */
+ 119:../FreeRTOS/timers.c **** typedef xTIMER Timer_t;
+ 120:../FreeRTOS/timers.c **** 
+ 121:../FreeRTOS/timers.c **** /* The definition of messages that can be sent and received on the timer queue.
+ 122:../FreeRTOS/timers.c **** Two types of message can be queued - messages that manipulate a software timer,
+ 123:../FreeRTOS/timers.c **** and messages that request the execution of a non-timer related callback.  The
+ 124:../FreeRTOS/timers.c **** two message types are defined in two separate structures, xTimerParametersType
+ 125:../FreeRTOS/timers.c **** and xCallbackParametersType respectively. */
+ 126:../FreeRTOS/timers.c **** typedef struct tmrTimerParameters
+ 127:../FreeRTOS/timers.c **** {
+ 128:../FreeRTOS/timers.c **** 	TickType_t			xMessageValue;		/*<< An optional value used by a subset of commands, for example, whe
+ 129:../FreeRTOS/timers.c **** 	Timer_t *			pxTimer;			/*<< The timer to which the command will be applied. */
+ 130:../FreeRTOS/timers.c **** } TimerParameter_t;
+ 131:../FreeRTOS/timers.c **** 
+ 132:../FreeRTOS/timers.c **** 
+ 133:../FreeRTOS/timers.c **** typedef struct tmrCallbackParameters
+ 134:../FreeRTOS/timers.c **** {
+ 135:../FreeRTOS/timers.c **** 	PendedFunction_t	pxCallbackFunction;	/* << The callback function to execute. */
+ 136:../FreeRTOS/timers.c **** 	void *pvParameter1;						/* << The value that will be used as the callback functions first paramet
+ 137:../FreeRTOS/timers.c **** 	uint32_t ulParameter2;					/* << The value that will be used as the callback functions second para
+ 138:../FreeRTOS/timers.c **** } CallbackParameters_t;
+ 139:../FreeRTOS/timers.c **** 
+ 140:../FreeRTOS/timers.c **** /* The structure that contains the two message types, along with an identifier
+ 141:../FreeRTOS/timers.c **** that is used to determine which message type is valid. */
+ 142:../FreeRTOS/timers.c **** typedef struct tmrTimerQueueMessage
+ 143:../FreeRTOS/timers.c **** {
+ 144:../FreeRTOS/timers.c **** 	BaseType_t			xMessageID;			/*<< The command being sent to the timer service task. */
+ 145:../FreeRTOS/timers.c **** 	union
+ 146:../FreeRTOS/timers.c **** 	{
+ 147:../FreeRTOS/timers.c **** 		TimerParameter_t xTimerParameters;
+ 148:../FreeRTOS/timers.c **** 
+ 149:../FreeRTOS/timers.c **** 		/* Don't include xCallbackParameters if it is not going to be used as
+ 150:../FreeRTOS/timers.c **** 		it makes the structure (and therefore the timer queue) larger. */
+ 151:../FreeRTOS/timers.c **** 		#if ( INCLUDE_xTimerPendFunctionCall == 1 )
+ 152:../FreeRTOS/timers.c **** 			CallbackParameters_t xCallbackParameters;
+ 153:../FreeRTOS/timers.c **** 		#endif /* INCLUDE_xTimerPendFunctionCall */
+ 154:../FreeRTOS/timers.c **** 	} u;
+ 155:../FreeRTOS/timers.c **** } DaemonTaskMessage_t;
+ 156:../FreeRTOS/timers.c **** 
+ 157:../FreeRTOS/timers.c **** /*lint -e956 A manual analysis and inspection has been used to determine which
+ 158:../FreeRTOS/timers.c **** static variables must be declared volatile. */
+ 159:../FreeRTOS/timers.c **** 
+ 160:../FreeRTOS/timers.c **** /* The list in which active timers are stored.  Timers are referenced in expire
+ 161:../FreeRTOS/timers.c **** time order, with the nearest expiry time at the front of the list.  Only the
+ 162:../FreeRTOS/timers.c **** timer service task is allowed to access these lists. */
+ 163:../FreeRTOS/timers.c **** PRIVILEGED_DATA static List_t xActiveTimerList1;
+ 164:../FreeRTOS/timers.c **** PRIVILEGED_DATA static List_t xActiveTimerList2;
+ 165:../FreeRTOS/timers.c **** PRIVILEGED_DATA static List_t *pxCurrentTimerList;
+ 166:../FreeRTOS/timers.c **** PRIVILEGED_DATA static List_t *pxOverflowTimerList;
+ 167:../FreeRTOS/timers.c **** 
+ 168:../FreeRTOS/timers.c **** /* A queue that is used to send commands to the timer service task. */
+ 169:../FreeRTOS/timers.c **** PRIVILEGED_DATA static QueueHandle_t xTimerQueue = NULL;
+ 170:../FreeRTOS/timers.c **** 
+ 171:../FreeRTOS/timers.c **** #if ( INCLUDE_xTimerGetTimerDaemonTaskHandle == 1 )
+ 172:../FreeRTOS/timers.c **** 
+ 173:../FreeRTOS/timers.c **** 	PRIVILEGED_DATA static TaskHandle_t xTimerTaskHandle = NULL;
+ 174:../FreeRTOS/timers.c **** 
+ 175:../FreeRTOS/timers.c **** #endif
+ 176:../FreeRTOS/timers.c **** 
+ 177:../FreeRTOS/timers.c **** /*lint +e956 */
+ 178:../FreeRTOS/timers.c **** 
+ 179:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 180:../FreeRTOS/timers.c **** 
+ 181:../FreeRTOS/timers.c **** /*
+ 182:../FreeRTOS/timers.c ****  * Initialise the infrastructure used by the timer service task if it has not
+ 183:../FreeRTOS/timers.c ****  * been initialised already.
+ 184:../FreeRTOS/timers.c ****  */
+ 185:../FreeRTOS/timers.c **** static void prvCheckForValidListAndQueue( void ) PRIVILEGED_FUNCTION;
+ 186:../FreeRTOS/timers.c **** 
+ 187:../FreeRTOS/timers.c **** /*
+ 188:../FreeRTOS/timers.c ****  * The timer service task (daemon).  Timer functionality is controlled by this
+ 189:../FreeRTOS/timers.c ****  * task.  Other tasks communicate with the timer service task using the
+ 190:../FreeRTOS/timers.c ****  * xTimerQueue queue.
+ 191:../FreeRTOS/timers.c ****  */
+ 192:../FreeRTOS/timers.c **** static void prvTimerTask( void *pvParameters ) PRIVILEGED_FUNCTION;
+ 193:../FreeRTOS/timers.c **** 
+ 194:../FreeRTOS/timers.c **** /*
+ 195:../FreeRTOS/timers.c ****  * Called by the timer service task to interpret and process a command it
+ 196:../FreeRTOS/timers.c ****  * received on the timer queue.
+ 197:../FreeRTOS/timers.c ****  */
+ 198:../FreeRTOS/timers.c **** static void prvProcessReceivedCommands( void ) PRIVILEGED_FUNCTION;
+ 199:../FreeRTOS/timers.c **** 
+ 200:../FreeRTOS/timers.c **** /*
+ 201:../FreeRTOS/timers.c ****  * Insert the timer into either xActiveTimerList1, or xActiveTimerList2,
+ 202:../FreeRTOS/timers.c ****  * depending on if the expire time causes a timer counter overflow.
+ 203:../FreeRTOS/timers.c ****  */
+ 204:../FreeRTOS/timers.c **** static BaseType_t prvInsertTimerInActiveList( Timer_t * const pxTimer, const TickType_t xNextExpiry
+ 205:../FreeRTOS/timers.c **** 
+ 206:../FreeRTOS/timers.c **** /*
+ 207:../FreeRTOS/timers.c ****  * An active timer has reached its expire time.  Reload the timer if it is an
+ 208:../FreeRTOS/timers.c ****  * auto reload timer, then call its callback.
+ 209:../FreeRTOS/timers.c ****  */
+ 210:../FreeRTOS/timers.c **** static void prvProcessExpiredTimer( const TickType_t xNextExpireTime, const TickType_t xTimeNow ) P
+ 211:../FreeRTOS/timers.c **** 
+ 212:../FreeRTOS/timers.c **** /*
+ 213:../FreeRTOS/timers.c ****  * The tick count has overflowed.  Switch the timer lists after ensuring the
+ 214:../FreeRTOS/timers.c ****  * current timer list does not still reference some timers.
+ 215:../FreeRTOS/timers.c ****  */
+ 216:../FreeRTOS/timers.c **** static void prvSwitchTimerLists( void ) PRIVILEGED_FUNCTION;
+ 217:../FreeRTOS/timers.c **** 
+ 218:../FreeRTOS/timers.c **** /*
+ 219:../FreeRTOS/timers.c ****  * Obtain the current tick count, setting *pxTimerListsWereSwitched to pdTRUE
+ 220:../FreeRTOS/timers.c ****  * if a tick count overflow occurred since prvSampleTimeNow() was last called.
+ 221:../FreeRTOS/timers.c ****  */
+ 222:../FreeRTOS/timers.c **** static TickType_t prvSampleTimeNow( BaseType_t * const pxTimerListsWereSwitched ) PRIVILEGED_FUNCTI
+ 223:../FreeRTOS/timers.c **** 
+ 224:../FreeRTOS/timers.c **** /*
+ 225:../FreeRTOS/timers.c ****  * If the timer list contains any active timers then return the expire time of
+ 226:../FreeRTOS/timers.c ****  * the timer that will expire first and set *pxListWasEmpty to false.  If the
+ 227:../FreeRTOS/timers.c ****  * timer list does not contain any timers then return 0 and set *pxListWasEmpty
+ 228:../FreeRTOS/timers.c ****  * to pdTRUE.
+ 229:../FreeRTOS/timers.c ****  */
+ 230:../FreeRTOS/timers.c **** static TickType_t prvGetNextExpireTime( BaseType_t * const pxListWasEmpty ) PRIVILEGED_FUNCTION;
+ 231:../FreeRTOS/timers.c **** 
+ 232:../FreeRTOS/timers.c **** /*
+ 233:../FreeRTOS/timers.c ****  * If a timer has expired, process it.  Otherwise, block the timer service task
+ 234:../FreeRTOS/timers.c ****  * until either a timer does expire or a command is received.
+ 235:../FreeRTOS/timers.c ****  */
+ 236:../FreeRTOS/timers.c **** static void prvProcessTimerOrBlockTask( const TickType_t xNextExpireTime, const BaseType_t xListWas
+ 237:../FreeRTOS/timers.c **** 
+ 238:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 239:../FreeRTOS/timers.c **** 
+ 240:../FreeRTOS/timers.c **** BaseType_t xTimerCreateTimerTask( void )
+ 241:../FreeRTOS/timers.c **** {
+  63              		.loc 1 241 0
+  64              		.cfi_startproc
+  65              		@ args = 0, pretend = 0, frame = 8
+  66              		@ frame_needed = 1, uses_anonymous_args = 0
+  67 0000 80B5     		push	{r7, lr}
+  68              		.cfi_def_cfa_offset 8
+  69              		.cfi_offset 7, -8
+  70              		.cfi_offset 14, -4
+  71 0002 86B0     		sub	sp, sp, #24
+  72              		.cfi_def_cfa_offset 32
+  73 0004 04AF     		add	r7, sp, #16
+  74              		.cfi_def_cfa 7, 16
+ 242:../FreeRTOS/timers.c **** BaseType_t xReturn = pdFAIL;
+  75              		.loc 1 242 0
+  76 0006 0023     		movs	r3, #0
+  77 0008 7B60     		str	r3, [r7, #4]
+ 243:../FreeRTOS/timers.c **** 
+ 244:../FreeRTOS/timers.c **** 	/* This function is called when the scheduler is started if
+ 245:../FreeRTOS/timers.c **** 	configUSE_TIMERS is set to 1.  Check that the infrastructure used by the
+ 246:../FreeRTOS/timers.c **** 	timer service task has been created/initialised.  If timers have already
+ 247:../FreeRTOS/timers.c **** 	been created then the initialisation will already have been performed. */
+ 248:../FreeRTOS/timers.c **** 	prvCheckForValidListAndQueue();
+  78              		.loc 1 248 0
+  79 000a FFF7FEFF 		bl	prvCheckForValidListAndQueue
+ 249:../FreeRTOS/timers.c **** 
+ 250:../FreeRTOS/timers.c **** 	if( xTimerQueue != NULL )
+  80              		.loc 1 250 0
+  81 000e 124B     		ldr	r3, .L6
+  82 0010 1B68     		ldr	r3, [r3]
+  83 0012 002B     		cmp	r3, #0
+  84 0014 0ED0     		beq	.L2
+ 251:../FreeRTOS/timers.c **** 	{
+ 252:../FreeRTOS/timers.c **** 		#if ( INCLUDE_xTimerGetTimerDaemonTaskHandle == 1 )
+ 253:../FreeRTOS/timers.c **** 		{
+ 254:../FreeRTOS/timers.c **** 			/* Create the timer task, storing its handle in xTimerTaskHandle so
+ 255:../FreeRTOS/timers.c **** 			it can be returned by the xTimerGetTimerDaemonTaskHandle() function. */
+ 256:../FreeRTOS/timers.c **** 			xReturn = xTaskCreate( prvTimerTask, "Tmr Svc", ( uint16_t ) configTIMER_TASK_STACK_DEPTH, NULL,
+ 257:../FreeRTOS/timers.c **** 		}
+ 258:../FreeRTOS/timers.c **** 		#else
+ 259:../FreeRTOS/timers.c **** 		{
+ 260:../FreeRTOS/timers.c **** 			/* Create the timer task without storing its handle. */
+ 261:../FreeRTOS/timers.c **** 			xReturn = xTaskCreate( prvTimerTask, "Tmr Svc", ( uint16_t ) configTIMER_TASK_STACK_DEPTH, NULL,
+  85              		.loc 1 261 0
+  86 0016 0323     		movs	r3, #3
+  87 0018 0093     		str	r3, [sp]
+  88 001a 0023     		movs	r3, #0
+  89 001c 0193     		str	r3, [sp, #4]
+  90 001e 0023     		movs	r3, #0
+  91 0020 0293     		str	r3, [sp, #8]
+  92 0022 0023     		movs	r3, #0
+  93 0024 0393     		str	r3, [sp, #12]
+  94 0026 0D48     		ldr	r0, .L6+4
+  95 0028 0D49     		ldr	r1, .L6+8
+  96 002a 8022     		movs	r2, #128
+  97 002c 0023     		movs	r3, #0
+  98 002e FFF7FEFF 		bl	xTaskGenericCreate
+  99 0032 7860     		str	r0, [r7, #4]
+ 100              	.L2:
+ 262:../FreeRTOS/timers.c **** 		}
+ 263:../FreeRTOS/timers.c **** 		#endif
+ 264:../FreeRTOS/timers.c **** 	}
+ 265:../FreeRTOS/timers.c **** 	else
+ 266:../FreeRTOS/timers.c **** 	{
+ 267:../FreeRTOS/timers.c **** 		mtCOVERAGE_TEST_MARKER();
+ 268:../FreeRTOS/timers.c **** 	}
+ 269:../FreeRTOS/timers.c **** 
+ 270:../FreeRTOS/timers.c **** 	configASSERT( xReturn );
+ 101              		.loc 1 270 0
+ 102 0034 7B68     		ldr	r3, [r7, #4]
+ 103 0036 002B     		cmp	r3, #0
+ 104 0038 09D1     		bne	.L3
+ 105              	.LBB25:
+ 106              	.LBB26:
+ 107              		.file 2 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../F
+   1:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** /*
+   2:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     FreeRTOS V8.2.1 - Copyright (C) 2015 Real Time Engineers Ltd.
+   3:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     All rights reserved
+   4:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+   5:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
+   6:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+   7:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     This file is part of the FreeRTOS distribution.
+   8:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+   9:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     FreeRTOS is free software; you can redistribute it and/or modify it under
+  10:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     the terms of the GNU General Public License (version 2) as published by the
+  11:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     Free Software Foundation >>!AND MODIFIED BY!<< the FreeRTOS exception.
+  12:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+  13:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     ***************************************************************************
+  14:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     >>!   NOTE: The modification to the GPL is included to allow you to     !<<
+  15:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     >>!   distribute a combined work that includes FreeRTOS without being   !<<
+  16:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     >>!   obliged to provide the source code for proprietary components     !<<
+  17:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     >>!   outside of the FreeRTOS kernel.                                   !<<
+  18:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     ***************************************************************************
+  19:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+  20:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     FreeRTOS is distributed in the hope that it will be useful, but WITHOUT ANY
+  21:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+  22:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     FOR A PARTICULAR PURPOSE.  Full license text is available on the following
+  23:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     link: http://www.freertos.org/a00114.html
+  24:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+  25:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     ***************************************************************************
+  26:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****      *                                                                       *
+  27:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****      *    FreeRTOS provides completely free yet professionally developed,    *
+  28:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****      *    robust, strictly quality controlled, supported, and cross          *
+  29:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****      *    platform software that is more than just the market leader, it     *
+  30:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****      *    is the industry's de facto standard.                               *
+  31:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****      *                                                                       *
+  32:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****      *    Help yourself get started quickly while simultaneously helping     *
+  33:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****      *    to support the FreeRTOS project by purchasing a FreeRTOS           *
+  34:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****      *    tutorial book, reference manual, or both:                          *
+  35:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****      *    http://www.FreeRTOS.org/Documentation                              *
+  36:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****      *                                                                       *
+  37:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     ***************************************************************************
+  38:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+  39:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     http://www.FreeRTOS.org/FAQHelp.html - Having a problem?  Start by reading
+  40:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     the FAQ page "My application does not run, what could be wrong?".  Have you
+  41:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     defined configASSERT()?
+  42:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+  43:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     http://www.FreeRTOS.org/support - In return for receiving this top quality
+  44:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     embedded software for free we request you assist our global community by
+  45:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     participating in the support forum.
+  46:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+  47:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     http://www.FreeRTOS.org/training - Investing in training allows your team to
+  48:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     be as productive as possible as early as possible.  Now you can receive
+  49:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     FreeRTOS training directly from Richard Barry, CEO of Real Time Engineers
+  50:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     Ltd, and the world's leading authority on the world's leading RTOS.
+  51:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+  52:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     http://www.FreeRTOS.org/plus - A selection of FreeRTOS ecosystem products,
+  53:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     including FreeRTOS+Trace - an indispensable productivity tool, a DOS
+  54:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     compatible FAT file system, and our tiny thread aware UDP/IP stack.
+  55:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+  56:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     http://www.FreeRTOS.org/labs - Where new FreeRTOS products go to incubate.
+  57:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     Come and try FreeRTOS+TCP, our new open source TCP/IP stack for FreeRTOS.
+  58:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+  59:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     http://www.OpenRTOS.com - Real Time Engineers ltd. license FreeRTOS to High
+  60:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     Integrity Systems ltd. to sell under the OpenRTOS brand.  Low cost OpenRTOS
+  61:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     licenses offer ticketed support, indemnification and commercial middleware.
+  62:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+  63:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     http://www.SafeRTOS.com - High Integrity Systems also provide a safety
+  64:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     engineered and independently SIL3 certified version for use in safety and
+  65:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     mission critical applications that require provable dependability.
+  66:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+  67:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****     1 tab == 4 spaces!
+  68:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** */
+  69:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+  70:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+  71:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #ifndef PORTMACRO_H
+  72:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define PORTMACRO_H
+  73:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+  74:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #ifdef __cplusplus
+  75:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** extern "C" {
+  76:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #endif
+  77:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+  78:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** /*-----------------------------------------------------------
+  79:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****  * Port specific definitions.
+  80:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****  *
+  81:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****  * The settings in this file configure FreeRTOS correctly for the
+  82:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****  * given hardware and compiler.
+  83:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****  *
+  84:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****  * These settings should not be altered.
+  85:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****  *-----------------------------------------------------------
+  86:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h ****  */
+  87:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+  88:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** /* Type definitions. */
+  89:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portCHAR		char
+  90:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portFLOAT		float
+  91:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portDOUBLE		double
+  92:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portLONG		long
+  93:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portSHORT		short
+  94:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portSTACK_TYPE	uint32_t
+  95:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portBASE_TYPE	long
+  96:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+  97:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** typedef portSTACK_TYPE StackType_t;
+  98:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** typedef long BaseType_t;
+  99:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** typedef unsigned long UBaseType_t;
+ 100:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 101:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #if( configUSE_16_BIT_TICKS == 1 )
+ 102:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	typedef uint16_t TickType_t;
+ 103:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	#define portMAX_DELAY ( TickType_t ) 0xffff
+ 104:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #else
+ 105:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	typedef uint32_t TickType_t;
+ 106:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	#define portMAX_DELAY ( TickType_t ) 0xffffffffUL
+ 107:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 108:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	/* 32-bit tick type on a 32-bit architecture, so reads of the tick count do
+ 109:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	not need to be guarded with a critical section. */
+ 110:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	#define portTICK_TYPE_IS_ATOMIC 1
+ 111:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #endif
+ 112:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** /*-----------------------------------------------------------*/
+ 113:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 114:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** /* Architecture specifics. */
+ 115:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portSTACK_GROWTH			( -1 )
+ 116:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portTICK_PERIOD_MS			( ( TickType_t ) 1000 / configTICK_RATE_HZ )
+ 117:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portBYTE_ALIGNMENT			8
+ 118:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** /*-----------------------------------------------------------*/
+ 119:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 120:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** /* Scheduler utilities. */
+ 121:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portYIELD() 															\
+ 122:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** {																				\
+ 123:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	/* Set a PendSV to request a context switch. */								\
+ 124:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	portNVIC_INT_CTRL_REG = portNVIC_PENDSVSET_BIT;								\
+ 125:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 																				\
+ 126:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	/* Barriers are normally not required but do ensure the code is completely	\
+ 127:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	within the specified behaviour for the architecture. */						\
+ 128:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	__asm volatile( "dsb" );													\
+ 129:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	__asm volatile( "isb" );													\
+ 130:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** }
+ 131:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 132:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portNVIC_INT_CTRL_REG		( * ( ( volatile uint32_t * ) 0xe000ed04 ) )
+ 133:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portNVIC_PENDSVSET_BIT		( 1UL << 28UL )
+ 134:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portEND_SWITCHING_ISR( xSwitchRequired ) if( xSwitchRequired != pdFALSE ) portYIELD()
+ 135:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portYIELD_FROM_ISR( x ) portEND_SWITCHING_ISR( x )
+ 136:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** /*-----------------------------------------------------------*/
+ 137:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 138:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** /* Critical section management. */
+ 139:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** extern void vPortEnterCritical( void );
+ 140:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** extern void vPortExitCritical( void );
+ 141:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portSET_INTERRUPT_MASK_FROM_ISR()		ulPortRaiseBASEPRI()
+ 142:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portCLEAR_INTERRUPT_MASK_FROM_ISR(x)	vPortSetBASEPRI(x)
+ 143:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portDISABLE_INTERRUPTS()				vPortRaiseBASEPRI()
+ 144:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portENABLE_INTERRUPTS()					vPortSetBASEPRI(0)
+ 145:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portENTER_CRITICAL()					vPortEnterCritical()
+ 146:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portEXIT_CRITICAL()						vPortExitCritical()
+ 147:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 148:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** /*-----------------------------------------------------------*/
+ 149:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 150:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** /* Task function macros as described on the FreeRTOS.org WEB site.  These are
+ 151:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** not necessary for to use this port.  They are defined so the common demo files
+ 152:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** (which build with all the ports) will build. */
+ 153:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portTASK_FUNCTION_PROTO( vFunction, pvParameters ) void vFunction( void *pvParameters )
+ 154:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portTASK_FUNCTION( vFunction, pvParameters ) void vFunction( void *pvParameters )
+ 155:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** /*-----------------------------------------------------------*/
+ 156:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 157:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** /* Tickless idle/low power functionality. */
+ 158:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #ifndef portSUPPRESS_TICKS_AND_SLEEP
+ 159:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	extern void vPortSuppressTicksAndSleep( TickType_t xExpectedIdleTime );
+ 160:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	#define portSUPPRESS_TICKS_AND_SLEEP( xExpectedIdleTime ) vPortSuppressTicksAndSleep( xExpectedIdl
+ 161:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #endif
+ 162:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** /*-----------------------------------------------------------*/
+ 163:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 164:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** /* Architecture specific optimisations. */
+ 165:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #ifndef configUSE_PORT_OPTIMISED_TASK_SELECTION
+ 166:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	#define configUSE_PORT_OPTIMISED_TASK_SELECTION 1
+ 167:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #endif
+ 168:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 169:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #if configUSE_PORT_OPTIMISED_TASK_SELECTION == 1
+ 170:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 171:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	/* Generic helper function. */
+ 172:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	__attribute__( ( always_inline ) ) static inline uint8_t ucPortCountLeadingZeros( uint32_t ulBitma
+ 173:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	{
+ 174:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	uint8_t ucReturn;
+ 175:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 176:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 		__asm volatile ( "clz %0, %1" : "=r" ( ucReturn ) : "r" ( ulBitmap ) );
+ 177:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 		return ucReturn;
+ 178:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	}
+ 179:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 180:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	/* Check the configuration. */
+ 181:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	#if( configMAX_PRIORITIES > 32 )
+ 182:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 		#error configUSE_PORT_OPTIMISED_TASK_SELECTION can only be set to 1 when configMAX_PRIORITIES is 
+ 183:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	#endif
+ 184:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 185:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	/* Store/clear the ready priorities in a bit map. */
+ 186:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	#define portRECORD_READY_PRIORITY( uxPriority, uxReadyPriorities ) ( uxReadyPriorities ) |= ( 1UL 
+ 187:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	#define portRESET_READY_PRIORITY( uxPriority, uxReadyPriorities ) ( uxReadyPriorities ) &= ~( 1UL 
+ 188:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 189:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	/*-----------------------------------------------------------*/
+ 190:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 191:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	#define portGET_HIGHEST_PRIORITY( uxTopPriority, uxReadyPriorities ) uxTopPriority = ( 31 - ucPort
+ 192:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 193:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #endif /* configUSE_PORT_OPTIMISED_TASK_SELECTION */
+ 194:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 195:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** /*-----------------------------------------------------------*/
+ 196:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 197:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #ifdef configASSERT
+ 198:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	void vPortValidateInterruptPriority( void );
+ 199:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	#define portASSERT_IF_INTERRUPT_PRIORITY_INVALID() 	vPortValidateInterruptPriority()
+ 200:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #endif
+ 201:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 202:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** /* portNOP() is not required by this port. */
+ 203:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #define portNOP()
+ 204:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 205:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #ifndef portFORCE_INLINE
+ 206:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	#define portFORCE_INLINE inline __attribute__(( always_inline))
+ 207:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** #endif
+ 208:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 209:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** /*-----------------------------------------------------------*/
+ 210:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 211:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** portFORCE_INLINE static void vPortRaiseBASEPRI( void )
+ 212:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** {
+ 213:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** uint32_t ulNewBASEPRI;
+ 214:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 
+ 215:/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../FreeRTOS/portable/GCC/ARM_CM4F/portmacro.h **** 	__asm volatile
+ 108              		.loc 2 215 0 discriminator 1
+ 109              	@ 215 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../Free
+ 110 003a 4FF00703 			mov r3, #7												
+ 111 003e 83F31188 		msr basepri, r3											
+ 112 0042 BFF36F8F 		isb														
+ 113 0046 BFF34F8F 		dsb														
+ 114              	
+ 115              	@ 0 "" 2
+ 116              		.thumb
+ 117 004a 3B60     		str	r3, [r7]
+ 118              	.L4:
+ 119              	.LBE26:
+ 120              	.LBE25:
+ 121              		.loc 1 270 0 discriminator 1
+ 122 004c FEE7     		b	.L4
+ 123              	.L3:
+ 271:../FreeRTOS/timers.c **** 	return xReturn;
+ 124              		.loc 1 271 0
+ 125 004e 7B68     		ldr	r3, [r7, #4]
+ 272:../FreeRTOS/timers.c **** }
+ 126              		.loc 1 272 0
+ 127 0050 1846     		mov	r0, r3
+ 128 0052 0837     		adds	r7, r7, #8
+ 129              		.cfi_def_cfa_offset 8
+ 130 0054 BD46     		mov	sp, r7
+ 131              		.cfi_def_cfa_register 13
+ 132              		@ sp needed
+ 133 0056 80BD     		pop	{r7, pc}
+ 134              	.L7:
+ 135              		.align	2
+ 136              	.L6:
+ 137 0058 00000000 		.word	xTimerQueue
+ 138 005c 00000000 		.word	prvTimerTask
+ 139 0060 00000000 		.word	.LC0
+ 140              		.cfi_endproc
+ 141              	.LFE4:
+ 143              		.section	.text.xTimerCreate,"ax",%progbits
+ 144              		.align	2
+ 145              		.global	xTimerCreate
+ 146              		.thumb
+ 147              		.thumb_func
+ 149              	xTimerCreate:
+ 150              	.LFB5:
+ 273:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 274:../FreeRTOS/timers.c **** 
+ 275:../FreeRTOS/timers.c **** TimerHandle_t xTimerCreate( const char * const pcTimerName, const TickType_t xTimerPeriodInTicks, c
+ 276:../FreeRTOS/timers.c **** {
+ 151              		.loc 1 276 0
+ 152              		.cfi_startproc
+ 153              		@ args = 4, pretend = 0, frame = 24
+ 154              		@ frame_needed = 1, uses_anonymous_args = 0
+ 155 0000 80B5     		push	{r7, lr}
+ 156              		.cfi_def_cfa_offset 8
+ 157              		.cfi_offset 7, -8
+ 158              		.cfi_offset 14, -4
+ 159 0002 86B0     		sub	sp, sp, #24
+ 160              		.cfi_def_cfa_offset 32
+ 161 0004 00AF     		add	r7, sp, #0
+ 162              		.cfi_def_cfa_register 7
+ 163 0006 F860     		str	r0, [r7, #12]
+ 164 0008 B960     		str	r1, [r7, #8]
+ 165 000a 7A60     		str	r2, [r7, #4]
+ 166 000c 3B60     		str	r3, [r7]
+ 277:../FreeRTOS/timers.c **** Timer_t *pxNewTimer;
+ 278:../FreeRTOS/timers.c **** 
+ 279:../FreeRTOS/timers.c **** 	/* Allocate the timer structure. */
+ 280:../FreeRTOS/timers.c **** 	if( xTimerPeriodInTicks == ( TickType_t ) 0U )
+ 167              		.loc 1 280 0
+ 168 000e BB68     		ldr	r3, [r7, #8]
+ 169 0010 002B     		cmp	r3, #0
+ 170 0012 02D1     		bne	.L9
+ 281:../FreeRTOS/timers.c **** 	{
+ 282:../FreeRTOS/timers.c **** 		pxNewTimer = NULL;
+ 171              		.loc 1 282 0
+ 172 0014 0023     		movs	r3, #0
+ 173 0016 7B61     		str	r3, [r7, #20]
+ 174 0018 1CE0     		b	.L10
+ 175              	.L9:
+ 283:../FreeRTOS/timers.c **** 	}
+ 284:../FreeRTOS/timers.c **** 	else
+ 285:../FreeRTOS/timers.c **** 	{
+ 286:../FreeRTOS/timers.c **** 		pxNewTimer = ( Timer_t * ) pvPortMalloc( sizeof( Timer_t ) );
+ 176              		.loc 1 286 0
+ 177 001a 2820     		movs	r0, #40
+ 178 001c FFF7FEFF 		bl	pvPortMalloc
+ 179 0020 7861     		str	r0, [r7, #20]
+ 287:../FreeRTOS/timers.c **** 		if( pxNewTimer != NULL )
+ 180              		.loc 1 287 0
+ 181 0022 7B69     		ldr	r3, [r7, #20]
+ 182 0024 002B     		cmp	r3, #0
+ 183 0026 15D0     		beq	.L10
+ 288:../FreeRTOS/timers.c **** 		{
+ 289:../FreeRTOS/timers.c **** 			/* Ensure the infrastructure used by the timer service task has been
+ 290:../FreeRTOS/timers.c **** 			created/initialised. */
+ 291:../FreeRTOS/timers.c **** 			prvCheckForValidListAndQueue();
+ 184              		.loc 1 291 0
+ 185 0028 FFF7FEFF 		bl	prvCheckForValidListAndQueue
+ 292:../FreeRTOS/timers.c **** 
+ 293:../FreeRTOS/timers.c **** 			/* Initialise the timer structure members using the function parameters. */
+ 294:../FreeRTOS/timers.c **** 			pxNewTimer->pcTimerName = pcTimerName;
+ 186              		.loc 1 294 0
+ 187 002c 7B69     		ldr	r3, [r7, #20]
+ 188 002e FA68     		ldr	r2, [r7, #12]
+ 189 0030 1A60     		str	r2, [r3]
+ 295:../FreeRTOS/timers.c **** 			pxNewTimer->xTimerPeriodInTicks = xTimerPeriodInTicks;
+ 190              		.loc 1 295 0
+ 191 0032 7B69     		ldr	r3, [r7, #20]
+ 192 0034 BA68     		ldr	r2, [r7, #8]
+ 193 0036 9A61     		str	r2, [r3, #24]
+ 296:../FreeRTOS/timers.c **** 			pxNewTimer->uxAutoReload = uxAutoReload;
+ 194              		.loc 1 296 0
+ 195 0038 7B69     		ldr	r3, [r7, #20]
+ 196 003a 7A68     		ldr	r2, [r7, #4]
+ 197 003c DA61     		str	r2, [r3, #28]
+ 297:../FreeRTOS/timers.c **** 			pxNewTimer->pvTimerID = pvTimerID;
+ 198              		.loc 1 297 0
+ 199 003e 7B69     		ldr	r3, [r7, #20]
+ 200 0040 3A68     		ldr	r2, [r7]
+ 201 0042 1A62     		str	r2, [r3, #32]
+ 298:../FreeRTOS/timers.c **** 			pxNewTimer->pxCallbackFunction = pxCallbackFunction;
+ 202              		.loc 1 298 0
+ 203 0044 7B69     		ldr	r3, [r7, #20]
+ 204 0046 3A6A     		ldr	r2, [r7, #32]
+ 205 0048 5A62     		str	r2, [r3, #36]
+ 299:../FreeRTOS/timers.c **** 			vListInitialiseItem( &( pxNewTimer->xTimerListItem ) );
+ 206              		.loc 1 299 0
+ 207 004a 7B69     		ldr	r3, [r7, #20]
+ 208 004c 0433     		adds	r3, r3, #4
+ 209 004e 1846     		mov	r0, r3
+ 210 0050 FFF7FEFF 		bl	vListInitialiseItem
+ 211              	.L10:
+ 300:../FreeRTOS/timers.c **** 
+ 301:../FreeRTOS/timers.c **** 			traceTIMER_CREATE( pxNewTimer );
+ 302:../FreeRTOS/timers.c **** 		}
+ 303:../FreeRTOS/timers.c **** 		else
+ 304:../FreeRTOS/timers.c **** 		{
+ 305:../FreeRTOS/timers.c **** 			traceTIMER_CREATE_FAILED();
+ 306:../FreeRTOS/timers.c **** 		}
+ 307:../FreeRTOS/timers.c **** 	}
+ 308:../FreeRTOS/timers.c **** 
+ 309:../FreeRTOS/timers.c **** 	/* 0 is not a valid value for xTimerPeriodInTicks. */
+ 310:../FreeRTOS/timers.c **** 	configASSERT( ( xTimerPeriodInTicks > 0 ) );
+ 212              		.loc 1 310 0
+ 213 0054 BB68     		ldr	r3, [r7, #8]
+ 214 0056 002B     		cmp	r3, #0
+ 215 0058 09D1     		bne	.L11
+ 216              	.LBB27:
+ 217              	.LBB28:
+ 218              		.loc 2 215 0 discriminator 1
+ 219              	@ 215 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../Free
+ 220 005a 4FF00703 			mov r3, #7												
+ 221 005e 83F31188 		msr basepri, r3											
+ 222 0062 BFF36F8F 		isb														
+ 223 0066 BFF34F8F 		dsb														
+ 224              	
+ 225              	@ 0 "" 2
+ 226              		.thumb
+ 227 006a 3B61     		str	r3, [r7, #16]
+ 228              	.L12:
+ 229              	.LBE28:
+ 230              	.LBE27:
+ 231              		.loc 1 310 0 discriminator 1
+ 232 006c FEE7     		b	.L12
+ 233              	.L11:
+ 311:../FreeRTOS/timers.c **** 
+ 312:../FreeRTOS/timers.c **** 	return ( TimerHandle_t ) pxNewTimer;
+ 234              		.loc 1 312 0
+ 235 006e 7B69     		ldr	r3, [r7, #20]
+ 313:../FreeRTOS/timers.c **** }
+ 236              		.loc 1 313 0
+ 237 0070 1846     		mov	r0, r3
+ 238 0072 1837     		adds	r7, r7, #24
+ 239              		.cfi_def_cfa_offset 8
+ 240 0074 BD46     		mov	sp, r7
+ 241              		.cfi_def_cfa_register 13
+ 242              		@ sp needed
+ 243 0076 80BD     		pop	{r7, pc}
+ 244              		.cfi_endproc
+ 245              	.LFE5:
+ 247              		.section	.text.xTimerGenericCommand,"ax",%progbits
+ 248              		.align	2
+ 249              		.global	xTimerGenericCommand
+ 250              		.thumb
+ 251              		.thumb_func
+ 253              	xTimerGenericCommand:
+ 254              	.LFB6:
+ 314:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 315:../FreeRTOS/timers.c **** 
+ 316:../FreeRTOS/timers.c **** BaseType_t xTimerGenericCommand( TimerHandle_t xTimer, const BaseType_t xCommandID, const TickType_
+ 317:../FreeRTOS/timers.c **** {
+ 255              		.loc 1 317 0
+ 256              		.cfi_startproc
+ 257              		@ args = 4, pretend = 0, frame = 40
+ 258              		@ frame_needed = 1, uses_anonymous_args = 0
+ 259 0000 80B5     		push	{r7, lr}
+ 260              		.cfi_def_cfa_offset 8
+ 261              		.cfi_offset 7, -8
+ 262              		.cfi_offset 14, -4
+ 263 0002 8AB0     		sub	sp, sp, #40
+ 264              		.cfi_def_cfa_offset 48
+ 265 0004 00AF     		add	r7, sp, #0
+ 266              		.cfi_def_cfa_register 7
+ 267 0006 F860     		str	r0, [r7, #12]
+ 268 0008 B960     		str	r1, [r7, #8]
+ 269 000a 7A60     		str	r2, [r7, #4]
+ 270 000c 3B60     		str	r3, [r7]
+ 318:../FreeRTOS/timers.c **** BaseType_t xReturn = pdFAIL;
+ 271              		.loc 1 318 0
+ 272 000e 0023     		movs	r3, #0
+ 273 0010 7B62     		str	r3, [r7, #36]
+ 319:../FreeRTOS/timers.c **** DaemonTaskMessage_t xMessage;
+ 320:../FreeRTOS/timers.c **** 
+ 321:../FreeRTOS/timers.c **** 	/* Send a message to the timer service task to perform a particular action
+ 322:../FreeRTOS/timers.c **** 	on a particular timer definition. */
+ 323:../FreeRTOS/timers.c **** 	if( xTimerQueue != NULL )
+ 274              		.loc 1 323 0
+ 275 0012 1D4B     		ldr	r3, .L21
+ 276 0014 1B68     		ldr	r3, [r3]
+ 277 0016 002B     		cmp	r3, #0
+ 278 0018 30D0     		beq	.L15
+ 324:../FreeRTOS/timers.c **** 	{
+ 325:../FreeRTOS/timers.c **** 		/* Send a command to the timer service task to start the xTimer timer. */
+ 326:../FreeRTOS/timers.c **** 		xMessage.xMessageID = xCommandID;
+ 279              		.loc 1 326 0
+ 280 001a BB68     		ldr	r3, [r7, #8]
+ 281 001c 7B61     		str	r3, [r7, #20]
+ 327:../FreeRTOS/timers.c **** 		xMessage.u.xTimerParameters.xMessageValue = xOptionalValue;
+ 282              		.loc 1 327 0
+ 283 001e 7B68     		ldr	r3, [r7, #4]
+ 284 0020 BB61     		str	r3, [r7, #24]
+ 328:../FreeRTOS/timers.c **** 		xMessage.u.xTimerParameters.pxTimer = ( Timer_t * ) xTimer;
+ 285              		.loc 1 328 0
+ 286 0022 FB68     		ldr	r3, [r7, #12]
+ 287 0024 FB61     		str	r3, [r7, #28]
+ 329:../FreeRTOS/timers.c **** 
+ 330:../FreeRTOS/timers.c **** 		if( xCommandID < tmrFIRST_FROM_ISR_COMMAND )
+ 288              		.loc 1 330 0
+ 289 0026 BB68     		ldr	r3, [r7, #8]
+ 290 0028 052B     		cmp	r3, #5
+ 291 002a 1CDC     		bgt	.L16
+ 331:../FreeRTOS/timers.c **** 		{
+ 332:../FreeRTOS/timers.c **** 			if( xTaskGetSchedulerState() == taskSCHEDULER_RUNNING )
+ 292              		.loc 1 332 0
+ 293 002c FFF7FEFF 		bl	xTaskGetSchedulerState
+ 294 0030 0346     		mov	r3, r0
+ 295 0032 022B     		cmp	r3, #2
+ 296 0034 0BD1     		bne	.L17
+ 333:../FreeRTOS/timers.c **** 			{
+ 334:../FreeRTOS/timers.c **** 				xReturn = xQueueSendToBack( xTimerQueue, &xMessage, xTicksToWait );
+ 297              		.loc 1 334 0
+ 298 0036 144B     		ldr	r3, .L21
+ 299 0038 1A68     		ldr	r2, [r3]
+ 300 003a 07F11403 		add	r3, r7, #20
+ 301 003e 1046     		mov	r0, r2
+ 302 0040 1946     		mov	r1, r3
+ 303 0042 3A6B     		ldr	r2, [r7, #48]
+ 304 0044 0023     		movs	r3, #0
+ 305 0046 FFF7FEFF 		bl	xQueueGenericSend
+ 306 004a 7862     		str	r0, [r7, #36]
+ 307 004c 16E0     		b	.L15
+ 308              	.L17:
+ 335:../FreeRTOS/timers.c **** 			}
+ 336:../FreeRTOS/timers.c **** 			else
+ 337:../FreeRTOS/timers.c **** 			{
+ 338:../FreeRTOS/timers.c **** 				xReturn = xQueueSendToBack( xTimerQueue, &xMessage, tmrNO_DELAY );
+ 309              		.loc 1 338 0
+ 310 004e 0E4B     		ldr	r3, .L21
+ 311 0050 1A68     		ldr	r2, [r3]
+ 312 0052 07F11403 		add	r3, r7, #20
+ 313 0056 1046     		mov	r0, r2
+ 314 0058 1946     		mov	r1, r3
+ 315 005a 0022     		movs	r2, #0
+ 316 005c 0023     		movs	r3, #0
+ 317 005e FFF7FEFF 		bl	xQueueGenericSend
+ 318 0062 7862     		str	r0, [r7, #36]
+ 319 0064 0AE0     		b	.L15
+ 320              	.L16:
+ 339:../FreeRTOS/timers.c **** 			}
+ 340:../FreeRTOS/timers.c **** 		}
+ 341:../FreeRTOS/timers.c **** 		else
+ 342:../FreeRTOS/timers.c **** 		{
+ 343:../FreeRTOS/timers.c **** 			xReturn = xQueueSendToBackFromISR( xTimerQueue, &xMessage, pxHigherPriorityTaskWoken );
+ 321              		.loc 1 343 0
+ 322 0066 084B     		ldr	r3, .L21
+ 323 0068 1A68     		ldr	r2, [r3]
+ 324 006a 07F11403 		add	r3, r7, #20
+ 325 006e 1046     		mov	r0, r2
+ 326 0070 1946     		mov	r1, r3
+ 327 0072 3A68     		ldr	r2, [r7]
+ 328 0074 0023     		movs	r3, #0
+ 329 0076 FFF7FEFF 		bl	xQueueGenericSendFromISR
+ 330 007a 7862     		str	r0, [r7, #36]
+ 331              	.L15:
+ 344:../FreeRTOS/timers.c **** 		}
+ 345:../FreeRTOS/timers.c **** 
+ 346:../FreeRTOS/timers.c **** 		traceTIMER_COMMAND_SEND( xTimer, xCommandID, xOptionalValue, xReturn );
+ 347:../FreeRTOS/timers.c **** 	}
+ 348:../FreeRTOS/timers.c **** 	else
+ 349:../FreeRTOS/timers.c **** 	{
+ 350:../FreeRTOS/timers.c **** 		mtCOVERAGE_TEST_MARKER();
+ 351:../FreeRTOS/timers.c **** 	}
+ 352:../FreeRTOS/timers.c **** 
+ 353:../FreeRTOS/timers.c **** 	return xReturn;
+ 332              		.loc 1 353 0
+ 333 007c 7B6A     		ldr	r3, [r7, #36]
+ 354:../FreeRTOS/timers.c **** }
+ 334              		.loc 1 354 0
+ 335 007e 1846     		mov	r0, r3
+ 336 0080 2837     		adds	r7, r7, #40
+ 337              		.cfi_def_cfa_offset 8
+ 338 0082 BD46     		mov	sp, r7
+ 339              		.cfi_def_cfa_register 13
+ 340              		@ sp needed
+ 341 0084 80BD     		pop	{r7, pc}
+ 342              	.L22:
+ 343 0086 00BF     		.align	2
+ 344              	.L21:
+ 345 0088 00000000 		.word	xTimerQueue
+ 346              		.cfi_endproc
+ 347              	.LFE6:
+ 349              		.section	.text.pcTimerGetTimerName,"ax",%progbits
+ 350              		.align	2
+ 351              		.global	pcTimerGetTimerName
+ 352              		.thumb
+ 353              		.thumb_func
+ 355              	pcTimerGetTimerName:
+ 356              	.LFB7:
+ 355:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 356:../FreeRTOS/timers.c **** 
+ 357:../FreeRTOS/timers.c **** #if ( INCLUDE_xTimerGetTimerDaemonTaskHandle == 1 )
+ 358:../FreeRTOS/timers.c **** 
+ 359:../FreeRTOS/timers.c **** 	TaskHandle_t xTimerGetTimerDaemonTaskHandle( void )
+ 360:../FreeRTOS/timers.c **** 	{
+ 361:../FreeRTOS/timers.c **** 		/* If xTimerGetTimerDaemonTaskHandle() is called before the scheduler has been
+ 362:../FreeRTOS/timers.c **** 		started, then xTimerTaskHandle will be NULL. */
+ 363:../FreeRTOS/timers.c **** 		configASSERT( ( xTimerTaskHandle != NULL ) );
+ 364:../FreeRTOS/timers.c **** 		return xTimerTaskHandle;
+ 365:../FreeRTOS/timers.c **** 	}
+ 366:../FreeRTOS/timers.c **** 
+ 367:../FreeRTOS/timers.c **** #endif
+ 368:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 369:../FreeRTOS/timers.c **** 
+ 370:../FreeRTOS/timers.c **** const char * pcTimerGetTimerName( TimerHandle_t xTimer )
+ 371:../FreeRTOS/timers.c **** {
+ 357              		.loc 1 371 0
+ 358              		.cfi_startproc
+ 359              		@ args = 0, pretend = 0, frame = 16
+ 360              		@ frame_needed = 1, uses_anonymous_args = 0
+ 361              		@ link register save eliminated.
+ 362 0000 80B4     		push	{r7}
+ 363              		.cfi_def_cfa_offset 4
+ 364              		.cfi_offset 7, -4
+ 365 0002 85B0     		sub	sp, sp, #20
+ 366              		.cfi_def_cfa_offset 24
+ 367 0004 00AF     		add	r7, sp, #0
+ 368              		.cfi_def_cfa_register 7
+ 369 0006 7860     		str	r0, [r7, #4]
+ 372:../FreeRTOS/timers.c **** Timer_t *pxTimer = ( Timer_t * ) xTimer;
+ 370              		.loc 1 372 0
+ 371 0008 7B68     		ldr	r3, [r7, #4]
+ 372 000a FB60     		str	r3, [r7, #12]
+ 373:../FreeRTOS/timers.c **** 
+ 374:../FreeRTOS/timers.c **** 	return pxTimer->pcTimerName;
+ 373              		.loc 1 374 0
+ 374 000c FB68     		ldr	r3, [r7, #12]
+ 375 000e 1B68     		ldr	r3, [r3]
+ 375:../FreeRTOS/timers.c **** }
+ 376              		.loc 1 375 0
+ 377 0010 1846     		mov	r0, r3
+ 378 0012 1437     		adds	r7, r7, #20
+ 379              		.cfi_def_cfa_offset 4
+ 380 0014 BD46     		mov	sp, r7
+ 381              		.cfi_def_cfa_register 13
+ 382              		@ sp needed
+ 383 0016 5DF8047B 		ldr	r7, [sp], #4
+ 384              		.cfi_restore 7
+ 385              		.cfi_def_cfa_offset 0
+ 386 001a 7047     		bx	lr
+ 387              		.cfi_endproc
+ 388              	.LFE7:
+ 390              		.section	.text.prvProcessExpiredTimer,"ax",%progbits
+ 391              		.align	2
+ 392              		.thumb
+ 393              		.thumb_func
+ 395              	prvProcessExpiredTimer:
+ 396              	.LFB8:
+ 376:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 377:../FreeRTOS/timers.c **** 
+ 378:../FreeRTOS/timers.c **** static void prvProcessExpiredTimer( const TickType_t xNextExpireTime, const TickType_t xTimeNow )
+ 379:../FreeRTOS/timers.c **** {
+ 397              		.loc 1 379 0
+ 398              		.cfi_startproc
+ 399              		@ args = 0, pretend = 0, frame = 24
+ 400              		@ frame_needed = 1, uses_anonymous_args = 0
+ 401 0000 80B5     		push	{r7, lr}
+ 402              		.cfi_def_cfa_offset 8
+ 403              		.cfi_offset 7, -8
+ 404              		.cfi_offset 14, -4
+ 405 0002 88B0     		sub	sp, sp, #32
+ 406              		.cfi_def_cfa_offset 40
+ 407 0004 02AF     		add	r7, sp, #8
+ 408              		.cfi_def_cfa 7, 32
+ 409 0006 7860     		str	r0, [r7, #4]
+ 410 0008 3960     		str	r1, [r7]
+ 380:../FreeRTOS/timers.c **** BaseType_t xResult;
+ 381:../FreeRTOS/timers.c **** Timer_t * const pxTimer = ( Timer_t * ) listGET_OWNER_OF_HEAD_ENTRY( pxCurrentTimerList );
+ 411              		.loc 1 381 0
+ 412 000a 1C4B     		ldr	r3, .L28
+ 413 000c 1B68     		ldr	r3, [r3]
+ 414 000e DB68     		ldr	r3, [r3, #12]
+ 415 0010 DB68     		ldr	r3, [r3, #12]
+ 416 0012 7B61     		str	r3, [r7, #20]
+ 382:../FreeRTOS/timers.c **** 
+ 383:../FreeRTOS/timers.c **** 	/* Remove the timer from the list of active timers.  A check has already
+ 384:../FreeRTOS/timers.c **** 	been performed to ensure the list is not empty. */
+ 385:../FreeRTOS/timers.c **** 	( void ) uxListRemove( &( pxTimer->xTimerListItem ) );
+ 417              		.loc 1 385 0
+ 418 0014 7B69     		ldr	r3, [r7, #20]
+ 419 0016 0433     		adds	r3, r3, #4
+ 420 0018 1846     		mov	r0, r3
+ 421 001a FFF7FEFF 		bl	uxListRemove
+ 386:../FreeRTOS/timers.c **** 	traceTIMER_EXPIRED( pxTimer );
+ 387:../FreeRTOS/timers.c **** 
+ 388:../FreeRTOS/timers.c **** 	/* If the timer is an auto reload timer then calculate the next
+ 389:../FreeRTOS/timers.c **** 	expiry time and re-insert the timer in the list of active timers. */
+ 390:../FreeRTOS/timers.c **** 	if( pxTimer->uxAutoReload == ( UBaseType_t ) pdTRUE )
+ 422              		.loc 1 390 0
+ 423 001e 7B69     		ldr	r3, [r7, #20]
+ 424 0020 DB69     		ldr	r3, [r3, #28]
+ 425 0022 012B     		cmp	r3, #1
+ 426 0024 22D1     		bne	.L26
+ 391:../FreeRTOS/timers.c **** 	{
+ 392:../FreeRTOS/timers.c **** 		/* The timer is inserted into a list using a time relative to anything
+ 393:../FreeRTOS/timers.c **** 		other than the current time.  It will therefore be inserted into the
+ 394:../FreeRTOS/timers.c **** 		correct list relative to the time this task thinks it is now. */
+ 395:../FreeRTOS/timers.c **** 		if( prvInsertTimerInActiveList( pxTimer, ( xNextExpireTime + pxTimer->xTimerPeriodInTicks ), xTim
+ 427              		.loc 1 395 0
+ 428 0026 7B69     		ldr	r3, [r7, #20]
+ 429 0028 9A69     		ldr	r2, [r3, #24]
+ 430 002a 7B68     		ldr	r3, [r7, #4]
+ 431 002c 1344     		add	r3, r3, r2
+ 432 002e 7869     		ldr	r0, [r7, #20]
+ 433 0030 1946     		mov	r1, r3
+ 434 0032 3A68     		ldr	r2, [r7]
+ 435 0034 7B68     		ldr	r3, [r7, #4]
+ 436 0036 FFF7FEFF 		bl	prvInsertTimerInActiveList
+ 437 003a 0346     		mov	r3, r0
+ 438 003c 012B     		cmp	r3, #1
+ 439 003e 15D1     		bne	.L26
+ 396:../FreeRTOS/timers.c **** 		{
+ 397:../FreeRTOS/timers.c **** 			/* The timer expired before it was added to the active timer
+ 398:../FreeRTOS/timers.c **** 			list.  Reload it now.  */
+ 399:../FreeRTOS/timers.c **** 			xResult = xTimerGenericCommand( pxTimer, tmrCOMMAND_START_DONT_TRACE, xNextExpireTime, NULL, tmr
+ 440              		.loc 1 399 0
+ 441 0040 0023     		movs	r3, #0
+ 442 0042 0093     		str	r3, [sp]
+ 443 0044 7869     		ldr	r0, [r7, #20]
+ 444 0046 0021     		movs	r1, #0
+ 445 0048 7A68     		ldr	r2, [r7, #4]
+ 446 004a 0023     		movs	r3, #0
+ 447 004c FFF7FEFF 		bl	xTimerGenericCommand
+ 448 0050 3861     		str	r0, [r7, #16]
+ 400:../FreeRTOS/timers.c **** 			configASSERT( xResult );
+ 449              		.loc 1 400 0
+ 450 0052 3B69     		ldr	r3, [r7, #16]
+ 451 0054 002B     		cmp	r3, #0
+ 452 0056 09D1     		bne	.L26
+ 453              	.LBB29:
+ 454              	.LBB30:
+ 455              		.loc 2 215 0 discriminator 1
+ 456              	@ 215 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../Free
+ 457 0058 4FF00703 			mov r3, #7												
+ 458 005c 83F31188 		msr basepri, r3											
+ 459 0060 BFF36F8F 		isb														
+ 460 0064 BFF34F8F 		dsb														
+ 461              	
+ 462              	@ 0 "" 2
+ 463              		.thumb
+ 464 0068 FB60     		str	r3, [r7, #12]
+ 465              	.L27:
+ 466              	.LBE30:
+ 467              	.LBE29:
+ 468              		.loc 1 400 0 discriminator 1
+ 469 006a FEE7     		b	.L27
+ 470              	.L26:
+ 401:../FreeRTOS/timers.c **** 			( void ) xResult;
+ 402:../FreeRTOS/timers.c **** 		}
+ 403:../FreeRTOS/timers.c **** 		else
+ 404:../FreeRTOS/timers.c **** 		{
+ 405:../FreeRTOS/timers.c **** 			mtCOVERAGE_TEST_MARKER();
+ 406:../FreeRTOS/timers.c **** 		}
+ 407:../FreeRTOS/timers.c **** 	}
+ 408:../FreeRTOS/timers.c **** 	else
+ 409:../FreeRTOS/timers.c **** 	{
+ 410:../FreeRTOS/timers.c **** 		mtCOVERAGE_TEST_MARKER();
+ 411:../FreeRTOS/timers.c **** 	}
+ 412:../FreeRTOS/timers.c **** 
+ 413:../FreeRTOS/timers.c **** 	/* Call the timer callback. */
+ 414:../FreeRTOS/timers.c **** 	pxTimer->pxCallbackFunction( ( TimerHandle_t ) pxTimer );
+ 471              		.loc 1 414 0
+ 472 006c 7B69     		ldr	r3, [r7, #20]
+ 473 006e 5B6A     		ldr	r3, [r3, #36]
+ 474 0070 7869     		ldr	r0, [r7, #20]
+ 475 0072 9847     		blx	r3
+ 415:../FreeRTOS/timers.c **** }
+ 476              		.loc 1 415 0
+ 477 0074 1837     		adds	r7, r7, #24
+ 478              		.cfi_def_cfa_offset 8
+ 479 0076 BD46     		mov	sp, r7
+ 480              		.cfi_def_cfa_register 13
+ 481              		@ sp needed
+ 482 0078 80BD     		pop	{r7, pc}
+ 483              	.L29:
+ 484 007a 00BF     		.align	2
+ 485              	.L28:
+ 486 007c 00000000 		.word	pxCurrentTimerList
+ 487              		.cfi_endproc
+ 488              	.LFE8:
+ 490              		.section	.text.prvTimerTask,"ax",%progbits
+ 491              		.align	2
+ 492              		.thumb
+ 493              		.thumb_func
+ 495              	prvTimerTask:
+ 496              	.LFB9:
+ 416:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 417:../FreeRTOS/timers.c **** 
+ 418:../FreeRTOS/timers.c **** static void prvTimerTask( void *pvParameters )
+ 419:../FreeRTOS/timers.c **** {
+ 497              		.loc 1 419 0
+ 498              		.cfi_startproc
+ 499              		@ args = 0, pretend = 0, frame = 16
+ 500              		@ frame_needed = 1, uses_anonymous_args = 0
+ 501 0000 80B5     		push	{r7, lr}
+ 502              		.cfi_def_cfa_offset 8
+ 503              		.cfi_offset 7, -8
+ 504              		.cfi_offset 14, -4
+ 505 0002 84B0     		sub	sp, sp, #16
+ 506              		.cfi_def_cfa_offset 24
+ 507 0004 00AF     		add	r7, sp, #0
+ 508              		.cfi_def_cfa_register 7
+ 509 0006 7860     		str	r0, [r7, #4]
+ 510              	.L31:
+ 420:../FreeRTOS/timers.c **** TickType_t xNextExpireTime;
+ 421:../FreeRTOS/timers.c **** BaseType_t xListWasEmpty;
+ 422:../FreeRTOS/timers.c **** 
+ 423:../FreeRTOS/timers.c **** 	/* Just to avoid compiler warnings. */
+ 424:../FreeRTOS/timers.c **** 	( void ) pvParameters;
+ 425:../FreeRTOS/timers.c **** 
+ 426:../FreeRTOS/timers.c **** 	for( ;; )
+ 427:../FreeRTOS/timers.c **** 	{
+ 428:../FreeRTOS/timers.c **** 		/* Query the timers list to see if it contains any timers, and if so,
+ 429:../FreeRTOS/timers.c **** 		obtain the time at which the next timer will expire. */
+ 430:../FreeRTOS/timers.c **** 		xNextExpireTime = prvGetNextExpireTime( &xListWasEmpty );
+ 511              		.loc 1 430 0 discriminator 1
+ 512 0008 07F10803 		add	r3, r7, #8
+ 513 000c 1846     		mov	r0, r3
+ 514 000e FFF7FEFF 		bl	prvGetNextExpireTime
+ 515 0012 F860     		str	r0, [r7, #12]
+ 431:../FreeRTOS/timers.c **** 
+ 432:../FreeRTOS/timers.c **** 		/* If a timer has expired, process it.  Otherwise, block this task
+ 433:../FreeRTOS/timers.c **** 		until either a timer does expire, or a command is received. */
+ 434:../FreeRTOS/timers.c **** 		prvProcessTimerOrBlockTask( xNextExpireTime, xListWasEmpty );
+ 516              		.loc 1 434 0 discriminator 1
+ 517 0014 BB68     		ldr	r3, [r7, #8]
+ 518 0016 F868     		ldr	r0, [r7, #12]
+ 519 0018 1946     		mov	r1, r3
+ 520 001a FFF7FEFF 		bl	prvProcessTimerOrBlockTask
+ 435:../FreeRTOS/timers.c **** 
+ 436:../FreeRTOS/timers.c **** 		/* Empty the command queue. */
+ 437:../FreeRTOS/timers.c **** 		prvProcessReceivedCommands();
+ 521              		.loc 1 437 0 discriminator 1
+ 522 001e FFF7FEFF 		bl	prvProcessReceivedCommands
+ 438:../FreeRTOS/timers.c **** 	}
+ 523              		.loc 1 438 0 discriminator 1
+ 524 0022 F1E7     		b	.L31
+ 525              		.cfi_endproc
+ 526              	.LFE9:
+ 528              		.section	.text.prvProcessTimerOrBlockTask,"ax",%progbits
+ 529              		.align	2
+ 530              		.thumb
+ 531              		.thumb_func
+ 533              	prvProcessTimerOrBlockTask:
+ 534              	.LFB10:
+ 439:../FreeRTOS/timers.c **** }
+ 440:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 441:../FreeRTOS/timers.c **** 
+ 442:../FreeRTOS/timers.c **** static void prvProcessTimerOrBlockTask( const TickType_t xNextExpireTime, const BaseType_t xListWas
+ 443:../FreeRTOS/timers.c **** {
+ 535              		.loc 1 443 0
+ 536              		.cfi_startproc
+ 537              		@ args = 0, pretend = 0, frame = 16
+ 538              		@ frame_needed = 1, uses_anonymous_args = 0
+ 539 0000 80B5     		push	{r7, lr}
+ 540              		.cfi_def_cfa_offset 8
+ 541              		.cfi_offset 7, -8
+ 542              		.cfi_offset 14, -4
+ 543 0002 84B0     		sub	sp, sp, #16
+ 544              		.cfi_def_cfa_offset 24
+ 545 0004 00AF     		add	r7, sp, #0
+ 546              		.cfi_def_cfa_register 7
+ 547 0006 7860     		str	r0, [r7, #4]
+ 548 0008 3960     		str	r1, [r7]
+ 444:../FreeRTOS/timers.c **** TickType_t xTimeNow;
+ 445:../FreeRTOS/timers.c **** BaseType_t xTimerListsWereSwitched;
+ 446:../FreeRTOS/timers.c **** 
+ 447:../FreeRTOS/timers.c **** 	vTaskSuspendAll();
+ 549              		.loc 1 447 0
+ 550 000a FFF7FEFF 		bl	vTaskSuspendAll
+ 448:../FreeRTOS/timers.c **** 	{
+ 449:../FreeRTOS/timers.c **** 		/* Obtain the time now to make an assessment as to whether the timer
+ 450:../FreeRTOS/timers.c **** 		has expired or not.  If obtaining the time causes the lists to switch
+ 451:../FreeRTOS/timers.c **** 		then don't process this timer as any timers that remained in the list
+ 452:../FreeRTOS/timers.c **** 		when the lists were switched will have been processed within the
+ 453:../FreeRTOS/timers.c **** 		prvSampleTimeNow() function. */
+ 454:../FreeRTOS/timers.c **** 		xTimeNow = prvSampleTimeNow( &xTimerListsWereSwitched );
+ 551              		.loc 1 454 0
+ 552 000e 07F10803 		add	r3, r7, #8
+ 553 0012 1846     		mov	r0, r3
+ 554 0014 FFF7FEFF 		bl	prvSampleTimeNow
+ 555 0018 F860     		str	r0, [r7, #12]
+ 455:../FreeRTOS/timers.c **** 		if( xTimerListsWereSwitched == pdFALSE )
+ 556              		.loc 1 455 0
+ 557 001a BB68     		ldr	r3, [r7, #8]
+ 558 001c 002B     		cmp	r3, #0
+ 559 001e 25D1     		bne	.L33
+ 456:../FreeRTOS/timers.c **** 		{
+ 457:../FreeRTOS/timers.c **** 			/* The tick count has not overflowed, has the timer expired? */
+ 458:../FreeRTOS/timers.c **** 			if( ( xListWasEmpty == pdFALSE ) && ( xNextExpireTime <= xTimeNow ) )
+ 560              		.loc 1 458 0
+ 561 0020 3B68     		ldr	r3, [r7]
+ 562 0022 002B     		cmp	r3, #0
+ 563 0024 0AD1     		bne	.L34
+ 564              		.loc 1 458 0 is_stmt 0 discriminator 1
+ 565 0026 7A68     		ldr	r2, [r7, #4]
+ 566 0028 FB68     		ldr	r3, [r7, #12]
+ 567 002a 9A42     		cmp	r2, r3
+ 568 002c 06D8     		bhi	.L34
+ 459:../FreeRTOS/timers.c **** 			{
+ 460:../FreeRTOS/timers.c **** 				( void ) xTaskResumeAll();
+ 569              		.loc 1 460 0 is_stmt 1
+ 570 002e FFF7FEFF 		bl	xTaskResumeAll
+ 461:../FreeRTOS/timers.c **** 				prvProcessExpiredTimer( xNextExpireTime, xTimeNow );
+ 571              		.loc 1 461 0
+ 572 0032 7868     		ldr	r0, [r7, #4]
+ 573 0034 F968     		ldr	r1, [r7, #12]
+ 574 0036 FFF7FEFF 		bl	prvProcessExpiredTimer
+ 575 003a 19E0     		b	.L32
+ 576              	.L34:
+ 462:../FreeRTOS/timers.c **** 			}
+ 463:../FreeRTOS/timers.c **** 			else
+ 464:../FreeRTOS/timers.c **** 			{
+ 465:../FreeRTOS/timers.c **** 				/* The tick count has not overflowed, and the next expire
+ 466:../FreeRTOS/timers.c **** 				time has not been reached yet.  This task should therefore
+ 467:../FreeRTOS/timers.c **** 				block to wait for the next expire time or a command to be
+ 468:../FreeRTOS/timers.c **** 				received - whichever comes first.  The following line cannot
+ 469:../FreeRTOS/timers.c **** 				be reached unless xNextExpireTime > xTimeNow, except in the
+ 470:../FreeRTOS/timers.c **** 				case when the current timer list is empty. */
+ 471:../FreeRTOS/timers.c **** 				vQueueWaitForMessageRestricted( xTimerQueue, ( xNextExpireTime - xTimeNow ), xListWasEmpty );
+ 577              		.loc 1 471 0
+ 578 003c 0E4B     		ldr	r3, .L37
+ 579 003e 1968     		ldr	r1, [r3]
+ 580 0040 7A68     		ldr	r2, [r7, #4]
+ 581 0042 FB68     		ldr	r3, [r7, #12]
+ 582 0044 D31A     		subs	r3, r2, r3
+ 583 0046 0846     		mov	r0, r1
+ 584 0048 1946     		mov	r1, r3
+ 585 004a 3A68     		ldr	r2, [r7]
+ 586 004c FFF7FEFF 		bl	vQueueWaitForMessageRestricted
+ 472:../FreeRTOS/timers.c **** 
+ 473:../FreeRTOS/timers.c **** 				if( xTaskResumeAll() == pdFALSE )
+ 587              		.loc 1 473 0
+ 588 0050 FFF7FEFF 		bl	xTaskResumeAll
+ 589 0054 0346     		mov	r3, r0
+ 590 0056 002B     		cmp	r3, #0
+ 591 0058 0AD1     		bne	.L32
+ 474:../FreeRTOS/timers.c **** 				{
+ 475:../FreeRTOS/timers.c **** 					/* Yield to wait for either a command to arrive, or the
+ 476:../FreeRTOS/timers.c **** 					block time to expire.  If a command arrived between the
+ 477:../FreeRTOS/timers.c **** 					critical section being exited and this yield then the yield
+ 478:../FreeRTOS/timers.c **** 					will not cause the task to block. */
+ 479:../FreeRTOS/timers.c **** 					portYIELD_WITHIN_API();
+ 592              		.loc 1 479 0
+ 593 005a 084B     		ldr	r3, .L37+4
+ 594 005c 4FF08052 		mov	r2, #268435456
+ 595 0060 1A60     		str	r2, [r3]
+ 596              	@ 479 "../FreeRTOS/timers.c" 1
+ 597 0062 BFF34F8F 		dsb
+ 598              	@ 0 "" 2
+ 599              	@ 479 "../FreeRTOS/timers.c" 1
+ 600 0066 BFF36F8F 		isb
+ 601              	@ 0 "" 2
+ 602              		.thumb
+ 603 006a 01E0     		b	.L32
+ 604              	.L33:
+ 480:../FreeRTOS/timers.c **** 				}
+ 481:../FreeRTOS/timers.c **** 				else
+ 482:../FreeRTOS/timers.c **** 				{
+ 483:../FreeRTOS/timers.c **** 					mtCOVERAGE_TEST_MARKER();
+ 484:../FreeRTOS/timers.c **** 				}
+ 485:../FreeRTOS/timers.c **** 			}
+ 486:../FreeRTOS/timers.c **** 		}
+ 487:../FreeRTOS/timers.c **** 		else
+ 488:../FreeRTOS/timers.c **** 		{
+ 489:../FreeRTOS/timers.c **** 			( void ) xTaskResumeAll();
+ 605              		.loc 1 489 0
+ 606 006c FFF7FEFF 		bl	xTaskResumeAll
+ 607              	.L32:
+ 490:../FreeRTOS/timers.c **** 		}
+ 491:../FreeRTOS/timers.c **** 	}
+ 492:../FreeRTOS/timers.c **** }
+ 608              		.loc 1 492 0
+ 609 0070 1037     		adds	r7, r7, #16
+ 610              		.cfi_def_cfa_offset 8
+ 611 0072 BD46     		mov	sp, r7
+ 612              		.cfi_def_cfa_register 13
+ 613              		@ sp needed
+ 614 0074 80BD     		pop	{r7, pc}
+ 615              	.L38:
+ 616 0076 00BF     		.align	2
+ 617              	.L37:
+ 618 0078 00000000 		.word	xTimerQueue
+ 619 007c 04ED00E0 		.word	-536810236
+ 620              		.cfi_endproc
+ 621              	.LFE10:
+ 623              		.section	.text.prvGetNextExpireTime,"ax",%progbits
+ 624              		.align	2
+ 625              		.thumb
+ 626              		.thumb_func
+ 628              	prvGetNextExpireTime:
+ 629              	.LFB11:
+ 493:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 494:../FreeRTOS/timers.c **** 
+ 495:../FreeRTOS/timers.c **** static TickType_t prvGetNextExpireTime( BaseType_t * const pxListWasEmpty )
+ 496:../FreeRTOS/timers.c **** {
+ 630              		.loc 1 496 0
+ 631              		.cfi_startproc
+ 632              		@ args = 0, pretend = 0, frame = 16
+ 633              		@ frame_needed = 1, uses_anonymous_args = 0
+ 634              		@ link register save eliminated.
+ 635 0000 80B4     		push	{r7}
+ 636              		.cfi_def_cfa_offset 4
+ 637              		.cfi_offset 7, -4
+ 638 0002 85B0     		sub	sp, sp, #20
+ 639              		.cfi_def_cfa_offset 24
+ 640 0004 00AF     		add	r7, sp, #0
+ 641              		.cfi_def_cfa_register 7
+ 642 0006 7860     		str	r0, [r7, #4]
+ 497:../FreeRTOS/timers.c **** TickType_t xNextExpireTime;
+ 498:../FreeRTOS/timers.c **** 
+ 499:../FreeRTOS/timers.c **** 	/* Timers are listed in expiry time order, with the head of the list
+ 500:../FreeRTOS/timers.c **** 	referencing the task that will expire first.  Obtain the time at which
+ 501:../FreeRTOS/timers.c **** 	the timer with the nearest expiry time will expire.  If there are no
+ 502:../FreeRTOS/timers.c **** 	active timers then just set the next expire time to 0.  That will cause
+ 503:../FreeRTOS/timers.c **** 	this task to unblock when the tick count overflows, at which point the
+ 504:../FreeRTOS/timers.c **** 	timer lists will be switched and the next expiry time can be
+ 505:../FreeRTOS/timers.c **** 	re-assessed.  */
+ 506:../FreeRTOS/timers.c **** 	*pxListWasEmpty = listLIST_IS_EMPTY( pxCurrentTimerList );
+ 643              		.loc 1 506 0
+ 644 0008 0E4B     		ldr	r3, .L43
+ 645 000a 1B68     		ldr	r3, [r3]
+ 646 000c 1B68     		ldr	r3, [r3]
+ 647 000e 002B     		cmp	r3, #0
+ 648 0010 0CBF     		ite	eq
+ 649 0012 0123     		moveq	r3, #1
+ 650 0014 0023     		movne	r3, #0
+ 651 0016 DBB2     		uxtb	r3, r3
+ 652 0018 1A46     		mov	r2, r3
+ 653 001a 7B68     		ldr	r3, [r7, #4]
+ 654 001c 1A60     		str	r2, [r3]
+ 507:../FreeRTOS/timers.c **** 	if( *pxListWasEmpty == pdFALSE )
+ 655              		.loc 1 507 0
+ 656 001e 7B68     		ldr	r3, [r7, #4]
+ 657 0020 1B68     		ldr	r3, [r3]
+ 658 0022 002B     		cmp	r3, #0
+ 659 0024 05D1     		bne	.L40
+ 508:../FreeRTOS/timers.c **** 	{
+ 509:../FreeRTOS/timers.c **** 		xNextExpireTime = listGET_ITEM_VALUE_OF_HEAD_ENTRY( pxCurrentTimerList );
+ 660              		.loc 1 509 0
+ 661 0026 074B     		ldr	r3, .L43
+ 662 0028 1B68     		ldr	r3, [r3]
+ 663 002a DB68     		ldr	r3, [r3, #12]
+ 664 002c 1B68     		ldr	r3, [r3]
+ 665 002e FB60     		str	r3, [r7, #12]
+ 666 0030 01E0     		b	.L41
+ 667              	.L40:
+ 510:../FreeRTOS/timers.c **** 	}
+ 511:../FreeRTOS/timers.c **** 	else
+ 512:../FreeRTOS/timers.c **** 	{
+ 513:../FreeRTOS/timers.c **** 		/* Ensure the task unblocks when the tick count rolls over. */
+ 514:../FreeRTOS/timers.c **** 		xNextExpireTime = ( TickType_t ) 0U;
+ 668              		.loc 1 514 0
+ 669 0032 0023     		movs	r3, #0
+ 670 0034 FB60     		str	r3, [r7, #12]
+ 671              	.L41:
+ 515:../FreeRTOS/timers.c **** 	}
+ 516:../FreeRTOS/timers.c **** 
+ 517:../FreeRTOS/timers.c **** 	return xNextExpireTime;
+ 672              		.loc 1 517 0
+ 673 0036 FB68     		ldr	r3, [r7, #12]
+ 518:../FreeRTOS/timers.c **** }
+ 674              		.loc 1 518 0
+ 675 0038 1846     		mov	r0, r3
+ 676 003a 1437     		adds	r7, r7, #20
+ 677              		.cfi_def_cfa_offset 4
+ 678 003c BD46     		mov	sp, r7
+ 679              		.cfi_def_cfa_register 13
+ 680              		@ sp needed
+ 681 003e 5DF8047B 		ldr	r7, [sp], #4
+ 682              		.cfi_restore 7
+ 683              		.cfi_def_cfa_offset 0
+ 684 0042 7047     		bx	lr
+ 685              	.L44:
+ 686              		.align	2
+ 687              	.L43:
+ 688 0044 00000000 		.word	pxCurrentTimerList
+ 689              		.cfi_endproc
+ 690              	.LFE11:
+ 692              		.section	.text.prvSampleTimeNow,"ax",%progbits
+ 693              		.align	2
+ 694              		.thumb
+ 695              		.thumb_func
+ 697              	prvSampleTimeNow:
+ 698              	.LFB12:
+ 519:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 520:../FreeRTOS/timers.c **** 
+ 521:../FreeRTOS/timers.c **** static TickType_t prvSampleTimeNow( BaseType_t * const pxTimerListsWereSwitched )
+ 522:../FreeRTOS/timers.c **** {
+ 699              		.loc 1 522 0
+ 700              		.cfi_startproc
+ 701              		@ args = 0, pretend = 0, frame = 16
+ 702              		@ frame_needed = 1, uses_anonymous_args = 0
+ 703 0000 80B5     		push	{r7, lr}
+ 704              		.cfi_def_cfa_offset 8
+ 705              		.cfi_offset 7, -8
+ 706              		.cfi_offset 14, -4
+ 707 0002 84B0     		sub	sp, sp, #16
+ 708              		.cfi_def_cfa_offset 24
+ 709 0004 00AF     		add	r7, sp, #0
+ 710              		.cfi_def_cfa_register 7
+ 711 0006 7860     		str	r0, [r7, #4]
+ 523:../FreeRTOS/timers.c **** TickType_t xTimeNow;
+ 524:../FreeRTOS/timers.c **** PRIVILEGED_DATA static TickType_t xLastTime = ( TickType_t ) 0U; /*lint !e956 Variable is only acce
+ 525:../FreeRTOS/timers.c **** 
+ 526:../FreeRTOS/timers.c **** 	xTimeNow = xTaskGetTickCount();
+ 712              		.loc 1 526 0
+ 713 0008 FFF7FEFF 		bl	xTaskGetTickCount
+ 714 000c F860     		str	r0, [r7, #12]
+ 527:../FreeRTOS/timers.c **** 
+ 528:../FreeRTOS/timers.c **** 	if( xTimeNow < xLastTime )
+ 715              		.loc 1 528 0
+ 716 000e 0B4B     		ldr	r3, .L49
+ 717 0010 1B68     		ldr	r3, [r3]
+ 718 0012 FA68     		ldr	r2, [r7, #12]
+ 719 0014 9A42     		cmp	r2, r3
+ 720 0016 05D2     		bcs	.L46
+ 529:../FreeRTOS/timers.c **** 	{
+ 530:../FreeRTOS/timers.c **** 		prvSwitchTimerLists();
+ 721              		.loc 1 530 0
+ 722 0018 FFF7FEFF 		bl	prvSwitchTimerLists
+ 531:../FreeRTOS/timers.c **** 		*pxTimerListsWereSwitched = pdTRUE;
+ 723              		.loc 1 531 0
+ 724 001c 7B68     		ldr	r3, [r7, #4]
+ 725 001e 0122     		movs	r2, #1
+ 726 0020 1A60     		str	r2, [r3]
+ 727 0022 02E0     		b	.L47
+ 728              	.L46:
+ 532:../FreeRTOS/timers.c **** 	}
+ 533:../FreeRTOS/timers.c **** 	else
+ 534:../FreeRTOS/timers.c **** 	{
+ 535:../FreeRTOS/timers.c **** 		*pxTimerListsWereSwitched = pdFALSE;
+ 729              		.loc 1 535 0
+ 730 0024 7B68     		ldr	r3, [r7, #4]
+ 731 0026 0022     		movs	r2, #0
+ 732 0028 1A60     		str	r2, [r3]
+ 733              	.L47:
+ 536:../FreeRTOS/timers.c **** 	}
+ 537:../FreeRTOS/timers.c **** 
+ 538:../FreeRTOS/timers.c **** 	xLastTime = xTimeNow;
+ 734              		.loc 1 538 0
+ 735 002a 044A     		ldr	r2, .L49
+ 736 002c FB68     		ldr	r3, [r7, #12]
+ 737 002e 1360     		str	r3, [r2]
+ 539:../FreeRTOS/timers.c **** 
+ 540:../FreeRTOS/timers.c **** 	return xTimeNow;
+ 738              		.loc 1 540 0
+ 739 0030 FB68     		ldr	r3, [r7, #12]
+ 541:../FreeRTOS/timers.c **** }
+ 740              		.loc 1 541 0
+ 741 0032 1846     		mov	r0, r3
+ 742 0034 1037     		adds	r7, r7, #16
+ 743              		.cfi_def_cfa_offset 8
+ 744 0036 BD46     		mov	sp, r7
+ 745              		.cfi_def_cfa_register 13
+ 746              		@ sp needed
+ 747 0038 80BD     		pop	{r7, pc}
+ 748              	.L50:
+ 749 003a 00BF     		.align	2
+ 750              	.L49:
+ 751 003c 00000000 		.word	xLastTime.4689
+ 752              		.cfi_endproc
+ 753              	.LFE12:
+ 755              		.section	.text.prvInsertTimerInActiveList,"ax",%progbits
+ 756              		.align	2
+ 757              		.thumb
+ 758              		.thumb_func
+ 760              	prvInsertTimerInActiveList:
+ 761              	.LFB13:
+ 542:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 543:../FreeRTOS/timers.c **** 
+ 544:../FreeRTOS/timers.c **** static BaseType_t prvInsertTimerInActiveList( Timer_t * const pxTimer, const TickType_t xNextExpiry
+ 545:../FreeRTOS/timers.c **** {
+ 762              		.loc 1 545 0
+ 763              		.cfi_startproc
+ 764              		@ args = 0, pretend = 0, frame = 24
+ 765              		@ frame_needed = 1, uses_anonymous_args = 0
+ 766 0000 80B5     		push	{r7, lr}
+ 767              		.cfi_def_cfa_offset 8
+ 768              		.cfi_offset 7, -8
+ 769              		.cfi_offset 14, -4
+ 770 0002 86B0     		sub	sp, sp, #24
+ 771              		.cfi_def_cfa_offset 32
+ 772 0004 00AF     		add	r7, sp, #0
+ 773              		.cfi_def_cfa_register 7
+ 774 0006 F860     		str	r0, [r7, #12]
+ 775 0008 B960     		str	r1, [r7, #8]
+ 776 000a 7A60     		str	r2, [r7, #4]
+ 777 000c 3B60     		str	r3, [r7]
+ 546:../FreeRTOS/timers.c **** BaseType_t xProcessTimerNow = pdFALSE;
+ 778              		.loc 1 546 0
+ 779 000e 0023     		movs	r3, #0
+ 780 0010 7B61     		str	r3, [r7, #20]
+ 547:../FreeRTOS/timers.c **** 
+ 548:../FreeRTOS/timers.c **** 	listSET_LIST_ITEM_VALUE( &( pxTimer->xTimerListItem ), xNextExpiryTime );
+ 781              		.loc 1 548 0
+ 782 0012 FB68     		ldr	r3, [r7, #12]
+ 783 0014 BA68     		ldr	r2, [r7, #8]
+ 784 0016 5A60     		str	r2, [r3, #4]
+ 549:../FreeRTOS/timers.c **** 	listSET_LIST_ITEM_OWNER( &( pxTimer->xTimerListItem ), pxTimer );
+ 785              		.loc 1 549 0
+ 786 0018 FB68     		ldr	r3, [r7, #12]
+ 787 001a FA68     		ldr	r2, [r7, #12]
+ 788 001c 1A61     		str	r2, [r3, #16]
+ 550:../FreeRTOS/timers.c **** 
+ 551:../FreeRTOS/timers.c **** 	if( xNextExpiryTime <= xTimeNow )
+ 789              		.loc 1 551 0
+ 790 001e BA68     		ldr	r2, [r7, #8]
+ 791 0020 7B68     		ldr	r3, [r7, #4]
+ 792 0022 9A42     		cmp	r2, r3
+ 793 0024 12D8     		bhi	.L52
+ 552:../FreeRTOS/timers.c **** 	{
+ 553:../FreeRTOS/timers.c **** 		/* Has the expiry time elapsed between the command to start/reset a
+ 554:../FreeRTOS/timers.c **** 		timer was issued, and the time the command was processed? */
+ 555:../FreeRTOS/timers.c **** 		if( ( xTimeNow - xCommandTime ) >= pxTimer->xTimerPeriodInTicks )
+ 794              		.loc 1 555 0
+ 795 0026 7A68     		ldr	r2, [r7, #4]
+ 796 0028 3B68     		ldr	r3, [r7]
+ 797 002a D21A     		subs	r2, r2, r3
+ 798 002c FB68     		ldr	r3, [r7, #12]
+ 799 002e 9B69     		ldr	r3, [r3, #24]
+ 800 0030 9A42     		cmp	r2, r3
+ 801 0032 02D3     		bcc	.L53
+ 556:../FreeRTOS/timers.c **** 		{
+ 557:../FreeRTOS/timers.c **** 			/* The time between a command being issued and the command being
+ 558:../FreeRTOS/timers.c **** 			processed actually exceeds the timers period.  */
+ 559:../FreeRTOS/timers.c **** 			xProcessTimerNow = pdTRUE;
+ 802              		.loc 1 559 0
+ 803 0034 0123     		movs	r3, #1
+ 804 0036 7B61     		str	r3, [r7, #20]
+ 805 0038 1BE0     		b	.L55
+ 806              	.L53:
+ 560:../FreeRTOS/timers.c **** 		}
+ 561:../FreeRTOS/timers.c **** 		else
+ 562:../FreeRTOS/timers.c **** 		{
+ 563:../FreeRTOS/timers.c **** 			vListInsert( pxOverflowTimerList, &( pxTimer->xTimerListItem ) );
+ 807              		.loc 1 563 0
+ 808 003a 104B     		ldr	r3, .L58
+ 809 003c 1A68     		ldr	r2, [r3]
+ 810 003e FB68     		ldr	r3, [r7, #12]
+ 811 0040 0433     		adds	r3, r3, #4
+ 812 0042 1046     		mov	r0, r2
+ 813 0044 1946     		mov	r1, r3
+ 814 0046 FFF7FEFF 		bl	vListInsert
+ 815 004a 12E0     		b	.L55
+ 816              	.L52:
+ 564:../FreeRTOS/timers.c **** 		}
+ 565:../FreeRTOS/timers.c **** 	}
+ 566:../FreeRTOS/timers.c **** 	else
+ 567:../FreeRTOS/timers.c **** 	{
+ 568:../FreeRTOS/timers.c **** 		if( ( xTimeNow < xCommandTime ) && ( xNextExpiryTime >= xCommandTime ) )
+ 817              		.loc 1 568 0
+ 818 004c 7A68     		ldr	r2, [r7, #4]
+ 819 004e 3B68     		ldr	r3, [r7]
+ 820 0050 9A42     		cmp	r2, r3
+ 821 0052 06D2     		bcs	.L56
+ 822              		.loc 1 568 0 is_stmt 0 discriminator 1
+ 823 0054 BA68     		ldr	r2, [r7, #8]
+ 824 0056 3B68     		ldr	r3, [r7]
+ 825 0058 9A42     		cmp	r2, r3
+ 826 005a 02D3     		bcc	.L56
+ 569:../FreeRTOS/timers.c **** 		{
+ 570:../FreeRTOS/timers.c **** 			/* If, since the command was issued, the tick count has overflowed
+ 571:../FreeRTOS/timers.c **** 			but the expiry time has not, then the timer must have already passed
+ 572:../FreeRTOS/timers.c **** 			its expiry time and should be processed immediately. */
+ 573:../FreeRTOS/timers.c **** 			xProcessTimerNow = pdTRUE;
+ 827              		.loc 1 573 0 is_stmt 1
+ 828 005c 0123     		movs	r3, #1
+ 829 005e 7B61     		str	r3, [r7, #20]
+ 830 0060 07E0     		b	.L55
+ 831              	.L56:
+ 574:../FreeRTOS/timers.c **** 		}
+ 575:../FreeRTOS/timers.c **** 		else
+ 576:../FreeRTOS/timers.c **** 		{
+ 577:../FreeRTOS/timers.c **** 			vListInsert( pxCurrentTimerList, &( pxTimer->xTimerListItem ) );
+ 832              		.loc 1 577 0
+ 833 0062 074B     		ldr	r3, .L58+4
+ 834 0064 1A68     		ldr	r2, [r3]
+ 835 0066 FB68     		ldr	r3, [r7, #12]
+ 836 0068 0433     		adds	r3, r3, #4
+ 837 006a 1046     		mov	r0, r2
+ 838 006c 1946     		mov	r1, r3
+ 839 006e FFF7FEFF 		bl	vListInsert
+ 840              	.L55:
+ 578:../FreeRTOS/timers.c **** 		}
+ 579:../FreeRTOS/timers.c **** 	}
+ 580:../FreeRTOS/timers.c **** 
+ 581:../FreeRTOS/timers.c **** 	return xProcessTimerNow;
+ 841              		.loc 1 581 0
+ 842 0072 7B69     		ldr	r3, [r7, #20]
+ 582:../FreeRTOS/timers.c **** }
+ 843              		.loc 1 582 0
+ 844 0074 1846     		mov	r0, r3
+ 845 0076 1837     		adds	r7, r7, #24
+ 846              		.cfi_def_cfa_offset 8
+ 847 0078 BD46     		mov	sp, r7
+ 848              		.cfi_def_cfa_register 13
+ 849              		@ sp needed
+ 850 007a 80BD     		pop	{r7, pc}
+ 851              	.L59:
+ 852              		.align	2
+ 853              	.L58:
+ 854 007c 00000000 		.word	pxOverflowTimerList
+ 855 0080 00000000 		.word	pxCurrentTimerList
+ 856              		.cfi_endproc
+ 857              	.LFE13:
+ 859              		.section	.text.prvProcessReceivedCommands,"ax",%progbits
+ 860              		.align	2
+ 861              		.thumb
+ 862              		.thumb_func
+ 864              	prvProcessReceivedCommands:
+ 865              	.LFB14:
+ 583:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 584:../FreeRTOS/timers.c **** 
+ 585:../FreeRTOS/timers.c **** static void	prvProcessReceivedCommands( void )
+ 586:../FreeRTOS/timers.c **** {
+ 866              		.loc 1 586 0
+ 867              		.cfi_startproc
+ 868              		@ args = 0, pretend = 0, frame = 48
+ 869              		@ frame_needed = 1, uses_anonymous_args = 0
+ 870 0000 80B5     		push	{r7, lr}
+ 871              		.cfi_def_cfa_offset 8
+ 872              		.cfi_offset 7, -8
+ 873              		.cfi_offset 14, -4
+ 874 0002 8EB0     		sub	sp, sp, #56
+ 875              		.cfi_def_cfa_offset 64
+ 876 0004 02AF     		add	r7, sp, #8
+ 877              		.cfi_def_cfa 7, 56
+ 587:../FreeRTOS/timers.c **** DaemonTaskMessage_t xMessage;
+ 588:../FreeRTOS/timers.c **** Timer_t *pxTimer;
+ 589:../FreeRTOS/timers.c **** BaseType_t xTimerListsWereSwitched, xResult;
+ 590:../FreeRTOS/timers.c **** TickType_t xTimeNow;
+ 591:../FreeRTOS/timers.c **** 
+ 592:../FreeRTOS/timers.c **** 	while( xQueueReceive( xTimerQueue, &xMessage, tmrNO_DELAY ) != pdFAIL ) /*lint !e603 xMessage does
+ 878              		.loc 1 592 0
+ 879 0006 99E0     		b	.L61
+ 880              	.L76:
+ 593:../FreeRTOS/timers.c **** 	{
+ 594:../FreeRTOS/timers.c **** 		#if ( INCLUDE_xTimerPendFunctionCall == 1 )
+ 595:../FreeRTOS/timers.c **** 		{
+ 596:../FreeRTOS/timers.c **** 			/* Negative commands are pended function calls rather than timer
+ 597:../FreeRTOS/timers.c **** 			commands. */
+ 598:../FreeRTOS/timers.c **** 			if( xMessage.xMessageID < ( BaseType_t ) 0 )
+ 881              		.loc 1 598 0
+ 882 0008 7B68     		ldr	r3, [r7, #4]
+ 883 000a 002B     		cmp	r3, #0
+ 884 000c 18DA     		bge	.L62
+ 885              	.LBB31:
+ 599:../FreeRTOS/timers.c **** 			{
+ 600:../FreeRTOS/timers.c **** 				const CallbackParameters_t * const pxCallback = &( xMessage.u.xCallbackParameters );
+ 886              		.loc 1 600 0
+ 887 000e 3B1D     		adds	r3, r7, #4
+ 888 0010 0433     		adds	r3, r3, #4
+ 889 0012 FB62     		str	r3, [r7, #44]
+ 601:../FreeRTOS/timers.c **** 
+ 602:../FreeRTOS/timers.c **** 				/* The timer uses the xCallbackParameters member to request a
+ 603:../FreeRTOS/timers.c **** 				callback be executed.  Check the callback is not NULL. */
+ 604:../FreeRTOS/timers.c **** 				configASSERT( pxCallback );
+ 890              		.loc 1 604 0
+ 891 0014 FB6A     		ldr	r3, [r7, #44]
+ 892 0016 002B     		cmp	r3, #0
+ 893 0018 09D1     		bne	.L63
+ 894              	.LBB32:
+ 895              	.LBB33:
+ 896              		.loc 2 215 0 discriminator 1
+ 897              	@ 215 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../Free
+ 898 001a 4FF00703 			mov r3, #7												
+ 899 001e 83F31188 		msr basepri, r3											
+ 900 0022 BFF36F8F 		isb														
+ 901 0026 BFF34F8F 		dsb														
+ 902              	
+ 903              	@ 0 "" 2
+ 904              		.thumb
+ 905 002a FB61     		str	r3, [r7, #28]
+ 906              	.L64:
+ 907              	.LBE33:
+ 908              	.LBE32:
+ 909              		.loc 1 604 0 discriminator 1
+ 910 002c FEE7     		b	.L64
+ 911              	.L63:
+ 605:../FreeRTOS/timers.c **** 
+ 606:../FreeRTOS/timers.c **** 				/* Call the function. */
+ 607:../FreeRTOS/timers.c **** 				pxCallback->pxCallbackFunction( pxCallback->pvParameter1, pxCallback->ulParameter2 );
+ 912              		.loc 1 607 0
+ 913 002e FB6A     		ldr	r3, [r7, #44]
+ 914 0030 1B68     		ldr	r3, [r3]
+ 915 0032 FA6A     		ldr	r2, [r7, #44]
+ 916 0034 5168     		ldr	r1, [r2, #4]
+ 917 0036 FA6A     		ldr	r2, [r7, #44]
+ 918 0038 9268     		ldr	r2, [r2, #8]
+ 919 003a 0846     		mov	r0, r1
+ 920 003c 1146     		mov	r1, r2
+ 921 003e 9847     		blx	r3
+ 922              	.L62:
+ 923              	.LBE31:
+ 608:../FreeRTOS/timers.c **** 			}
+ 609:../FreeRTOS/timers.c **** 			else
+ 610:../FreeRTOS/timers.c **** 			{
+ 611:../FreeRTOS/timers.c **** 				mtCOVERAGE_TEST_MARKER();
+ 612:../FreeRTOS/timers.c **** 			}
+ 613:../FreeRTOS/timers.c **** 		}
+ 614:../FreeRTOS/timers.c **** 		#endif /* INCLUDE_xTimerPendFunctionCall */
+ 615:../FreeRTOS/timers.c **** 
+ 616:../FreeRTOS/timers.c **** 		/* Commands that are positive are timer commands rather than pended
+ 617:../FreeRTOS/timers.c **** 		function calls. */
+ 618:../FreeRTOS/timers.c **** 		if( xMessage.xMessageID >= ( BaseType_t ) 0 )
+ 924              		.loc 1 618 0
+ 925 0040 7B68     		ldr	r3, [r7, #4]
+ 926 0042 002B     		cmp	r3, #0
+ 927 0044 7ADB     		blt	.L61
+ 619:../FreeRTOS/timers.c **** 		{
+ 620:../FreeRTOS/timers.c **** 			/* The messages uses the xTimerParameters member to work on a
+ 621:../FreeRTOS/timers.c **** 			software timer. */
+ 622:../FreeRTOS/timers.c **** 			pxTimer = xMessage.u.xTimerParameters.pxTimer;
+ 928              		.loc 1 622 0
+ 929 0046 FB68     		ldr	r3, [r7, #12]
+ 930 0048 BB62     		str	r3, [r7, #40]
+ 623:../FreeRTOS/timers.c **** 
+ 624:../FreeRTOS/timers.c **** 			if( listIS_CONTAINED_WITHIN( NULL, &( pxTimer->xTimerListItem ) ) == pdFALSE )
+ 931              		.loc 1 624 0
+ 932 004a BB6A     		ldr	r3, [r7, #40]
+ 933 004c 5B69     		ldr	r3, [r3, #20]
+ 934 004e 002B     		cmp	r3, #0
+ 935 0050 04D0     		beq	.L65
+ 625:../FreeRTOS/timers.c **** 			{
+ 626:../FreeRTOS/timers.c **** 				/* The timer is in a list, remove it. */
+ 627:../FreeRTOS/timers.c **** 				( void ) uxListRemove( &( pxTimer->xTimerListItem ) );
+ 936              		.loc 1 627 0
+ 937 0052 BB6A     		ldr	r3, [r7, #40]
+ 938 0054 0433     		adds	r3, r3, #4
+ 939 0056 1846     		mov	r0, r3
+ 940 0058 FFF7FEFF 		bl	uxListRemove
+ 941              	.L65:
+ 628:../FreeRTOS/timers.c **** 			}
+ 629:../FreeRTOS/timers.c **** 			else
+ 630:../FreeRTOS/timers.c **** 			{
+ 631:../FreeRTOS/timers.c **** 				mtCOVERAGE_TEST_MARKER();
+ 632:../FreeRTOS/timers.c **** 			}
+ 633:../FreeRTOS/timers.c **** 
+ 634:../FreeRTOS/timers.c **** 			traceTIMER_COMMAND_RECEIVED( pxTimer, xMessage.xMessageID, xMessage.u.xTimerParameters.xMessageV
+ 635:../FreeRTOS/timers.c **** 
+ 636:../FreeRTOS/timers.c **** 			/* In this case the xTimerListsWereSwitched parameter is not used, but
+ 637:../FreeRTOS/timers.c **** 			it must be present in the function call.  prvSampleTimeNow() must be
+ 638:../FreeRTOS/timers.c **** 			called after the message is received from xTimerQueue so there is no
+ 639:../FreeRTOS/timers.c **** 			possibility of a higher priority task adding a message to the message
+ 640:../FreeRTOS/timers.c **** 			queue with a time that is ahead of the timer daemon task (because it
+ 641:../FreeRTOS/timers.c **** 			pre-empted the timer daemon task after the xTimeNow value was set). */
+ 642:../FreeRTOS/timers.c **** 			xTimeNow = prvSampleTimeNow( &xTimerListsWereSwitched );
+ 942              		.loc 1 642 0
+ 943 005c 3B46     		mov	r3, r7
+ 944 005e 1846     		mov	r0, r3
+ 945 0060 FFF7FEFF 		bl	prvSampleTimeNow
+ 946 0064 7862     		str	r0, [r7, #36]
+ 643:../FreeRTOS/timers.c **** 
+ 644:../FreeRTOS/timers.c **** 			switch( xMessage.xMessageID )
+ 947              		.loc 1 644 0
+ 948 0066 7B68     		ldr	r3, [r7, #4]
+ 949 0068 092B     		cmp	r3, #9
+ 950 006a 66D8     		bhi	.L77
+ 951 006c 01A2     		adr	r2, .L68
+ 952 006e 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 953 0072 00BF     		.p2align 2
+ 954              	.L68:
+ 955 0074 9D000000 		.word	.L67+1
+ 956 0078 9D000000 		.word	.L67+1
+ 957 007c 9D000000 		.word	.L67+1
+ 958 0080 3D010000 		.word	.L61+1
+ 959 0084 FB000000 		.word	.L70+1
+ 960 0088 33010000 		.word	.L71+1
+ 961 008c 9D000000 		.word	.L67+1
+ 962 0090 9D000000 		.word	.L67+1
+ 963 0094 3D010000 		.word	.L61+1
+ 964 0098 FB000000 		.word	.L70+1
+ 965              		.p2align 1
+ 966              	.L67:
+ 645:../FreeRTOS/timers.c **** 			{
+ 646:../FreeRTOS/timers.c **** 				case tmrCOMMAND_START :
+ 647:../FreeRTOS/timers.c **** 			    case tmrCOMMAND_START_FROM_ISR :
+ 648:../FreeRTOS/timers.c **** 			    case tmrCOMMAND_RESET :
+ 649:../FreeRTOS/timers.c **** 			    case tmrCOMMAND_RESET_FROM_ISR :
+ 650:../FreeRTOS/timers.c **** 				case tmrCOMMAND_START_DONT_TRACE :
+ 651:../FreeRTOS/timers.c **** 					/* Start or restart a timer. */
+ 652:../FreeRTOS/timers.c **** 					if( prvInsertTimerInActiveList( pxTimer,  xMessage.u.xTimerParameters.xMessageValue + pxTimer-
+ 967              		.loc 1 652 0
+ 968 009c BA68     		ldr	r2, [r7, #8]
+ 969 009e BB6A     		ldr	r3, [r7, #40]
+ 970 00a0 9B69     		ldr	r3, [r3, #24]
+ 971 00a2 1A44     		add	r2, r2, r3
+ 972 00a4 BB68     		ldr	r3, [r7, #8]
+ 973 00a6 B86A     		ldr	r0, [r7, #40]
+ 974 00a8 1146     		mov	r1, r2
+ 975 00aa 7A6A     		ldr	r2, [r7, #36]
+ 976 00ac FFF7FEFF 		bl	prvInsertTimerInActiveList
+ 977 00b0 0346     		mov	r3, r0
+ 978 00b2 012B     		cmp	r3, #1
+ 979 00b4 20D1     		bne	.L72
+ 653:../FreeRTOS/timers.c **** 					{
+ 654:../FreeRTOS/timers.c **** 						/* The timer expired before it was added to the active
+ 655:../FreeRTOS/timers.c **** 						timer list.  Process it now. */
+ 656:../FreeRTOS/timers.c **** 						pxTimer->pxCallbackFunction( ( TimerHandle_t ) pxTimer );
+ 980              		.loc 1 656 0
+ 981 00b6 BB6A     		ldr	r3, [r7, #40]
+ 982 00b8 5B6A     		ldr	r3, [r3, #36]
+ 983 00ba B86A     		ldr	r0, [r7, #40]
+ 984 00bc 9847     		blx	r3
+ 657:../FreeRTOS/timers.c **** 						traceTIMER_EXPIRED( pxTimer );
+ 658:../FreeRTOS/timers.c **** 
+ 659:../FreeRTOS/timers.c **** 						if( pxTimer->uxAutoReload == ( UBaseType_t ) pdTRUE )
+ 985              		.loc 1 659 0
+ 986 00be BB6A     		ldr	r3, [r7, #40]
+ 987 00c0 DB69     		ldr	r3, [r3, #28]
+ 988 00c2 012B     		cmp	r3, #1
+ 989 00c4 18D1     		bne	.L72
+ 660:../FreeRTOS/timers.c **** 						{
+ 661:../FreeRTOS/timers.c **** 							xResult = xTimerGenericCommand( pxTimer, tmrCOMMAND_START_DONT_TRACE, xMessage.u.xTimerParam
+ 990              		.loc 1 661 0
+ 991 00c6 BA68     		ldr	r2, [r7, #8]
+ 992 00c8 BB6A     		ldr	r3, [r7, #40]
+ 993 00ca 9B69     		ldr	r3, [r3, #24]
+ 994 00cc 1A44     		add	r2, r2, r3
+ 995 00ce 0023     		movs	r3, #0
+ 996 00d0 0093     		str	r3, [sp]
+ 997 00d2 B86A     		ldr	r0, [r7, #40]
+ 998 00d4 0021     		movs	r1, #0
+ 999 00d6 0023     		movs	r3, #0
+ 1000 00d8 FFF7FEFF 		bl	xTimerGenericCommand
+ 1001 00dc 3862     		str	r0, [r7, #32]
+ 662:../FreeRTOS/timers.c **** 							configASSERT( xResult );
+ 1002              		.loc 1 662 0
+ 1003 00de 3B6A     		ldr	r3, [r7, #32]
+ 1004 00e0 002B     		cmp	r3, #0
+ 1005 00e2 09D1     		bne	.L72
+ 1006              	.LBB34:
+ 1007              	.LBB35:
+ 1008              		.loc 2 215 0 discriminator 1
+ 1009              	@ 215 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../Free
+ 1010 00e4 4FF00703 			mov r3, #7												
+ 1011 00e8 83F31188 		msr basepri, r3											
+ 1012 00ec BFF36F8F 		isb														
+ 1013 00f0 BFF34F8F 		dsb														
+ 1014              	
+ 1015              	@ 0 "" 2
+ 1016              		.thumb
+ 1017 00f4 BB61     		str	r3, [r7, #24]
+ 1018              	.L73:
+ 1019              	.LBE35:
+ 1020              	.LBE34:
+ 1021              		.loc 1 662 0 discriminator 2
+ 1022 00f6 FEE7     		b	.L73
+ 1023              	.L72:
+ 663:../FreeRTOS/timers.c **** 							( void ) xResult;
+ 664:../FreeRTOS/timers.c **** 						}
+ 665:../FreeRTOS/timers.c **** 						else
+ 666:../FreeRTOS/timers.c **** 						{
+ 667:../FreeRTOS/timers.c **** 							mtCOVERAGE_TEST_MARKER();
+ 668:../FreeRTOS/timers.c **** 						}
+ 669:../FreeRTOS/timers.c **** 					}
+ 670:../FreeRTOS/timers.c **** 					else
+ 671:../FreeRTOS/timers.c **** 					{
+ 672:../FreeRTOS/timers.c **** 						mtCOVERAGE_TEST_MARKER();
+ 673:../FreeRTOS/timers.c **** 					}
+ 674:../FreeRTOS/timers.c **** 					break;
+ 1024              		.loc 1 674 0 discriminator 4
+ 1025 00f8 20E0     		b	.L61
+ 1026              	.L70:
+ 675:../FreeRTOS/timers.c **** 
+ 676:../FreeRTOS/timers.c **** 				case tmrCOMMAND_STOP :
+ 677:../FreeRTOS/timers.c **** 				case tmrCOMMAND_STOP_FROM_ISR :
+ 678:../FreeRTOS/timers.c **** 					/* The timer has already been removed from the active list.
+ 679:../FreeRTOS/timers.c **** 					There is nothing to do here. */
+ 680:../FreeRTOS/timers.c **** 					break;
+ 681:../FreeRTOS/timers.c **** 
+ 682:../FreeRTOS/timers.c **** 				case tmrCOMMAND_CHANGE_PERIOD :
+ 683:../FreeRTOS/timers.c **** 				case tmrCOMMAND_CHANGE_PERIOD_FROM_ISR :
+ 684:../FreeRTOS/timers.c **** 					pxTimer->xTimerPeriodInTicks = xMessage.u.xTimerParameters.xMessageValue;
+ 1027              		.loc 1 684 0
+ 1028 00fa BA68     		ldr	r2, [r7, #8]
+ 1029 00fc BB6A     		ldr	r3, [r7, #40]
+ 1030 00fe 9A61     		str	r2, [r3, #24]
+ 685:../FreeRTOS/timers.c **** 					configASSERT( ( pxTimer->xTimerPeriodInTicks > 0 ) );
+ 1031              		.loc 1 685 0
+ 1032 0100 BB6A     		ldr	r3, [r7, #40]
+ 1033 0102 9B69     		ldr	r3, [r3, #24]
+ 1034 0104 002B     		cmp	r3, #0
+ 1035 0106 09D1     		bne	.L74
+ 1036              	.LBB36:
+ 1037              	.LBB37:
+ 1038              		.loc 2 215 0 discriminator 1
+ 1039              	@ 215 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../Free
+ 1040 0108 4FF00703 			mov r3, #7												
+ 1041 010c 83F31188 		msr basepri, r3											
+ 1042 0110 BFF36F8F 		isb														
+ 1043 0114 BFF34F8F 		dsb														
+ 1044              	
+ 1045              	@ 0 "" 2
+ 1046              		.thumb
+ 1047 0118 7B61     		str	r3, [r7, #20]
+ 1048              	.L75:
+ 1049              	.LBE37:
+ 1050              	.LBE36:
+ 1051              		.loc 1 685 0 discriminator 5
+ 1052 011a FEE7     		b	.L75
+ 1053              	.L74:
+ 686:../FreeRTOS/timers.c **** 
+ 687:../FreeRTOS/timers.c **** 					/* The new period does not really have a reference, and can be
+ 688:../FreeRTOS/timers.c **** 					longer or shorter than the old one.  The command time is
+ 689:../FreeRTOS/timers.c **** 					therefore set to the current time, and as the period cannot be
+ 690:../FreeRTOS/timers.c **** 					zero the next expiry time can only be in the future, meaning
+ 691:../FreeRTOS/timers.c **** 					(unlike for the xTimerStart() case above) there is no fail case
+ 692:../FreeRTOS/timers.c **** 					that needs to be handled here. */
+ 693:../FreeRTOS/timers.c **** 					( void ) prvInsertTimerInActiveList( pxTimer, ( xTimeNow + pxTimer->xTimerPeriodInTicks ), xTi
+ 1054              		.loc 1 693 0
+ 1055 011c BB6A     		ldr	r3, [r7, #40]
+ 1056 011e 9A69     		ldr	r2, [r3, #24]
+ 1057 0120 7B6A     		ldr	r3, [r7, #36]
+ 1058 0122 1344     		add	r3, r3, r2
+ 1059 0124 B86A     		ldr	r0, [r7, #40]
+ 1060 0126 1946     		mov	r1, r3
+ 1061 0128 7A6A     		ldr	r2, [r7, #36]
+ 1062 012a 7B6A     		ldr	r3, [r7, #36]
+ 1063 012c FFF7FEFF 		bl	prvInsertTimerInActiveList
+ 694:../FreeRTOS/timers.c **** 					break;
+ 1064              		.loc 1 694 0
+ 1065 0130 04E0     		b	.L61
+ 1066              	.L71:
+ 695:../FreeRTOS/timers.c **** 
+ 696:../FreeRTOS/timers.c **** 				case tmrCOMMAND_DELETE :
+ 697:../FreeRTOS/timers.c **** 					/* The timer has already been removed from the active list,
+ 698:../FreeRTOS/timers.c **** 					just free up the memory. */
+ 699:../FreeRTOS/timers.c **** 					vPortFree( pxTimer );
+ 1067              		.loc 1 699 0
+ 1068 0132 B86A     		ldr	r0, [r7, #40]
+ 1069 0134 FFF7FEFF 		bl	vPortFree
+ 700:../FreeRTOS/timers.c **** 					break;
+ 1070              		.loc 1 700 0
+ 1071 0138 00E0     		b	.L61
+ 1072              	.L77:
+ 701:../FreeRTOS/timers.c **** 
+ 702:../FreeRTOS/timers.c **** 				default	:
+ 703:../FreeRTOS/timers.c **** 					/* Don't expect to get here. */
+ 704:../FreeRTOS/timers.c **** 					break;
+ 1073              		.loc 1 704 0
+ 1074 013a 00BF     		nop
+ 1075              	.L61:
+ 592:../FreeRTOS/timers.c **** 	{
+ 1076              		.loc 1 592 0
+ 1077 013c 074B     		ldr	r3, .L78
+ 1078 013e 1A68     		ldr	r2, [r3]
+ 1079 0140 3B1D     		adds	r3, r7, #4
+ 1080 0142 1046     		mov	r0, r2
+ 1081 0144 1946     		mov	r1, r3
+ 1082 0146 0022     		movs	r2, #0
+ 1083 0148 0023     		movs	r3, #0
+ 1084 014a FFF7FEFF 		bl	xQueueGenericReceive
+ 1085 014e 0346     		mov	r3, r0
+ 1086 0150 002B     		cmp	r3, #0
+ 1087 0152 7FF459AF 		bne	.L76
+ 705:../FreeRTOS/timers.c **** 			}
+ 706:../FreeRTOS/timers.c **** 		}
+ 707:../FreeRTOS/timers.c **** 	}
+ 708:../FreeRTOS/timers.c **** }
+ 1088              		.loc 1 708 0
+ 1089 0156 3037     		adds	r7, r7, #48
+ 1090              		.cfi_def_cfa_offset 8
+ 1091 0158 BD46     		mov	sp, r7
+ 1092              		.cfi_def_cfa_register 13
+ 1093              		@ sp needed
+ 1094 015a 80BD     		pop	{r7, pc}
+ 1095              	.L79:
+ 1096              		.align	2
+ 1097              	.L78:
+ 1098 015c 00000000 		.word	xTimerQueue
+ 1099              		.cfi_endproc
+ 1100              	.LFE14:
+ 1102              		.section	.text.prvSwitchTimerLists,"ax",%progbits
+ 1103              		.align	2
+ 1104              		.thumb
+ 1105              		.thumb_func
+ 1107              	prvSwitchTimerLists:
+ 1108              	.LFB15:
+ 709:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 710:../FreeRTOS/timers.c **** 
+ 711:../FreeRTOS/timers.c **** static void prvSwitchTimerLists( void )
+ 712:../FreeRTOS/timers.c **** {
+ 1109              		.loc 1 712 0
+ 1110              		.cfi_startproc
+ 1111              		@ args = 0, pretend = 0, frame = 24
+ 1112              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1113 0000 80B5     		push	{r7, lr}
+ 1114              		.cfi_def_cfa_offset 8
+ 1115              		.cfi_offset 7, -8
+ 1116              		.cfi_offset 14, -4
+ 1117 0002 88B0     		sub	sp, sp, #32
+ 1118              		.cfi_def_cfa_offset 40
+ 1119 0004 02AF     		add	r7, sp, #8
+ 1120              		.cfi_def_cfa 7, 32
+ 713:../FreeRTOS/timers.c **** TickType_t xNextExpireTime, xReloadTime;
+ 714:../FreeRTOS/timers.c **** List_t *pxTemp;
+ 715:../FreeRTOS/timers.c **** Timer_t *pxTimer;
+ 716:../FreeRTOS/timers.c **** BaseType_t xResult;
+ 717:../FreeRTOS/timers.c **** 
+ 718:../FreeRTOS/timers.c **** 	/* The tick count has overflowed.  The timer lists must be switched.
+ 719:../FreeRTOS/timers.c **** 	If there are any timers still referenced from the current timer list
+ 720:../FreeRTOS/timers.c **** 	then they must have expired and should be processed before the lists
+ 721:../FreeRTOS/timers.c **** 	are switched. */
+ 722:../FreeRTOS/timers.c **** 	while( listLIST_IS_EMPTY( pxCurrentTimerList ) == pdFALSE )
+ 1121              		.loc 1 722 0
+ 1122 0006 44E0     		b	.L81
+ 1123              	.L84:
+ 723:../FreeRTOS/timers.c **** 	{
+ 724:../FreeRTOS/timers.c **** 		xNextExpireTime = listGET_ITEM_VALUE_OF_HEAD_ENTRY( pxCurrentTimerList );
+ 1124              		.loc 1 724 0
+ 1125 0008 2B4B     		ldr	r3, .L85
+ 1126 000a 1B68     		ldr	r3, [r3]
+ 1127 000c DB68     		ldr	r3, [r3, #12]
+ 1128 000e 1B68     		ldr	r3, [r3]
+ 1129 0010 7B61     		str	r3, [r7, #20]
+ 725:../FreeRTOS/timers.c **** 
+ 726:../FreeRTOS/timers.c **** 		/* Remove the timer from the list. */
+ 727:../FreeRTOS/timers.c **** 		pxTimer = ( Timer_t * ) listGET_OWNER_OF_HEAD_ENTRY( pxCurrentTimerList );
+ 1130              		.loc 1 727 0
+ 1131 0012 294B     		ldr	r3, .L85
+ 1132 0014 1B68     		ldr	r3, [r3]
+ 1133 0016 DB68     		ldr	r3, [r3, #12]
+ 1134 0018 DB68     		ldr	r3, [r3, #12]
+ 1135 001a 3B61     		str	r3, [r7, #16]
+ 728:../FreeRTOS/timers.c **** 		( void ) uxListRemove( &( pxTimer->xTimerListItem ) );
+ 1136              		.loc 1 728 0
+ 1137 001c 3B69     		ldr	r3, [r7, #16]
+ 1138 001e 0433     		adds	r3, r3, #4
+ 1139 0020 1846     		mov	r0, r3
+ 1140 0022 FFF7FEFF 		bl	uxListRemove
+ 729:../FreeRTOS/timers.c **** 		traceTIMER_EXPIRED( pxTimer );
+ 730:../FreeRTOS/timers.c **** 
+ 731:../FreeRTOS/timers.c **** 		/* Execute its callback, then send a command to restart the timer if
+ 732:../FreeRTOS/timers.c **** 		it is an auto-reload timer.  It cannot be restarted here as the lists
+ 733:../FreeRTOS/timers.c **** 		have not yet been switched. */
+ 734:../FreeRTOS/timers.c **** 		pxTimer->pxCallbackFunction( ( TimerHandle_t ) pxTimer );
+ 1141              		.loc 1 734 0
+ 1142 0026 3B69     		ldr	r3, [r7, #16]
+ 1143 0028 5B6A     		ldr	r3, [r3, #36]
+ 1144 002a 3869     		ldr	r0, [r7, #16]
+ 1145 002c 9847     		blx	r3
+ 735:../FreeRTOS/timers.c **** 
+ 736:../FreeRTOS/timers.c **** 		if( pxTimer->uxAutoReload == ( UBaseType_t ) pdTRUE )
+ 1146              		.loc 1 736 0
+ 1147 002e 3B69     		ldr	r3, [r7, #16]
+ 1148 0030 DB69     		ldr	r3, [r3, #28]
+ 1149 0032 012B     		cmp	r3, #1
+ 1150 0034 2DD1     		bne	.L81
+ 737:../FreeRTOS/timers.c **** 		{
+ 738:../FreeRTOS/timers.c **** 			/* Calculate the reload value, and if the reload value results in
+ 739:../FreeRTOS/timers.c **** 			the timer going into the same timer list then it has already expired
+ 740:../FreeRTOS/timers.c **** 			and the timer should be re-inserted into the current list so it is
+ 741:../FreeRTOS/timers.c **** 			processed again within this loop.  Otherwise a command should be sent
+ 742:../FreeRTOS/timers.c **** 			to restart the timer to ensure it is only inserted into a list after
+ 743:../FreeRTOS/timers.c **** 			the lists have been swapped. */
+ 744:../FreeRTOS/timers.c **** 			xReloadTime = ( xNextExpireTime + pxTimer->xTimerPeriodInTicks );
+ 1151              		.loc 1 744 0
+ 1152 0036 3B69     		ldr	r3, [r7, #16]
+ 1153 0038 9A69     		ldr	r2, [r3, #24]
+ 1154 003a 7B69     		ldr	r3, [r7, #20]
+ 1155 003c 1344     		add	r3, r3, r2
+ 1156 003e FB60     		str	r3, [r7, #12]
+ 745:../FreeRTOS/timers.c **** 			if( xReloadTime > xNextExpireTime )
+ 1157              		.loc 1 745 0
+ 1158 0040 FA68     		ldr	r2, [r7, #12]
+ 1159 0042 7B69     		ldr	r3, [r7, #20]
+ 1160 0044 9A42     		cmp	r2, r3
+ 1161 0046 0ED9     		bls	.L82
+ 746:../FreeRTOS/timers.c **** 			{
+ 747:../FreeRTOS/timers.c **** 				listSET_LIST_ITEM_VALUE( &( pxTimer->xTimerListItem ), xReloadTime );
+ 1162              		.loc 1 747 0
+ 1163 0048 3B69     		ldr	r3, [r7, #16]
+ 1164 004a FA68     		ldr	r2, [r7, #12]
+ 1165 004c 5A60     		str	r2, [r3, #4]
+ 748:../FreeRTOS/timers.c **** 				listSET_LIST_ITEM_OWNER( &( pxTimer->xTimerListItem ), pxTimer );
+ 1166              		.loc 1 748 0
+ 1167 004e 3B69     		ldr	r3, [r7, #16]
+ 1168 0050 3A69     		ldr	r2, [r7, #16]
+ 1169 0052 1A61     		str	r2, [r3, #16]
+ 749:../FreeRTOS/timers.c **** 				vListInsert( pxCurrentTimerList, &( pxTimer->xTimerListItem ) );
+ 1170              		.loc 1 749 0
+ 1171 0054 184B     		ldr	r3, .L85
+ 1172 0056 1A68     		ldr	r2, [r3]
+ 1173 0058 3B69     		ldr	r3, [r7, #16]
+ 1174 005a 0433     		adds	r3, r3, #4
+ 1175 005c 1046     		mov	r0, r2
+ 1176 005e 1946     		mov	r1, r3
+ 1177 0060 FFF7FEFF 		bl	vListInsert
+ 1178 0064 15E0     		b	.L81
+ 1179              	.L82:
+ 750:../FreeRTOS/timers.c **** 			}
+ 751:../FreeRTOS/timers.c **** 			else
+ 752:../FreeRTOS/timers.c **** 			{
+ 753:../FreeRTOS/timers.c **** 				xResult = xTimerGenericCommand( pxTimer, tmrCOMMAND_START_DONT_TRACE, xNextExpireTime, NULL, tm
+ 1180              		.loc 1 753 0
+ 1181 0066 0023     		movs	r3, #0
+ 1182 0068 0093     		str	r3, [sp]
+ 1183 006a 3869     		ldr	r0, [r7, #16]
+ 1184 006c 0021     		movs	r1, #0
+ 1185 006e 7A69     		ldr	r2, [r7, #20]
+ 1186 0070 0023     		movs	r3, #0
+ 1187 0072 FFF7FEFF 		bl	xTimerGenericCommand
+ 1188 0076 B860     		str	r0, [r7, #8]
+ 754:../FreeRTOS/timers.c **** 				configASSERT( xResult );
+ 1189              		.loc 1 754 0
+ 1190 0078 BB68     		ldr	r3, [r7, #8]
+ 1191 007a 002B     		cmp	r3, #0
+ 1192 007c 09D1     		bne	.L81
+ 1193              	.LBB38:
+ 1194              	.LBB39:
+ 1195              		.loc 2 215 0 discriminator 1
+ 1196              	@ 215 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../Free
+ 1197 007e 4FF00703 			mov r3, #7												
+ 1198 0082 83F31188 		msr basepri, r3											
+ 1199 0086 BFF36F8F 		isb														
+ 1200 008a BFF34F8F 		dsb														
+ 1201              	
+ 1202              	@ 0 "" 2
+ 1203              		.thumb
+ 1204 008e 3B60     		str	r3, [r7]
+ 1205              	.L83:
+ 1206              	.LBE39:
+ 1207              	.LBE38:
+ 1208              		.loc 1 754 0 discriminator 1
+ 1209 0090 FEE7     		b	.L83
+ 1210              	.L81:
+ 722:../FreeRTOS/timers.c **** 	{
+ 1211              		.loc 1 722 0
+ 1212 0092 094B     		ldr	r3, .L85
+ 1213 0094 1B68     		ldr	r3, [r3]
+ 1214 0096 1B68     		ldr	r3, [r3]
+ 1215 0098 002B     		cmp	r3, #0
+ 1216 009a B5D1     		bne	.L84
+ 755:../FreeRTOS/timers.c **** 				( void ) xResult;
+ 756:../FreeRTOS/timers.c **** 			}
+ 757:../FreeRTOS/timers.c **** 		}
+ 758:../FreeRTOS/timers.c **** 		else
+ 759:../FreeRTOS/timers.c **** 		{
+ 760:../FreeRTOS/timers.c **** 			mtCOVERAGE_TEST_MARKER();
+ 761:../FreeRTOS/timers.c **** 		}
+ 762:../FreeRTOS/timers.c **** 	}
+ 763:../FreeRTOS/timers.c **** 
+ 764:../FreeRTOS/timers.c **** 	pxTemp = pxCurrentTimerList;
+ 1217              		.loc 1 764 0
+ 1218 009c 064B     		ldr	r3, .L85
+ 1219 009e 1B68     		ldr	r3, [r3]
+ 1220 00a0 7B60     		str	r3, [r7, #4]
+ 765:../FreeRTOS/timers.c **** 	pxCurrentTimerList = pxOverflowTimerList;
+ 1221              		.loc 1 765 0
+ 1222 00a2 064B     		ldr	r3, .L85+4
+ 1223 00a4 1B68     		ldr	r3, [r3]
+ 1224 00a6 044A     		ldr	r2, .L85
+ 1225 00a8 1360     		str	r3, [r2]
+ 766:../FreeRTOS/timers.c **** 	pxOverflowTimerList = pxTemp;
+ 1226              		.loc 1 766 0
+ 1227 00aa 044A     		ldr	r2, .L85+4
+ 1228 00ac 7B68     		ldr	r3, [r7, #4]
+ 1229 00ae 1360     		str	r3, [r2]
+ 767:../FreeRTOS/timers.c **** }
+ 1230              		.loc 1 767 0
+ 1231 00b0 1837     		adds	r7, r7, #24
+ 1232              		.cfi_def_cfa_offset 8
+ 1233 00b2 BD46     		mov	sp, r7
+ 1234              		.cfi_def_cfa_register 13
+ 1235              		@ sp needed
+ 1236 00b4 80BD     		pop	{r7, pc}
+ 1237              	.L86:
+ 1238 00b6 00BF     		.align	2
+ 1239              	.L85:
+ 1240 00b8 00000000 		.word	pxCurrentTimerList
+ 1241 00bc 00000000 		.word	pxOverflowTimerList
+ 1242              		.cfi_endproc
+ 1243              	.LFE15:
+ 1245              		.section	.text.prvCheckForValidListAndQueue,"ax",%progbits
+ 1246              		.align	2
+ 1247              		.thumb
+ 1248              		.thumb_func
+ 1250              	prvCheckForValidListAndQueue:
+ 1251              	.LFB16:
+ 768:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 769:../FreeRTOS/timers.c **** 
+ 770:../FreeRTOS/timers.c **** static void prvCheckForValidListAndQueue( void )
+ 771:../FreeRTOS/timers.c **** {
+ 1252              		.loc 1 771 0
+ 1253              		.cfi_startproc
+ 1254              		@ args = 0, pretend = 0, frame = 8
+ 1255              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1256 0000 80B5     		push	{r7, lr}
+ 1257              		.cfi_def_cfa_offset 8
+ 1258              		.cfi_offset 7, -8
+ 1259              		.cfi_offset 14, -4
+ 1260 0002 82B0     		sub	sp, sp, #8
+ 1261              		.cfi_def_cfa_offset 16
+ 1262 0004 00AF     		add	r7, sp, #0
+ 1263              		.cfi_def_cfa_register 7
+ 772:../FreeRTOS/timers.c **** 	/* Check that the list from which active timers are referenced, and the
+ 773:../FreeRTOS/timers.c **** 	queue used to communicate with the timer service, have been
+ 774:../FreeRTOS/timers.c **** 	initialised. */
+ 775:../FreeRTOS/timers.c **** 	taskENTER_CRITICAL();
+ 1264              		.loc 1 775 0
+ 1265 0006 FFF7FEFF 		bl	vPortEnterCritical
+ 776:../FreeRTOS/timers.c **** 	{
+ 777:../FreeRTOS/timers.c **** 		if( xTimerQueue == NULL )
+ 1266              		.loc 1 777 0
+ 1267 000a 154B     		ldr	r3, .L90
+ 1268 000c 1B68     		ldr	r3, [r3]
+ 1269 000e 002B     		cmp	r3, #0
+ 1270 0010 21D1     		bne	.L88
+ 778:../FreeRTOS/timers.c **** 		{
+ 779:../FreeRTOS/timers.c **** 			vListInitialise( &xActiveTimerList1 );
+ 1271              		.loc 1 779 0
+ 1272 0012 1448     		ldr	r0, .L90+4
+ 1273 0014 FFF7FEFF 		bl	vListInitialise
+ 780:../FreeRTOS/timers.c **** 			vListInitialise( &xActiveTimerList2 );
+ 1274              		.loc 1 780 0
+ 1275 0018 1348     		ldr	r0, .L90+8
+ 1276 001a FFF7FEFF 		bl	vListInitialise
+ 781:../FreeRTOS/timers.c **** 			pxCurrentTimerList = &xActiveTimerList1;
+ 1277              		.loc 1 781 0
+ 1278 001e 134B     		ldr	r3, .L90+12
+ 1279 0020 104A     		ldr	r2, .L90+4
+ 1280 0022 1A60     		str	r2, [r3]
+ 782:../FreeRTOS/timers.c **** 			pxOverflowTimerList = &xActiveTimerList2;
+ 1281              		.loc 1 782 0
+ 1282 0024 124B     		ldr	r3, .L90+16
+ 1283 0026 104A     		ldr	r2, .L90+8
+ 1284 0028 1A60     		str	r2, [r3]
+ 783:../FreeRTOS/timers.c **** 			xTimerQueue = xQueueCreate( ( UBaseType_t ) configTIMER_QUEUE_LENGTH, sizeof( DaemonTaskMessage_
+ 1285              		.loc 1 783 0
+ 1286 002a 0A20     		movs	r0, #10
+ 1287 002c 1021     		movs	r1, #16
+ 1288 002e 0022     		movs	r2, #0
+ 1289 0030 FFF7FEFF 		bl	xQueueGenericCreate
+ 1290 0034 0246     		mov	r2, r0
+ 1291 0036 0A4B     		ldr	r3, .L90
+ 1292 0038 1A60     		str	r2, [r3]
+ 784:../FreeRTOS/timers.c **** 			configASSERT( xTimerQueue );
+ 1293              		.loc 1 784 0
+ 1294 003a 094B     		ldr	r3, .L90
+ 1295 003c 1B68     		ldr	r3, [r3]
+ 1296 003e 002B     		cmp	r3, #0
+ 1297 0040 09D1     		bne	.L88
+ 1298              	.LBB40:
+ 1299              	.LBB41:
+ 1300              		.loc 2 215 0 discriminator 1
+ 1301              	@ 215 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../Free
+ 1302 0042 4FF00703 			mov r3, #7												
+ 1303 0046 83F31188 		msr basepri, r3											
+ 1304 004a BFF36F8F 		isb														
+ 1305 004e BFF34F8F 		dsb														
+ 1306              	
+ 1307              	@ 0 "" 2
+ 1308              		.thumb
+ 1309 0052 7B60     		str	r3, [r7, #4]
+ 1310              	.L89:
+ 1311              	.LBE41:
+ 1312              	.LBE40:
+ 1313              		.loc 1 784 0 discriminator 1
+ 1314 0054 FEE7     		b	.L89
+ 1315              	.L88:
+ 785:../FreeRTOS/timers.c **** 
+ 786:../FreeRTOS/timers.c **** 			#if ( configQUEUE_REGISTRY_SIZE > 0 )
+ 787:../FreeRTOS/timers.c **** 			{
+ 788:../FreeRTOS/timers.c **** 				if( xTimerQueue != NULL )
+ 789:../FreeRTOS/timers.c **** 				{
+ 790:../FreeRTOS/timers.c **** 					vQueueAddToRegistry( xTimerQueue, "TmrQ" );
+ 791:../FreeRTOS/timers.c **** 				}
+ 792:../FreeRTOS/timers.c **** 				else
+ 793:../FreeRTOS/timers.c **** 				{
+ 794:../FreeRTOS/timers.c **** 					mtCOVERAGE_TEST_MARKER();
+ 795:../FreeRTOS/timers.c **** 				}
+ 796:../FreeRTOS/timers.c **** 			}
+ 797:../FreeRTOS/timers.c **** 			#endif /* configQUEUE_REGISTRY_SIZE */
+ 798:../FreeRTOS/timers.c **** 		}
+ 799:../FreeRTOS/timers.c **** 		else
+ 800:../FreeRTOS/timers.c **** 		{
+ 801:../FreeRTOS/timers.c **** 			mtCOVERAGE_TEST_MARKER();
+ 802:../FreeRTOS/timers.c **** 		}
+ 803:../FreeRTOS/timers.c **** 	}
+ 804:../FreeRTOS/timers.c **** 	taskEXIT_CRITICAL();
+ 1316              		.loc 1 804 0
+ 1317 0056 FFF7FEFF 		bl	vPortExitCritical
+ 805:../FreeRTOS/timers.c **** }
+ 1318              		.loc 1 805 0
+ 1319 005a 0837     		adds	r7, r7, #8
+ 1320              		.cfi_def_cfa_offset 8
+ 1321 005c BD46     		mov	sp, r7
+ 1322              		.cfi_def_cfa_register 13
+ 1323              		@ sp needed
+ 1324 005e 80BD     		pop	{r7, pc}
+ 1325              	.L91:
+ 1326              		.align	2
+ 1327              	.L90:
+ 1328 0060 00000000 		.word	xTimerQueue
+ 1329 0064 00000000 		.word	xActiveTimerList1
+ 1330 0068 00000000 		.word	xActiveTimerList2
+ 1331 006c 00000000 		.word	pxCurrentTimerList
+ 1332 0070 00000000 		.word	pxOverflowTimerList
+ 1333              		.cfi_endproc
+ 1334              	.LFE16:
+ 1336              		.section	.text.xTimerIsTimerActive,"ax",%progbits
+ 1337              		.align	2
+ 1338              		.global	xTimerIsTimerActive
+ 1339              		.thumb
+ 1340              		.thumb_func
+ 1342              	xTimerIsTimerActive:
+ 1343              	.LFB17:
+ 806:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 807:../FreeRTOS/timers.c **** 
+ 808:../FreeRTOS/timers.c **** BaseType_t xTimerIsTimerActive( TimerHandle_t xTimer )
+ 809:../FreeRTOS/timers.c **** {
+ 1344              		.loc 1 809 0
+ 1345              		.cfi_startproc
+ 1346              		@ args = 0, pretend = 0, frame = 16
+ 1347              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1348 0000 80B5     		push	{r7, lr}
+ 1349              		.cfi_def_cfa_offset 8
+ 1350              		.cfi_offset 7, -8
+ 1351              		.cfi_offset 14, -4
+ 1352 0002 84B0     		sub	sp, sp, #16
+ 1353              		.cfi_def_cfa_offset 24
+ 1354 0004 00AF     		add	r7, sp, #0
+ 1355              		.cfi_def_cfa_register 7
+ 1356 0006 7860     		str	r0, [r7, #4]
+ 810:../FreeRTOS/timers.c **** BaseType_t xTimerIsInActiveList;
+ 811:../FreeRTOS/timers.c **** Timer_t *pxTimer = ( Timer_t * ) xTimer;
+ 1357              		.loc 1 811 0
+ 1358 0008 7B68     		ldr	r3, [r7, #4]
+ 1359 000a FB60     		str	r3, [r7, #12]
+ 812:../FreeRTOS/timers.c **** 
+ 813:../FreeRTOS/timers.c **** 	/* Is the timer in the list of active timers? */
+ 814:../FreeRTOS/timers.c **** 	taskENTER_CRITICAL();
+ 1360              		.loc 1 814 0
+ 1361 000c FFF7FEFF 		bl	vPortEnterCritical
+ 815:../FreeRTOS/timers.c **** 	{
+ 816:../FreeRTOS/timers.c **** 		/* Checking to see if it is in the NULL list in effect checks to see if
+ 817:../FreeRTOS/timers.c **** 		it is referenced from either the current or the overflow timer lists in
+ 818:../FreeRTOS/timers.c **** 		one go, but the logic has to be reversed, hence the '!'. */
+ 819:../FreeRTOS/timers.c **** 		xTimerIsInActiveList = ( BaseType_t ) !( listIS_CONTAINED_WITHIN( NULL, &( pxTimer->xTimerListIte
+ 1362              		.loc 1 819 0
+ 1363 0010 FB68     		ldr	r3, [r7, #12]
+ 1364 0012 5B69     		ldr	r3, [r3, #20]
+ 1365 0014 002B     		cmp	r3, #0
+ 1366 0016 14BF     		ite	ne
+ 1367 0018 0123     		movne	r3, #1
+ 1368 001a 0023     		moveq	r3, #0
+ 1369 001c DBB2     		uxtb	r3, r3
+ 1370 001e BB60     		str	r3, [r7, #8]
+ 820:../FreeRTOS/timers.c **** 	}
+ 821:../FreeRTOS/timers.c **** 	taskEXIT_CRITICAL();
+ 1371              		.loc 1 821 0
+ 1372 0020 FFF7FEFF 		bl	vPortExitCritical
+ 822:../FreeRTOS/timers.c **** 
+ 823:../FreeRTOS/timers.c **** 	return xTimerIsInActiveList;
+ 1373              		.loc 1 823 0
+ 1374 0024 BB68     		ldr	r3, [r7, #8]
+ 824:../FreeRTOS/timers.c **** } /*lint !e818 Can't be pointer to const due to the typedef. */
+ 1375              		.loc 1 824 0
+ 1376 0026 1846     		mov	r0, r3
+ 1377 0028 1037     		adds	r7, r7, #16
+ 1378              		.cfi_def_cfa_offset 8
+ 1379 002a BD46     		mov	sp, r7
+ 1380              		.cfi_def_cfa_register 13
+ 1381              		@ sp needed
+ 1382 002c 80BD     		pop	{r7, pc}
+ 1383              		.cfi_endproc
+ 1384              	.LFE17:
+ 1386 002e 00BF     		.section	.text.pvTimerGetTimerID,"ax",%progbits
+ 1387              		.align	2
+ 1388              		.global	pvTimerGetTimerID
+ 1389              		.thumb
+ 1390              		.thumb_func
+ 1392              	pvTimerGetTimerID:
+ 1393              	.LFB18:
+ 825:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 826:../FreeRTOS/timers.c **** 
+ 827:../FreeRTOS/timers.c **** void *pvTimerGetTimerID( const TimerHandle_t xTimer )
+ 828:../FreeRTOS/timers.c **** {
+ 1394              		.loc 1 828 0
+ 1395              		.cfi_startproc
+ 1396              		@ args = 0, pretend = 0, frame = 24
+ 1397              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1398 0000 80B5     		push	{r7, lr}
+ 1399              		.cfi_def_cfa_offset 8
+ 1400              		.cfi_offset 7, -8
+ 1401              		.cfi_offset 14, -4
+ 1402 0002 86B0     		sub	sp, sp, #24
+ 1403              		.cfi_def_cfa_offset 32
+ 1404 0004 00AF     		add	r7, sp, #0
+ 1405              		.cfi_def_cfa_register 7
+ 1406 0006 7860     		str	r0, [r7, #4]
+ 829:../FreeRTOS/timers.c **** Timer_t * const pxTimer = ( Timer_t * ) xTimer;
+ 1407              		.loc 1 829 0
+ 1408 0008 7B68     		ldr	r3, [r7, #4]
+ 1409 000a 7B61     		str	r3, [r7, #20]
+ 830:../FreeRTOS/timers.c **** void *pvReturn;
+ 831:../FreeRTOS/timers.c **** 
+ 832:../FreeRTOS/timers.c **** 	configASSERT( xTimer );
+ 1410              		.loc 1 832 0
+ 1411 000c 7B68     		ldr	r3, [r7, #4]
+ 1412 000e 002B     		cmp	r3, #0
+ 1413 0010 09D1     		bne	.L95
+ 1414              	.LBB42:
+ 1415              	.LBB43:
+ 1416              		.loc 2 215 0 discriminator 1
+ 1417              	@ 215 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../Free
+ 1418 0012 4FF00703 			mov r3, #7												
+ 1419 0016 83F31188 		msr basepri, r3											
+ 1420 001a BFF36F8F 		isb														
+ 1421 001e BFF34F8F 		dsb														
+ 1422              	
+ 1423              	@ 0 "" 2
+ 1424              		.thumb
+ 1425 0022 FB60     		str	r3, [r7, #12]
+ 1426              	.L96:
+ 1427              	.LBE43:
+ 1428              	.LBE42:
+ 1429              		.loc 1 832 0 discriminator 1
+ 1430 0024 FEE7     		b	.L96
+ 1431              	.L95:
+ 833:../FreeRTOS/timers.c **** 
+ 834:../FreeRTOS/timers.c **** 	taskENTER_CRITICAL();
+ 1432              		.loc 1 834 0
+ 1433 0026 FFF7FEFF 		bl	vPortEnterCritical
+ 835:../FreeRTOS/timers.c **** 	{
+ 836:../FreeRTOS/timers.c **** 		pvReturn = pxTimer->pvTimerID;
+ 1434              		.loc 1 836 0
+ 1435 002a 7B69     		ldr	r3, [r7, #20]
+ 1436 002c 1B6A     		ldr	r3, [r3, #32]
+ 1437 002e 3B61     		str	r3, [r7, #16]
+ 837:../FreeRTOS/timers.c **** 	}
+ 838:../FreeRTOS/timers.c **** 	taskEXIT_CRITICAL();
+ 1438              		.loc 1 838 0
+ 1439 0030 FFF7FEFF 		bl	vPortExitCritical
+ 839:../FreeRTOS/timers.c **** 
+ 840:../FreeRTOS/timers.c **** 	return pvReturn;
+ 1440              		.loc 1 840 0
+ 1441 0034 3B69     		ldr	r3, [r7, #16]
+ 841:../FreeRTOS/timers.c **** }
+ 1442              		.loc 1 841 0
+ 1443 0036 1846     		mov	r0, r3
+ 1444 0038 1837     		adds	r7, r7, #24
+ 1445              		.cfi_def_cfa_offset 8
+ 1446 003a BD46     		mov	sp, r7
+ 1447              		.cfi_def_cfa_register 13
+ 1448              		@ sp needed
+ 1449 003c 80BD     		pop	{r7, pc}
+ 1450              		.cfi_endproc
+ 1451              	.LFE18:
+ 1453 003e 00BF     		.section	.text.vTimerSetTimerID,"ax",%progbits
+ 1454              		.align	2
+ 1455              		.global	vTimerSetTimerID
+ 1456              		.thumb
+ 1457              		.thumb_func
+ 1459              	vTimerSetTimerID:
+ 1460              	.LFB19:
+ 842:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 843:../FreeRTOS/timers.c **** 
+ 844:../FreeRTOS/timers.c **** void vTimerSetTimerID( TimerHandle_t xTimer, void *pvNewID )
+ 845:../FreeRTOS/timers.c **** {
+ 1461              		.loc 1 845 0
+ 1462              		.cfi_startproc
+ 1463              		@ args = 0, pretend = 0, frame = 16
+ 1464              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1465 0000 80B5     		push	{r7, lr}
+ 1466              		.cfi_def_cfa_offset 8
+ 1467              		.cfi_offset 7, -8
+ 1468              		.cfi_offset 14, -4
+ 1469 0002 84B0     		sub	sp, sp, #16
+ 1470              		.cfi_def_cfa_offset 24
+ 1471 0004 00AF     		add	r7, sp, #0
+ 1472              		.cfi_def_cfa_register 7
+ 1473 0006 7860     		str	r0, [r7, #4]
+ 1474 0008 3960     		str	r1, [r7]
+ 846:../FreeRTOS/timers.c **** Timer_t * const pxTimer = ( Timer_t * ) xTimer;
+ 1475              		.loc 1 846 0
+ 1476 000a 7B68     		ldr	r3, [r7, #4]
+ 1477 000c FB60     		str	r3, [r7, #12]
+ 847:../FreeRTOS/timers.c **** 
+ 848:../FreeRTOS/timers.c **** 	configASSERT( xTimer );
+ 1478              		.loc 1 848 0
+ 1479 000e 7B68     		ldr	r3, [r7, #4]
+ 1480 0010 002B     		cmp	r3, #0
+ 1481 0012 09D1     		bne	.L99
+ 1482              	.LBB44:
+ 1483              	.LBB45:
+ 1484              		.loc 2 215 0 discriminator 1
+ 1485              	@ 215 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../Free
+ 1486 0014 4FF00703 			mov r3, #7												
+ 1487 0018 83F31188 		msr basepri, r3											
+ 1488 001c BFF36F8F 		isb														
+ 1489 0020 BFF34F8F 		dsb														
+ 1490              	
+ 1491              	@ 0 "" 2
+ 1492              		.thumb
+ 1493 0024 BB60     		str	r3, [r7, #8]
+ 1494              	.L100:
+ 1495              	.LBE45:
+ 1496              	.LBE44:
+ 1497              		.loc 1 848 0 discriminator 1
+ 1498 0026 FEE7     		b	.L100
+ 1499              	.L99:
+ 849:../FreeRTOS/timers.c **** 
+ 850:../FreeRTOS/timers.c **** 	taskENTER_CRITICAL();
+ 1500              		.loc 1 850 0
+ 1501 0028 FFF7FEFF 		bl	vPortEnterCritical
+ 851:../FreeRTOS/timers.c **** 	{
+ 852:../FreeRTOS/timers.c **** 		pxTimer->pvTimerID = pvNewID;
+ 1502              		.loc 1 852 0
+ 1503 002c FB68     		ldr	r3, [r7, #12]
+ 1504 002e 3A68     		ldr	r2, [r7]
+ 1505 0030 1A62     		str	r2, [r3, #32]
+ 853:../FreeRTOS/timers.c **** 	}
+ 854:../FreeRTOS/timers.c **** 	taskEXIT_CRITICAL();
+ 1506              		.loc 1 854 0
+ 1507 0032 FFF7FEFF 		bl	vPortExitCritical
+ 855:../FreeRTOS/timers.c **** }
+ 1508              		.loc 1 855 0
+ 1509 0036 1037     		adds	r7, r7, #16
+ 1510              		.cfi_def_cfa_offset 8
+ 1511 0038 BD46     		mov	sp, r7
+ 1512              		.cfi_def_cfa_register 13
+ 1513              		@ sp needed
+ 1514 003a 80BD     		pop	{r7, pc}
+ 1515              		.cfi_endproc
+ 1516              	.LFE19:
+ 1518              		.section	.text.xTimerPendFunctionCallFromISR,"ax",%progbits
+ 1519              		.align	2
+ 1520              		.global	xTimerPendFunctionCallFromISR
+ 1521              		.thumb
+ 1522              		.thumb_func
+ 1524              	xTimerPendFunctionCallFromISR:
+ 1525              	.LFB20:
+ 856:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 857:../FreeRTOS/timers.c **** 
+ 858:../FreeRTOS/timers.c **** #if( INCLUDE_xTimerPendFunctionCall == 1 )
+ 859:../FreeRTOS/timers.c **** 
+ 860:../FreeRTOS/timers.c **** 	BaseType_t xTimerPendFunctionCallFromISR( PendedFunction_t xFunctionToPend, void *pvParameter1, ui
+ 861:../FreeRTOS/timers.c **** 	{
+ 1526              		.loc 1 861 0
+ 1527              		.cfi_startproc
+ 1528              		@ args = 0, pretend = 0, frame = 40
+ 1529              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1530 0000 80B5     		push	{r7, lr}
+ 1531              		.cfi_def_cfa_offset 8
+ 1532              		.cfi_offset 7, -8
+ 1533              		.cfi_offset 14, -4
+ 1534 0002 8AB0     		sub	sp, sp, #40
+ 1535              		.cfi_def_cfa_offset 48
+ 1536 0004 00AF     		add	r7, sp, #0
+ 1537              		.cfi_def_cfa_register 7
+ 1538 0006 F860     		str	r0, [r7, #12]
+ 1539 0008 B960     		str	r1, [r7, #8]
+ 1540 000a 7A60     		str	r2, [r7, #4]
+ 1541 000c 3B60     		str	r3, [r7]
+ 862:../FreeRTOS/timers.c **** 	DaemonTaskMessage_t xMessage;
+ 863:../FreeRTOS/timers.c **** 	BaseType_t xReturn;
+ 864:../FreeRTOS/timers.c **** 
+ 865:../FreeRTOS/timers.c **** 		/* Complete the message with the function parameters and post it to the
+ 866:../FreeRTOS/timers.c **** 		daemon task. */
+ 867:../FreeRTOS/timers.c **** 		xMessage.xMessageID = tmrCOMMAND_EXECUTE_CALLBACK_FROM_ISR;
+ 1542              		.loc 1 867 0
+ 1543 000e 6FF00103 		mvn	r3, #1
+ 1544 0012 7B61     		str	r3, [r7, #20]
+ 868:../FreeRTOS/timers.c **** 		xMessage.u.xCallbackParameters.pxCallbackFunction = xFunctionToPend;
+ 1545              		.loc 1 868 0
+ 1546 0014 FB68     		ldr	r3, [r7, #12]
+ 1547 0016 BB61     		str	r3, [r7, #24]
+ 869:../FreeRTOS/timers.c **** 		xMessage.u.xCallbackParameters.pvParameter1 = pvParameter1;
+ 1548              		.loc 1 869 0
+ 1549 0018 BB68     		ldr	r3, [r7, #8]
+ 1550 001a FB61     		str	r3, [r7, #28]
+ 870:../FreeRTOS/timers.c **** 		xMessage.u.xCallbackParameters.ulParameter2 = ulParameter2;
+ 1551              		.loc 1 870 0
+ 1552 001c 7B68     		ldr	r3, [r7, #4]
+ 1553 001e 3B62     		str	r3, [r7, #32]
+ 871:../FreeRTOS/timers.c **** 
+ 872:../FreeRTOS/timers.c **** 		xReturn = xQueueSendFromISR( xTimerQueue, &xMessage, pxHigherPriorityTaskWoken );
+ 1554              		.loc 1 872 0
+ 1555 0020 074B     		ldr	r3, .L103
+ 1556 0022 1A68     		ldr	r2, [r3]
+ 1557 0024 07F11403 		add	r3, r7, #20
+ 1558 0028 1046     		mov	r0, r2
+ 1559 002a 1946     		mov	r1, r3
+ 1560 002c 3A68     		ldr	r2, [r7]
+ 1561 002e 0023     		movs	r3, #0
+ 1562 0030 FFF7FEFF 		bl	xQueueGenericSendFromISR
+ 1563 0034 7862     		str	r0, [r7, #36]
+ 873:../FreeRTOS/timers.c **** 
+ 874:../FreeRTOS/timers.c **** 		tracePEND_FUNC_CALL_FROM_ISR( xFunctionToPend, pvParameter1, ulParameter2, xReturn );
+ 875:../FreeRTOS/timers.c **** 
+ 876:../FreeRTOS/timers.c **** 		return xReturn;
+ 1564              		.loc 1 876 0
+ 1565 0036 7B6A     		ldr	r3, [r7, #36]
+ 877:../FreeRTOS/timers.c **** 	}
+ 1566              		.loc 1 877 0
+ 1567 0038 1846     		mov	r0, r3
+ 1568 003a 2837     		adds	r7, r7, #40
+ 1569              		.cfi_def_cfa_offset 8
+ 1570 003c BD46     		mov	sp, r7
+ 1571              		.cfi_def_cfa_register 13
+ 1572              		@ sp needed
+ 1573 003e 80BD     		pop	{r7, pc}
+ 1574              	.L104:
+ 1575              		.align	2
+ 1576              	.L103:
+ 1577 0040 00000000 		.word	xTimerQueue
+ 1578              		.cfi_endproc
+ 1579              	.LFE20:
+ 1581              		.section	.text.xTimerPendFunctionCall,"ax",%progbits
+ 1582              		.align	2
+ 1583              		.global	xTimerPendFunctionCall
+ 1584              		.thumb
+ 1585              		.thumb_func
+ 1587              	xTimerPendFunctionCall:
+ 1588              	.LFB21:
+ 878:../FreeRTOS/timers.c **** 
+ 879:../FreeRTOS/timers.c **** #endif /* INCLUDE_xTimerPendFunctionCall */
+ 880:../FreeRTOS/timers.c **** /*-----------------------------------------------------------*/
+ 881:../FreeRTOS/timers.c **** 
+ 882:../FreeRTOS/timers.c **** #if( INCLUDE_xTimerPendFunctionCall == 1 )
+ 883:../FreeRTOS/timers.c **** 
+ 884:../FreeRTOS/timers.c **** 	BaseType_t xTimerPendFunctionCall( PendedFunction_t xFunctionToPend, void *pvParameter1, uint32_t 
+ 885:../FreeRTOS/timers.c **** 	{
+ 1589              		.loc 1 885 0
+ 1590              		.cfi_startproc
+ 1591              		@ args = 0, pretend = 0, frame = 40
+ 1592              		@ frame_needed = 1, uses_anonymous_args = 0
+ 1593 0000 80B5     		push	{r7, lr}
+ 1594              		.cfi_def_cfa_offset 8
+ 1595              		.cfi_offset 7, -8
+ 1596              		.cfi_offset 14, -4
+ 1597 0002 8AB0     		sub	sp, sp, #40
+ 1598              		.cfi_def_cfa_offset 48
+ 1599 0004 00AF     		add	r7, sp, #0
+ 1600              		.cfi_def_cfa_register 7
+ 1601 0006 F860     		str	r0, [r7, #12]
+ 1602 0008 B960     		str	r1, [r7, #8]
+ 1603 000a 7A60     		str	r2, [r7, #4]
+ 1604 000c 3B60     		str	r3, [r7]
+ 886:../FreeRTOS/timers.c **** 	DaemonTaskMessage_t xMessage;
+ 887:../FreeRTOS/timers.c **** 	BaseType_t xReturn;
+ 888:../FreeRTOS/timers.c **** 
+ 889:../FreeRTOS/timers.c **** 		/* This function can only be called after a timer has been created or
+ 890:../FreeRTOS/timers.c **** 		after the scheduler has been started because, until then, the timer
+ 891:../FreeRTOS/timers.c **** 		queue does not exist. */
+ 892:../FreeRTOS/timers.c **** 		configASSERT( xTimerQueue );
+ 1605              		.loc 1 892 0
+ 1606 000e 134B     		ldr	r3, .L109
+ 1607 0010 1B68     		ldr	r3, [r3]
+ 1608 0012 002B     		cmp	r3, #0
+ 1609 0014 09D1     		bne	.L106
+ 1610              	.LBB46:
+ 1611              	.LBB47:
+ 1612              		.loc 2 215 0 discriminator 1
+ 1613              	@ 215 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/../../Free
+ 1614 0016 4FF00703 			mov r3, #7												
+ 1615 001a 83F31188 		msr basepri, r3											
+ 1616 001e BFF36F8F 		isb														
+ 1617 0022 BFF34F8F 		dsb														
+ 1618              	
+ 1619              	@ 0 "" 2
+ 1620              		.thumb
+ 1621 0026 3B62     		str	r3, [r7, #32]
+ 1622              	.L107:
+ 1623              	.LBE47:
+ 1624              	.LBE46:
+ 1625              		.loc 1 892 0 discriminator 1
+ 1626 0028 FEE7     		b	.L107
+ 1627              	.L106:
+ 893:../FreeRTOS/timers.c **** 
+ 894:../FreeRTOS/timers.c **** 		/* Complete the message with the function parameters and post it to the
+ 895:../FreeRTOS/timers.c **** 		daemon task. */
+ 896:../FreeRTOS/timers.c **** 		xMessage.xMessageID = tmrCOMMAND_EXECUTE_CALLBACK;
+ 1628              		.loc 1 896 0
+ 1629 002a 4FF0FF33 		mov	r3, #-1
+ 1630 002e 3B61     		str	r3, [r7, #16]
+ 897:../FreeRTOS/timers.c **** 		xMessage.u.xCallbackParameters.pxCallbackFunction = xFunctionToPend;
+ 1631              		.loc 1 897 0
+ 1632 0030 FB68     		ldr	r3, [r7, #12]
+ 1633 0032 7B61     		str	r3, [r7, #20]
+ 898:../FreeRTOS/timers.c **** 		xMessage.u.xCallbackParameters.pvParameter1 = pvParameter1;
+ 1634              		.loc 1 898 0
+ 1635 0034 BB68     		ldr	r3, [r7, #8]
+ 1636 0036 BB61     		str	r3, [r7, #24]
+ 899:../FreeRTOS/timers.c **** 		xMessage.u.xCallbackParameters.ulParameter2 = ulParameter2;
+ 1637              		.loc 1 899 0
+ 1638 0038 7B68     		ldr	r3, [r7, #4]
+ 1639 003a FB61     		str	r3, [r7, #28]
+ 900:../FreeRTOS/timers.c **** 
+ 901:../FreeRTOS/timers.c **** 		xReturn = xQueueSendToBack( xTimerQueue, &xMessage, xTicksToWait );
+ 1640              		.loc 1 901 0
+ 1641 003c 074B     		ldr	r3, .L109
+ 1642 003e 1A68     		ldr	r2, [r3]
+ 1643 0040 07F11003 		add	r3, r7, #16
+ 1644 0044 1046     		mov	r0, r2
+ 1645 0046 1946     		mov	r1, r3
+ 1646 0048 3A68     		ldr	r2, [r7]
+ 1647 004a 0023     		movs	r3, #0
+ 1648 004c FFF7FEFF 		bl	xQueueGenericSend
+ 1649 0050 7862     		str	r0, [r7, #36]
+ 902:../FreeRTOS/timers.c **** 
+ 903:../FreeRTOS/timers.c **** 		tracePEND_FUNC_CALL( xFunctionToPend, pvParameter1, ulParameter2, xReturn );
+ 904:../FreeRTOS/timers.c **** 
+ 905:../FreeRTOS/timers.c **** 		return xReturn;
+ 1650              		.loc 1 905 0
+ 1651 0052 7B6A     		ldr	r3, [r7, #36]
+ 906:../FreeRTOS/timers.c **** 	}
+ 1652              		.loc 1 906 0
+ 1653 0054 1846     		mov	r0, r3
+ 1654 0056 2837     		adds	r7, r7, #40
+ 1655              		.cfi_def_cfa_offset 8
+ 1656 0058 BD46     		mov	sp, r7
+ 1657              		.cfi_def_cfa_register 13
+ 1658              		@ sp needed
+ 1659 005a 80BD     		pop	{r7, pc}
+ 1660              	.L110:
+ 1661              		.align	2
+ 1662              	.L109:
+ 1663 005c 00000000 		.word	xTimerQueue
+ 1664              		.cfi_endproc
+ 1665              	.LFE21:
+ 1667              		.section	.bss.xLastTime.4689,"aw",%nobits
+ 1668              		.align	2
+ 1671              	xLastTime.4689:
+ 1672 0000 00000000 		.space	4
+ 1673              		.text
+ 1674              	.Letext0:
+ 1675              		.file 3 "/home/houxd/prog/NXP/S32DS_ARM_v2.0/S32DS/arm_ewl2/EWL_C/include/cstdint"
+ 1676              		.file 4 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/../../FreeRTOS/include/list.h"
+ 1677              		.file 5 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/queue.h"
+ 1678              		.file 6 "/home/houxd/workspaceS32DS.ARM.V20/dp1000/FreeRTOS/include/timers.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 timers.c
+     /tmp/ccbfvohJ.s:21     .bss.xActiveTimerList1:00000000 $d
+     /tmp/ccbfvohJ.s:24     .bss.xActiveTimerList1:00000000 xActiveTimerList1
+     /tmp/ccbfvohJ.s:27     .bss.xActiveTimerList2:00000000 $d
+     /tmp/ccbfvohJ.s:30     .bss.xActiveTimerList2:00000000 xActiveTimerList2
+     /tmp/ccbfvohJ.s:33     .bss.pxCurrentTimerList:00000000 $d
+     /tmp/ccbfvohJ.s:36     .bss.pxCurrentTimerList:00000000 pxCurrentTimerList
+     /tmp/ccbfvohJ.s:39     .bss.pxOverflowTimerList:00000000 $d
+     /tmp/ccbfvohJ.s:42     .bss.pxOverflowTimerList:00000000 pxOverflowTimerList
+     /tmp/ccbfvohJ.s:45     .bss.xTimerQueue:00000000 $d
+     /tmp/ccbfvohJ.s:48     .bss.xTimerQueue:00000000 xTimerQueue
+     /tmp/ccbfvohJ.s:51     .rodata:00000000 $d
+     /tmp/ccbfvohJ.s:55     .text.xTimerCreateTimerTask:00000000 $t
+     /tmp/ccbfvohJ.s:60     .text.xTimerCreateTimerTask:00000000 xTimerCreateTimerTask
+     /tmp/ccbfvohJ.s:1250   .text.prvCheckForValidListAndQueue:00000000 prvCheckForValidListAndQueue
+     /tmp/ccbfvohJ.s:137    .text.xTimerCreateTimerTask:00000058 $d
+     /tmp/ccbfvohJ.s:495    .text.prvTimerTask:00000000 prvTimerTask
+     /tmp/ccbfvohJ.s:144    .text.xTimerCreate:00000000 $t
+     /tmp/ccbfvohJ.s:149    .text.xTimerCreate:00000000 xTimerCreate
+     /tmp/ccbfvohJ.s:248    .text.xTimerGenericCommand:00000000 $t
+     /tmp/ccbfvohJ.s:253    .text.xTimerGenericCommand:00000000 xTimerGenericCommand
+     /tmp/ccbfvohJ.s:345    .text.xTimerGenericCommand:00000088 $d
+     /tmp/ccbfvohJ.s:350    .text.pcTimerGetTimerName:00000000 $t
+     /tmp/ccbfvohJ.s:355    .text.pcTimerGetTimerName:00000000 pcTimerGetTimerName
+     /tmp/ccbfvohJ.s:391    .text.prvProcessExpiredTimer:00000000 $t
+     /tmp/ccbfvohJ.s:395    .text.prvProcessExpiredTimer:00000000 prvProcessExpiredTimer
+     /tmp/ccbfvohJ.s:760    .text.prvInsertTimerInActiveList:00000000 prvInsertTimerInActiveList
+     /tmp/ccbfvohJ.s:486    .text.prvProcessExpiredTimer:0000007c $d
+     /tmp/ccbfvohJ.s:491    .text.prvTimerTask:00000000 $t
+     /tmp/ccbfvohJ.s:628    .text.prvGetNextExpireTime:00000000 prvGetNextExpireTime
+     /tmp/ccbfvohJ.s:533    .text.prvProcessTimerOrBlockTask:00000000 prvProcessTimerOrBlockTask
+     /tmp/ccbfvohJ.s:864    .text.prvProcessReceivedCommands:00000000 prvProcessReceivedCommands
+     /tmp/ccbfvohJ.s:529    .text.prvProcessTimerOrBlockTask:00000000 $t
+     /tmp/ccbfvohJ.s:697    .text.prvSampleTimeNow:00000000 prvSampleTimeNow
+     /tmp/ccbfvohJ.s:618    .text.prvProcessTimerOrBlockTask:00000078 $d
+     /tmp/ccbfvohJ.s:624    .text.prvGetNextExpireTime:00000000 $t
+     /tmp/ccbfvohJ.s:688    .text.prvGetNextExpireTime:00000044 $d
+     /tmp/ccbfvohJ.s:693    .text.prvSampleTimeNow:00000000 $t
+     /tmp/ccbfvohJ.s:1107   .text.prvSwitchTimerLists:00000000 prvSwitchTimerLists
+     /tmp/ccbfvohJ.s:751    .text.prvSampleTimeNow:0000003c $d
+     /tmp/ccbfvohJ.s:1671   .bss.xLastTime.4689:00000000 xLastTime.4689
+     /tmp/ccbfvohJ.s:756    .text.prvInsertTimerInActiveList:00000000 $t
+     /tmp/ccbfvohJ.s:854    .text.prvInsertTimerInActiveList:0000007c $d
+     /tmp/ccbfvohJ.s:860    .text.prvProcessReceivedCommands:00000000 $t
+     /tmp/ccbfvohJ.s:955    .text.prvProcessReceivedCommands:00000074 $d
+     /tmp/ccbfvohJ.s:965    .text.prvProcessReceivedCommands:0000009c $t
+     /tmp/ccbfvohJ.s:1098   .text.prvProcessReceivedCommands:0000015c $d
+     /tmp/ccbfvohJ.s:1103   .text.prvSwitchTimerLists:00000000 $t
+     /tmp/ccbfvohJ.s:1240   .text.prvSwitchTimerLists:000000b8 $d
+     /tmp/ccbfvohJ.s:1246   .text.prvCheckForValidListAndQueue:00000000 $t
+     /tmp/ccbfvohJ.s:1328   .text.prvCheckForValidListAndQueue:00000060 $d
+     /tmp/ccbfvohJ.s:1337   .text.xTimerIsTimerActive:00000000 $t
+     /tmp/ccbfvohJ.s:1342   .text.xTimerIsTimerActive:00000000 xTimerIsTimerActive
+     /tmp/ccbfvohJ.s:1387   .text.pvTimerGetTimerID:00000000 $t
+     /tmp/ccbfvohJ.s:1392   .text.pvTimerGetTimerID:00000000 pvTimerGetTimerID
+     /tmp/ccbfvohJ.s:1454   .text.vTimerSetTimerID:00000000 $t
+     /tmp/ccbfvohJ.s:1459   .text.vTimerSetTimerID:00000000 vTimerSetTimerID
+     /tmp/ccbfvohJ.s:1519   .text.xTimerPendFunctionCallFromISR:00000000 $t
+     /tmp/ccbfvohJ.s:1524   .text.xTimerPendFunctionCallFromISR:00000000 xTimerPendFunctionCallFromISR
+     /tmp/ccbfvohJ.s:1577   .text.xTimerPendFunctionCallFromISR:00000040 $d
+     /tmp/ccbfvohJ.s:1582   .text.xTimerPendFunctionCall:00000000 $t
+     /tmp/ccbfvohJ.s:1587   .text.xTimerPendFunctionCall:00000000 xTimerPendFunctionCall
+     /tmp/ccbfvohJ.s:1663   .text.xTimerPendFunctionCall:0000005c $d
+     /tmp/ccbfvohJ.s:1668   .bss.xLastTime.4689:00000000 $d
+                     .debug_frame:00000010 $d
+                           .group:00000000 wm4.0.728a2e6911dc01ff85c2d70c52e8fae1
+                           .group:00000000 wm4.lib_c99.prefix.8.3580c292f50811c682d980dc4180498e
+                           .group:00000000 wm4.common.prefix.16.d7bf937cdf46fd76dde96b376e3b328a
+                           .group:00000000 wm4.ewl_c_version.h.9.0bcb57d6a3f89baae1f9b121de2772f5
+                           .group:00000000 wm4.os_enum.h.9.f9446d6af68b3fa72a37d4d924d3b347
+                           .group:00000000 wm4.ansi_prefix.ARM.h.13.4b23f4c654df3c3277534542f67d200c
+                           .group:00000000 wm4.ansi_parms.h.64.90aed58330fdde08746db908036e1f37
+                           .group:00000000 wm4.size_t.h.9.f983491a73b5c81f421ee8223b1ac5c0
+                           .group:00000000 wm4.ewl_lib_ext1.h.14.f9b057cc049671136093886db2a3473f
+                           .group:00000000 wm4.ewl_rsize_t.h.11.b283831bb803e76ceb1756da2df9a1b5
+                           .group:00000000 wm4.wchar_t.h.9.94198016f5b5f455e54ea1f3f054b416
+                           .group:00000000 wm4.limits_api.h.9.bc6daa20b3abae2bba6c512044e73b43
+                           .group:00000000 wm4.cstdint.134.883feaa2838fb8c945f155045ce06256
+                           .group:00000000 wm4.cstdlib.44.e27e649b4051799f046eccdb898dfe03
+                           .group:00000000 wm4.cstddef.32.067e2ea187472b6198f9ace951e27a51
+                           .group:00000000 wm4.FreeRTOSConfig.h.72.75cb346dabad37f1d1a80e0a337065ed
+                           .group:00000000 wm4.projdefs.h.71.b3c50e668908413922aad758934ec914
+                           .group:00000000 wm4.portmacro.h.72.f619b572c99e5bd3ac77abd33efb542d
+                           .group:00000000 wm4.portable.h.106.61ffdda1afafb5a5e1f7197ade95b43a
+                           .group:00000000 wm4.mpu_wrappers.h.71.dd245fe44d82bd40288b5a47f895c82c
+                           .group:00000000 wm4.FreeRTOS.h.179.860507a4e765cb3b74f37181fc3c9df6
+                           .group:00000000 wm4.list.h.103.6a12b7b9a7a136c3cca0ee53675c5498
+                           .group:00000000 wm4.task.h.88.249f28f82749d6a86cb49478ec501d6f
+                           .group:00000000 wm4.queue.h.72.b79111e1f2901fd0fc4ec217c5b93342
+                           .group:00000000 wm4.timers.h.96.6d8400d69a49ecea6915b6a9d26422a9
+
+UNDEFINED SYMBOLS
+xTaskGenericCreate
+pvPortMalloc
+vListInitialiseItem
+xTaskGetSchedulerState
+xQueueGenericSend
+xQueueGenericSendFromISR
+uxListRemove
+vTaskSuspendAll
+xTaskResumeAll
+vQueueWaitForMessageRestricted
+xTaskGetTickCount
+vListInsert
+vPortFree
+xQueueGenericReceive
+vPortEnterCritical
+vListInitialise
+xQueueGenericCreate
+vPortExitCritical
