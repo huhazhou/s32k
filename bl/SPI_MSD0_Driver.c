@@ -8,11 +8,6 @@
 #include <stdio.h>
 #include "SPI_MSD0_Driver.h"
 
-#define printf(...)
-
-/* Private define ------------------------------------------------------------*/
-//#define PRINT_INFO  1	
-/* Private variables ---------------------------------------------------------*/
 MSD_CARDINFO SD0_CardInfo;
 
 /*******************************************************************************
@@ -46,23 +41,6 @@ void writeclock(uint8_t cnt)
 		MSD0_spi_read_write(0xff);
 	//CS_HIGH;
 }
-/*******************************************************************************
- * Function Name  : MSD0_SPI_Configuration
- * Description    : SD Card SPI Configuration
- * Input          : None
- * Output         : None
- * Return         : None
- * Attention		 : None
- *******************************************************************************/
-//void MSD0_SPI_Configuration(void) {
-//
-//	//�ر�Ƭѡ
-//	MSD0_card_disable();
-//
-//	//����SPI�ӿ�
-//	LPSPI1_init_master();
-//
-//}
 
 /*******************************************************************************
  * Function Name  : MSD0_SPIHighSpeed
@@ -76,11 +54,9 @@ void MSD0_SPIHighSpeed(unsigned char b_high) {
 
 	/* Speed select */
 	if (b_high == 0) {
-		printf("\r\nspi�л�������");
 		LPSPI0->TCR &= 0xc7ffffff;
 		LPSPI0->TCR |= 0x38000000;
 	} else {
-		printf("\r\nspi�л�������");
 		LPSPI0_init_master();
 
 	}
@@ -99,26 +75,6 @@ int MSD0_Init(void) {
 	unsigned char r1;
 	unsigned char buff[6] = { 0 };
 	unsigned short retry;
-
-	/* Check , if no card insert */
-	/*
-	 if( MSD0_card_insert() )
-	 {
-	 #ifdef PRINT_INFO
-	 printf("There is no card detected! \r\n");
-	 #endif
-	 / * FATFS error flag * /
-	 return -1;
-	 }
-	 */
-	/* Power on and delay some times */
-	/*
-	 for(retry=0; retry<0x100; retry++)
-	 {
-	 MSD0_card_power_on();
-	 }
-	 */
-	//fa shi zhong gei sd ka ,jixing chu shi hua
 	/* Satrt send 74 clocks at least */
 	for (retry = 0; retry < 80; retry++) {
 		MSD0_spi_read_write(DUMMY_BYTE);
@@ -131,49 +87,33 @@ int MSD0_Init(void) {
 		//MSD0_spi_read_write(r1);
 		if (r1 == 0x01) {
 			retry = 0;
-			printf("\r\nCMD0 FAN HUI ZHENG QUE");
 			break;
 		}
 	}
-	printf("BIAO JI 1");
 	/* Timeout return */
 	if (retry == 0xFFF) {
-		printf("\r\nReset card into IDLE state failed!\r\n");
 		return 1;
 	}
-	printf("BIAO JI 2");
 	/* Get the card type, version */
 	r1 = MSD0_send_command_hold(CMD8, 0x1AA, 0x87);
-	printf("\r\n����CMD8����");
-	{
-		char s[3];
-		sprintf(s,"%x",r1);
-		printf(s);
-	}
 	/* r1=0x05 -> V1.0 */
 	if (r1 == 0x05) {
 		SD0_CardInfo.CardType = CARDTYPE_SDV1;
-		printf("CMD8 FAN HUI ZHENG QUE");
 		/* End of CMD8, chip disable and dummy byte */
 		MSD0_card_disable();
 		MSD0_spi_read_write(DUMMY_BYTE);
 
 		/* SD1.0/MMC start initialize */
 		/* Send CMD55+ACMD41, No-response is a MMC card, otherwise is a SD1.0 card */
-		printf("ZHUN BEI FA SONG CMD55");
 		for (retry = 0; retry < 0xFFF; retry++) {
 			r1 = MSD0_send_command(CMD55, 0, 0); /* should be return 0x01 */
 			if (r1 != 0x01) {
-#ifdef PRINT_INFO
-				printf("Send CMD55 should return 0x01, response=0x%02x\r\n", r1);
-#endif
 				MSD0_spi_read_write(0xa7);
 				return r1;
 			}
 			r1 = MSD0_send_command(ACMD41, 0, 0); /* should be return 0x00 */
 			if (r1 == 0x00) {
 				retry = 0;
-				printf("jinruACMD41 QIE FAN HUI 0");
 				break;
 			}
 			MSD0_spi_read_write(0x5a);
@@ -191,24 +131,12 @@ int MSD0_Init(void) {
 
 			/* Timeout return */
 			if (retry == 0xFFF) {
-#ifdef PRINT_INFO
-				printf("Send CMD1 should return 0x00, response=0x%02x\r\n", r1);
-#endif
 				return 2;
 			}
 
 			SD0_CardInfo.CardType = CARDTYPE_MMC;
-#ifdef PRINT_INFO
-			printf("Card Type                     : MMC\r\n");
-#endif
 		}
 		/* SD1.0 card detected, print information */
-#ifdef PRINT_INFO
-		else
-		{
-			printf("Card Type                     : SD V1\r\n");
-		}
-#endif
 
 		/* Set spi speed high */
 		MSD0_SPIHighSpeed(1);
@@ -216,25 +144,18 @@ int MSD0_Init(void) {
 		/* CRC disable */
 		r1 = MSD0_send_command(CMD59, 0, 0x01);
 		if (r1 != 0x00) {
-#ifdef PRINT_INFO
-			printf("Send CMD59 should return 0x00, response=0x%02x\r\n", r1);
-#endif
 			return r1; /* response error, return r1 */
 		}
 
 		/* Set the block size */
 		r1 = MSD0_send_command(CMD16, MSD_BLOCKSIZE, 0xFF);
 		if (r1 != 0x00) {
-#ifdef PRINT_INFO
-			printf("Send CMD16 should return 0x00, response=0x%02x\r\n", r1);
-#endif
 			return r1; /* response error, return r1 */
 		}
 	}
 
 	/* r1=0x01 -> V2.x, read OCR register, check version */
 	else if (r1 == 0x01) {
-		printf("\r\n����CMD8���ؽ��1");
 		/* 4Bytes returned after CMD8 sent	*/
 		buff[0] = MSD0_spi_read_write(DUMMY_BYTE); /* should be 0x00 */
 		buff[1] = MSD0_spi_read_write(DUMMY_BYTE); /* should be 0x00 */
@@ -244,52 +165,16 @@ int MSD0_Init(void) {
 		/* End of CMD8, chip disable and dummy byte */
 		MSD0_card_disable();
 		MSD0_spi_read_write(DUMMY_BYTE);
-		{
-				char s[3];
-				printf("\r\n �ж��ǵĽ������ѹ\r\n");
-				sprintf(s,"%x",buff[2]);
-				printf(s);
-				sprintf(s,"%x",buff[3]);
-				printf(s);
-
-		}
 		/* Check voltage range be 2.7-3.6V	*/
 		if (buff[2] == 0x01 && buff[3] == 0xAA) {
 			for (retry = 0; retry < 0xFFF; retry++) {
 				r1 = MSD0_send_command(CMD55, 0, 0); /* should be return 0x01 */
-				printf("\r\nSend CMD55 should return 0x01, ");
-				{
-					char s[3];
-					sprintf(s,"%x",r1);
-					printf(s);
-				}
 				if (r1 != 0x01) {
-
-
-					printf("\r\nSend CMD55 should return 0x01, ");
-					{
-						char s[3];
-						sprintf(s,"%x",r1);
-						printf(s);
-					}
-
 					return r1;
 				}
 
 				r1 = MSD0_send_command(ACMD41, 0x40000000, 0); /* should be return 0x00 */
-				printf("\r\nACMD41�����");
-				{
-					char s[3];
-					sprintf(s,"%x",r1);
-					printf(s);
-				}
 				if (r1 == 0x00) {
-					printf("\r\nACMD41�������ȷ");
-					{
-						char s[3];
-						sprintf(s,"%x",r1);
-						printf(s);
-					}
 					retry = 0;
 					break;
 				}
@@ -297,19 +182,12 @@ int MSD0_Init(void) {
 
 			/* Timeout return */
 			if (retry == 0xFFF) {
-#ifdef PRINT_INFO
-				printf("Send ACMD41 should return 0x00, response=0x%02x\r\n", r1);
-#endif
 				return 3;
 			}
 
 			/* Read OCR by CMD58 */
 			r1 = MSD0_send_command_hold(CMD58, 0, 0);
-			printf("\r\n����CMD58");
 			if (r1 != 0x00) {
-#ifdef PRINT_INFO
-				printf("Send CMD58 should return 0x00, response=0x%02x\r\n", r1);
-#endif
 				return r1; /* response error, return r1 */
 			}
 
@@ -325,21 +203,13 @@ int MSD0_Init(void) {
 			/* OCR -> CCS(bit30)  1: SDV2HC	 0: SDV2 */
 			if (buff[0] & 0x40) {
 				SD0_CardInfo.CardType = CARDTYPE_SDV2HC;
-
-				printf("\r\nCard Type                     : SD V2HC\r\n");
-
 			} else {
 				SD0_CardInfo.CardType = CARDTYPE_SDV2;
-
-				printf("Card Type                     : SD V2\r\n");
-
 			}
-
 			/* Set spi speed high */
 			MSD0_SPIHighSpeed(1);
 		}
 	}
-	printf("\n\nSD����ʼ�����");
 	return 0;
 }
 
@@ -652,23 +522,11 @@ int MSD0_WriteSingleBlock(unsigned int sector, unsigned char *buffer)
   /* if ver = SD2.0 HC, sector need <<9 */
   if(SD0_CardInfo.CardType != CARDTYPE_SDV2HC)
   {
-	  {
-		  char buf[3];
-		  printf("\r\n SD");
-		  sprintf(buf,"%x",SD0_CardInfo.CardType);
-		  printf(buf);
-	  }
 	  sector = sector<<9;
   }
 
   /* Send CMD24 : Write single block command */
   r1 = MSD0_send_command(CMD24, sector, 0);
-  {
-	  char buf[3];
-	  printf("\r\n Send CMD24 : Write single block command");
-	  sprintf(buf,"%x",r1);
-	  printf(buf);
-  }
   if(r1 != 0x00)
   {
 	 return 1;

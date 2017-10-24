@@ -261,52 +261,39 @@ unsigned uart_getdata_blocked(int port,uint8_t *buf,int bufsize,int frame_tmout)
 }
 void uart_puts(int port,const char *data_string)  {
 	taskENTER_CRITICAL();
-	LPUART_Type* uartTbl[3] = { LPUART0, LPUART1, LPUART2 };
 	const char *p = data_string;
 	int c;
 	while ((c=*p++))
-		LPUART_transmit_char(uartTbl[port], c);
+		LPUART_transmit_char(port, c);
 	taskEXIT_CRITICAL();
 }
 void uart_send_lf_crlf(int port,int len,const uint8_t* data)
 {
-	LPUART_Type* uartTbl[3] = { LPUART0, LPUART1, LPUART2 };
 	const uint8_t *p = data;
 	const uint8_t *end = p+len;
 	taskENTER_CRITICAL();
 	if(port==UART_RS485)rs485_dir(1);
 	while(p<end){
 		if(*p=='\n')
-			LPUART_transmit_char(uartTbl[port], '\r');
-		LPUART_transmit_char(uartTbl[port], *p++);
+			LPUART_transmit_char(port, '\r');
+		LPUART_transmit_char(port, *p++);
 	}
 	if(port==UART_RS485)rs485_dir(0);
 	taskEXIT_CRITICAL();
 }
 void uart_send(int port,int len,const uint8_t* data)
 {
-	LPUART_Type* uartTbl[3] = { LPUART0, LPUART1, LPUART2 };
 	const uint8_t *p = data;
 	const uint8_t *end = p+len;
 	taskENTER_CRITICAL();
 	if(port==UART_RS485)rs485_dir(1);
 	while(p<end){
-		LPUART_transmit_char(uartTbl[port], *p++);
+		LPUART_transmit_char(port, *p++);
 	}
 	if(port==UART_RS485)rs485_dir(0);
 	taskEXIT_CRITICAL();
 }
-//static void test_uart_loop(void *p)
-//{
-//	uartQueueTbl[1] = xQueueCreate(128, sizeof(uint8_t));
-//	os_trace("UART%d send message\n",1);
-//	uart_puts(1, "$$TEST$$\n");
-//	os_sleep_ms(1000);
-//	char buf[64];
-//	uart_gets_timeout(1, buf, 64, 1000);//(1, buf, 64);
-//	os_trace("UART%d get message: %s\n",1,buf);
-//	os_suspend();
-//}
+
 static void uart_proc(void *p)
 {
 	struct UartParamSt* param = (struct UartParamSt*)p;
@@ -386,7 +373,7 @@ void nic_io_init(){
 	NIC_POWER_ON_CLR();
 	NIC_VBAT_CLR();
 }
-void nic_power_onoff(void)
+static void nic_power_onoff(void)
 {
 	NIC_VBAT_CLR();
 	os_sleep_ms(500);		/* 500 ms might be ok */
@@ -568,7 +555,7 @@ void load_time()
 		.tm_mon = bcd2int(dst.mon),
 		.tm_year = (2000 + bcd2int(dst.year)) - 1900,
 	};
-	time_t now = mktime(&ltm) - __timezone(NULL);	//to utc
+	time_t now = mktime(&ltm);	//to local
 	time(&now);
 }
 void store_time()
@@ -589,28 +576,21 @@ void store_time()
 	ds3231_settime(&dst);
 	taskEXIT_CRITICAL();
 }
-void rtc_proc(void* p)
-{
-	(void)p;
-	for(;;){
-		struct tm ltm;
-		localtime_s(NULL,&ltm);
-		os_trace("read time: %s",asctime(&ltm));
-		os_sleep_ms(1000);
-	}
-}
+
 int test_rtc(void)
 {
 	TaskHandle_t rtc_handle;
 	float tempr = ds3231_gettempr();
 	os_trace("DS3231 temprature: %f\n", tempr);
-//	//2017/10/20 9:26:0
-//	time_t set = 1508462760;	//utc
-//	struct tm ltm;
-//	localtime_s(&set,&ltm);
-//	printf("set time: %s\n",asctime(&ltm));
-//	time(&set);
-//	store_time();
+	void rtc_proc(void* p){
+		(void)p;
+		for(;;){
+			struct tm ltm;
+			localtime_s(NULL,&ltm);
+			os_trace("read time: %s",asctime(&ltm));
+			os_sleep_ms(1000);
+		}
+	}
 	OS_ASSERT(pdTRUE==xTaskCreate(rtc_proc,"rtc_proc", 1024/4, NULL , 5, &rtc_handle));
 	for(int i=0;i<2;i++){
 		load_time();		//per 5-sec load time from hardware
@@ -739,7 +719,7 @@ void mainTask(void *p)
 	for(;;){
 		os_trace("dp1000 test program, version:0.1 build: %s %s\n",__DATE__,__TIME__);
 		os_trace("-------------------------------------------------\n");
-		os_trace("Type \'%u\'-\'%u\' to select test item, or \'a\' for all:\n",0,tbllen);
+		os_trace("Type \"%u\"-\"%u\" to select test item, or \"a\" for all:\n",0,tbllen);
 		os_trace("time setup use command:\n");
 		os_trace("      \"ts 20171012120000 \"\n");
 
@@ -801,7 +781,7 @@ int main()
 	PORT_init();             /* Configure ports */
 
 	LPSPI0_init_master();
-	MSD0_SPIHighSpeed(0);
+	//MSD0_SPIHighSpeed(1);
 
 	FLEXCAN_init(0,0xA,500000);
 	FLEXCAN_init(1,0xB,500000);
@@ -811,9 +791,9 @@ int main()
 	uartQueueTbl[1] = xQueueCreate(128, sizeof(uint8_t));
 	uartQueueTbl[2] = xQueueCreate(128, sizeof(uint8_t));
 
-	LPUART_init(LPUART0, 9600);	//RS485
-	LPUART_init(LPUART1, 115200);	//4G
-	LPUART_init(LPUART2, 9600);	//GPS
+	LPUART_init(UART_RS485, 9600);
+	LPUART_init(UART_4G, 	115200);
+	LPUART_init(UART_GPS, 	9600);
 
 	os_trace_init();
 	OS_ASSERT(pdTRUE==xTaskCreate(mainTask,"mainTask", 4096/4, NULL , 5, &mainTaskHandle));

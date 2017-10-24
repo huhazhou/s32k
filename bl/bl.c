@@ -29,8 +29,8 @@ void NVIC_init_IRQs (void) {
 	S32_NVIC->ISER[LPUART1_RxTx_IRQn/32] = 1 << (LPUART1_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: enable IRQ */
 	S32_NVIC->IP[LPUART1_RxTx_IRQn] =0x05; /* IRQ48-LPIT0 ch0: priority 10 of 0-15*/
 
-	S32_NVIC->ICPR[LPUART1_RxTx_IRQn/32] = 1 << (LPUART2_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: clr any pending IRQ*/
-	S32_NVIC->ISER[LPUART1_RxTx_IRQn/32] = 1 << (LPUART2_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: enable IRQ */
+	S32_NVIC->ICPR[LPUART2_RxTx_IRQn/32] = 1 << (LPUART2_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: clr any pending IRQ*/
+	S32_NVIC->ISER[LPUART2_RxTx_IRQn/32] = 1 << (LPUART2_RxTx_IRQn % 32); /* IRQ48-LPIT0 ch0: enable IRQ */
 	S32_NVIC->IP[LPUART2_RxTx_IRQn] =0x05; /* IRQ48-LPIT0 ch0: priority 10 of 0-15*/
 
 //	  S32_NVIC->ICPR[1] = 1 << (48 % 32);  /* IRQ48-LPIT0 ch0: clr any pending IRQ*/

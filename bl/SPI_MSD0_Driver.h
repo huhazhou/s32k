@@ -40,10 +40,10 @@
 #define MSD0_card_power_on()
 #define MSD0_card_insert()       	GPIOB->IDR & GPIO_Pin_0//GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_0)
 */
-#define MSD0_card_enable()             ;//GPIO_HAL_ClearPins(PTB,1<<17);
-#define MSD0_card_disable()             ;//GPIO_HAL_SetPins(PTB,1<<17);
-#define MSD0_card_power_on()            ;
-#define MSD0_card_insert()              0//SD��������
+#define MSD0_card_enable()             //GPIO_HAL_ClearPins(PTB,1<<17);
+#define MSD0_card_disable()            //GPIO_HAL_SetPins(PTB,1<<17);
+#define MSD0_card_power_on()
+#define MSD0_card_insert()				(0)
 //
 //
 /* Private typedef -----------------------------------------------------------*/

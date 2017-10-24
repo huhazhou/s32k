@@ -8,7 +8,7 @@
 #ifndef LPUART_H_
 #define LPUART_H_
 #include "S32K144.h"
-void LPUART_init(LPUART_Type *LPUART, uint32_t bps);
-void LPUART_transmit_char(LPUART_Type *LPUART, char send);
-int LPUART_receive_char(LPUART_Type *LPUART);
+void LPUART_init(int port, uint32_t bps);
+void LPUART_transmit_char(int port, char send);
+int LPUART_receive_char(int port);
 #endif /* LPUART_H_ */

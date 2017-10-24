@@ -25,6 +25,7 @@
 #include "ffconf.h"
 #include "SPI_MSD0_Driver.h"
 #include <stdio.h>
+#include "timelib.h"
 
 /* Private variables ---------------------------------------------------------*/
 extern MSD_CARDINFO SD0_CardInfo;
@@ -223,8 +224,15 @@ void *buff /* Buffer to send/receive control data */
 /* 31-25: Year(0-127 org.1980), 24-21: Month(1-12), 20-16: Day(1-31) */
 /* 15-11: Hour(0-23), 10-5: Minute(0-59), 4-0: Second(0-29 *2) */
 DWORD get_fattime(void) {
-
-	return 0;
+	time_t t = time(NULL);
+	struct tm * lt = localtime(&t);
+	return ((lt->tm_year+1900-1980) << 25) 	/* Year origin from 1980 */
+		| ((lt->tm_mon+1) << 21) 			/* Month = 1...12 */
+		| (lt->tm_mday << 16) 				/* Day = 1...31 */
+		| (lt->tm_hour << 11) 				/* Hour = 0...23 */
+		| (lt->tm_min << 5) 					/* Min = 0...59 */
+		| (lt->tm_sec >> 1) 					/* Sec = 0...59 */
+		;
 }
 
 /*********************************************************************************************************

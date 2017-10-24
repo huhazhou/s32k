@@ -169,7 +169,6 @@
 							<tool id="com.freescale.s32ds.cross.gnu.disassembler.509370006" name="Standard S32DS Disassembler" superClass="com.freescale.s32ds.cross.gnu.disassembler"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.freescale.s32ds.cross.gnu.arm.cortexm.exe.debug.1766390407.Project_Settings/Debugger/dp1000_Debug_RAM_Segger.launch" name="dp1000_Debug_RAM_Segger.launch" rcbsApplicability="disable" resourcePath="Project_Settings/Debugger/dp1000_Debug_RAM_Segger.launch" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FreeRTOS"/>
 						<entry excluding="Linker_Files/S32K1xx_ram.ld|Debugger/dp1000_Debug_RAM_Segger.launch" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Project_Settings"/>
@@ -308,7 +307,6 @@
 							<tool id="com.freescale.s32ds.cross.gnu.disassembler.726048734" name="Standard S32DS Disassembler" superClass="com.freescale.s32ds.cross.gnu.disassembler"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.freescale.s32ds.cross.gnu.arm.cortexm.exe.release.1039767156.Project_Settings/Debugger/dp1000_Debug_RAM_Segger.launch" name="dp1000_Debug_RAM_Segger.launch" rcbsApplicability="disable" resourcePath="Project_Settings/Debugger/dp1000_Debug_RAM_Segger.launch" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry excluding="Linker_Files/S32K1xx_ram.ld|Debugger/dp1000_Debug_RAM_Segger.launch" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Project_Settings"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="bl"/>

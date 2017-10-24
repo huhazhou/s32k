@@ -9,8 +9,53 @@
 #include "S32K144.h" /* include peripheral declarations S32K144 */
 #include "LPUART.h"
 
-void LPUART_init(LPUART_Type *LPUART, uint32_t bps)  /* Init. summary: 9600 baud, 1 stop bit, 8 bit format, no parity */
+/*
+int calc_opt_div(int bps, float *errpto){
+	float min_val=1.f;
+	int min_index=0;
+	for(int i=4;i<=32;i++){
+		printf("8000000/115200/%d = %d \ttrue_bps=%d \tdiff=%d \terrpto=%f\n",
+				(int)i,
+				8000000/115200/i,
+				8000000/(8000000/115200/i)/i,
+				8000000/(8000000/115200/i)/i-115200,
+				(8000000/(8000000/115200/i)/i-115200)/(115200.f)
+		);
+		if((8000000/(8000000/115200/i)/i-115200)/(115200.f)<min_val){
+			min_val = (8000000/(8000000/115200/i)/i-115200)/(115200.f);
+			min_index = i;
+		}
+	}
+	*errpto = min_val;
+	return min_index;
+}
+
+int main(void) {
+	int bpstbl[] = {2400,4800,9600,19200,38400,57600,115200};
+	for(int i=0;i<sizeof(bpstbl)/sizeof(bpstbl[0]);i++){
+		float errpto;
+		int v = calc_opt_div(bpstbl[i],&errpto);
+		printf("bps=%d div=%d, err=%f\n",bpstbl[i],v,errpto);
+	}
+	return EXIT_SUCCESS;
+}
+
+output:
+bps=2400 div=23, err=0.006441
+bps=4800 div=23, err=0.006441
+bps=9600 div=23, err=0.006441
+bps=19200 div=23, err=0.006441
+bps=38400 div=23, err=0.006441
+bps=57600 div=23, err=0.006441
+bps=115200 div=23, err=0.006441
+
+*/
+
+static LPUART_Type* uartTbl[3] = { LPUART0, LPUART1, LPUART2 };
+
+void LPUART_init(int port, uint32_t bps)  /* Init. summary: 9600 baud, 1 stop bit, 8 bit format, no parity */
 {
+	LPUART_Type *LPUART = uartTbl[port];
 	if(LPUART==LPUART0){
 	  PCC->PCCn[PCC_LPUART0_INDEX] &= ~PCC_PCCn_CGC_MASK;    /* Ensure clk disabled for config */
 	  PCC->PCCn[PCC_LPUART0_INDEX] |= PCC_PCCn_PCS(0b001)    /* Clock Src= 1 (SOSCDIV2_CLK) */
@@ -27,19 +72,7 @@ void LPUART_init(LPUART_Type *LPUART, uint32_t bps)  /* Init. summary: 9600 baud
 	/*
 	 * fuck sysclk
 	 */
-	if(bps==9600)
-		LPUART->BAUD = 0x0F000000+(8000000/16/9600);
-	else if(bps==19200)
-		LPUART->BAUD = 0x0F000000+(8000000/16/19200);
-	else if(bps==38400)
-		LPUART->BAUD = 0x0F000000+(8000000/16/38400);
-	else if(bps==57600)
-		LPUART->BAUD = 0x10000000+(8000000/17/57600);
-	else if(bps==115200)
-		LPUART->BAUD = 0x10000000+(8000000/17/115200);
-	else{
-		LPUART->BAUD = 0x03000000+(8000000/4/bps);
-	}
+	LPUART->BAUD = ((23-1)<<24)+(8000000/23/bps);// 0x03000000+(8000000/4/bps);
 
 //  LPUART->BAUD = 0x0F000034;  /* Initialize for 9600 baud, 1 stop: */
 //                               /* SBR=52 (0x34): baud divisor = 8M/9600/16 = ~52 */
@@ -74,14 +107,16 @@ void LPUART_init(LPUART_Type *LPUART, uint32_t bps)  /* Init. summary: 9600 baud
 	//LPUART1->GLOBAL |= 1<<1;
 }
 
-void LPUART_transmit_char(LPUART_Type *LPUART,char send) {    /* Function to Transmit single Char */
+void LPUART_transmit_char(int port,char send) {    /* Function to Transmit single Char */
+  LPUART_Type *LPUART = uartTbl[port];
   //while((LPUART->STAT & LPUART_STAT_TDRE_MASK)>>LPUART_STAT_TDRE_SHIFT==0);
                                    /* Wait for transmit buffer to be empty */
   LPUART->DATA=send;              /* Send data */
   while((LPUART->STAT & LPUART_STAT_TC_MASK)==0);
 }
 
-int LPUART_receive_char(LPUART_Type *LPUART) {    /* Function to Receive single Char */
+int LPUART_receive_char(int port) {    /* Function to Receive single Char */
+	LPUART_Type *LPUART = uartTbl[port];
   char recieve;
   if((LPUART->STAT & LPUART_STAT_RDRF_MASK)>>LPUART_STAT_RDRF_SHIFT==0)
 	  return -1;
